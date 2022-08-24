@@ -1,0 +1,17 @@
+﻿NewFormatContext context
+{
+	#まだ未実装
+	quarter_view = "Off";
+
+	#トップバーの題字
+	#まだ未実装
+	title_name = "ローガントゥーガ開発者用シナリオ";
+
+	#メニューボタン並びの間隔です。デフォルトは50ドットです。
+	#まだ未実装
+	title_menu_space = "50";
+
+	#タイトル画面のＢＧＭ
+	#まだ未実装
+	title_bgm = "a,b,c";
+}

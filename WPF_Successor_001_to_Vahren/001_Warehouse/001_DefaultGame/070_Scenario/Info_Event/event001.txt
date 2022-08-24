@@ -1,0 +1,78 @@
+﻿event we1
+<-
+	let a = isPlayer(pOne);
+	let b = yet(opOne);
+	if (a && b) {
+		event(opOne);
+	}
+	else if (isPlayer(pTwo) && yet(opTwo)) {
+		event(opTwo);
+	}
+	else if (isPlayer(pThree) && yet(opThree)) {
+		event(opThree);
+	}
+	else if (isPlayer(pFour) && yet(opFour)) {
+		event(opFour);
+	}
+
+	// クリア判定
+	// 残り勢力数
+	//	pushCountPower(npp)
+	
+	//	if (npp == 1 && gameclearflag == 0){
+	//	setGameClear(on)
+	//	}
+	//
+
+	if (isPlayer(pOne) && countPower() == 1 && isAlive(pOne)){
+		dialog("貴方は他勢力を滅ぼしました！　統一です！");
+		setGameClear();
+	}
+	else if (isPlayer(pTwo) && countPower() == 1 && isAlive(pTwo)){
+		dialog("貴方は他勢力を滅ぼしました！　統一です！");
+		setGameClear();
+	}
+	else if (isPlayer(pThree) && countPower() == 1 && isAlive(pThree)){
+		dialog("貴方は他勢力を滅ぼしました！　統一です！");
+		setGameClear();
+	}
+	else if (isPlayer(pFour) && countPower() == 1 && isAlive(pFour)){
+		dialog("貴方は他勢力を滅ぼしました！　統一です！");
+		setGameClear();
+	}
+
+	if (isPlayer(pOne) && isGameClear()) {
+		event(ed);
+	}
+	else if (isPlayer(pTwo) && isGameClear()) {
+		event(ed);
+	}
+	else if (isPlayer(pThree) && isGameClear()) {
+		event(ed);
+	}
+	else if (isPlayer(pFour) && isGameClear()) {
+		event(ed);
+	}
+	
+	if (isPlayerTurn()){
+		// 内政操作
+		event(world_sys_poli);
+		
+		// イベント
+		if (isPlayer(pOne)){
+			event(pOne_portal_pturn);
+		}
+		// 
+		if (isPlayer(pTwo)){
+			event(pTwo_portal_pturn);
+		}
+		// 
+		if (isPlayer(pThree)){
+			event(pThree_portal_pturn);
+		}
+		// 
+		if (isPlayer(pFour)){
+			event(pFour_portal_pturn);
+		}
+	}
+->

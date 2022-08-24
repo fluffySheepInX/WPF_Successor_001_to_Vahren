@@ -1,0 +1,201 @@
+﻿NewFormatUnit AbelIrijhorn
+{
+	name = "アーベル・イリイホーン";
+	help = "やがて悲しき重圧の新提督";
+	race = "human";
+	class = "LineInfantryM14";	
+	image = "chip001.png";
+	dead    = "これで良かった。私には荷が重すぎたんだ……";
+	retreat = "逃げることは五〇の計略より優れているそうな";
+	join    = "私が上の人間に欲していることはただ一つ。じっと座っていること。ただそれだけだ。";
+	face = "face001.png";
+	voice_type = "AbelIrijhorn";
+	
+	#部下に出来る種類
+	friend = "LineInfantryM14";
+	
+	merce = "LineInfantryM14";
+	staff = "LineInfantryM14";
+	initMember = "LineInfantryM14*7";
+	enemy = "teiou";
+
+	//陣形
+	//0=前衛
+	//1=中衛（騎兵用に
+	//2=後衛
+	formation = "0";
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "100";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}
+
+NewFormatUnit VictodyRoyle
+{
+	name = "ヴィクトーディ・ロイル";
+	help = "提督ファンクラブ1号にして万能参謀";
+	race = "human";
+	class = "LineInfantryM14";	
+	image = "chip002.png";
+	dead    = "提督の手を握りたい。そうすれば私はどこにでも行けるから……";
+	retreat = "提督に会いに行きます！";
+	join    = "提督どこー？";
+	face = "face002.png";
+	voice_type = "VictodyRoyle";
+	friend = "LineInfantryM14";
+	merce = "LineInfantryM14";
+	staff = "LineInfantryM14";
+	initMember = "LineInfantryM14*7";
+	enemy = "teiou";
+
+	formation = "0";
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "100";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}
+
+NewFormatUnit JothianRoarcy
+{
+	name = "ジョディアン・ロレーシー";
+	help = "茨の道";
+	race = "human";
+	class = "DragoonFrancesca";	
+	image = "chip003.png";
+	dead    = "わ、わた……俺が死ぬわけねえ！";
+	retreat = "私が逃げるとは中々の戦場……！";
+	join    = "いくらでも膝を折りましょう。貴方が名君であるならば";
+	face = "face003.png";
+	voice_type = "JothianRoarcy";
+	
+	#部下に出来る種類
+	friend = "DragoonFrancesca";
+	
+	merce = "DragoonFrancesca";
+	staff = "DragoonFrancesca";
+	initMember = "DragoonFrancesca*7";
+	enemy = "teiou";
+
+	formation = "1";
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "100";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}
+
+NewFormatUnit MabateRoarcy
+{
+	name = "マベート・ロレーシー";
+	help = "彼女だけが彼を追った";
+	race = "human";
+	class = "HowitzerC11";	
+	image = "chip004.png";
+	dead    = "誰か、お兄……いえ、兄のことを頼みます";
+	retreat = "キュピーン。私の嗅覚が逃げるべきと囁いた";
+	join    = "新入社員です！私のお兄ちゃんのこともよろしく！";
+	face = "face005.png";
+	voice_type = "MabateRoarcy";
+	
+	#部下に出来る種類
+	friend = "HowitzerC11";
+	
+	merce = "HowitzerC11";
+	staff = "HowitzerC11";
+	initMember = "HowitzerC11*7";
+	enemy = "teiou";
+
+	formation = "2";
+
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "100";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}

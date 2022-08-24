@@ -1,0 +1,37 @@
+﻿namespace WPF_Successor_001_to_Vahren._015_Lexer
+{
+    public enum TokenType
+    {
+        LPAREN,
+        RPAREN,
+        LBRACE,
+        RBRACE,
+        FUNCTION,
+        ASSIGN,
+        PLUS,
+        MINUS,
+        ASTERISK,
+        SLASH,
+        BANG,
+        LT,
+        GT,
+        EQ,
+        AndAnd,
+        OrOr,
+        NOT_EQ,
+        ILLEGAL,
+        IDENT,
+        COMMA,
+        INT,
+        IF,
+        EOF,
+        LET,
+        SEMICOLON,
+        RETURN,
+        TRUE,
+        FALSE,
+        ELSE,
+        MSG,
+        INITD,
+    }
+}

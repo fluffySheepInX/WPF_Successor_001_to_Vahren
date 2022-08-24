@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <PublishSingleFile>true</PublishSingleFile>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\001_MessageWindow\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\005_LoadImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\010_MainMenuImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\001_TitleImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\010_EventImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\015_BattleMapCellImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\020_BattleUnitImage\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="ROBOCOPY &quot;$(ProjectDir)001_Warehouse&quot; &quot;$(TargetDir)001_Warehouse&quot; /S /E /MIR&#xD;&#xA;" />
+  </Target>
+
+</Project>

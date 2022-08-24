@@ -1,0 +1,248 @@
+﻿#サンプル
+
+NewFormatScenario sc1
+{
+	#ボタンを押すと何のアクションを取るか設定
+	#大文字小文字注意
+	#
+	#Scenario = ゲーム
+	#Mail = 今の時点ではgmail起動
+	#Internet = URLにアクセス
+	#
+	ButtonType = "Scenario";
+
+	#改行を入力すると、空文字に変換される
+	#シナリオ名
+	scenario_name="憂鬱なる提督達より愛をこめて";
+
+	#シナリオ選択画面の右下にイメージ画像を出すか設定します。
+	#Trueの時、イメージが出ます。
+	#Falseの時、テキストが下最大限まで出ます
+	scenario_image_bool="True";
+
+	#シナリオ選択画面の右下に出ます。
+	#
+	#.jpg←未対応
+	#.png←未対応
+	#.gif
+	#
+	# デフォでは横900,縦500でぴったりになります。
+	#
+	scenario_image="test_900x500.gif";
+
+	#
+	#省略時は0。シナリオ選択画面(タイトル画面で難易度を選択した後の画面)での並び順を定めます。
+	#上から表示するには、-10,-9,-8...-2,-1と設定するのが良いです
+	#
+	#context構造体において、scenario_select2 を設定している場合、
+	#sortkeyが負の値と0のものが、通常のシナリオ選択になり、
+	#sortkeyが正の値のものが、scenario_select2 で設定されたグループになります。
+	#
+	sortkey = "-10";
+
+	#改行を入力すると、空文字に変換される
+	#ヘルプウィンドウに表示される文字列。
+	help_string="";
+	
+	#デフォルトで各行の先頭及び後方の空白は取り除かれます。
+	#空白を入れたい場合は〇を使って下さい。
+	#
+	#例：
+	#〇テ〇ス〇ト
+	#結果：
+	#　テ　ス　ト
+	#
+	text="
+		館エレイル帝国の尖兵であった東アイディオール株式会社は
+		先代社長の無茶な拡大志向によってシステムに異変をきたしていた。
+		
+		崩壊を悟った現社長は本国からの責任追及を避ける為に
+		息のかかった提督達を保護し、後ろ盾のない人間を新たな提督に任命、
+		極東へ進軍を命じた。
+
+		もし進軍が成功すればそれで良し。
+		失敗したら、その責任に先代社長の負の遺産をオマケでなすりつけ、帝国へ引き渡すのである。
+
+		……という全容に私は気付いているのだが、
+		いやほんとどうしたらいいんだ誰か助けてくれ。
+		〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇──新たな提督、アーベル・イリイホーン
+	";
+
+	#ワールドマップの画像ファイル名+拡張子。
+	#フォルダ「015_MapImage」の下を探しに行く
+	#省略時はworld.png
+	#無い場合もworld.png
+	#空文字もworld.png
+	map_image_name_file = "world.png";
+
+	#必須項目
+	#登場する領地
+	spot = "spot0001,spot0002,spot0003,spot0004,spot0005,s001,spot0099,spot0098";
+
+	#全て出す
+	#未実装
+	showSpot(Kind:ALL);
+	
+	#以下実装予定
+	#第二引数で指定したものは出さない
+	#showSpot(Kind:ALL,NoDisplay:spot0099,spot0098);
+
+	#以下実装予定
+	#出す
+	#showSpot(Display:spot0099,spot0098);
+	
+	#繋げる
+	linkSpot(spot0001, spot0004);
+	linkSpot(spot0004, spot0003);
+	linkSpot(spot0004, spot0002);
+	linkSpot(spot0001, spot0005);
+	linkSpot(spot0005, s001);
+
+	#最大出撃数
+	war_capacity = "16";
+	
+	#省略時は8。領地のデフォルト駐留数
+	spot_capacity = "16";
+	
+	#省略時は8。部隊のデフォルト定員数
+	member_capacity = "8";
+
+	#訓練時の最大上昇値
+	training_up = "2";
+
+	#スペルカード取得の間隔
+	get_card_interval = "1";
+
+	#world
+	world = "worldevent001";
+}
+
+NewFormatScenario sc2
+{
+	ButtonType = "Scenario";
+
+	#改行を入力すると、空文字に変換される
+	#シナリオ名
+	scenario_name="詰み手を誤った男たち";
+
+	sortkey = "-9";
+
+	#改行を入力すると、空文字に変換される
+	#ヘルプウィンドウに表示される文字列。
+	help_string="";
+	
+	text="
+		test
+		test2
+		test3
+	";
+}
+
+NewFormatScenario sc3
+{
+	scenario_name="作者にメールを送る";
+	text="Gmailがすぐ送信出来る状態で開きます！";
+	sortkey = "1";
+	ButtonType = "Mail";
+	mail = "fluffysheepinx@gmail.com";
+}
+NewFormatScenario sc4
+{
+	scenario_name="作者のホームページへ行く";
+	text="押すと飛びます！";
+	sortkey = "2";
+	ButtonType = "Internet";
+	internet = "http://lockedroom.tokyo/";
+}
+
+
+scenario sc3
+{
+	name = 第１章 - チョコレートフェスティバル
+	help = 第１章
+	text =
+		「本質とは何か」$
+		「それ無しではあり得ない要素のことだ」$
+		「では国家の本質とは」$
+		「暴力の独占」$
+		「なぜ独占する」$
+		「政治を一か所で回したいが為に」$
+		「待て、暴力ではなく政治こそ、国家の本質ではないのか」$
+		「政治無しでも国家であることは成立する」$
+		「それは国家なのか？」$
+		「国家で無ければ、では何なのか」$
+		$
+		暴力で税を徴収し、$
+		暴力で田園を掠め、$
+		暴力で人を支配する。$
+		$
+		「これが国家でないなら、では何なのか」
+		;
+
+	// ボタン名を列挙する事でメニューウィンドウのボタンを消せます。ﾀｰﾝが半角である事に注意してください。
+	offset = 探索
+
+	politics = poli_sysev01
+	poli = 人材強化, poli_spot01, poli1
+
+	sortkey = -100
+	
+	// 任意のevent構造体を指定する（ワールドイベントの発生）
+	world = we1
+	
+	// 最大出撃数
+	war_capacity = 16
+	
+	// 省略時は8。領地のデフォルト駐留数
+	spot_capacity = 16
+	
+	training_up = 2
+	dungeon = off
+
+	ws_alpha = 64
+	ws_light = 96
+	ws_light_range = 64
+
+	power = p1, p2, p3, p4
+			;
+	roam = minamiOlivia,simazakiAllyn,hakase,hayasiScarlett,
+			kogutiSayoko,maruyamaTuyosi,takizawaSyozi,uharaYousuke
+		   ;
+
+	spot = 
+	s001, s002, s003, s004, s005, s006, s007, s008, s009, s010, 
+	s011, s012, s013, s014, s015, s016, s017, s018, s019, s020, 
+	s021, s022, s023, s024, s025, s026
+	;
+
+	showSpot(s001)
+	showSpot(s002)
+	showSpot(s003) showSpot(s004) showSpot(s005) showSpot(s006) showSpot(s007) showSpot(s008) showSpot(s009) showSpot(s010)
+	showSpot(s011) showSpot(s012) showSpot(s013) showSpot(s014) showSpot(s015) showSpot(s016) showSpot(s017) showSpot(s018) showSpot(s019) showSpot(s020)
+	showSpot(s021) showSpot(s022) showSpot(s023) showSpot(s024) showSpot(s025) showSpot(s026) 
+
+	linkSpot(s001, s002)
+	linkSpot(s002, s004)
+	linkSpot(s004, s003)
+	linkSpot(s003, s005)
+	linkSpot(s005, s006) linkSpot(s005, s007)
+	linkSpot(s007, s006) linkSpot(s007, s008)
+	linkSpot(s008, s009)
+	linkSpot(s009, s010)
+	linkSpot(s010, s011)
+	linkSpot(s011, s013)
+	linkSpot(s013, s012)
+	linkSpot(s012, s010)
+	linkSpot(s013, s014)
+	linkSpot(s014, s016)
+	linkSpot(s016, s015)
+	linkSpot(s015, s017)
+	linkSpot(s017, s018)
+	linkSpot(s018, s020)
+	linkSpot(s020, s019)
+	linkSpot(s019, s005)
+	linkSpot(s005, s021)
+	linkSpot(s021, s026) linkSpot(s021, s023)
+	linkSpot(s023, s022) linkSpot(s023, s025)
+	linkSpot(s022, s024)
+}

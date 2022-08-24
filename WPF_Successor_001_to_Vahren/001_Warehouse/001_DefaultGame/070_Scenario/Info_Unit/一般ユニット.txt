@@ -1,0 +1,103 @@
+﻿NewFormatUnit LineInfantryM14
+{
+	name = "戦列歩兵M14式";
+	race = "human";
+	image = "chipGene001.png";
+	friend = "LineInfantryM14";
+	merce = "LineInfantryM14";
+	staff = "LineInfantryM14";
+
+	level = "1";
+	level_max = "100";
+	price   = "100";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "1500";
+	mp      = "500";
+	attack  = "70";
+	defense = "70";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "70";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	escape_range = "-1";
+}
+
+NewFormatUnit HowitzerC11
+{
+	name = "榴弾砲C11式";
+	race = "human";
+	image = "chipGene002.png";
+	friend = "HowitzerC11";
+	merce = "HowitzerC11";
+	staff = "HowitzerC11";
+	formation = "2";
+
+	level = "1";
+	level_max = "100";
+	price   = "100";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "1500";
+	mp      = "500";
+	attack  = "70";
+	defense = "70";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "70";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	escape_range = "-1";
+}
+
+NewFormatUnit DragoonFrancesca
+{
+	name = "フランチェスカ竜騎兵";
+	race = "human";
+	image = "chipGene003.png";
+	friend = "DragoonFrancesca";
+	merce = "DragoonFrancesca";
+	staff = "DragoonFrancesca";
+	formation = "1";
+
+	level = "1";
+	level_max = "100";
+	price   = "100";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "1500";
+	mp      = "500";
+	attack  = "70";
+	defense = "70";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "70";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	escape_range = "-1";
+}

@@ -1,0 +1,90 @@
+﻿NewFormatSpot spot0001
+{
+	#必須項目
+	name = "テヤルガ";
+	
+	#必須項目
+	image = "099_CASTLE1.png";
+
+	#必須項目
+	#
+	#マップの左の端が0
+	#
+	#将来的には数式も対応予定
+	#
+	x = "2400";
+
+	#必須項目
+	#
+	#マップの上の端が0
+	#マップの下の端が高さのサイズ
+	#つまりグラフと向きが逆
+	#
+	y = "600";
+
+	member = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy";
+}
+
+NewFormatSpot spot0002
+{
+	name = "ハリヤル";
+	image = "099_SNOW2.png";
+	x = "2700";
+	y = "600";
+}
+
+NewFormatSpot spot0003
+{
+	name = "ホウリイ";
+	image = "099_WASTE6.png";
+	x = "2600";
+	y = "450";
+}
+
+NewFormatSpot spot0004
+{
+	name = "ギリアイル";
+	image = "099_WASTE6.png";
+	x = "2500";
+	y = "500";
+}
+
+NewFormatSpot spot0005
+{
+	name = "ウィーチェ";
+	image = "099_WASTE6.png";
+	x = "2250";
+	y = "650";
+}
+
+spot s001
+{
+	name = アイストゥールゥ
+	member@sc1 = kibogamineMaurice,yokohamaWinston,yamadaAlice,yamanasiThom
+	member@sc2 = kibogamineMaurice,yokohamaWinston,yamadaAlice,yamanasiThom
+	member@scTest = kibogamineMaurice
+	gain = 1500
+	monster = ghostFire
+
+	image = 099_SNOW2
+	map = s001
+	x = 2100
+	y = 700
+}
+
+NewFormatSpot spot0099
+{
+	name = "１テスト１";
+	image = "099_SNOW2.png";
+	x = "0";
+	y = "0";
+}
+
+NewFormatSpot spot0098
+{
+	name = "２テスト２";
+	image = "099_SNOW2.png";
+	x = "100";
+	y = "100";
+}
+

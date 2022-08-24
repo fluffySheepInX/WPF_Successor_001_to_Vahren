@@ -1,0 +1,35 @@
+﻿<Window x:Class="CreateClass.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CreateClass"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="800">
+    <Grid Margin="0,0,0,0">
+
+        <RichTextBox Margin="10,50,745,215" Name="riTag">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="string"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <RichTextBox Margin="60,50,636,215" Name="riTarget">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="RichTextBox"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="10,374,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <RichTextBox Margin="169,50,527,215" x:Name="riTarget_Copy">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="RichTextBox"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+
+    </Grid>
+</Window>
