@@ -8,8 +8,11 @@
       d:DesignHeight="450" d:DesignWidth="1800"
       Background="AliceBlue"
       Title="Page015_Message">
-    <Canvas x:Name="canvasMessage" KeyUp="canvasMessage_KeyUp">
+    <Canvas x:Name="canvasMessage" KeyUp="canvasMessage_KeyUp" MouseLeftButtonDown="canvasMessage_MouseLeftButtonDown">
         <Border x:Name="borLeftWindow" Height="420" Width="1770" Margin="15,15,0,0" Background="#454545" BorderBrush="Black" BorderThickness="4" >
         </Border>
+        <Label Name="Label1" FontSize="25" Foreground="White"
+                   Content="未設定&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;test&#xD;&#xA;" 
+                    Margin="30,30,0,0" Height="390" Width="1400" />
     </Canvas>
 </Page>

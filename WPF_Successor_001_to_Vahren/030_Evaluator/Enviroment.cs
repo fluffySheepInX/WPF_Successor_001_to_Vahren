@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WPF_Successor_001_to_Vahren._030_Evaluator
 {
@@ -15,7 +16,14 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
 
         public IObject Set(string name, IObject value)
         {
-            this.Store.Add(name, value);
+            if (this.Store.ContainsKey(name))
+            {
+                this.Store[name] = value;
+            }
+            else
+            {
+                this.Store.Add(name, value);
+            }
             return value;
         }
     }

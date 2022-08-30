@@ -36,4 +36,5 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         public string Inspect() => "null";
         public ObjectType Type() => ObjectType.NULL;
     }
+
 }

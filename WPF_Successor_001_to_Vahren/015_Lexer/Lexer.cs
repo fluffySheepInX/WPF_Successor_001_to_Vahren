@@ -24,6 +24,10 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
             = new Dictionary<string, TokenType>() {
         { "if", TokenType.IF },
         { "msg", TokenType.MSG },
+        { "talk", TokenType.TALK },
+        { "choice", TokenType.CHOICE },
+        { "dialog", TokenType.DIALOG },
+        { "let", TokenType.LET },
         };
         #endregion
 
@@ -185,15 +189,17 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
 
             if (this.CurrentChar == '"')
             {
+                identifier = String.Empty;
                 this.ReadChar();
                 while (this.CurrentChar != '"')
                 {
+                    identifier += this.CurrentChar;
                     if (this.NextChar == '"')
                     {
+                        string re = identifier;
                         this.ReadChar();
-                        return identifier;
+                        return re;
                     }
-                    identifier += this.CurrentChar;
                     this.ReadChar();
                 }
 

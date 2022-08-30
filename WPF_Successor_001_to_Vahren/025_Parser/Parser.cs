@@ -81,6 +81,9 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
             this.PrefixParseFns.Add(TokenType.IF, this.ParseIfExpression);
             this.PrefixParseFns.Add(TokenType.FUNCTION, this.ParseFunctionLiteral);
             this.PrefixParseFns.Add(TokenType.MSG, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.TALK, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.CHOICE, this.ParseChoiceLiteral);
+            this.PrefixParseFns.Add(TokenType.DIALOG, this.ParseDialogLiteral);
         }
         private void RegisterInfixParseFns()
         {
@@ -292,6 +295,40 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
             if (!this.ExpectPeek(TokenType.LPAREN)) throw new Exception();
 
             fn.Parameters = this.ParseParameters();
+
+            return fn;
+        }
+        public IExpression ParseDialogLiteral()
+        {
+            var fn = new DialogLiteral()
+            {
+                Token = this.CurrentToken
+            };
+
+            if (!this.ExpectPeek(TokenType.LPAREN)) throw new Exception();
+
+            fn.Parameters = this.ParseParameters();
+
+            return fn;
+        }
+        public IExpression ParseChoiceLiteral()
+        {
+            var fn = new ChoiceLiteral()
+            {
+                Token = this.CurrentToken
+            };
+
+            if (!this.ExpectPeek(TokenType.LPAREN)) throw new Exception();
+
+            fn.Parameters = this.ParseParameters();
+
+            if (fn.Parameters.Count < 3)
+            {
+                throw new Exception("Choiceの引数が足りません");
+            }
+
+            fn.VaName = fn.Parameters[0].Value;
+            fn.Parameters.RemoveAt(0);
 
             return fn;
         }

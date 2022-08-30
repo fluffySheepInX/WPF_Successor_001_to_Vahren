@@ -24,6 +24,12 @@
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Page020_Talk.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="ROBOCOPY &quot;$(ProjectDir)001_Warehouse&quot; &quot;$(TargetDir)001_Warehouse&quot; /MIR&#xD;&#xA;IF %25ERRORLEVEL%25 LSS 8 EXIT 0" />
   </Target>

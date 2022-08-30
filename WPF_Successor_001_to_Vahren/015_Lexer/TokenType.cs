@@ -31,7 +31,11 @@
         TRUE,
         FALSE,
         ELSE,
-        MSG,
         INITD,
+        //関数
+        MSG,
+        TALK,
+        CHOICE,
+        DIALOG,
     }
 }

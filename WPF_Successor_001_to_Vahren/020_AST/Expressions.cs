@@ -228,7 +228,7 @@ namespace WPF_Successor_001_to_Vahren._020_AST
     }
 
     /// <summary>
-    /// MSGやダイアログなど
+    /// MSGやTALKなど
     /// </summary>
     public class SystemFunctionLiteral : IExpression
     {
@@ -263,6 +263,80 @@ namespace WPF_Successor_001_to_Vahren._020_AST
             return String.Empty;
         }
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DialogLiteral : IExpression
+    {
+        public Token Token { get; set; } = new Token(TokenType.DIALOG, "");
+        public List<Identifier> Parameters { get; set; } = new List<Identifier>();
+
+        public string ToCode()
+        {
+            var builder = new StringBuilder();
+            builder.Append("DialogLiteral");
+            builder.Append("(");
+
+            if (this.Parameters == null)
+            {
+                // 何もせず
+            }
+            else
+            {
+                var parameters = this.Parameters.Select(p => p.ToCode());
+                builder.Append(string.Join(", ", parameters));
+            }
+            builder.Append(")");
+            return builder.ToString();
+        }
+
+        public string TokenLiteral()
+        {
+            if (this.Token != null)
+            {
+                return this.Token.Literal;
+            }
+            return String.Empty;
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ChoiceLiteral : IExpression
+    {
+        public Token Token { get; set; } = new Token(TokenType.DIALOG, "");
+        public List<Identifier> Parameters { get; set; } = new List<Identifier>();
+        public string VaName = string.Empty;
+
+        public string ToCode()
+        {
+            var builder = new StringBuilder();
+            builder.Append("DialogLiteral");
+            builder.Append("(");
+
+            if (this.Parameters == null)
+            {
+                // 何もせず
+            }
+            else
+            {
+                var parameters = this.Parameters.Select(p => p.ToCode());
+                builder.Append(string.Join(", ", parameters));
+            }
+            builder.Append(")");
+            return builder.ToString();
+        }
+
+        public string TokenLiteral()
+        {
+            if (this.Token != null)
+            {
+                return this.Token.Literal;
+            }
+            return String.Empty;
+        }
+    }
+
 
     public class CallExpression : IExpression
     {

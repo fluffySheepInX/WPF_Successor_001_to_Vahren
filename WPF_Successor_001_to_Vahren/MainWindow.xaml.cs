@@ -3728,39 +3728,78 @@ namespace WPF_Successor_001_to_Vahren
                 var enviroment = new Enviroment();
                 var evaluator = new Evaluator();
                 evaluator.window = this;
-                await evaluator.Eval(ev.Root, enviroment);
+                evaluator.Eval(ev.Root, enviroment);
             }
 
             //ストラテジーメニュー表示
             SetWindowStrategyMenu();
         }
 
-        public async Task DoWork(SystemFunctionLiteral systemFunctionLiteral)
+        /// <summary>
+        /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。
+        /// </summary>
+        private void DoEvents()
         {
-
-            Uri uri = new Uri("/Page015_Message.xaml", UriKind.Relative);
-            await Task.Run(() =>
+            DispatcherFrame frame = new DispatcherFrame();
+            var callback = new DispatcherOperationCallback(obj =>
             {
-                Application.Current.Dispatcher.Invoke((Action)(() =>
-                {
-                    Frame frame = new Frame();
-                    frame.Source = uri;
-                    frame.Margin = new Thickness(0, 0, 0, 0);
-                    frame.Name = StringName.windowSortieMenu;
-                        this.canvasMain.Children.Add(frame);
-                        Application.Current.Properties["window"] = this;
-                    if (systemFunctionLiteral.Token.Type == TokenType.MSG)
-                    {
-                        Application.Current.Properties["message"] = systemFunctionLiteral.Parameters[0].Value;
-                    }
-                }));
-                condition.Reset();
-                condition.Wait();
+                ((DispatcherFrame)obj).Continue = false;
+                return null;
             });
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
+            Dispatcher.PushFrame(frame);
         }
 
+        public void DoWork(SystemFunctionLiteral systemFunctionLiteral)
+        {
+            Frame frame = new Frame();
 
-        public async void ExecuteEvent()
+            // メッセージ枠に表示する文字列を設定する。
+            if (systemFunctionLiteral.Token.Type == TokenType.MSG)
+            {
+                Application.Current.Properties["message"] = systemFunctionLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine);
+                // キャンバスにメッセージ枠を追加する。
+                Uri uri = new Uri("/Page015_Message.xaml", UriKind.Relative);
+                frame.Source = uri;
+                frame.Margin = new Thickness(15, this._sizeClientWinHeight - 440, 0, 0);
+                frame.Name = StringName.windowSortieMenu;
+                this.canvasMain.Children.Add(frame);
+                Application.Current.Properties["window"] = this;
+            }
+            else if (systemFunctionLiteral.Token.Type == TokenType.TALK)
+            {
+                Application.Current.Properties["message"] = systemFunctionLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine);
+                Application.Current.Properties["face"] = systemFunctionLiteral.Parameters[0].Value;
+                // キャンバスにメッセージ枠を追加する。
+                Uri uri = new Uri("/Page020_Talk.xaml", UriKind.Relative);
+                frame.Source = uri;
+                frame.Margin = new Thickness(15, this._sizeClientWinHeight - 440, 0, 0);
+                frame.Name = StringName.windowSortieMenu;
+                this.canvasMain.Children.Add(frame);
+                Application.Current.Properties["window"] = this;
+            }
+
+            // キャンバス表示を更新する。これが無いとメッセージ枠が表示されない。
+            DoEvents();
+
+            // メッセージ枠への入力を待つ。
+            // 実際にはcanvasのどこかに入力ハンドラーを作ればいいっぽい。
+            // メインウインドウ全体の入力イベントに連動させた方が、操作しやすそう。
+            condition.Reset();
+            while (condition.Wait(100) == false)
+            {
+                // 待っている間も一定時間ごとに表示を更新する。
+                // これによって、ウインドウの操作や入力の処理が動くっぽい。
+                DoEvents();
+            }
+            Thread.Sleep(1);
+            condition.Reset();
+
+            // メッセージ枠を取り除く。
+            this.canvasMain.Children.Remove(frame);
+        }
+
+        public void ExecuteEvent()
         {
             //イベント実行
             var ev = this.ClassGameStatus.ListEvent
@@ -3770,7 +3809,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var enviroment = new Enviroment();
                 var evaluator = new Evaluator();
-                await evaluator.Eval(ev.Root, enviroment);
+                evaluator.Eval(ev.Root, enviroment);
             }
         }
 

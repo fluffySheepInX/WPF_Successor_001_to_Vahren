@@ -21,7 +21,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         public NullObject Null = new NullObject();
         public MainWindow? window = null;
 
-        public async Task<IObject?> Eval(INode? node, Enviroment enviroment)
+        public IObject? Eval(INode? node, Enviroment enviroment)
         {
             switch (node)
             {
@@ -30,7 +30,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     return this.EvalRootProgram(root.Statements, enviroment);
                 case ExpressionStatement statement:
                     var re = this.Eval(statement.Expression, enviroment);
-                    return re.Result;
+                    return re;
 
                 // 式
                 case IntegerLiteral integerLiteral:
@@ -44,16 +44,16 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         {
                             return null;
                         }
-                        if (right.Result == null)
+                        if (right == null)
                         {
                             return null;
                         }
-                        return this.EvalPrefixExpression(prefixExpression.Operator, right.Result);
+                        return this.EvalPrefixExpression(prefixExpression.Operator, right);
                     }
                 case InfixExpression infixExpression:
                     {
-                        var le = this.Eval(infixExpression.Left, enviroment).Result;
-                        var ri = this.Eval(infixExpression.Right, enviroment).Result;
+                        var le = this.Eval(infixExpression.Left, enviroment);
+                        var ri = this.Eval(infixExpression.Right, enviroment);
                         if (le == null || ri == null)
                         {
                             return null;
@@ -79,8 +79,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     {
                         var value = this.Eval(returnStatement.ReturnValue, enviroment);
                         if (value == null) return null;
-                        if (value.Result == null) return null;
-                        return new ReturnValue(value.Result);
+                        return new ReturnValue(value);
                     }
                 case LetStatement letStatement:
                     {
@@ -93,11 +92,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         {
                             return null;
                         }
-                        if (letValue.Result == null)
-                        {
-                            return null;
-                        }
-                        enviroment.Set(letStatement.Name.Value, letValue.Result);
+                        enviroment.Set(letStatement.Name.Value, letValue);
                         break;
                     }
                 case Identifier identifier:
@@ -105,8 +100,21 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 case SystemFunctionLiteral systemFunctionLiteral:
                     if (this.window != null)
                     {
-                        //うまく行かず
-                        await this.window.DoWork(systemFunctionLiteral);
+                        this.window.DoWork(systemFunctionLiteral);
+                    }
+                    return null;
+                case DialogLiteral dialogLiteral:
+                    if (dialogLiteral.Token.Type == TokenType.DIALOG)
+                    {
+                        MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                    }
+                    return null;
+                case ChoiceLiteral choiceLiteral:
+                    if (choiceLiteral.Token.Type == TokenType.CHOICE)
+                    {
+                        Win005_Choice dlg = new Win005_Choice(choiceLiteral.Parameters.Select(x => x.Value).ToList());
+                        dlg.ShowDialog();
+                        enviroment.Set(choiceLiteral.VaName, new IntegerObject(dlg.ChoiceNumber));
                     }
                     return null;
 
@@ -133,7 +141,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
 
             foreach (var statement in blockStatement.Statements)
             {
-                result = this.Eval(statement, enviroment).Result;
+                result = this.Eval(statement, enviroment);
                 if (result == null)
                 {
                     return this.Null;
@@ -154,12 +162,8 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
             {
                 return this.Null;
             }
-            if (condition.Result == null)
-            {
-                return this.Null;
-            }
 
-            if (this.IsTruthly(condition.Result))
+            if (this.IsTruthly(condition))
             {
                 if (ifExpression.Consequence == null)
                 {
@@ -248,7 +252,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
             IObject? result = null;
             foreach (var statement in statements)
             {
-                result = this.Eval(statement, enviroment).Result;
+                result = this.Eval(statement, enviroment);
                 if (result is ReturnValue returnValue)
                 {
                     return returnValue.Value;

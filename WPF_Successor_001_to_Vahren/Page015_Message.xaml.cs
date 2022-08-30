@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,25 @@ namespace WPF_Successor_001_to_Vahren
         public Page015_Message()
         {
             InitializeComponent();
+
+            var window = Application.Current.Properties["window"];
+            if (window == null)
+            {
+                return;
+            }
+            var mainWindow = window as MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            var con = Convert.ToString(Application.Current.Properties["message"]);
+            if (con == null)
+            {
+                return;
+            }
+
+            Label1.Content = con;
+
         }
 
         private void canvasMessage_KeyUp(object sender, KeyEventArgs e)
@@ -40,8 +60,23 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
             mainWindow.condition.Signal();
-            Thread.Sleep(1);
-            mainWindow.condition.Reset();
+        }
+
+        private void canvasMessage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var window = Application.Current.Properties["window"];
+            if (window == null)
+            {
+                return;
+            }
+            var mainWindow = window as MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            //MessageBox.Show("マウス入力 ok ?\n");
+            mainWindow.condition.Signal();
         }
     }
 }
