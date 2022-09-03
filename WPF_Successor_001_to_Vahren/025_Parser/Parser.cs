@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using WPF_Successor_001_to_Vahren._015_Lexer;
@@ -84,6 +85,8 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
             this.PrefixParseFns.Add(TokenType.TALK, this.ParseSystemFunctionLiteral);
             this.PrefixParseFns.Add(TokenType.CHOICE, this.ParseChoiceLiteral);
             this.PrefixParseFns.Add(TokenType.DIALOG, this.ParseDialogLiteral);
+            this.PrefixParseFns.Add(TokenType.SELECT, this.ParseDialogSelectLiteral);
+            this.PrefixParseFns.Add(TokenType.EVENT, this.ParseEventLiteral);
         }
         private void RegisterInfixParseFns()
         {
@@ -150,7 +153,24 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
                 // else に読み進める
                 this.ChangeTokenForNext();
                 // else の後 { チェック
-                if (!this.ExpectPeek(TokenType.LBRACE)) throw new Exception();
+                if (!this.ExpectPeek(TokenType.LBRACE))
+                {
+                    //else ifをするなら
+                    //無限ループでガンガン回す
+                    //if (!this.ExpectPeek(TokenType.IF))
+                    //{
+                    //while (true)
+                    //{
+                    // if条件式解析
+                    //expression.Condition = this.ParseExpression(Precedence.LOWEST);
+                    //if (!this.ExpectPeek(TokenType.ELSE))
+                    //{
+                    //}
+                    //continue;
+                    //}
+                    //}
+                    throw new Exception();
+                }
 
                 // {=現在トークン
                 // ブロック文解析
@@ -311,6 +331,19 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
 
             return fn;
         }
+        public IExpression ParseDialogSelectLiteral()
+        {
+            var fn = new DialogSelectLiteral()
+            {
+                Token = this.CurrentToken
+            };
+
+            if (!this.ExpectPeek(TokenType.LPAREN)) throw new Exception();
+
+            fn.Parameters = this.ParseParameters();
+
+            return fn;
+        }
         public IExpression ParseChoiceLiteral()
         {
             var fn = new ChoiceLiteral()
@@ -329,6 +362,19 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
 
             fn.VaName = fn.Parameters[0].Value;
             fn.Parameters.RemoveAt(0);
+
+            return fn;
+        }
+        public IExpression ParseEventLiteral()
+        {
+            var fn = new EventLiteral()
+            {
+                Token = this.CurrentToken
+            };
+
+            if (!this.ExpectPeek(TokenType.LPAREN)) throw new Exception();
+
+            fn.Parameters = this.ParseParameters();
 
             return fn;
         }

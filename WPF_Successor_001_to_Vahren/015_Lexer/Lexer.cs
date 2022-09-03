@@ -23,11 +23,17 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
         public static Dictionary<string, TokenType> Keywords
             = new Dictionary<string, TokenType>() {
         { "if", TokenType.IF },
+        //{ "else", TokenType.ELSE },
+        { "return", TokenType.RETURN },
+        { "true", TokenType.TRUE },
+        { "false", TokenType.FALSE },
+        { "let", TokenType.LET },
         { "msg", TokenType.MSG },
         { "talk", TokenType.TALK },
         { "choice", TokenType.CHOICE },
         { "dialog", TokenType.DIALOG },
-        { "let", TokenType.LET },
+        { "select", TokenType.SELECT },
+        { "event", TokenType.EVENT },
         };
         #endregion
 

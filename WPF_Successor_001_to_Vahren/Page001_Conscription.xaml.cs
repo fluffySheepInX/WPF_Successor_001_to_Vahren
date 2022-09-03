@@ -218,7 +218,21 @@ namespace WPF_Successor_001_to_Vahren
                             DisplayButtonSelect(button);
                         }
 
-                        stackPanelUnit.Children.Add(button);
+                        StackPanel stackPanelLabel = new StackPanel();
+                        stackPanelLabel.Width = 48;
+                        stackPanelLabel.Height = 72;
+                        stackPanelLabel.Orientation = Orientation.Vertical;
+
+                        Label label = new Label();
+                        label.Content = "Lv:" + itemUnit.value.Level;
+                        label.Foreground = Brushes.White;
+                        label.FontSize = 15;
+                        label.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        stackPanelLabel.Children.Add(button);
+                        stackPanelLabel.Children.Add(label);
+
+                        stackPanelUnit.Children.Add(stackPanelLabel);
                     }
 
                     stackPanel.Children.Add(stackPanelUnit);
@@ -315,12 +329,17 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 foreach (StackPanel itemH in verticalStack.Children)
                 {
-                    foreach (var item in itemH.Children)
+                    foreach (var itemStackPa in itemH.Children)
                     {
-                        var conv = item as Button;
-                        if (conv != null)
+                        var sta = itemStackPa as StackPanel;
+                        if (sta is not StackPanel) continue;
+                        foreach (var item in sta.Children)
                         {
-                            DisplayButtonNormal(conv);
+                            var conv = item as Button;
+                            if (conv != null)
+                            {
+                                DisplayButtonNormal(conv);
+                            }
                         }
                     }
                 }

@@ -27,5 +27,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region Yet
+        private bool _yet { get; set; } = true;
+        public bool Yet
+        {
+            get { return _yet; }
+            set { _yet = value; }
+        }
+        #endregion
     }
 }

@@ -20,6 +20,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         public BooleanObject False = new BooleanObject(false);
         public NullObject Null = new NullObject();
         public MainWindow? window = null;
+        public ClassGameStatus ClassGameStatus { get; set; } = new ClassGameStatus();
 
         public IObject? Eval(INode? node, Enviroment enviroment)
         {
@@ -116,6 +117,36 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         dlg.ShowDialog();
                         enviroment.Set(choiceLiteral.VaName, new IntegerObject(dlg.ChoiceNumber));
                     }
+                    return null;
+                case DialogSelectLiteral dialogSelectLiteral:
+                    if (dialogSelectLiteral.Token.Type == TokenType.SELECT)
+                    {
+                        MessageBoxResult result = MessageBox.Show(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine), "スキップ時はNoを選択", MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            enviroment.Set(dialogSelectLiteral.Parameters[0].Value, new IntegerObject(1));
+                        }
+                    }
+                    return null;
+                case EventLiteral eventLiteral:
+                    if (this.window == null)
+                    {
+                        return null;
+                    }
+                    var ev = this.ClassGameStatus.ListEvent
+                        .Where(x => x.Name == eventLiteral.Parameters[0].Value)
+                        .FirstOrDefault();
+                    if (ev == null)
+                    {
+                        return null;
+                    }
+
+                    var evaluator = new Evaluator();
+                    evaluator.ClassGameStatus = this.ClassGameStatus;
+                    evaluator.window = this.window;
+                    evaluator.Eval(ev.Root, enviroment);
+                    ev.Yet = false;
+
                     return null;
 
             }

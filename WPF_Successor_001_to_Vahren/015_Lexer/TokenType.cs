@@ -37,5 +37,7 @@
         TALK,
         CHOICE,
         DIALOG,
+        SELECT,
+        EVENT,
     }
 }

@@ -3727,8 +3727,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var enviroment = new Enviroment();
                 var evaluator = new Evaluator();
+                evaluator.ClassGameStatus = this.ClassGameStatus;
                 evaluator.window = this;
                 evaluator.Eval(ev.Root, enviroment);
+                ev.Yet = false;
             }
 
             //ストラテジーメニュー表示
@@ -3809,7 +3811,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var enviroment = new Enviroment();
                 var evaluator = new Evaluator();
+                evaluator.ClassGameStatus = this.ClassGameStatus;
+                evaluator.window = this;
                 evaluator.Eval(ev.Root, enviroment);
+                ev.Yet = false;
             }
         }
 

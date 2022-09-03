@@ -114,7 +114,7 @@ NewFormatScenario sc1
 	get_card_interval = "1";
 
 	#world
-	world = "worldevent001";
+	world = "world_first_sc";
 }
 
 NewFormatScenario sc2
