@@ -42,6 +42,17 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region ListClassMap
+        private ClassMap listClassMap = new ClassMap();
+
+        public ClassMap ListClassMap
+        {
+            get { return listClassMap; }
+            set { listClassMap = value; }
+        }
+
+        #endregion
+
         #region ListSpot
         private List<ClassSpot> _listSpot = new List<ClassSpot>();
         public List<ClassSpot> AllListSpot
@@ -73,6 +84,33 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return listEvent; }
             set { listEvent = value; }
+        }
+        #endregion
+
+        #region NowTurn
+        private int nowTurn = -1;
+        public int NowTurn
+        {
+            get { return nowTurn; }
+            set { nowTurn = value; }
+        }
+        #endregion
+
+        #region NowCountPower
+        private int nowCountPower = -1;
+        public int NowCountPower
+        {
+            get { return nowCountPower; }
+            set { nowCountPower = value; }
+        }
+        #endregion
+
+        #region NowCountSpot
+        private int nowCountSpot = -1;
+        public int NowCountSelectionPowerSpot
+        {
+            get { return nowCountSpot; }
+            set { nowCountSpot = value; }
         }
         #endregion
 

@@ -39,5 +39,9 @@
         DIALOG,
         SELECT,
         EVENT,
+        PUSHTURN,
+        STOREPLAYERPOWER,
+        PUSHCOUNTPOWER,
+        PUSHSPOT,
     }
 }

@@ -87,6 +87,10 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
             this.PrefixParseFns.Add(TokenType.DIALOG, this.ParseDialogLiteral);
             this.PrefixParseFns.Add(TokenType.SELECT, this.ParseDialogSelectLiteral);
             this.PrefixParseFns.Add(TokenType.EVENT, this.ParseEventLiteral);
+            this.PrefixParseFns.Add(TokenType.PUSHTURN, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.STOREPLAYERPOWER, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.PUSHCOUNTPOWER, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.PUSHSPOT, this.ParseSystemFunctionLiteral);
         }
         private void RegisterInfixParseFns()
         {

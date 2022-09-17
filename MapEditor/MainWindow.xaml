@@ -1,0 +1,124 @@
+﻿<Window x:Name="win" x:Class="MapEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MapEditor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1600" Loaded="win_Loaded">
+    <Grid x:Name="grdAll">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="6*"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="grdCanvas" Grid.Column="0" Background="Gray">
+            <ScrollViewer 
+                          x:Name="scCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+                <Grid x:Name="gridMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <UniformGrid Name="wrapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    ></UniformGrid>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+        <Grid Name="grdFunction" Background="Brown" Grid.Column="1">
+            <ScrollViewer x:Name="scFunction" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Stretch">
+                    <Border Height="90" HorizontalAlignment="Stretch" Background="#454545" BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top">
+                        <Canvas Height="80" Background="Azure">
+                            <Label Content="縦"></Label>
+                            <Label Content="注意：まっさらになります" Canvas.Left="37" Canvas.Top="57"></Label>
+                            <TextBox x:Name="txtMapHeight" Width="53" Canvas.Left="19" Canvas.Top="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     Text="0" />
+                            <Label Content="幅" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="74"/>
+                            <TextBox x:Name="txtMapWidth" Width="53" Canvas.Left="95" Canvas.Top="4" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                     Text="0"/>
+                            <Button x:Name="heiUp" Content="↑" Canvas.Left="19" Canvas.Top="25" Click="heiUp_Click"/>
+                            <Button x:Name="heiDown" Content="↓" Canvas.Left="56" Canvas.Top="25" HorizontalAlignment="Left" VerticalAlignment="Center" Click="heiDown_Click"/>
+                            <Button x:Name="widUp" Content="↑" Canvas.Left="95" Canvas.Top="25" HorizontalAlignment="Left" VerticalAlignment="Center" Click="widUp_Click"/>
+                            <Button x:Name="widDown" Content="↓" Canvas.Left="132" Canvas.Top="25" HorizontalAlignment="Left" VerticalAlignment="Center" Click="widDown_Click"/>
+                            <Button x:Name="btnExecuteGridSizeChange" Content="実行" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Click="btnExecuteGridSizeChange_Click"/>
+                        </Canvas>
+                    </Border>
+                    <Border Height="50" HorizontalAlignment="Stretch" Background="#454545" BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top">
+                        <Canvas Height="50" Background="Azure">
+                            <Label Content="マスの大きさ" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <!--<TextBox x:Name="txtTipHeight" Width="53" Canvas.Left="95" Canvas.Top="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>-->
+                            <StackPanel HorizontalAlignment="Center" Height="39" VerticalAlignment="Top" Width="91" Canvas.Left="64" Canvas.Top="5">
+                                <Slider x:Name="slTipSize" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
+                                    TickFrequency="1" LargeChange="1" Minimum="0" Maximum="10"
+                                    Width="91" HorizontalAlignment="Left" ValueChanged="slTipSize_ValueChanged" Value="5"/>
+                                <TextBlock x:Name="ASlider" Text="{Binding Value, ElementName=slTipSize}" HorizontalAlignment="Center" Height="14"/>
+                            </StackPanel>
+                        </Canvas>
+                    </Border>
+                    <Border  Height="120" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Canvas Height="110" Background="Azure">
+                            <Canvas Height="45" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Button Content="実行" Canvas.Left="67" Canvas.Top="12"></Button>
+                                <Label Content="上" Canvas.Top="9"></Label>
+                                <TextBox x:Name="txtUe" Width="22" Canvas.Left="19" Canvas.Top="13" 
+                                         Text="0"/>
+                                <Button Content="↑" Canvas.Left="46" Canvas.Top="3" />
+                                <Button Content="↓" Canvas.Left="46" Canvas.Top="22" />
+                            </Canvas>
+                            <Canvas Height="45" Width="100" HorizontalAlignment="Left" Canvas.Left="101" VerticalAlignment="Center">
+                                <Button Content="実行" Canvas.Left="67" Canvas.Top="12"></Button>
+                                <Label Content="下" Canvas.Top="9"/>
+                                <TextBox x:Name="txtSita" Width="22" Canvas.Left="19" Canvas.Top="13"
+                                         Text="0"/>
+                                <Button Content="↑" Canvas.Left="46" Canvas.Top="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <Button Content="↓" Canvas.Left="46" Canvas.Top="22" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                            </Canvas>
+                            <Canvas Height="46" Width="100" HorizontalAlignment="Left" Canvas.Top="45" VerticalAlignment="Center" Canvas.Left="101">
+                                <Button Content="実行" Canvas.Left="67" Canvas.Top="12"></Button>
+                                <Label Content="右" HorizontalAlignment="Center" Canvas.Top="9" VerticalAlignment="Top"></Label>
+                                <TextBox x:Name="txtMigi" Width="22" Canvas.Left="19" Canvas.Top="13"
+                                         Text="0"/>
+                                <Button Content="↑" Canvas.Left="46" Canvas.Top="3" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                                <Button Content="↓" Canvas.Left="46" Canvas.Top="22" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                            </Canvas>
+                            <Canvas Height="45" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="45">
+                                <Button Content="実行" Canvas.Left="67" Canvas.Top="12"></Button>
+                                <Label Content="左" Canvas.Top="9"></Label>
+                                <TextBox Width="22" Canvas.Left="19" Canvas.Top="13"
+                                         Text="0"/>
+                                <Button Content="↑" Canvas.Left="46" Canvas.Top="3" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                                <Button Content="↓" Canvas.Left="46" Canvas.Top="22" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            </Canvas>
+                        </Canvas>
+                    </Border>
+                    <Border  Height="90" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Canvas Height="80" Background="Azure">
+                            <Button Content="前undo" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
+                            <Button Content="先undo" Canvas.Top="20" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64"/>
+                            <Button x:Name="btnSaveNew" Content="新規保存" Canvas.Top="40" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64" Click="btnSaveNew_Click"/>
+                            <Button Content="上書き保存" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
+
+                            <Label Content="ペン太さ" Canvas.Top="3" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="94"/>
+                            <TextBox Width="53" Canvas.Left="92" Canvas.Top="29" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <Button Content="↑" Canvas.Left="92" Canvas.Top="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <Button Content="↓" Canvas.Left="129" Canvas.Top="50" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                            <Button x:Name="btnBaketu" Canvas.Left="160" Height="60" Width="94" Canvas.Top="10" Click="btnBaketu_Click">
+                                <TextBlock>現在の選択Tipで
+                                    <LineBreak />塗りつぶし</TextBlock>
+                            </Button>
+
+                        </Canvas>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid x:Name="grdMaptip" Grid.Column="2" Background="AliceBlue">
+            <ScrollViewer x:Name="scMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <WrapPanel Name="wrapMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=ScrollViewer}}"
+                                 Height="Auto">
+                    <Button Content="素材のあるフォルダを開く" Click="Button_Click"/>
+                </WrapPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

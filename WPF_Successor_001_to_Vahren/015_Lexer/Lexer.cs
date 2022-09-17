@@ -34,6 +34,10 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
         { "dialog", TokenType.DIALOG },
         { "select", TokenType.SELECT },
         { "event", TokenType.EVENT },
+        { "pushTurn", TokenType.PUSHTURN },
+        { "storePlayerPower", TokenType.STOREPLAYERPOWER },
+        { "pushCountPower", TokenType.PUSHCOUNTPOWER },
+        { "pushSpot", TokenType.PUSHSPOT },
         };
         #endregion
 

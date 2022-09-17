@@ -1471,6 +1471,9 @@ namespace WPF_Successor_001_to_Vahren
                 Set_List_ClassInfo(this.NowNumberGameTitle);
             }
 
+            // Map情報一括読み込み
+
+
             // 左上作る
             {
                 Canvas canvas = new Canvas();
@@ -2182,6 +2185,11 @@ namespace WPF_Successor_001_to_Vahren
 
                     // Event 終わり
                 }
+
+                // Map
+
+
+
                 //正規表現終わり
 
                 //インデックスを張っておく
@@ -3633,6 +3641,10 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        /// <summary>
+        /// 勢力決定後に実行
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         private async void TimerAction60FPSAfterFadeIn()
         {
             if (AfterFadeIn == false)
@@ -3720,18 +3732,26 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //イベント実行
-            var ev = this.ClassGameStatus.ListEvent
-                        .Where(x => x.Name == this.ListClassScenario[this.NumberScenarioSelection].World)
-                        .FirstOrDefault();
-            if (ev != null)
             {
-                var enviroment = new Enviroment();
-                var evaluator = new Evaluator();
-                evaluator.ClassGameStatus = this.ClassGameStatus;
-                evaluator.window = this;
-                evaluator.Eval(ev.Root, enviroment);
-                ev.Yet = false;
+                var ev = this.ClassGameStatus.ListEvent
+                            .Where(x => x.Name == this.ListClassScenario[this.NumberScenarioSelection].World)
+                            .FirstOrDefault();
+                if (ev != null)
+                {
+                    var enviroment = new Enviroment();
+                    var evaluator = new Evaluator();
+                    evaluator.ClassGameStatus = this.ClassGameStatus;
+                    evaluator.window = this;
+                    evaluator.Eval(ev.Root, enviroment);
+                    ev.Yet = false;
+                }
             }
+
+            //ステータス設定
+            //※毎ターンチェックする
+            this.ClassGameStatus.NowTurn = 1;
+            this.ClassGameStatus.NowCountPower = this.ClassGameStatus.ListPower.Count;
+            this.ClassGameStatus.NowCountSelectionPowerSpot = this.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count;
 
             //ストラテジーメニュー表示
             SetWindowStrategyMenu();

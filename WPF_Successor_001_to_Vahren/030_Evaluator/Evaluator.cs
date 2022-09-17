@@ -30,9 +30,10 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 case Root root:
                     return this.EvalRootProgram(root.Statements, enviroment);
                 case ExpressionStatement statement:
-                    var re = this.Eval(statement.Expression, enviroment);
-                    return re;
-
+                    {
+                        var re = this.Eval(statement.Expression, enviroment);
+                        return re;
+                    }
                 // 式
                 case IntegerLiteral integerLiteral:
                     return new IntegerObject(integerLiteral.Value);
@@ -99,9 +100,51 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 case Identifier identifier:
                     return this.EvalIdentifier(identifier, enviroment);
                 case SystemFunctionLiteral systemFunctionLiteral:
-                    if (this.window != null)
+                    if (systemFunctionLiteral.Token.Type == TokenType.TALK ||
+                        systemFunctionLiteral.Token.Type == TokenType.MSG)
                     {
-                        this.window.DoWork(systemFunctionLiteral);
+                        if (this.window != null)
+                        {
+                            this.window.DoWork(systemFunctionLiteral);
+                        }
+                    }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.PUSHTURN)
+                    {
+                        if (this.window != null)
+                        {
+                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                            new IntegerObject(this.window.ClassGameStatus.NowTurn));
+                        }
+                    }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.STOREPLAYERPOWER)
+                    {
+                        if (this.window != null)
+                        {
+                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                            new IntegerObject(this.window.ClassGameStatus.SelectionPowerAndCity.ClassPower.Index));
+                        }
+                    }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.PUSHCOUNTPOWER)
+                    {
+                        if (this.window != null)
+                        {
+                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                            new IntegerObject(this.window.ClassGameStatus.NowCountPower));
+                        }
+                    }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.PUSHSPOT)
+                    {
+                        if (this.window != null)
+                        {
+                            var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
+                            var intRe = re.Item1 as IntegerObject;
+                            if (intRe == null) return null;
+
+                            var getPo = this.window.ClassGameStatus.ListPower.Where(x => x.Index == intRe.Value).FirstOrDefault();
+                            if (getPo == null) return null;
+                            enviroment.Set(systemFunctionLiteral.Parameters[1].Value,
+                                            new IntegerObject(getPo.ListNowMember.Count));
+                        }
                     }
                     return null;
                 case DialogLiteral dialogLiteral:

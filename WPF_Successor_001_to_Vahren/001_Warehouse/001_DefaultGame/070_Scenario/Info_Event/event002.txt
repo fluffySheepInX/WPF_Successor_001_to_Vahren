@@ -1,4 +1,20 @@
 ﻿event world_first_sc
 <-
+	//現在のターン数を代入します。
+	let nowTurn = -1;
+	pushTurn(nowTurn);
+	
+	//プレイヤー勢力を変数ppに代入します。
+	let pp = -1;
+	storePlayerPower(pp);
+	
+	//残り勢力数
+	let npp = -1;
+	pushCountPower(npp);
+
+	//変数pp（プレイヤー勢力）の領地数を取ります。
+	let nowPps = -1;
+	pushSpot(pp,nowPps);
+
 	event(world_first_sc_one);
 ->

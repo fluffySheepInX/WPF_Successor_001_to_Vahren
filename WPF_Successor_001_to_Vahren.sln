@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_Successor_001_to_Vahren", "WPF_Successor_001_to_Vahren\WPF_Successor_001_to_Vahren.csproj", "{D1EECBFF-407C-48FC-A3D0-A43A02A0B618}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF_Successor_001_to_Vahren", "WPF_Successor_001_to_Vahren\WPF_Successor_001_to_Vahren.csproj", "{D1EECBFF-407C-48FC-A3D0-A43A02A0B618}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateClass", "CreateClass\CreateClass.csproj", "{8B6DE4C8-F5E7-48EC-8D8E-9F889A469D49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateClass", "CreateClass\CreateClass.csproj", "{8B6DE4C8-F5E7-48EC-8D8E-9F889A469D49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapEditor", "MapEditor\MapEditor.csproj", "{C092106B-F79B-492E-AB67-7DCB15E9B489}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8B6DE4C8-F5E7-48EC-8D8E-9F889A469D49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B6DE4C8-F5E7-48EC-8D8E-9F889A469D49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B6DE4C8-F5E7-48EC-8D8E-9F889A469D49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C092106B-F79B-492E-AB67-7DCB15E9B489}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C092106B-F79B-492E-AB67-7DCB15E9B489}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C092106B-F79B-492E-AB67-7DCB15E9B489}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C092106B-F79B-492E-AB67-7DCB15E9B489}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

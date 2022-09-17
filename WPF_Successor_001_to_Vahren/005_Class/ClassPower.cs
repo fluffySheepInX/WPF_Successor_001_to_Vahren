@@ -57,6 +57,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region ListHome
+        /// <summary>
+        /// 勢力のホーム領地を示します。COMの思考に影響します。列挙された領地方面の攻略、奪還を優先するようになります。
+        /// </summary>
         private List<string> _listHome = new List<string>();
         public List<string> ListHome
         {
@@ -89,11 +92,25 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region ListMember
+        /// <summary>
+        /// 開始時の領地。
+        /// </summary>
         private List<string> _listMember = new List<string>();
         public List<string> ListMember
         {
             get { return _listMember; }
             set { _listMember = value; }
+        }
+        #endregion
+        #region ListNowMember
+        /// <summary>
+        /// 現在の領地。
+        /// </summary>
+        private List<string> listNowMember = new List<string>();
+        public List<string> ListNowMember
+        {
+            get { return listNowMember; }
+            set { listNowMember = value; }
         }
         #endregion
         #region Image
