@@ -40,7 +40,7 @@
                     <Label Width="180" Height="50" Foreground="White" FontSize="25" HorizontalAlignment="Left" Canvas.Left="15" VerticalAlignment="Center">出撃されますか？</Label>
                 </Canvas>
                 <Grid Width="390" Height="70" Margin="0,770,0,0">
-                    <Button x:Name="btnSortie" Width="100" Height="45" FontSize="20">出撃する</Button>
+                    <Button x:Name="btnSortie" Width="100" Height="45" FontSize="20" Click="btnSortie_Click">出撃する</Button>
                 </Grid>
             </Canvas>
         </Border>

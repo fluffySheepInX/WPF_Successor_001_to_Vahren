@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
-    public class ClassMap
+    public class ClassMapBattle
     {
         #region Name
         private string name = string.Empty;
@@ -28,7 +29,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region MyRegion
+        #region List<List<MapDetail>> MapData
         private List<List<MapDetail>> mapData = new List<List<MapDetail>>();
 
         public List<List<MapDetail>> MapData
@@ -37,6 +38,33 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { mapData = value; }
         }
 
+        #endregion
+
+        #region FrontPosi
+        private Point frontPosi;
+        public Point FrontPosi
+        {
+            get { return frontPosi; }
+            set { frontPosi = value; }
+        }
+        #endregion
+
+        #region DefensePosi
+        private Point defensePosi;
+        public Point DefensePosi
+        {
+            get { return defensePosi; }
+            set { defensePosi = value; }
+        }
+        #endregion
+
+        #region NeutralPosi
+        private Point neutralPosi;
+        public Point NeutralPosi
+        {
+            get { return neutralPosi; }
+            set { neutralPosi = value; }
+        }
         #endregion
     }
 

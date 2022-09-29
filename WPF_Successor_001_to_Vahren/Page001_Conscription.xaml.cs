@@ -152,7 +152,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.lblMemberCount.Content =
                     count.ToString() +
                     "/" +
-                    mainWindow.ListClassScenario[mainWindow.NumberScenarioSelection].SpotCapacity;
+                    mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].SpotCapacity;
             }
             // 駐在部隊
             {
@@ -398,7 +398,7 @@ namespace WPF_Successor_001_to_Vahren
 
             if (selectUnitNumber == -1)
             {
-                count = mainWindow.ListClassScenario[mainWindow.NumberScenarioSelection].MemberCapacity;
+                count = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
 
                 var cloneExt = extName.DeepCopy();
                 cloneExt.IsSelect = false;
@@ -421,7 +421,7 @@ namespace WPF_Successor_001_to_Vahren
             else
             {
                 //その部隊での残り雇用数算出
-                count = mainWindow.ListClassScenario[mainWindow.NumberScenarioSelection].MemberCapacity
+                count = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity
                     - mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup[selectUnitNumber].ListClassUnit.Count;
 
                 if (count <= 0)
@@ -508,7 +508,7 @@ namespace WPF_Successor_001_to_Vahren
 
             //駐在数が多すぎたらダメ
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup.Count
-                >= mainWindow.ListClassScenario[mainWindow.NumberScenarioSelection].SpotCapacity)
+                >= mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].SpotCapacity)
             {
                 return;
             }
@@ -535,7 +535,7 @@ namespace WPF_Successor_001_to_Vahren
             if (selectUnitNumber != -1)
             {
                 if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup[selectUnitNumber].ListClassUnit.Count
-                    >= mainWindow.ListClassScenario[mainWindow.NumberScenarioSelection].MemberCapacity)
+                    >= mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity)
                 {
                     MessageBox.Show("定員オーバーです");
                     return;

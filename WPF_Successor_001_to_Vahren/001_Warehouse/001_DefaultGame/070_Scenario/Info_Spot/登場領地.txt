@@ -22,7 +22,12 @@
 	#
 	y = "600";
 
+	#初期人材
 	member = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy";
+
+	#戦闘マップ
+	map = "wefwefwefwefw";
+
 }
 
 NewFormatSpot spot0002
@@ -31,6 +36,7 @@ NewFormatSpot spot0002
 	image = "099_SNOW2.png";
 	x = "2700";
 	y = "600";
+	map = "wefwefwefwefw";
 }
 
 NewFormatSpot spot0003
@@ -39,6 +45,7 @@ NewFormatSpot spot0003
 	image = "099_WASTE6.png";
 	x = "2600";
 	y = "450";
+	map = "wefwefwefwefw";
 }
 
 NewFormatSpot spot0004
@@ -47,6 +54,7 @@ NewFormatSpot spot0004
 	image = "099_WASTE6.png";
 	x = "2500";
 	y = "500";
+	map = "wefwefwefwefw";
 }
 
 NewFormatSpot spot0005
@@ -55,6 +63,7 @@ NewFormatSpot spot0005
 	image = "099_WASTE6.png";
 	x = "2250";
 	y = "650";
+	map = "wefwefwefwefw";
 }
 
 spot s001
@@ -78,6 +87,7 @@ NewFormatSpot spot0099
 	image = "099_SNOW2.png";
 	x = "0";
 	y = "0";
+	map = "wefwefwefwefw";
 }
 
 NewFormatSpot spot0098
@@ -86,5 +96,6 @@ NewFormatSpot spot0098
 	image = "099_SNOW2.png";
 	x = "100";
 	y = "100";
+	map = "wefwefwefwefw";
 }
 

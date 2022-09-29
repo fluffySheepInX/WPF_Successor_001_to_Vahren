@@ -7,7 +7,7 @@ using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
-    public class ClassScenario
+    public class ClassScenarioInfo
     {
         #region ScenarioName
         private string _scenarioName = string.Empty;

@@ -305,7 +305,9 @@ namespace MapEditor
         private void btnSaveNew_Click(object sender, RoutedEventArgs e)
         {
             string fileName = string.Empty;
-            var a = new CommonOpenFileDialog();
+            string folderName = string.Empty;
+            var a = new CommonSaveFileDialog();
+            a.Filters.Add(new CommonFileDialogFilter("TEXT", "*.txt"));
             a.Title = "場所を選択してください";
             using (var dia = a)
             {
@@ -314,7 +316,7 @@ namespace MapEditor
                     return;
                 }
 
-                fileName = dia.FileName;
+                fileName = dia.FileAsShellObject.ParsingName;
             }
 
             if (MapData == null)
@@ -339,7 +341,7 @@ namespace MapEditor
             }
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("map fileName");
+            stringBuilder.AppendLine("map " + System.IO.Path.GetFileName(fileName));
             stringBuilder.AppendLine("{");
             Dictionary<string, string> targetString = new Dictionary<string, string>();
             for (int i = 0; i < target.Count; i++)
@@ -362,12 +364,12 @@ namespace MapEditor
                     stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(value) + ",");
                 }
                 //改行
-                stringBuilder.AppendLine("@");
+                stringBuilder.AppendLine("@,");
             }
             stringBuilder.AppendLine("\";");
 
             stringBuilder.AppendLine("}");
-            int ab = 0;
+            File.AppendAllText(fileName + ".txt", stringBuilder.ToString());
         }
     }
 }

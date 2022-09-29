@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,10 @@ using WPF_Successor_001_to_Vahren._020_AST;
 using WPF_Successor_001_to_Vahren._025_Parser;
 using WPF_Successor_001_to_Vahren._030_Evaluator;
 using WpfAnimatedGif;
+using static System.Net.Mime.MediaTypeNames;
+using Application = System.Windows.Application;
+using Image = System.Windows.Controls.Image;
+
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
@@ -241,12 +246,11 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         #region ListClassScenario
-        public List<ClassScenario> ListClassScenario
+        public List<ClassScenarioInfo> ListClassScenarioInfo
         {
-            get { return _listClassScenario; }
-            set { _listClassScenario = value; }
+            get { return _listClassScenarioInfo; }
+            set { _listClassScenarioInfo = value; }
         }
-
         #endregion
 
         #region NumberScenarioSelection
@@ -272,7 +276,7 @@ namespace WPF_Successor_001_to_Vahren
 
         #region PrivateField
         private int _numberScenarioSelection;
-        private List<ClassScenario> _listClassScenario = new List<ClassScenario>();
+        private List<ClassScenarioInfo> _listClassScenarioInfo = new List<ClassScenarioInfo>();
         private int _difficultyLevel = 0;
         private int _nowNumberGameTitle = 0;
         private bool _fadeOut = false;
@@ -303,6 +307,8 @@ namespace WPF_Successor_001_to_Vahren
         public DelegateNewGame? delegateNewGame = null;
         public delegate void DelegateNewGameAfterFadeIn();
         public DelegateNewGameAfterFadeIn? delegateNewGameAfterFadeIn = null;
+        public delegate void DelegateBattleMap();
+        public DelegateBattleMap? delegateBattleMap = null;
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
         public readonly CountdownEvent condition = new CountdownEvent(1);
@@ -416,7 +422,7 @@ namespace WPF_Successor_001_to_Vahren
             //MessageBox.Show(a.ToString());
             this.NumberScenarioSelection = a;
 
-            switch (this.ListClassScenario[a].ButtonType)
+            switch (this.ListClassScenarioInfo[a].ButtonType)
             {
                 case ButtonType.Scenario:
                     break;
@@ -426,7 +432,7 @@ namespace WPF_Successor_001_to_Vahren
                             new System
                             .Diagnostics
                             .ProcessStartInfo("https://mail.google.com/mail/u/0/?tf=cm&fs=1&to=" +
-                                                this.ListClassScenario[a].Mail +
+                                                this.ListClassScenarioInfo[a].Mail +
                                                 "&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0");
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
@@ -434,7 +440,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 case ButtonType.Internet:
                     {
-                        var startInfo = new System.Diagnostics.ProcessStartInfo(this.ListClassScenario[a].Internet);
+                        var startInfo = new System.Diagnostics.ProcessStartInfo(this.ListClassScenarioInfo[a].Internet);
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
                         return;
@@ -593,7 +599,7 @@ namespace WPF_Successor_001_to_Vahren
             // 右上
             {
                 Canvas canvas = new Canvas();
-                if (this.ListClassScenario[tag].ScenarioImageBool == true)
+                if (this.ListClassScenarioInfo[tag].ScenarioImageBool == true)
                 {
                     canvas.Height = this.CanvasMainHeight / 2;
                 }
@@ -629,7 +635,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     tbDate1.Text = String.Join(
                                         Environment.NewLine,
-                                        this.ListClassScenario[tag].ScenarioIntroduce
+                                        this.ListClassScenarioInfo[tag].ScenarioIntroduce
                                             .Split(Environment.NewLine)
                                             .Select(x => x.TrimStart())
                                             .Select(y => y.TrimEnd())
@@ -643,7 +649,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasMain.Children.Add(canvas);
             }
 
-            if (this.ListClassScenario[tag].ScenarioImageBool == false)
+            if (this.ListClassScenarioInfo[tag].ScenarioImageBool == false)
             {
                 return;
             }
@@ -679,7 +685,7 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                     strings.Add("005_BackgroundImage");
                     strings.Add("005_MenuImage");
-                    strings.Add(this.ListClassScenario[tag].ScenarioImage);
+                    strings.Add(this.ListClassScenarioInfo[tag].ScenarioImage);
                     string path = System.IO.Path.Combine(strings.ToArray());
 
                     var bi = new BitmapImage(new Uri(path));
@@ -721,7 +727,7 @@ namespace WPF_Successor_001_to_Vahren
             ////隣接チェック
             //国に関係なく抽出
             List<string> strings = new List<string>();
-            foreach (var item in this.ListClassScenario[this.NumberScenarioSelection].ListLinkSpot)
+            foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
             {
                 if (classPowerAndCity.ClassSpot.NameTag == item.Item1)
                 {
@@ -759,6 +765,7 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Children.Add(frame);
             Application.Current.Properties["window"] = this;
             Application.Current.Properties["spots"] = classSpots;
+            Application.Current.Properties["selectSpots"] = classPowerAndCity;
         }
 
         private void DisplayCitySelection(object sender)
@@ -1157,7 +1164,7 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeIn(); };
+            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeInDecidePower(); };
             timerAfterFadeIn.Start();
 
             this.FadeIn = true;
@@ -1273,7 +1280,10 @@ namespace WPF_Successor_001_to_Vahren
             //一行毎の読み込み終わり
         }
 
-        private void MainWindowContentRendered()
+        /// <summary>
+        /// タイトル画面を作成して表示し、BGMを流す
+        /// </summary>
+        public void MainWindowContentRendered()
         {
             //// xml存在確認
             //string fileName = this._pathConfigFile;
@@ -1306,6 +1316,106 @@ namespace WPF_Successor_001_to_Vahren
             Canvas.SetZIndex(this.canvasMain, 99);
 
             SetWindowTitle(targetNumber: 0);
+        }
+
+        /// <summary>
+        /// 戦闘画面を作成する処理
+        /// </summary>
+        public void SetBattleMap()
+        {
+            int a = 16;
+
+            //マップ生成
+            Canvas canvas = new Canvas();
+            {
+                canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32
+                                    + (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 16);
+                canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 32;
+                canvas.Name = "BattleMap";
+                canvas.Background = Brushes.Black;
+                canvas.Margin = new Thickness()
+                {
+                    Left = (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32) / 2,
+                    Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
+                };
+                RotateTransform rotateTransform2 = new RotateTransform(0);
+                //rotateTransform2.CenterX = 25;
+                //rotateTransform2.CenterY = 50;
+                canvas.RenderTransform = rotateTransform2;
+            }
+
+            // get target path.
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+            strings.Add("015_BattleMapCellImage");
+            string cellImagePath = System.IO.Path.Combine(strings.ToArray());
+            // get file.
+            var files = System.IO.Directory.EnumerateFiles(
+                cellImagePath,
+                "*.png",
+                System.IO.SearchOption.AllDirectories
+                );
+            Dictionary<string, string> map = new Dictionary<string, string>();
+            foreach (var item in files)
+            {
+                map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
+            }
+
+            //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
+            int takasa = 32;
+            int yoko = 48;
+
+            foreach (var itemCol in this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData
+                                    .Select((value, index) => (value, index)))
+            {
+                foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
+                {
+                    map.TryGetValue(itemRow.value.Tip, out string? value);
+                    if (value == null) continue;
+
+                    System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                    var bi = new BitmapImage(new Uri(value));
+                    ImageBrush image = new ImageBrush();
+                    image.Stretch = Stretch.Fill;
+                    image.ImageSource = bi;
+
+                    //RotateTransform rotateTransform2 = new RotateTransform(45);
+                    //rotateTransform2.CenterX = 25;
+                    //rotateTransform2.CenterY = 50;
+                    //image.RelativeTransform = rotateTransform2;
+
+                    path.Fill = image;
+                    path.Stretch = Stretch.Fill;
+                    path.StrokeThickness = 0;
+                    path.Data = Geometry.Parse("M 0," + takasa / 2 + " L " + yoko / 2 + "," + takasa + " L " + yoko + "," + takasa / 2 + " L " + yoko / 2 + ",0 Z");
+                    path.Margin = new Thickness() 
+                    { 
+                        Left = (itemCol.index * (yoko / 2)) + (itemRow.index * (yoko / 2)), 
+                        Top = (canvas.Height / 2) + (itemCol.index * (takasa / 2)) + (itemRow.index * (-(takasa / 2))) 
+                    };
+                    canvas.Children.Add(path);
+                }
+            }
+
+            Canvas backCanvas = new Canvas();
+            backCanvas.Background = Brushes.AliceBlue;
+            backCanvas.Width = this._sizeClientWinWidth;
+            backCanvas.Height = this._sizeClientWinHeight;
+            backCanvas.Margin = new Thickness()
+            {
+                Left = (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2),
+                Top = (this.CanvasMainHeight / 2) - (this._sizeClientWinHeight / 2)
+            };
+            backCanvas.Children.Add(canvas);
+
+            Canvas.SetZIndex(backCanvas, 99);
+            this.canvasMain.Children.Add(backCanvas);
+
+            this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
+            //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
+            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeInBattleStart(); };
+            timerAfterFadeIn.Start();
         }
 
         private void SetWindowTitle(int targetNumber)
@@ -1466,12 +1576,16 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
             // シナリオ情報一括読み込み
-            if (this.ListClassScenario.Count <= 0)
+            if (this.ListClassScenarioInfo.Count <= 0)
             {
                 Set_List_ClassInfo(this.NowNumberGameTitle);
             }
 
             // Map情報一括読み込み
+            if (this.ClassGameStatus.ListClassMapBattle.Count <= 0)
+            {
+                SetListClassMapBattle(this.NowNumberGameTitle);
+            }
 
 
             // 左上作る
@@ -1495,7 +1609,7 @@ namespace WPF_Successor_001_to_Vahren
                     rectangleInfo.StrokeThickness = 5;
                     canvas.Children.Add(rectangleInfo);
 
-                    foreach (var item in this.ListClassScenario
+                    foreach (var item in this.ListClassScenarioInfo
                                             .Where(y => y.Sortkey <= 0)
                                             .OrderBy(x => x.Sortkey)
                                             .Select((value, index) => (value, index)))
@@ -1578,11 +1692,11 @@ namespace WPF_Successor_001_to_Vahren
                         canvas.Children.Add(grid);
                     }
 
-                    int tag = this.ListClassScenario
+                    int tag = this.ListClassScenarioInfo
                                             .Where(y => y.Sortkey <= 0)
                                             .Count();
 
-                    foreach (var item in this.ListClassScenario
+                    foreach (var item in this.ListClassScenarioInfo
                                             .Where(y => y.Sortkey > 0)
                                             .OrderBy(x => x.Sortkey)
                                             .Select((value, index) => (value, index)))
@@ -1617,6 +1731,195 @@ namespace WPF_Successor_001_to_Vahren
 
 
             Thread.Sleep(10);
+        }
+
+        private void SetListClassMapBattle(int gameTitleNumber)
+        {
+            // get target path.
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[gameTitleNumber].FullName);
+            strings.Add("016_BattleMapImage");
+            string path = System.IO.Path.Combine(strings.ToArray());
+
+            // get file.
+            var files = System.IO.Directory.EnumerateFiles(
+                path,
+                "*.txt",
+                System.IO.SearchOption.AllDirectories
+                );
+
+            //check
+            {
+                if (files.Count() < 1)
+                {
+                    // ファイルがない！
+                    throw new Exception();
+                }
+
+                if (this.ClassGameStatus.ListClassMapBattle == null)
+                {
+                    this.ClassGameStatus.ListClassMapBattle = new List<ClassMapBattle>();
+                }
+            }
+
+            foreach (var item in files)
+            {
+                string readAllLines;
+                readAllLines = File.ReadAllText(item);
+
+                if (readAllLines.Length == 0)
+                {
+                    continue;
+                }
+
+                // 大文字かっこは許しまへんで
+                {
+                    var ch = readAllLines.Length - readAllLines.Replace("{", "").Replace("}", "").Length;
+                    if (ch % 2 != 0 || readAllLines.Length - ch == 0)
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                // Map
+                {
+                    string targetString = "map";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var mapMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase)
+                                        .Matches(readAllLines);
+
+                    var listMatches = mapMatches.Where(x => x != null).ToList();
+                    if (listMatches == null)
+                    {
+                        // データがない！
+                        throw new Exception();
+                    }
+                    if (listMatches.Count < 1)
+                    {
+                        // データがないので次
+                    }
+                    else
+                    {
+                        foreach (var getData in listMatches)
+                        {
+                            ClassGameStatus.ListClassMapBattle.Add(GetClassMapBattle(getData.Value));
+                        }
+                    }
+
+                    // Map 終わり
+                }
+
+            }
+        }
+
+        private ClassMapBattle GetClassMapBattle(string value)
+        {
+            ClassMapBattle classMapBattle = new ClassMapBattle();
+
+            // コメント行を取り除く
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("//") == true)
+                    {
+                        var data = line[i].Split("//");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
+
+            int eleNumber = 0;
+            Dictionary<string, string> map = new Dictionary<string, string>();
+            while (true)
+            {
+                {
+                    var ele =
+                        new Regex(GetPat("ele" + eleNumber), RegexOptions.IgnoreCase)
+                        .Matches(value);
+                    var first = CheckMatchElement(ele);
+                    if (first == null)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        map.Add("ele" + eleNumber, first.Value);
+                    }
+                }
+                eleNumber++;
+            }
+
+            //name
+            {
+                var name =
+                    new Regex(GetPat("name"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(name);
+                if (first == null)
+                {
+                    classMapBattle.Name = String.Empty;
+                }
+                else
+                {
+                    classMapBattle.Name = first.Value;
+                }
+            }
+
+            //tag name
+            {
+                var nameTag = new Regex(GetPatTag("map"), RegexOptions.IgnoreCase)
+                                .Matches(value);
+                var first = CheckMatchElement(nameTag);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classMapBattle.TagName = first.Value.Replace(Environment.NewLine, "");
+            }
+
+            //data
+            {
+                var data =
+                    new Regex(GetPatComma("data"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(data);
+                if (first == null)
+                {
+                    classMapBattle.MapData = new List<List<MapDetail>>();
+                }
+                else
+                {
+                    classMapBattle.MapData.Add(new List<MapDetail>());
+                    List<string> re = first.Value.Split(",").ToList();
+                    //最後の改行を消す
+                    re.RemoveAt(re.Count - 1);
+                    for (int i = 0; i < re.Count; i++)
+                    {
+                        if (re[i] == "@")
+                        {
+                            classMapBattle.MapData.Add(new List<MapDetail>());
+                            continue;
+                        }
+                        else
+                        {
+                            MapDetail mapDetail = new MapDetail();
+                            map.TryGetValue(re[i].Replace(System.Environment.NewLine, string.Empty), out string? mapValue);
+                            if (mapValue != null) mapDetail.Tip = mapValue;
+                            classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
+                        }
+                    }
+                }
+            }
+
+            //最後の空行を消す
+            if (classMapBattle.MapData[classMapBattle.MapData.Count - 1].Count == 0)
+            {
+                classMapBattle.MapData.RemoveAt(classMapBattle.MapData.Count - 1);
+            }
+            return classMapBattle;
         }
 
         private void SetMapStrategy()
@@ -1661,7 +1964,7 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                     strings.Add("005_BackgroundImage");
                     strings.Add("015_MapImage");
-                    strings.Add(this.ListClassScenario[this.NumberScenarioSelection].NameMapImageFile);
+                    strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
                     string path = System.IO.Path.Combine(strings.ToArray());
 
                     this.ClassGameStatus.CurrentPoint =
@@ -1686,7 +1989,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     //現シナリオで使用するスポットを抽出する
                     List<ClassSpot> result = new List<ClassSpot>();
-                    foreach (var item in this.ListClassScenario[this.NumberScenarioSelection].DisplayListSpot)
+                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
                     {
                         foreach (var item2 in this.ClassGameStatus.AllListSpot)
                         {
@@ -1700,7 +2003,7 @@ namespace WPF_Successor_001_to_Vahren
                     int hei = 32;
 
                     //spotをlineで繋ぐ
-                    foreach (var item in this.ListClassScenario[this.NumberScenarioSelection].ListLinkSpot)
+                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
                     {
                         var ext1 = result.Where(x => x.NameTag == item.Item1).FirstOrDefault();
                         if (ext1 == null)
@@ -1903,7 +2206,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             // get target path.
             List<string> strings = new List<string>();
-            strings.Add(ClassConfigGameTitle.DirectoryGameTitle[gameTitleNumber].FullName);
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[gameTitleNumber].FullName);
             strings.Add("070_Scenario");
             string path = System.IO.Path.Combine(strings.ToArray());
 
@@ -1922,9 +2225,9 @@ namespace WPF_Successor_001_to_Vahren
                     throw new Exception();
                 }
 
-                if (this.ListClassScenario == null)
+                if (this.ListClassScenarioInfo == null)
                 {
-                    this.ListClassScenario = new List<ClassScenario>();
+                    this.ListClassScenarioInfo = new List<ClassScenarioInfo>();
                 }
             }
 
@@ -1987,16 +2290,16 @@ namespace WPF_Successor_001_to_Vahren
 
                             if (kind == 0)
                             {
-                                this.ListClassScenario.Add(GetClassScenarioNewFormat(getData.Value));
+                                this.ListClassScenarioInfo.Add(GetClassScenarioNewFormat(getData.Value));
                             }
                             else
                             {
-                                this.ListClassScenario.Add(GetClassScenario(getData.Value));
+                                this.ListClassScenarioInfo.Add(GetClassScenario(getData.Value));
                             }
                         }
-                        if (this.ListClassScenario.Count > 1)
+                        if (this.ListClassScenarioInfo.Count > 1)
                         {
-                            this.ListClassScenario.Sort((x, y) => x.Sortkey - y.Sortkey);
+                            this.ListClassScenarioInfo.Sort((x, y) => x.Sortkey - y.Sortkey);
                         }
                     }
                 }
@@ -2186,10 +2489,6 @@ namespace WPF_Successor_001_to_Vahren
                     // Event 終わり
                 }
 
-                // Map
-
-
-
                 //正規表現終わり
 
                 //インデックスを張っておく
@@ -2345,6 +2644,20 @@ namespace WPF_Successor_001_to_Vahren
                     classSpot.ListMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
                 }
             }
+            {
+                var map =
+                    new Regex(@"(?<=map[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(map);
+                if (first == null)
+                {
+                    classSpot.Map = String.Empty;
+                }
+                else
+                {
+                    classSpot.Map = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
 
             return classSpot;
         }
@@ -2421,15 +2734,15 @@ namespace WPF_Successor_001_to_Vahren
             return classSpot;
         }
 
-        private ClassScenario GetClassScenario(string value)
+        private ClassScenarioInfo GetClassScenario(string value)
         {
-            ClassScenario classScenario = new ClassScenario();
+            ClassScenarioInfo classScenario = new ClassScenarioInfo();
             return classScenario;
         }
 
-        private ClassScenario GetClassScenarioNewFormat(string value)
+        private ClassScenarioInfo GetClassScenarioNewFormat(string value)
         {
-            ClassScenario classScenario = new ClassScenario();
+            ClassScenarioInfo classScenario = new ClassScenarioInfo();
 
             // コメント行を取り除く
             {
@@ -3604,6 +3917,11 @@ namespace WPF_Successor_001_to_Vahren
                 delegateNewGame();
                 delegateNewGame = null;
             }
+            if (delegateBattleMap != null)
+            {
+                delegateBattleMap();
+                delegateBattleMap = null;
+            }
 
             if (this.FadeIn == true
                 || this.FadeInExecution == true)
@@ -3645,7 +3963,7 @@ namespace WPF_Successor_001_to_Vahren
         /// 勢力決定後に実行
         /// </summary>
         /// <exception cref="Exception"></exception>
-        private async void TimerAction60FPSAfterFadeIn()
+        private async void TimerAction60FPSAfterFadeInDecidePower()
         {
             if (AfterFadeIn == false)
             {
@@ -3689,7 +4007,10 @@ namespace WPF_Successor_001_to_Vahren
             classVec.Target = this.ClassGameStatus.SelectionCityPoint;
             classVec.Speed = 10;
             classVec.Set();
+
+            //移動し過ぎを防止
             int counter = 500;
+
             while (flag1 == true)
             {
                 Thread.Sleep(5);
@@ -3734,7 +4055,7 @@ namespace WPF_Successor_001_to_Vahren
             //イベント実行
             {
                 var ev = this.ClassGameStatus.ListEvent
-                            .Where(x => x.Name == this.ListClassScenario[this.NumberScenarioSelection].World)
+                            .Where(x => x.Name == this.ListClassScenarioInfo[this.NumberScenarioSelection].World)
                             .FirstOrDefault();
                 if (ev != null)
                 {
@@ -3755,6 +4076,65 @@ namespace WPF_Successor_001_to_Vahren
 
             //ストラテジーメニュー表示
             SetWindowStrategyMenu();
+        }
+
+        /// <summary>
+        /// マップ生成後に実行
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private async void TimerAction60FPSAfterFadeInBattleStart()
+        {
+            if (AfterFadeIn == false)
+            {
+                return;
+            }
+            var rec = this.fade.Children[this.fade.Children.Count - 1] as System.Windows.Shapes.Rectangle;
+            if (rec == null)
+            {
+                throw new Exception();
+            }
+            if (rec.Height > 0)
+            {
+                return;
+            }
+
+            //この位置でなければダメ？
+            AfterFadeIn = false;
+            timerAfterFadeIn.Stop();
+
+            Thread.Sleep(100);
+
+            //自軍へ視点移動
+            bool flag1 = true;
+
+            //移動し過ぎを防止
+            int counter = 500;
+
+            while (flag1 == true)
+            {
+                Thread.Sleep(5);
+                break;
+                await Task.Run(() =>
+                {
+                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                    {
+                    }));
+                });
+                counter--;
+
+                if (counter <= 0)
+                {
+                    throw new Exception();
+                }
+            }
+
+            //イベントチェック
+
+
+            //開戦ダイアログ
+            MessageBox.Show("開戦します");
+
+            //開戦スレッド実行
         }
 
         /// <summary>
@@ -3825,7 +4205,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             //イベント実行
             var ev = this.ClassGameStatus.ListEvent
-                        .Where(x => x.Name == this.ListClassScenario[this.NumberScenarioSelection].World)
+                        .Where(x => x.Name == this.ListClassScenarioInfo[this.NumberScenarioSelection].World)
                         .FirstOrDefault();
             if (ev != null)
             {

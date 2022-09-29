@@ -68,6 +68,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region Map
+        private string _map = string.Empty;
+        public string Map
+        {
+            get { return _map; }
+            set { _map = value; }
+        }
+        #endregion
+
         //選択したスポットがどこの勢力に属するかはClassPowerAndCityで見る
 
         #region PowerNameTag

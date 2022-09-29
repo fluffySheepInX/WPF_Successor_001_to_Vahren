@@ -334,5 +334,47 @@ namespace WPF_Successor_001_to_Vahren
 
             DisplaySortieUnit(mainWindow);
         }
+
+        private void btnSortie_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Application.Current.Properties["window"];
+            if (window == null)
+            {
+                return;
+            }
+            var mainWindow = window as MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var spots = Application.Current.Properties["selectSpots"];
+            if (spots == null)
+            {
+                return;
+            }
+
+            var convSpots = spots as ClassPowerAndCity;
+            if (convSpots == null)
+            {
+                return;
+            }
+
+            var extractMap = mainWindow
+                                .ClassGameStatus
+                                .ListClassMapBattle
+                                .Where(x => x.TagName == convSpots.ClassSpot.Map)
+                                .FirstOrDefault();
+            if (extractMap != null)
+            {
+                mainWindow.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
+            }
+
+            mainWindow.FadeOut = true;
+
+            mainWindow.delegateBattleMap = mainWindow.SetBattleMap;
+
+            mainWindow.FadeIn = true;
+        }
     }
 }

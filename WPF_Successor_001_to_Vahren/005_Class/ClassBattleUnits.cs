@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
-    public class ClassBattleUnits
+    public class ClassBattle
     {
         #region SortieUnitGroup
         private List<ClassHorizontalUnit> _sortieUnitGroup = new List<ClassHorizontalUnit>();
@@ -38,6 +38,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _neutralUnitGroup; }
             set { _neutralUnitGroup = value; }
+        }
+        #endregion
+
+        #region ClassMapBattle
+        private ClassMapBattle classMapBattle = new ClassMapBattle();
+        public ClassMapBattle ClassMapBattle
+        {
+            get { return classMapBattle; }
+            set { classMapBattle = value; }
         }
         #endregion
 

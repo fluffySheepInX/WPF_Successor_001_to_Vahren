@@ -42,13 +42,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region ListClassMap
-        private ClassMap listClassMap = new ClassMap();
+        #region ListClassMapBattle
+        private List<ClassMapBattle> listClassMapBattle = new List<ClassMapBattle>();
 
-        public ClassMap ListClassMap
+        public List<ClassMapBattle> ListClassMapBattle
         {
-            get { return listClassMap; }
-            set { listClassMap = value; }
+            get { return listClassMapBattle; }
+            set { listClassMapBattle = value; }
         }
 
         #endregion
@@ -115,8 +115,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ClassBattleUnits
-        private ClassBattleUnits _classBattleUnits = new ClassBattleUnits();
-        public ClassBattleUnits ClassBattleUnits
+        private ClassBattle _classBattleUnits = new ClassBattle();
+        public ClassBattle ClassBattleUnits
         {
             get { return _classBattleUnits; }
             set { _classBattleUnits = value; }
@@ -158,5 +158,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
 
         #endregion
+
     }
 }

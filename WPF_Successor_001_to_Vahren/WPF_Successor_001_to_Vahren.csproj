@@ -16,7 +16,6 @@
     <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\010_MainMenuImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\001_TitleImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\010_EventImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\015_BattleMapCellImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\020_BattleUnitImage\" />
   </ItemGroup>
 
