@@ -147,6 +147,23 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _currentPoint = value; }
         }
         #endregion
+        #region StartPointBattle
+        private Point _startPointBattle;
+        public Point StartPointBattle
+        {
+            get { return _startPointBattle; }
+            set { _startPointBattle = value; }
+        }
+        #endregion
+        #region CurrentPointBattle
+        private Point _currentPointBattle;
+        public Point CurrentPointBattle
+        {
+            get { return _currentPointBattle; }
+            set { _currentPointBattle = value; }
+        }
+        #endregion
+
 
         #region WindowStrategyMenu
         private Page005_StrategyMenu _windowStrategyMenu = new Page005_StrategyMenu();

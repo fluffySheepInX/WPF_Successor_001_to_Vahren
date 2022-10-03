@@ -41,8 +41,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region FrontPosi
-        private Point frontPosi;
-        public Point FrontPosi
+        private Point? frontPosi = null;
+        public Point? FrontPosi
         {
             get { return frontPosi; }
             set { frontPosi = value; }
@@ -50,8 +50,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region DefensePosi
-        private Point defensePosi;
-        public Point DefensePosi
+        private Point? defensePosi = null;
+        public Point? DefensePosi
         {
             get { return defensePosi; }
             set { defensePosi = value; }
@@ -59,8 +59,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region NeutralPosi
-        private Point neutralPosi;
-        public Point NeutralPosi
+        private Point? neutralPosi = null;
+        public Point? NeutralPosi
         {
             get { return neutralPosi; }
             set { neutralPosi = value; }

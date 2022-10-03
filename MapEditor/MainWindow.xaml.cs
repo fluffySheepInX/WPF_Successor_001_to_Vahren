@@ -42,6 +42,7 @@ namespace MapEditor
         {
             this.txtMapHeight.Text = "10";
             this.txtMapWidth.Text = "10";
+            this.TipSize = (int)(slTipSize.Value * 12.8);
             int size = TipSize;
 
             ////スクロールバーの幅はパブリックとして公開されていない？
@@ -77,7 +78,26 @@ namespace MapEditor
             Canvas canvas = new Canvas();
             canvas.Width = size;
             canvas.Height = size;
-            canvas.Background = Brushes.AliceBlue;
+
+            if (MapData != null)
+            {
+                if (MapData[col][hei] == String.Empty)
+                {
+                    canvas.Background = Brushes.AliceBlue;
+                }
+                else
+                {
+                    var bi = new BitmapImage(new Uri(MapData[col][hei]));
+                    Image image = new Image();
+                    image.Width = slTipSize.Value * 12.8;
+                    image.Height = slTipSize.Value * 12.8;
+                    image.Stretch = Stretch.Fill;
+                    image.Source = bi;
+                    image.Margin = new Thickness(0, 0, 0, 0);
+                    canvas.Children.Add(image);
+                }
+            }
+
             canvas.MouseEnter += ButtonMap_MouseEnter;
             canvas.MouseLeftButtonDown += ButtonMap_Click;
             canvas.Tag = col + "," + hei;
@@ -217,10 +237,14 @@ namespace MapEditor
             gridMaptip.Height = (size * wrapCanvas.Rows);
             gridMaptip.Width = (size * wrapCanvas.Columns);
 
+            MapData = new List<List<string>>();
+
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
+                MapData.Add(new List<string>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
+                    MapData[i].Add("");
                     DisplayGrid(size, i, j);
                 }
             }
@@ -252,7 +276,13 @@ namespace MapEditor
 
         private void slTipSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int size = TipSize;
+            int size = (int)(e.NewValue * 12.8);
+
+            SizeChangeTip(size);
+        }
+
+        private void SizeChangeTip(int size)
+        {
             wrapCanvas.Children.Clear();
             wrapCanvas.Rows = int.Parse(this.txtMapHeight.Text);
             wrapCanvas.Columns = int.Parse(this.txtMapWidth.Text);
@@ -370,6 +400,16 @@ namespace MapEditor
 
             stringBuilder.AppendLine("}");
             File.AppendAllText(fileName + ".txt", stringBuilder.ToString());
+        }
+
+        private void grdCanvas_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down
+                || Keyboard.GetKeyStates(Key.RightCtrl) == KeyStates.Down)
+            {
+                slTipSize.Value = slTipSize.Value + ((e.Delta > 0) ? 1 : -1);
+                SizeChangeTip((int)(slTipSize.Value * 12.8));
+            }
         }
     }
 }

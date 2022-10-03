@@ -54,7 +54,7 @@ NewFormatSpot spot0004
 	image = "099_WASTE6.png";
 	x = "2500";
 	y = "500";
-	map = "wefwefwefwefw";
+	map = "sabaku";
 }
 
 NewFormatSpot spot0005

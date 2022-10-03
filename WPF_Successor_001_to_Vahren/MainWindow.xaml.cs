@@ -463,6 +463,7 @@ namespace WPF_Successor_001_to_Vahren
             this.FadeIn = true;
         }
 
+        #region マップ移動
         private void GridMapStrategy_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
@@ -482,7 +483,6 @@ namespace WPF_Successor_001_to_Vahren
 
             e.Handled = true;
         }
-
         private void GridMapStrategy_MouseMove(object sender, MouseEventArgs e)
         {
             if (this.ClassGameStatus.IsMouse == false)
@@ -513,6 +513,73 @@ namespace WPF_Successor_001_to_Vahren
 
             e.Handled = true;
         }
+        private void GridMapStrategy_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.ClassGameStatus.IsMouse = false;
+
+            e.Handled = true;
+        }
+
+        #region Battle
+        private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+            if (ri == null)
+            {
+                throw new Exception();
+            }
+
+            this.ClassGameStatus.IsMouse = true;
+            this.ClassGameStatus.StartPointBattle = e.GetPosition(ri);
+
+            e.Handled = true;
+        }
+        private void CanvasMapBattle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.ClassGameStatus.IsMouse = false;
+
+            e.Handled = true;
+        }
+        private void CanvasMapBattle_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.ClassGameStatus.IsMouse == false)
+            {
+                return;
+            }
+
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapBattle);
+            if (ri == null)
+            {
+                throw new Exception();
+            }
+            var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+            if (ri == null)
+            {
+                throw new Exception();
+            }
+
+            Point getPoint = e.GetPosition(ri2);
+            this.ClassGameStatus.CurrentPointBattle = getPoint;
+
+            var thickness = new Thickness();
+            thickness.Left = ri2.Margin.Left + (this.ClassGameStatus.CurrentPointBattle.X - this.ClassGameStatus.StartPointBattle.X);
+            thickness.Top = ri2.Margin.Top + (this.ClassGameStatus.CurrentPointBattle.Y - this.ClassGameStatus.StartPointBattle.Y);
+            ri2.Margin = thickness;
+
+            this.ClassGameStatus.StartPointBattle = this.ClassGameStatus.CurrentPointBattle;
+
+            e.Handled = true;
+        }
+        private void CanvasMapBattle_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.ClassGameStatus.IsMouse = false;
+
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #endregion
 
         private void GridMapStrategy_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
@@ -568,13 +635,6 @@ namespace WPF_Successor_001_to_Vahren
                 default:
                     break;
             }
-        }
-
-        private void GridMapStrategy_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.ClassGameStatus.IsMouse = false;
-
-            e.Handled = true;
         }
 
         private void WindowMainMenuLeftTop_MouseEnter(object sender, MouseEventArgs e)
@@ -1323,97 +1383,368 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         public void SetBattleMap()
         {
-            int a = 16;
+            //var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            //if (ri == null)
+            //{
+            //    throw new Exception();
+            //}
+            //var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
+            //if (ri == null)
+            //{
+            //    throw new Exception();
+            //}
+            //var ri3 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.canvasWindowStrategy);
+            //if (ri3 == null)
+            //{
+            //    throw new Exception();
+            //}
+            //var ri4 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowConscription);
+            //if (ri4 == null)
+            //{
+            //    throw new Exception();
+            //}
+            //var ri5 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowSortieMenu);
+            //if (ri5 == null)
+            //{
+            //    throw new Exception();
+            //}
 
-            //マップ生成
+            //this.canvasMain.Children.Remove(ri);
+            //this.canvasMain.Children.Remove(ri2);
+
+            //マップそのもの
             Canvas canvas = new Canvas();
+            int takasaMapTip = 32;
+            int yokoMapTip = 48;
+            canvas.Name = StringName.windowMapBattle;
+            canvas.Background = Brushes.Black;
+            canvas.MouseMove += CanvasMapBattle_MouseMove;
+            canvas.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
+            canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
+            canvas.MouseLeave += CanvasMapBattle_MouseLeave;
+
             {
-                canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32
-                                    + (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 16);
-                canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 32;
-                canvas.Name = "BattleMap";
-                canvas.Background = Brushes.Black;
-                canvas.Margin = new Thickness()
+
+                if (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle == null)
                 {
-                    Left = (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32) / 2,
-                    Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
+                    {
+                        canvas.Width = 160
+                                        + 80;
+                        canvas.Height = 160;
+                        canvas.Margin = new Thickness()
+                        {
+                            Left = 160 / 2,
+                            Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
+                        };
+                    }
+                }
+                else
+                {
+                    {
+                        canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32
+                                            + (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 16);
+                        canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 32;
+                        canvas.Margin = new Thickness()
+                        {
+                            Left = ((
+                                    (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2)
+                                    ))
+                                        +
+                                    (this._sizeClientWinWidth / 2) - ((this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32) / 2),
+                            Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
+                        };
+                        //RotateTransform rotateTransform2 = new RotateTransform(0);
+                        ////rotateTransform2.CenterX = 25;
+                        ////rotateTransform2.CenterY = 50;
+                        //canvas.RenderTransform = rotateTransform2;
+                    }
+
+                    // get target path.
+                    List<string> strings = new List<string>();
+                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("015_BattleMapCellImage");
+                    string cellImagePath = System.IO.Path.Combine(strings.ToArray());
+                    // get file.
+                    var files = System.IO.Directory.EnumerateFiles(
+                        cellImagePath,
+                        "*.png",
+                        System.IO.SearchOption.AllDirectories
+                        );
+                    Dictionary<string, string> map = new Dictionary<string, string>();
+                    foreach (var item in files)
+                    {
+                        map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
+                    }
+
+                    //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
+
+                    foreach (var itemCol in this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData
+                                            .Select((value, index) => (value, index)))
+                    {
+                        foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
+                        {
+                            map.TryGetValue(itemRow.value.Tip, out string? value);
+                            if (value == null) continue;
+
+                            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                            var bi = new BitmapImage(new Uri(value));
+                            ImageBrush image = new ImageBrush();
+                            image.Stretch = Stretch.Fill;
+                            image.ImageSource = bi;
+
+                            //RotateTransform rotateTransform2 = new RotateTransform(45);
+                            //rotateTransform2.CenterX = 25;
+                            //rotateTransform2.CenterY = 50;
+                            //image.RelativeTransform = rotateTransform2;
+
+                            path.Fill = image;
+                            path.Stretch = Stretch.Fill;
+                            path.StrokeThickness = 0;
+                            path.Data = Geometry.Parse("M 0," + takasaMapTip / 2 + " L " + yokoMapTip / 2 + "," + takasaMapTip + " L " + yokoMapTip + "," + takasaMapTip / 2 + " L " + yokoMapTip / 2 + ",0 Z");
+                            path.Margin = new Thickness()
+                            {
+                                Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
+                                Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                            };
+                            canvas.Children.Add(path);
+                        }
+                    }
+                }
+
+                Canvas backCanvas = new Canvas();
+                backCanvas.Name = StringName.gridMapBattle;
+                backCanvas.Background = Brushes.AliceBlue;
+                backCanvas.Width = this._sizeClientWinWidth;
+                backCanvas.Height = this._sizeClientWinHeight;
+
+                backCanvas.Margin = new Thickness()
+                {
+                    Left = (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2),
+                    Top = (this.CanvasMainHeight / 2) - (this._sizeClientWinHeight / 2)
                 };
-                RotateTransform rotateTransform2 = new RotateTransform(0);
-                //rotateTransform2.CenterX = 25;
-                //rotateTransform2.CenterY = 50;
-                canvas.RenderTransform = rotateTransform2;
+                backCanvas.Children.Add(canvas);
+
+                Canvas.SetZIndex(backCanvas, 99);
+                this.canvasMain.Children.Add(backCanvas);
             }
 
-            // get target path.
-            List<string> strings = new List<string>();
-            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-            strings.Add("015_BattleMapCellImage");
-            string cellImagePath = System.IO.Path.Combine(strings.ToArray());
-            // get file.
-            var files = System.IO.Directory.EnumerateFiles(
-                cellImagePath,
-                "*.png",
-                System.IO.SearchOption.AllDirectories
-                );
-            Dictionary<string, string> map = new Dictionary<string, string>();
-            foreach (var item in files)
+            ////ユニット
+            //中点
+            decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count / 2);
+            //線の端
+            Point hidariTakasa = new Point(0, canvas.Height / 2);
+            Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
+            //ユニットの端の位置を算出
+            if (this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count % 2 == 0)
             {
-                map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
+                ////偶数
+                //これは正しくないが、案が思い浮かばない
+                hidariTakasa.X = (migiTakasa.X / 2) - ((double)countMeHalf * 32);
+                migiTakasa.X = (migiTakasa.X / 2) + ((double)countMeHalf * 32);
+
+                hidariTakasa.Y = (migiTakasa.Y * 0.75) - ((double)countMeHalf * (takasaMapTip / 2));
+                migiTakasa.Y = (migiTakasa.Y * 0.75) + ((double)countMeHalf * (takasaMapTip / 2));
+            }
+            else
+            {
+                ////奇数
+                //これは正しくないが、案が思い浮かばない
+                hidariTakasa.X = (migiTakasa.X / 2) - (((double)countMeHalf + 1) * 32);
+                migiTakasa.X = (migiTakasa.X / 2) + (((double)countMeHalf + 1) * 32);
+
+                hidariTakasa.Y = (migiTakasa.Y * 0.75) - (((double)countMeHalf + 1) * (takasaMapTip / 2));
+                migiTakasa.Y = (migiTakasa.Y * 0.75) + (((double)countMeHalf + 1) * (takasaMapTip / 2));
             }
 
-            //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
-            int takasa = 32;
-            int yoko = 48;
-
-            foreach (var itemCol in this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData
-                                    .Select((value, index) => (value, index)))
+            //前衛
+            foreach (var item in this.ClassGameStatus
+                        .ClassBattleUnits.SortieUnitGroup
+                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
             {
-                foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
+                //比率
+                Point hiritu = new Point()
                 {
-                    map.TryGetValue(itemRow.value.Tip, out string? value);
-                    if (value == null) continue;
+                    X = item.ListClassUnit.Count - 1,
+                    Y = 0
+                };
 
-                    System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
-                    var bi = new BitmapImage(new Uri(value));
+                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                {
+                    List<string> strings = new List<string>();
+                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("040_ChipImage");
+                    strings.Add(itemListClassUnit.value.Image);
+                    string path = System.IO.Path.Combine(strings.ToArray());
+
+                    var bi = new BitmapImage(new Uri(path));
                     ImageBrush image = new ImageBrush();
                     image.Stretch = Stretch.Fill;
                     image.ImageSource = bi;
+                    Button button = new Button();
+                    button.Background = image;
+                    button.Width = 32;
+                    button.Height = 32;
 
-                    //RotateTransform rotateTransform2 = new RotateTransform(45);
-                    //rotateTransform2.CenterX = 25;
-                    //rotateTransform2.CenterY = 50;
-                    //image.RelativeTransform = rotateTransform2;
+                    Canvas canvasChip = new Canvas();
+                    //固有の情報
+                    canvasChip.Name = "Chip";
+                    canvasChip.Tag = null;
 
-                    path.Fill = image;
-                    path.Stretch = Stretch.Fill;
-                    path.StrokeThickness = 0;
-                    path.Data = Geometry.Parse("M 0," + takasa / 2 + " L " + yoko / 2 + "," + takasa + " L " + yoko + "," + takasa / 2 + " L " + yoko / 2 + ",0 Z");
-                    path.Margin = new Thickness() 
-                    { 
-                        Left = (itemCol.index * (yoko / 2)) + (itemRow.index * (yoko / 2)), 
-                        Top = (canvas.Height / 2) + (itemCol.index * (takasa / 2)) + (itemRow.index * (-(takasa / 2))) 
+                    canvasChip.Children.Add(button);
+                    canvasChip.Width = 32;
+                    canvasChip.Height = 32;
+                    //内分点の公式
+                    double left = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    double top = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    if (item.ListClassUnit.Count == 1)
+                    {
+                        left = (hidariTakasa.X + migiTakasa.X) / 2;
+                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                    }
+                    canvasChip.Margin = new Thickness()
+                    {
+                        Left = left,
+                        Top = top
                     };
-                    canvas.Children.Add(path);
+
+                    Canvas.SetZIndex(canvasChip, 99);
+                    canvas.Children.Add(canvasChip);
+                }
+            }
+            //中衛
+            foreach (var item in this.ClassGameStatus
+                        .ClassBattleUnits.SortieUnitGroup
+                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
+            {
+                //比率
+                Point hiritu = new Point()
+                {
+                    X = item.ListClassUnit.Count - 1,
+                    Y = 0
+                };
+
+                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                {
+                    List<string> strings = new List<string>();
+                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("040_ChipImage");
+                    strings.Add(itemListClassUnit.value.Image);
+                    string path = System.IO.Path.Combine(strings.ToArray());
+
+                    var bi = new BitmapImage(new Uri(path));
+                    ImageBrush image = new ImageBrush();
+                    image.Stretch = Stretch.Fill;
+                    image.ImageSource = bi;
+                    Button button = new Button();
+                    button.Background = image;
+                    button.Width = 32;
+                    button.Height = 32;
+
+                    Canvas canvasChip = new Canvas();
+                    //固有の情報
+                    canvasChip.Name = "Chip";
+                    canvasChip.Tag = null;
+
+                    canvasChip.Children.Add(button);
+                    canvasChip.Width = 32;
+                    canvasChip.Height = 32;
+                    //内分点の公式
+                    double left = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    double top = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    if (item.ListClassUnit.Count == 1)
+                    {
+                        left = (hidariTakasa.X + migiTakasa.X) / 2;
+                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                    }
+                    canvasChip.Margin = new Thickness()
+                    {
+                        Left = left,
+                        Top = top
+                    };
+
+                    Canvas.SetZIndex(canvasChip, 99);
+                    canvas.Children.Add(canvasChip);
+                }
+            }
+            //後衛
+            foreach (var item in this.ClassGameStatus
+                        .ClassBattleUnits.SortieUnitGroup
+                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
+            {
+                //比率
+                Point hiritu = new Point()
+                {
+                    X = item.ListClassUnit.Count - 1,
+                    Y = 0
+                };
+
+                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                {
+                    List<string> strings = new List<string>();
+                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("040_ChipImage");
+                    strings.Add(itemListClassUnit.value.Image);
+                    string path = System.IO.Path.Combine(strings.ToArray());
+
+                    var bi = new BitmapImage(new Uri(path));
+                    ImageBrush image = new ImageBrush();
+                    image.Stretch = Stretch.Fill;
+                    image.ImageSource = bi;
+                    Button button = new Button();
+                    button.Background = image;
+                    button.Width = 32;
+                    button.Height = 32;
+
+                    Canvas canvasChip = new Canvas();
+                    //固有の情報
+                    canvasChip.Name = "Chip";
+                    canvasChip.Tag = null;
+
+                    canvasChip.Children.Add(button);
+                    canvasChip.Width = 32;
+                    canvasChip.Height = 32;
+                    //内分点の公式
+                    double left = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    double top = (
+                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                    )
+                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                    if (item.ListClassUnit.Count == 1)
+                    {
+                        left = (hidariTakasa.X + migiTakasa.X) / 2;
+                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                    }
+                    canvasChip.Margin = new Thickness()
+                    {
+                        Left = left,
+                        Top = top
+                    };
+
+                    Canvas.SetZIndex(canvasChip, 99);
+                    canvas.Children.Add(canvasChip);
                 }
             }
 
-            Canvas backCanvas = new Canvas();
-            backCanvas.Background = Brushes.AliceBlue;
-            backCanvas.Width = this._sizeClientWinWidth;
-            backCanvas.Height = this._sizeClientWinHeight;
-            backCanvas.Margin = new Thickness()
-            {
-                Left = (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2),
-                Top = (this.CanvasMainHeight / 2) - (this._sizeClientWinHeight / 2)
-            };
-            backCanvas.Children.Add(canvas);
-
-            Canvas.SetZIndex(backCanvas, 99);
-            this.canvasMain.Children.Add(backCanvas);
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            timerAfterFadeIn.Tick -= (x, s) => { TimerAction60FPSAfterFadeInDecidePower(); };
             timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeInBattleStart(); };
             timerAfterFadeIn.Start();
         }

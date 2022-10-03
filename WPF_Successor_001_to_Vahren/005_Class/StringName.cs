@@ -14,7 +14,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public static readonly string windowMainMenuRightUnder = "windowMainMenuRightUnder";
 
         public static readonly string windowMapStrategy = "windowMapStrategy";
+        public static readonly string windowMapBattle = "windowMapBattle";
         public static readonly string gridMapStrategy = "gridMapStrategy";
+        public static readonly string gridMapBattle = "gridMapBattle";
         public static readonly string windowSelectionPower = "windowSelectionPower";
         public static readonly string windowSelectionPowerMini = "windowSelectionPowerMini";
         public static readonly string canvasWindowStrategy = "canvasWindowStrategy";

@@ -12,7 +12,7 @@
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="grdCanvas" Grid.Column="0" Background="Gray">
+        <Grid x:Name="grdCanvas" Grid.Column="0" Background="Gray" PreviewMouseWheel="grdCanvas_PreviewMouseWheel">
             <ScrollViewer 
                           x:Name="scCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
@@ -41,11 +41,13 @@
                             <Button x:Name="btnExecuteGridSizeChange" Content="実行" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Click="btnExecuteGridSizeChange_Click"/>
                         </Canvas>
                     </Border>
-                    <Border Height="50" HorizontalAlignment="Stretch" Background="#454545" BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top">
-                        <Canvas Height="50" Background="Azure">
+                    <Border Height="70" HorizontalAlignment="Stretch" Background="#454545" BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top">
+                        <Canvas Height="70" Background="Azure">
                             <Label Content="マスの大きさ" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Label Content="Ctrl+ホイールでも変更可能です" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="18"/>
+                            <Label Content="反応しない時もあります。気にせず何度か回して下さい" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="41"/>
                             <!--<TextBox x:Name="txtTipHeight" Width="53" Canvas.Left="95" Canvas.Top="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>-->
-                            <StackPanel HorizontalAlignment="Center" Height="39" VerticalAlignment="Top" Width="91" Canvas.Left="64" Canvas.Top="5">
+                            <StackPanel HorizontalAlignment="Center" Height="39" VerticalAlignment="Top" Width="91" Canvas.Left="160" Canvas.Top="5">
                                 <Slider x:Name="slTipSize" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
                                     TickFrequency="1" LargeChange="1" Minimum="0" Maximum="10"
                                     Width="91" HorizontalAlignment="Left" ValueChanged="slTipSize_ValueChanged" Value="5"/>
@@ -89,12 +91,13 @@
                             </Canvas>
                         </Canvas>
                     </Border>
-                    <Border  Height="90" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
-                        <Canvas Height="80" Background="Azure">
+                    <Border  Height="130" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Canvas Height="120" Background="Azure">
                             <Button Content="前undo" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
                             <Button Content="先undo" Canvas.Top="20" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64"/>
                             <Button x:Name="btnSaveNew" Content="新規保存" Canvas.Top="40" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64" Click="btnSaveNew_Click"/>
                             <Button Content="上書き保存" Canvas.Top="60" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
+                            <Button x:Name="btnLoad" Content="読み込み" Canvas.Top="80" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
 
                             <Label Content="ペン太さ" Canvas.Top="3" HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="94"/>
                             <TextBox Width="53" Canvas.Left="92" Canvas.Top="29" HorizontalAlignment="Left" VerticalAlignment="Top"/>

@@ -42,8 +42,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ClassMapBattle
-        private ClassMapBattle classMapBattle = new ClassMapBattle();
-        public ClassMapBattle ClassMapBattle
+        private ClassMapBattle? classMapBattle = null;
+        public ClassMapBattle? ClassMapBattle
         {
             get { return classMapBattle; }
             set { classMapBattle = value; }
