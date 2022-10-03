@@ -1,17 +1,46 @@
-# WPF_Successor_001_to_Vahren
+# Name　ローガントゥーガ
+  
+  ローグ要素（追加予定）のあるヴァーレントゥーガの後継（自称）です。
+  
+# Image
+ 
+ 追加予定
+ 
+# Features
+ 
+ ゲームエンジン
+ 
+# Requirement
+  
+* WindowsAPICodePack-Shell 1.1.1
+ 
+# Installation
+  
+```
+無し
+```
+ 
+# Usage
+ 
+```
+VisualStudioで実行して下さい
+```
+ 
+# Note
+ 
+ 無し
+ 
+# Author
+ 
+* ふわふわ羊
+* 無所属
+* fluffysheepinx@gmail.com
+ 
+# License 
+"ローガン" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
-開発環境⇒VisualStudio2022Com
+# ご協力
+Yutaka-Sawada氏（技術的問題）
+数学を愛する会
 
-このコードはヴァーレントゥーガ後継のつもりで書きました。
-しかし、技術的な問題によりストップしています。
-
-030_Evaluatorフォルダの
-Evaluator.csファイルの
-109行目でうまくいっておりません。
-
-他山の石となりましたら幸いです。
-
-追記：
-Yutaka-Sawada氏により、技術的問題が解決されました。
-開発は続行されます。
 感謝申し上げます。ありがとうございます。
