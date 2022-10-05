@@ -566,7 +566,7 @@ namespace WPF_Successor_001_to_Vahren
             thickness.Top = ri2.Margin.Top + (this.ClassGameStatus.CurrentPointBattle.Y - this.ClassGameStatus.StartPointBattle.Y);
             ri2.Margin = thickness;
 
-            this.ClassGameStatus.StartPointBattle = this.ClassGameStatus.CurrentPointBattle;
+            //this.ClassGameStatus.StartPointBattle = this.ClassGameStatus.CurrentPointBattle;
 
             e.Handled = true;
         }
