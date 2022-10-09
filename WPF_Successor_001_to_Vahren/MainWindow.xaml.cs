@@ -1524,7 +1524,7 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 backCanvas.Children.Add(canvas);
 
-                Canvas.SetZIndex(backCanvas, 99);
+                Canvas.SetZIndex(backCanvas, 98);
                 this.canvasMain.Children.Add(backCanvas);
             }
 
@@ -1556,7 +1556,7 @@ namespace WPF_Successor_001_to_Vahren
                 migiTakasa.Y = (migiTakasa.Y * 0.75) + (((double)countMeHalf + 1) * (takasaMapTip / 2));
             }
 
-            //前衛
+            //自軍前衛
             foreach (var item in this.ClassGameStatus
                         .ClassBattleUnits.SortieUnitGroup
                         .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
@@ -1610,14 +1610,14 @@ namespace WPF_Successor_001_to_Vahren
                     canvasChip.Margin = new Thickness()
                     {
                         Left = left,
-                        Top = top
+                        Top = top - 96
                     };
 
                     Canvas.SetZIndex(canvasChip, 99);
                     canvas.Children.Add(canvasChip);
                 }
             }
-            //中衛
+            //自軍中衛
             foreach (var item in this.ClassGameStatus
                         .ClassBattleUnits.SortieUnitGroup
                         .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
@@ -1678,7 +1678,7 @@ namespace WPF_Successor_001_to_Vahren
                     canvas.Children.Add(canvasChip);
                 }
             }
-            //後衛
+            //自軍後衛
             foreach (var item in this.ClassGameStatus
                         .ClassBattleUnits.SortieUnitGroup
                         .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
@@ -1732,13 +1732,34 @@ namespace WPF_Successor_001_to_Vahren
                     canvasChip.Margin = new Thickness()
                     {
                         Left = left,
-                        Top = top
+                        Top = top + 96
                     };
 
                     Canvas.SetZIndex(canvasChip, 99);
                     canvas.Children.Add(canvasChip);
                 }
             }
+
+            //ウィンドウ
+            {
+                Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
+                Frame frame = new Frame();
+                frame.Source = uri;
+                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 250 - 60, 0, 0);
+                frame.Name = StringName.windowBattleCommand;
+                Canvas.SetZIndex(frame, 99);
+                this.canvasMain.Children.Add(frame);
+            }
+            {
+                Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
+                Frame frame = new Frame();
+                frame.Source = uri;
+                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 60, 0, 0);
+                frame.Name = StringName.windowBattleCommand;
+                Canvas.SetZIndex(frame, 99);
+                this.canvasMain.Children.Add(frame);
+            }
+            Application.Current.Properties["window"] = this;
 
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);

@@ -1,0 +1,33 @@
+﻿skill gun01
+{
+	fkey = "gun*1";
+	func = "missile";
+	icon = "f_attack.png, _num5.png, _num1.png, we_gun010.png";
+	name = "【ニードル銃lv1】";
+	help = "そのまんまニードル銃";
+	center = "on";
+	mp = "0";
+	slow_per = "25";
+	slow_time = "3";
+	sound = "gun19, gun21, gun30";
+	image = "a_bullet";
+	direct = "on";
+	w = "12";
+	h = "12";
+	a = "200";
+	center = "on";
+	force_fire = "on";
+	attr = "taiho";
+	str = "attack_dext * 120";
+	range = "550";
+	damage_range_adjust = "435";
+	range_min = "145";
+	speed = "1800";
+	gun_delay = "skimgun*1";
+	pair_next  = "b_kemuri_eff02";
+	next = "m_hit_eff01";
+	random_space = "32";
+	offset = "on";
+	ray = "185, 255, 255, 255";
+	force_ray = "on";
+}
