@@ -77,6 +77,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listUnit = value; }
         }
         #endregion
+        #region ListSkill
+        private List<ClassSkill> _listSkill = new List<ClassSkill>();
+        public List<ClassSkill> ListSkill
+        {
+            get { return _listSkill; }
+            set { _listSkill = value; }
+        }
+        #endregion
 
         #region ListEvent
         private List<ClassEvent> listEvent = new List<ClassEvent>();

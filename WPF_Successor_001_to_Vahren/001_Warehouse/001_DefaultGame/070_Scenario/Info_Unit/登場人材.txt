@@ -25,6 +25,9 @@
 	//2=後衛
 	formation = "0";
 
+	//スキル
+	skill = "gun01";
+
 	level = "3";
 	level_max = "100";
 	price   = "10000";
@@ -71,6 +74,7 @@ NewFormatUnit VictodyRoyle
 	enemy = "teiou";
 
 	formation = "0";
+	skill = "gun01";
 
 	level = "3";
 	level_max = "100";
@@ -121,6 +125,7 @@ NewFormatUnit JothianRoarcy
 	enemy = "teiou";
 
 	formation = "1";
+	skill = "gun01";
 
 	level = "3";
 	level_max = "100";
@@ -171,7 +176,6 @@ NewFormatUnit MabateRoarcy
 	enemy = "teiou";
 
 	formation = "2";
-
 
 	level = "3";
 	level_max = "100";

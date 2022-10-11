@@ -1,4 +1,7 @@
-﻿namespace WPF_Successor_001_to_Vahren._005_Class
+﻿using System.Collections.Generic;
+using System.Windows.Documents;
+
+namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassUnit
     {
@@ -376,6 +379,15 @@
             set { _escape_range = value; }
         }
         #endregion
+        #region Skill
+        private List<string> skill = new List<string>();
 
+        public List<string> Skill
+        {
+            get { return skill; }
+            set { skill = value; }
+        }
+
+        #endregion
     }
 }

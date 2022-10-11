@@ -45,4 +45,18 @@
         , M
         , B
     }
+    public enum SkillFunc
+    {
+        missile
+            ,
+        sword
+            ,
+        heal
+            ,
+        summon
+            ,
+        charge
+            ,
+        status
+    }
 }

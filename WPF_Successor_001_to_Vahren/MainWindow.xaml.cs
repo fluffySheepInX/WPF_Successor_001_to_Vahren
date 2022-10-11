@@ -2813,6 +2813,58 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 // Unit 終わり
 
+                // Skill
+                {
+                    string targetString = "NewFormatSkill";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    var scenarioMatches = new Regex(@"Skill[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                    if (listMatches == null)
+                    {
+                        // データがない！
+                        throw new Exception();
+                    }
+                    if (listMatches.Count < 1)
+                    {
+                        // データがないので次
+                    }
+                    else
+                    {
+                        foreach (var getData in listMatches)
+                        {
+                            //enumを使うべき？
+                            int kind = 0;
+                            {
+                                //このコードだとNewFormatUnitTest等が通るのでよくない
+                                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                if (String.Compare(join, targetString, true) == 0)
+                                {
+                                    kind = 0;
+                                }
+                                else
+                                {
+                                    kind = 1;
+                                }
+                            }
+
+                            if (kind == 0)
+                            {
+                                ClassGameStatus.ListSkill.Add(GetClassSkillNewFormat(getData.Value));
+                            }
+                            else
+                            {
+                                //ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
+                            }
+                        }
+                    }
+                }
+                // Skill 終わり
+
                 // Event
                 {
                     string targetString = "event";
@@ -2840,6 +2892,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     // Event 終わり
                 }
+                // Event 終わり
 
                 //正規表現終わり
 
@@ -2854,6 +2907,420 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
             }
+        }
+
+        private ClassSkill GetClassSkillNewFormat(string value)
+        {
+            ClassSkill classSkill = new ClassSkill();
+
+            // コメント行を取り除く
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("#") == true)
+                    {
+                        var data = line[i].Split("#");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
+
+            //nameTag
+            {
+                var nameTag = new Regex(GetPatTag("NewFormatSkill"), RegexOptions.IgnoreCase)
+                                .Matches(value);
+                var first = CheckMatchElement(nameTag);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.NameTag = first.Value.Replace(Environment.NewLine, "");
+            }
+            //fkey
+            {
+                var fkey =
+                    new Regex(GetPat("fkey"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(fkey);
+                if (first == null)
+                {
+                    classSkill.FKey = (string.Empty, -1);
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "").Split("*").ToList();
+                    classSkill.FKey = (re[0], int.Parse(re[1]));
+                }
+            }
+            //func
+            {
+                var func =
+                    new Regex(GetPat("func"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(func);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Func = (SkillFunc)Enum.Parse(typeof(SkillFunc), first.Value.Replace(Environment.NewLine, ""));
+            }
+            //icon
+            {
+                var icon =
+                    new Regex(GetPat("icon"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(icon);
+                if (first == null)
+                {
+                    classSkill.Icon = new List<string>();
+                }
+                else
+                {
+                    classSkill.Icon = first.Value
+                                        .Replace(Environment.NewLine, "")
+                                        .Replace(" ", "")
+                                        .Split(",").ToList();
+                }
+            }
+            //name
+            {
+                var name =
+                    new Regex(GetPat("name"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(name);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Name = first.Value.Replace(Environment.NewLine, "");
+            }
+            //help
+            {
+                var help =
+                    new Regex(GetPat("help"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(help);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Name = first.Value.Replace(Environment.NewLine, "");
+            }
+            //center
+            {
+                var center =
+                    new Regex(GetPat("center"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(center);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Center = first.Value.Replace(Environment.NewLine, "");
+            }
+            //mp
+            {
+                var mp =
+                    new Regex(GetPat("mp"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(mp);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Mp = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //slow_per
+            {
+                var slow_per =
+                    new Regex(GetPat("slow_per"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(slow_per);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.SlowPer = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //slow_time
+            {
+                var slow_time =
+                    new Regex(GetPat("slow_time"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(slow_time);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.SlowTime = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //sound
+            {
+                var sound =
+                    new Regex(GetPat("sound"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(sound);
+                if (first == null)
+                {
+                    classSkill.Sound = new List<string>();
+                }
+                else
+                {
+                    classSkill.Sound = first.Value
+                                        .Replace(Environment.NewLine, "")
+                                        .Replace(" ", "")
+                                        .Split(",").ToList();
+                }
+            }
+            //image
+            {
+                var image =
+                    new Regex(GetPat("image"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(image);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Image = first.Value.Replace(Environment.NewLine, "");
+            }
+            //direct
+            {
+                var direct =
+                    new Regex(GetPat("direct"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(direct);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Direct = first.Value.Replace(Environment.NewLine, "");
+            }
+            //w
+            {
+                var w =
+                    new Regex(GetPat("w"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(w);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.W = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //h
+            {
+                var h =
+                    new Regex(GetPat("h"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(h);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.H = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //a
+            {
+                var a =
+                    new Regex(GetPat("a"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(a);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.A = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //force_fire
+            {
+                var force_fire =
+                    new Regex(GetPat("force_fire"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(force_fire);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.ForceFire = first.Value.Replace(Environment.NewLine, "");
+            }
+            //attr
+            {
+                var attr =
+                    new Regex(GetPat("attr"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(attr);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Attr = first.Value.Replace(Environment.NewLine, "");
+            }
+            //str
+            {
+                var str =
+                    new Regex(GetPat("str"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(str);
+                if (first == null)
+                {
+                    classSkill.Str = (string.Empty, -1);
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "").Split("*").ToList();
+                    classSkill.Str = (re[0], int.Parse(re[1]));
+                }
+            }
+            //range
+            {
+                var range =
+                    new Regex(GetPat("range"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(range);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Range = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //damage_range_adjust
+            {
+                var damage_range_adjust =
+                    new Regex(GetPat("damage_range_adjust"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(damage_range_adjust);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.DamageRangeAdjust = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //range_min
+            {
+                var range_min =
+                    new Regex(GetPat("range_min"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(range_min);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.RangeMin = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //speed
+            {
+                var speed =
+                    new Regex(GetPat("speed"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(speed);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Speed = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //gun_delay
+            {
+                var gun_delay =
+                    new Regex(GetPat("gun_delay"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(gun_delay);
+                if (first == null)
+                {
+                    classSkill.GunDelay = (string.Empty, -1);
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "").Split("*").ToList();
+                    classSkill.GunDelay = (re[0], int.Parse(re[1]));
+                }
+            }
+            //pair_next
+            {
+                var pair_next =
+                    new Regex(GetPat("pair_next"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(pair_next);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.PairNext = first.Value.Replace(Environment.NewLine, "");
+            }
+            //next
+            {
+                var next =
+                    new Regex(GetPat("next"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(next);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.Next = first.Value.Replace(Environment.NewLine, "");
+            }
+            //random_space
+            {
+                var random_space =
+                    new Regex(GetPat("random_space"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(random_space);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.RandomSpace = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //offset
+            {
+                var offset =
+                    new Regex(GetPat("offset"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(offset);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    classSkill.Offset = re;
+                }
+            }
+            //ray
+            {
+                var ray =
+                    new Regex(GetPat("ray"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(ray);
+                if (first == null)
+                {
+                    classSkill.Ray = new List<int>();
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "").Split(',').Select(Int32.Parse)?.ToList();
+                    classSkill.Ray = re != null ? re : new List<int>();
+                }
+            }
+            //force_ray
+            {
+                var force_ray =
+                    new Regex(GetPat("force_ray"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(force_ray);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classSkill.ForceRay = first.Value.Replace(Environment.NewLine, "");
+            }
+
+
+            return classSkill;
         }
 
         private void GetClassEvent(string value)
@@ -4155,6 +4622,23 @@ namespace WPF_Successor_001_to_Vahren
                     classUnit.Escape_range = Convert.ToInt32(first.Value);
                 }
             }
+            {
+                var skill =
+                    new Regex(GetPat("skill"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(skill);
+                if (first == null)
+                {
+                    classUnit.Skill = new List<string>();
+                }
+                else
+                {
+                    classUnit.Skill = first.Value
+                                        .Replace(Environment.NewLine, "")
+                                        .Replace(" ", "")
+                                        .Split(",").ToList();
+                }
+            }
 
             return classUnit;
         }
@@ -4186,10 +4670,17 @@ namespace WPF_Successor_001_to_Vahren
             string a = @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\"";))";
             return a;
         }
+
+        /// <summary>
+        /// これいる？
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private string GetPatComma(string name)
         {
             return @"(?<=" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))";
         }
+
         private string GetPatTag(string name)
         {
             return @"(?<=" + name + @"[\s]*)([\S\n]+?)(?=[\s]|{)";
