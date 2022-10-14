@@ -4978,6 +4978,125 @@ namespace WPF_Successor_001_to_Vahren
             MessageBox.Show("開戦します");
 
             //開戦スレッド実行
+            this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
+            //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
+            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            timerAfterFadeIn.Tick -= (x, s) => { TimerAction60FPSAfterFadeInBattleStart(); };
+            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSBattle(); };
+            timerAfterFadeIn.Start();
+
+            //工事中
+            ////スキルスレッド開始
+            //var t = Task.Run(TaskBattleSkill);
+            ////移動スレッド開始
+            //var tt = Task.Run(TaskBattleMoveAsync);
+
+        }
+
+        private void TimerAction60FPSBattle()
+        {
+            //勝敗ループ
+            while (true)
+            {
+                {
+                    bool flgaDefHp = false;
+                    foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                    {
+                        foreach (var item in itemDefUnitGroup.ListClassUnit)
+                        {
+                            if (item.Hp >= 1)
+                            {
+                                flgaDefHp = true;
+                            }
+                        }
+                    }
+
+                    if (flgaDefHp == false)
+                    {
+                        //defの負け
+                        break;
+                    }
+                }
+                {
+                    bool flgaAttackHp = false;
+                    foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+                    {
+                        foreach (var item in itemDefUnitGroup.ListClassUnit)
+                        {
+                            if (item.Hp >= 1)
+                            {
+                                flgaAttackHp = true;
+                            }
+                        }
+                    }
+
+                    if (flgaAttackHp == false)
+                    {
+                        //defの負け
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void TaskBattleSkill()
+        {
+
+        }
+        private async Task TaskBattleMoveAsync()
+        {
+            while (true)
+            {
+                await Task.Delay((int)((double)1 / 60) * 1000);
+
+                foreach (var item in this.ClassGameStatus
+                .ClassBattleUnits.SortieUnitGroup)
+                {
+                    foreach (var itemGroupBy in item.ListClassUnit)
+                    {
+                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
+                        {
+                            //スキルスレッド開始
+                            var calc0 = ClassCalcVec.ReturnVecDistance(
+                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y), 
+                                to: itemGroupBy.OrderPosi
+                                );
+                            itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                            var t = Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy));
+                        }
+                    }
+                }
+            }
+        }
+        private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit)
+        {
+            while (true)
+            {
+                await Task.Delay((int)((double)1 / 60) * 1000);
+                if (classUnit.NowPosi.X < classUnit.OrderPosi.X+10 
+                    && classUnit.NowPosi.X < classUnit.OrderPosi.X - 10
+                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 10
+                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y - 10)
+                {
+                    break;
+                }
+                else
+                {
+                    classUnit.NowPosi = new Point()
+                    {
+                        X = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed),
+                        Y = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed)
+                    };
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            //ClassUnitにIDを付与する
+                            //そのIDでsearchしてobujekutoを取得
+                        }));
+                    });
+                }
+            }
         }
 
         /// <summary>

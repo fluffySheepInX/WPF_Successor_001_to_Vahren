@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Documents;
+using System.Windows;
+using Point = System.Windows.Point;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -388,6 +391,33 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { skill = value; }
         }
 
+        #endregion
+
+        #region NowPosi
+        private Point nowPosi;
+
+        public Point NowPosi
+        {
+            get { return nowPosi; }
+            set { nowPosi = value; }
+        }
+        #endregion
+        #region OrderPosi
+        private Point orderPosi;
+
+        public Point OrderPosi
+        {
+            get { return orderPosi; }
+            set { orderPosi = value; }
+        }
+        #endregion
+        #region VecMove
+        private Point vecMove;
+        public Point VecMove
+        {
+            get { return vecMove; }
+            set { vecMove = value; }
+        }
         #endregion
     }
 }
