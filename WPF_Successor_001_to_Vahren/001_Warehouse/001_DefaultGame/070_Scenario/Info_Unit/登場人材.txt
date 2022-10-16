@@ -40,7 +40,7 @@
 	defense = "100";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "100";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -88,7 +88,7 @@ NewFormatUnit VictodyRoyle
 	defense = "100";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "100";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -139,7 +139,7 @@ NewFormatUnit JothianRoarcy
 	defense = "100";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "100";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -189,7 +189,7 @@ NewFormatUnit MabateRoarcy
 	defense = "100";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "100";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";

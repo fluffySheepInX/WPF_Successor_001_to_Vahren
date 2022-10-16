@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._010_Enum;
@@ -1278,6 +1279,42 @@ namespace WPF_Successor_001_to_Vahren
 
         #endregion
 
+        private void WindowMapBattleUnit_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            long name = long.Parse((string)((Canvas)sender).Tag);
+            foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+            {
+                var re = item.ListClassUnit.Where(x => x.ID == name).FirstOrDefault();
+                if (re != null)
+                {
+                    re.FlagMove = true;
+                    break;
+                }
+            }
+        }
+        private void windowMapBattle_MouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+            if (ri == null)
+            {
+                throw new Exception();
+            }
+
+            foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+            {
+                var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
+                if (re != null)
+                {
+                    re.OrderPosi = e.GetPosition(ri);
+                    re.FlagMove = false;
+                    re.FlagMoving = false;
+                    break;
+                }
+            }
+
+        }
+
+
         #region Method
         private void ReadFileOrderDocument()
         {
@@ -1422,7 +1459,7 @@ namespace WPF_Successor_001_to_Vahren
             canvas.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
             canvas.MouseLeave += CanvasMapBattle_MouseLeave;
-
+            canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
             {
 
                 if (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle == null)
@@ -1584,12 +1621,11 @@ namespace WPF_Successor_001_to_Vahren
                     button.Background = image;
                     button.Width = 32;
                     button.Height = 32;
-
                     Canvas canvasChip = new Canvas();
                     //固有の情報
-                    canvasChip.Name = "Chip";
-                    canvasChip.Tag = null;
-
+                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
                     canvasChip.Children.Add(button);
                     canvasChip.Width = 32;
                     canvasChip.Height = 32;
@@ -1611,6 +1647,16 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Left = left,
                         Top = top - 96
+                    };
+                    itemListClassUnit.value.NowPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
+                    };
+                    itemListClassUnit.value.OrderPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
                     };
 
                     Canvas.SetZIndex(canvasChip, 99);
@@ -1648,9 +1694,9 @@ namespace WPF_Successor_001_to_Vahren
 
                     Canvas canvasChip = new Canvas();
                     //固有の情報
-                    canvasChip.Name = "Chip";
-                    canvasChip.Tag = null;
-
+                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
                     canvasChip.Children.Add(button);
                     canvasChip.Width = 32;
                     canvasChip.Height = 32;
@@ -1672,6 +1718,16 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Left = left,
                         Top = top
+                    };
+                    itemListClassUnit.value.NowPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
+                    };
+                    itemListClassUnit.value.OrderPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
                     };
 
                     Canvas.SetZIndex(canvasChip, 99);
@@ -1709,9 +1765,9 @@ namespace WPF_Successor_001_to_Vahren
 
                     Canvas canvasChip = new Canvas();
                     //固有の情報
-                    canvasChip.Name = "Chip";
-                    canvasChip.Tag = null;
-
+                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
                     canvasChip.Children.Add(button);
                     canvasChip.Width = 32;
                     canvasChip.Height = 32;
@@ -1733,6 +1789,16 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Left = left,
                         Top = top + 96
+                    };
+                    itemListClassUnit.value.NowPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
+                    };
+                    itemListClassUnit.value.OrderPosi = new Point()
+                    {
+                        X = left,
+                        Y = top
                     };
 
                     Canvas.SetZIndex(canvasChip, 99);
@@ -4640,6 +4706,8 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            classUnit.ID = this.ClassGameStatus.IDCount;
+            this.ClassGameStatus.SetIDCount();
             return classUnit;
         }
 
@@ -4988,8 +5056,8 @@ namespace WPF_Successor_001_to_Vahren
             //工事中
             ////スキルスレッド開始
             //var t = Task.Run(TaskBattleSkill);
-            ////移動スレッド開始
-            //var tt = Task.Run(TaskBattleMoveAsync);
+            //移動スレッド開始
+            var tt = Task.Run(TaskBattleMoveAsync);
 
         }
 
@@ -5043,25 +5111,26 @@ namespace WPF_Successor_001_to_Vahren
         {
 
         }
-        private async Task TaskBattleMoveAsync()
+        private Task TaskBattleMoveAsync()
         {
             while (true)
             {
-                await Task.Delay((int)((double)1 / 60) * 1000);
+                //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
 
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.SortieUnitGroup)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit)
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x=>x.FlagMoving == false))
                     {
                         if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
                         {
                             //スキルスレッド開始
                             var calc0 = ClassCalcVec.ReturnVecDistance(
-                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y), 
+                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
                                 to: itemGroupBy.OrderPosi
                                 );
                             itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                            itemGroupBy.FlagMoving = true;
                             var t = Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy));
                         }
                     }
@@ -5070,18 +5139,32 @@ namespace WPF_Successor_001_to_Vahren
         }
         private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit)
         {
+            //移動し過ぎを防止
+            int counter = 100;
+
             while (true)
             {
-                await Task.Delay((int)((double)1 / 60) * 1000);
-                if (classUnit.NowPosi.X < classUnit.OrderPosi.X+10 
-                    && classUnit.NowPosi.X < classUnit.OrderPosi.X - 10
-                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 10
-                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y - 10)
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                //await Task.Delay((int)(Math.Floor(((double)1 / 60) * 100000)));
+                if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
+                    && classUnit.NowPosi.X > classUnit.OrderPosi.X - 5
+                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 5
+                    && classUnit.NowPosi.Y > classUnit.OrderPosi.Y - 5)
                 {
-                    break;
+                    classUnit.OrderPosi = new Point()
+                    {
+                        X = classUnit.NowPosi.X,
+                        Y = classUnit.NowPosi.Y
+                    };
+                    classUnit.FlagMoving = false;
+                    return;
                 }
                 else
                 {
+                    if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
+                    {
+                        classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
+                    }
                     classUnit.NowPosi = new Point()
                     {
                         X = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed),
@@ -5091,11 +5174,23 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Application.Current.Dispatcher.Invoke((Action)(() =>
                         {
-                            //ClassUnitにIDを付与する
-                            //そのIDでsearchしてobujekutoを取得
+                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "Chip" + classUnit.ID.ToString());
+                            if (re2 != null)
+                            {
+                                re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                            }
                         }));
                     });
                 }
+
+                counter--;
+
+                if (counter <= 0)
+                {
+                    throw new Exception("ErrorNumber:000001");
+                }
+
             }
         }
 

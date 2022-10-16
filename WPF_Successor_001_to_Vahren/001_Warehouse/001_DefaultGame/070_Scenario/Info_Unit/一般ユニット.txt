@@ -20,7 +20,7 @@
 	defense = "70";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "70";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -55,7 +55,7 @@ NewFormatUnit HowitzerC11
 	defense = "70";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "70";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -91,7 +91,7 @@ NewFormatUnit DragoonFrancesca
 	defense = "70";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "70";
+	speed   = "5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";

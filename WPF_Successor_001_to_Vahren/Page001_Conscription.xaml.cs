@@ -526,6 +526,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
             var cloneExt = extName.DeepCopy();
+            cloneExt.ID = mainWindow.ClassGameStatus.IDCount;
             cloneExt.IsSelect = false;
 
             //選択されているユニットがあるか？
@@ -540,16 +541,26 @@ namespace WPF_Successor_001_to_Vahren
                     MessageBox.Show("定員オーバーです");
                     return;
                 }
-                mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup[selectUnitNumber].ListClassUnit.Add(cloneExt);
+                mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot
+                    .UnitGroup[selectUnitNumber]
+                    .ListClassUnit
+                    .Add(cloneExt);
             }
             else
             {
                 //選択されているユニットが無ければ、新部隊長誕生
                 var lis = new List<ClassUnit>();
                 lis.Add(cloneExt);
-                convTag.ClassPowerAndCity.ClassSpot.UnitGroup.Add(new ClassHorizontalUnit() { FlagDisplay = true, ListClassUnit = lis });
+                convTag.ClassPowerAndCity.ClassSpot.UnitGroup
+                    .Add(
+                    new ClassHorizontalUnit() 
+                    {
+                        FlagDisplay = true, 
+                        ListClassUnit = lis 
+                    });
             }
 
+            mainWindow.ClassGameStatus.SetIDCount();
             DisplayMember(mainWindow, mainWindow.ClassGameStatus.SelectionPowerAndCity);
         }
 

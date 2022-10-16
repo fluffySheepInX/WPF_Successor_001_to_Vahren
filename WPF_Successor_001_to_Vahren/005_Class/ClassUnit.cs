@@ -35,7 +35,16 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
 
         #endregion
+        #region ID
+        private long id;
 
+        public long ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        #endregion
         #region IsReader
         private bool _isReader = false;
         public bool IsReader
@@ -393,6 +402,24 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         #endregion
 
+        #region FlagMove
+        private bool flagMove;
+
+        public bool FlagMove
+        {
+            get { return flagMove; }
+            set { flagMove = value; }
+        }
+
+        #endregion
+        #region FlagMoving
+        private bool flagMoving;
+        public bool FlagMoving
+        {
+            get { return flagMoving; }
+            set { flagMoving = value; }
+        }
+        #endregion
         #region NowPosi
         private Point nowPosi;
 

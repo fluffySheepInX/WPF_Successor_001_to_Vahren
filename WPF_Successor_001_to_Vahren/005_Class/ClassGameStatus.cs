@@ -6,6 +6,21 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassGameStatus
     {
+        #region IDCount
+        private long iDCount = 0;
+        public long IDCount
+        {
+            get { return iDCount; }
+            set 
+            { 
+                iDCount = value; 
+            }
+        }
+        #endregion
+        public void SetIDCount()
+        {
+            iDCount += 1;
+        }
         #region Camera
         private Point _camera;
         public Point Camera
