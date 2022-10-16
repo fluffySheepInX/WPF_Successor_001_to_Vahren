@@ -400,7 +400,12 @@ namespace WPF_Successor_001_to_Vahren
             this._sizeClientWinHeight = (int)si.Height;
         }
 
-
+        /// <summary>
+        /// タイトル画面に表示される難易度ボタンがクリックされた時の処理
+        /// 押されたボタンから難易度(aに代入されている)を取得、シナリオ選択画面へ移行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void titleButton_click(Object sender, EventArgs e)
         {
             var target = (Button)sender;
@@ -414,7 +419,12 @@ namespace WPF_Successor_001_to_Vahren
 
             this.FadeIn = true;
         }
-
+        /// <summary>
+        /// シナリオ選択画面でいずれかのシナリオボタンが押された時の処理
+        /// 押されたボタンに対応する番号(aに代入されている)のシナリオを呼び出す
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ScenarioSelectionButton_click(Object sender, EventArgs e)
         {
             var target = (Button)sender;
@@ -847,7 +857,10 @@ namespace WPF_Successor_001_to_Vahren
             Application.Current.Properties["window"] = this;
             Application.Current.Properties["ClassPowerAndCity"] = classPowerAndCity;
         }
-
+        /// <summary>
+        /// 勢力選択画面での勢力情報表示
+        /// </summary>
+        /// <param name="sender"></param>
         private void DisplayPowerSelection(object sender)
         {
             var cast = (Button)sender;
@@ -1196,7 +1209,11 @@ namespace WPF_Successor_001_to_Vahren
 
             ri.Children.Add(canvas);
         }
-
+        /// <summary>
+        /// 勢力選択画面で決定押した時の処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonSelectionPowerDecide_click(object sender, EventArgs e)
         {
             this.FadeOut = true;
@@ -1258,7 +1275,11 @@ namespace WPF_Successor_001_to_Vahren
                 Top = -(this.CanvasMainHeight / 2)
             };
         }
-
+        /// <summary>
+        /// 勢力選択画面で取り消しした時の処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonSelectionPowerRemove_click(object sender, EventArgs e)
         {
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
@@ -2273,7 +2294,9 @@ namespace WPF_Successor_001_to_Vahren
             }
             return classMapBattle;
         }
-
+        /// <summary>
+        /// シナリオ選択画面から移行する戦略マップ表示画面
+        /// </summary>
         private void SetMapStrategy()
         {
             this.canvasMain.Children.Clear();
@@ -2491,10 +2514,14 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Grid gridPowerButton = new Grid();
                         BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.FlagPath));
+                        //旗を加工する処理を入れたい
+                        Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+                        var destimg = new CroppedBitmap(bitimg1, rect);
 
                         Image img = new Image();
                         img.Stretch = Stretch.Fill;
-                        img.Source = bitimg1;
+                        //img.Source = bitimg1;
+                        img.Source = destimg;
                         img.Height = hei;
                         img.Width = hei;
                         img.HorizontalAlignment = HorizontalAlignment.Left;
