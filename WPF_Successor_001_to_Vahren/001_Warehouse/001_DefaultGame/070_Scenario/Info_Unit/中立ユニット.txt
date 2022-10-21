@@ -1,0 +1,34 @@
+﻿NewFormatUnit ghostFire
+{
+	name = "鬼火";
+	race = "human";
+	image = "chipGene001.png";
+	friend = "LineInfantryM14";
+	merce = "LineInfantryM14";
+	staff = "LineInfantryM14";
+	skill = "gun01";
+
+	level = "1";
+	level_max = "100";
+	price   = "100";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "1500";
+	mp      = "500";
+	attack  = "70";
+	defense = "70";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "5";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	escape_range = "-1";
+}

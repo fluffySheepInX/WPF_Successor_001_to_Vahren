@@ -348,6 +348,12 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            var selectedItem = (ClassSpot)this.comboCity.SelectedItem;
+            if (selectedItem == null)
+            {
+                return;
+            }
+
             var spots = Application.Current.Properties["selectSpots"];
             if (spots == null)
             {
@@ -357,6 +363,42 @@ namespace WPF_Successor_001_to_Vahren
             var convSpots = spots as ClassPowerAndCity;
             if (convSpots == null)
             {
+                return;
+            }
+
+            //兵が存在する都市かチェック
+            if (convSpots.ClassSpot.ListMember.Count == 0 && convSpots.ClassSpot.ListMonster.Count == 0)
+            {
+                var aa = mainWindow.ClassGameStatus.AllListSpot
+                        .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
+                        .First();
+
+                //spotの所属情報を書き換え
+                convSpots.ClassSpot.PowerNameTag = selectedItem.PowerNameTag;
+                aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
+                //unitの所属情報を書き換え
+                foreach (var item in mainWindow.ClassGameStatus.AllListSpot.Where(x=>x.NameTag == selectedItem.NameTag))
+                {
+                    foreach (var itemUnitGroup in item.UnitGroup)
+                    {
+                        itemUnitGroup.Spot = convSpots.ClassSpot;
+                        //unit移動
+                        aa.UnitGroup.Add(itemUnitGroup);
+                    }
+                    //これでは出撃してないユニットも全部消えてしまう
+                    item.UnitGroup.Clear();
+                }
+                //出撃ウィンドウを消す
+                {
+                    var ri = (Frame)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.windowSortieMenu);
+                    if (ri != null)
+                    {
+                        mainWindow.canvasMain.Children.Remove(ri);
+                    }
+                }
+                //message
+                MessageBox.Show(selectedItem.Name+ "を占領しました！");
+
                 return;
             }
 

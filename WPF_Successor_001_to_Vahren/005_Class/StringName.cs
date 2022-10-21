@@ -26,8 +26,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public static readonly string windowSortieMenu = "windowSortieMenu";
         public static readonly string windowSortieMemberDecide = "windowSortieMemberDecide";
         public static readonly string windowBattleCommand = "windowBattleCommand";
+        public static readonly string buttonClassPowerAndCity = "buttonClassPowerAndCity";
 
-
+        
         //縦
         public static readonly string stackPanelResidentVertical = "stackPanelResidentVertical";
         //横

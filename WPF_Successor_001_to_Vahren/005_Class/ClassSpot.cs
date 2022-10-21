@@ -88,13 +88,30 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-
         #region ListMember
         private List<string> _listMember = new List<string>();
         public List<string> ListMember
         {
             get { return _listMember; }
             set { _listMember = value; }
+        }
+        #endregion
+
+        #region ListWanderingMonster
+        private List<(string,int)> _listWanderingMonster = new List<(string, int)>();
+        public List<(string, int)> ListWanderingMonster
+        {
+            get { return _listWanderingMonster; }
+            set { _listWanderingMonster = value; }
+        }
+        #endregion
+
+        #region ListMonster
+        private List<(string, int)> _listMonster = new List<(string, int)>();
+        public List<(string, int)> ListMonster
+        {
+            get { return _listMonster; }
+            set { _listMonster = value; }
         }
         #endregion
 

@@ -26,6 +26,17 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listClassUnit = value; }
         }
 
+        #region Spot
+        private ClassSpot _spot = new ClassSpot();
+
+        public ClassSpot Spot
+        {
+            get { return _spot; }
+            set { _spot = value; }
+        }
+
+        #endregion
+
         #endregion
     }
 }

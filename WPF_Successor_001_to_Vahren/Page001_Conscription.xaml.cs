@@ -148,7 +148,12 @@ namespace WPF_Successor_001_to_Vahren
         {
             // 駐在部隊トップバー
             {
-                var count = targetPowerAndCity.ClassSpot.UnitGroup.Count;
+                var count = mainWindow.ClassGameStatus.AllListSpot
+                    .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
+                    .First()
+                    .UnitGroup
+                    .Where(x => x.Spot.NameTag == targetPowerAndCity.ClassSpot.NameTag)
+                    .Count();
                 this.lblMemberCount.Content =
                     count.ToString() +
                     "/" +
@@ -159,7 +164,10 @@ namespace WPF_Successor_001_to_Vahren
                 StackPanel stackPanel = new StackPanel();
                 stackPanel.Orientation = Orientation.Vertical;
                 stackPanel.Name = StringName.stackPanelResidentVertical;
-                foreach (var item in targetPowerAndCity.ClassSpot.UnitGroup)
+                var tar = mainWindow.ClassGameStatus.AllListSpot
+                    .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
+                    .First();
+                foreach (var item in tar.UnitGroup.Where(x=>x.Spot.NameTag == targetPowerAndCity.ClassSpot.NameTag))
                 {
                     StackPanel stackPanelUnit = new StackPanel();
                     stackPanelUnit.Orientation = Orientation.Horizontal;

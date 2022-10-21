@@ -794,25 +794,26 @@ namespace WPF_Successor_001_to_Vahren
             var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
 
             //自ターンチェック
+            //CPUタイムに押されても平気なように
 
             ////隣接チェック
-            //国に関係なく抽出
-            List<string> strings = new List<string>();
+            //国に関係なく隣接都市名を抽出
+            List<string> NameRinsetuSpot = new List<string>();
             foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
             {
                 if (classPowerAndCity.ClassSpot.NameTag == item.Item1)
                 {
-                    strings.Add(item.Item2);
+                    NameRinsetuSpot.Add(item.Item2);
                     continue;
                 }
                 if (classPowerAndCity.ClassSpot.NameTag == item.Item2)
                 {
-                    strings.Add(item.Item1);
+                    NameRinsetuSpot.Add(item.Item1);
                 }
             }
-            //国で抽出
+            //国で隣接都市名を抽出
             List<ClassSpot> classSpots = new List<ClassSpot>();
-            foreach (var item in strings)
+            foreach (var item in NameRinsetuSpot)
             {
                 var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
                 if (ge == null)
@@ -860,6 +861,7 @@ namespace WPF_Successor_001_to_Vahren
         }
         /// <summary>
         /// 勢力選択画面での勢力情報表示
+        /// 決定ボタン押下時「ButtonSelectionPowerDecide_click」
         /// </summary>
         /// <param name="sender"></param>
         private void DisplayPowerSelection(object sender)
@@ -1225,6 +1227,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
             {
                 itemSpot.UnitGroup = new List<ClassHorizontalUnit>();
+                //メンバー配置
                 foreach (var itemMember in itemSpot.ListMember)
                 {
                     var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(itemMember)).FirstOrDefault();
@@ -1233,11 +1236,51 @@ namespace WPF_Successor_001_to_Vahren
                         continue;
                     }
                     var classUnit = new List<ClassUnit>();
-                    classUnit.Add(info);
+                    var deep = info.DeepCopy();
+                    deep.ID = this.ClassGameStatus.IDCount;
+                    this.ClassGameStatus.SetIDCount();
+                    classUnit.Add(deep);
 
-                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { FlagDisplay = true, ListClassUnit = classUnit });
+                    //データ構造のミス
+                    //ここでも以下のようにすべきだった
+                    //var classUnit = new List<ClassUnit>();
+                    //for (int i = 0; i < ListWanderingMonster.Item2; i++)
+                    //{
+                    //    var deep = info.DeepCopy();
+                    //    deep.ID = this.ClassGameStatus.IDCount;
+                    //    this.ClassGameStatus.SetIDCount();
+                    //    classUnit.Add(deep);
+                    //}
+
+                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
+                }
+                //中立配置
+                foreach (var ListWanderingMonster in itemSpot.ListWanderingMonster)
+                {
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(ListWanderingMonster.Item1)).FirstOrDefault();
+                    if (info == null)
+                    {
+                        continue;
+                    }
+                    var classUnit = new List<ClassUnit>();
+                    for (int i = 0; i < ListWanderingMonster.Item2; i++)
+                    {
+                        var deep = info.DeepCopy();
+                        deep.ID = this.ClassGameStatus.IDCount;
+                        this.ClassGameStatus.SetIDCount();
+                        classUnit.Add(deep);
+                    }
+
+                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
                 }
             }
+
+            //var ri = (Button)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.buttonClassPowerAndCity);
+            //if (ri == null)
+            //{
+            //    throw new Exception();
+            //}
+            //ri.Tag = new ClassPowerAndCity(this.ClassGameStatus.SelectionPowerAndCity.ClassPower, this.ClassGameStatus.SelectionPowerAndCity.ClassSpot);
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
@@ -2008,6 +2051,10 @@ namespace WPF_Successor_001_to_Vahren
             return result;
         }
 
+        /// <summary>
+        /// シナリオ選択ボタンを押す画面
+        /// 次処理は恐らく「ScenarioSelectionButton_click」
+        /// </summary>
         private void SetWindowMainMenu()
         {
             this.canvasMain.Children.Clear();
@@ -2168,7 +2215,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // Move window
 
-
+            //多分意味ない
             Thread.Sleep(10);
         }
 
@@ -2223,7 +2270,7 @@ namespace WPF_Successor_001_to_Vahren
                 // Map
                 {
                     string targetString = "map";
-                    // 大文字かっこも入るが、上でチェックしている
+                    // 大文字かっこも入るが、上でチェックしている←本当か？
                     // \sは空行や改行など
                     var mapMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase)
                                         .Matches(readAllLines);
@@ -2362,6 +2409,7 @@ namespace WPF_Successor_001_to_Vahren
         }
         /// <summary>
         /// シナリオ選択画面から移行する戦略マップ表示画面
+        /// 次処理は恐らく「ButtonSelectionCity_click」
         /// </summary>
         private void SetMapStrategy()
         {
@@ -2499,6 +2547,7 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Children.Add(tbDate1);
 
                         Button button = new Button();
+                        button.Name = StringName.buttonClassPowerAndCity + item.index;
                         button.HorizontalAlignment = HorizontalAlignment.Left;
                         button.VerticalAlignment = VerticalAlignment.Top;
                         button.Content = img;
@@ -2519,7 +2568,8 @@ namespace WPF_Successor_001_to_Vahren
                                 if (item3 == item.value.NameTag)
                                 {
                                     // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
-                                    button.Tag = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
+                                    var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
+                                    button.Tag = classPowerAndCity;
                                     //ついでに、スポットの属する勢力名を設定
                                     var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
                                     if (ge != null)
@@ -3481,6 +3531,7 @@ namespace WPF_Successor_001_to_Vahren
                 value = String.Join(Environment.NewLine, line);
             }
 
+            //NewFormatSpot
             {
                 var nameTag =
                     new Regex(GetPatTag("NewFormatSpot"), RegexOptions.IgnoreCase)
@@ -3492,6 +3543,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classSpot.NameTag = first.Value.Replace(Environment.NewLine, "");
             }
+            //name
             {
                 var name =
                     new Regex(@"(?<=name[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
@@ -3503,6 +3555,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classSpot.Name = first.Value.Replace(Environment.NewLine, "");
             }
+            //image
             {
                 var image =
                     new Regex(@"(?<=image[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
@@ -3520,6 +3573,7 @@ namespace WPF_Successor_001_to_Vahren
                 string path = System.IO.Path.Combine(strings.ToArray());
                 classSpot.ImagePath = path;
             }
+            //x
             {
                 var x =
                     new Regex(@"(?<=x[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
@@ -3531,6 +3585,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classSpot.X = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
             }
+            //y
             {
                 var y =
                     new Regex(@"(?<=y[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
@@ -3542,6 +3597,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classSpot.Y = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
             }
+            //member
             {
                 var member =
                     new Regex(GetPatComma("member"), RegexOptions.IgnoreCase)
@@ -3556,6 +3612,7 @@ namespace WPF_Successor_001_to_Vahren
                     classSpot.ListMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
                 }
             }
+            //map
             {
                 var map =
                     new Regex(@"(?<=map[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
@@ -3568,6 +3625,48 @@ namespace WPF_Successor_001_to_Vahren
                 else
                 {
                     classSpot.Map = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
+            //wanderingMonster
+            {
+                var wanderingMonster =
+                    new Regex(GetPat("wanderingMonster"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(wanderingMonster);
+                if (first == null)
+                {
+                    classSpot.ListWanderingMonster = new List<(string, int)>();
+                }
+                else
+                {
+                    List<(string, int)> values = new List<(string, int)>();
+                    foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(",").ToList())
+                    {
+                        var cutResult = item.Split("*").ToList();
+                        values.Add(new(cutResult[0], int.Parse(cutResult[1])));
+                    }
+                    classSpot.ListWanderingMonster = values;
+                }
+            }
+            //monster
+            {
+                var monster =
+                    new Regex(GetPat("monster"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(monster);
+                if (first == null)
+                {
+                    classSpot.ListMonster = new List<(string, int)>();
+                }
+                else
+                {
+                    List<(string, int)> values = new List<(string, int)>();
+                    foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(",").ToList())
+                    {
+                        var cutResult = item.Split("*").ToList();
+                        values.Add(new(cutResult[0], int.Parse(cutResult[1])));
+                    }
+                    classSpot.ListMonster = values;
                 }
             }
 
@@ -4733,8 +4832,9 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            classUnit.ID = this.ClassGameStatus.IDCount;
-            this.ClassGameStatus.SetIDCount();
+            //ここですべきでない
+            //classUnit.ID = this.ClassGameStatus.IDCount;
+            //this.ClassGameStatus.SetIDCount();
             return classUnit;
         }
 
@@ -4760,6 +4860,13 @@ namespace WPF_Successor_001_to_Vahren
             return scenarioName.FirstOrDefault();
         }
 
+        /// <summary>
+        /// 通常のパターン
+        /// name = "test";
+        /// など
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private string GetPat(string name)
         {
             string a = @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\"";))";
@@ -4767,13 +4874,15 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         /// <summary>
-        /// これいる？
+        /// これいる？上で良い気がする
+        /// member = "aaa,bbb,ccc"
+        /// など
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         private string GetPatComma(string name)
         {
-            return @"(?<=" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))";
+            return @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))";
         }
 
         private string GetPatTag(string name)
@@ -5147,7 +5256,7 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.SortieUnitGroup)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x=>x.FlagMoving == false))
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {
                         if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
                         {

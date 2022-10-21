@@ -37,6 +37,11 @@ NewFormatSpot spot0002
 	x = "2700";
 	y = "600";
 	map = "wefwefwefwefw";
+
+	#滅亡等で中立になった時のユニット
+	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
+	#中立時初期ユニット
+	monster = "ghostFire*5,ghostFire*5,ghostFire*5";
 }
 
 NewFormatSpot spot0003
