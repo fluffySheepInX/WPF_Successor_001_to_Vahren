@@ -786,6 +786,11 @@ namespace WPF_Successor_001_to_Vahren
         }
         private void ButtonSelectionCity_RightKeyDown(object sender, EventArgs e)
         {
+            if (this.NowSituation == Situation.SelectGroup)
+            {
+                return; //勢力選択中は出撃しない。
+            }
+
             var cast = (Button)sender;
             if (cast.Tag is not ClassPowerAndCity)
             {
@@ -872,6 +877,12 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+            if (classPowerAndCity.ClassPower.MasterTag == string.Empty)
+            {
+                return; //選択領地のマスター名が空なら、勢力情報画面を表示しない。
+            }
+
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
             if (ri == null)
             {
@@ -898,7 +909,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
 
             var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(classPowerAndCity.ClassPower.MasterTag)).FirstOrDefault();
             if (result != null)
