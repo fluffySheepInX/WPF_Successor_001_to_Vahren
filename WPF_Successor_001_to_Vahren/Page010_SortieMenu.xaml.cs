@@ -259,6 +259,7 @@ namespace WPF_Successor_001_to_Vahren
                         buttonSelect.Content = "←";
                         buttonSelect.FontSize += 10;
                         buttonSelect.Tag = item;
+                        //大変ぽいので後回し
                         //buttonSelect.Click += btnUnitsSelect_Click;
                         stackPanelUnit.Children.Add(buttonSelect);
                     }
@@ -382,12 +383,18 @@ namespace WPF_Successor_001_to_Vahren
                     foreach (var itemUnitGroup in item.UnitGroup)
                     {
                         itemUnitGroup.Spot = convSpots.ClassSpot;
+                        itemUnitGroup.FlagDisplay = true;
                         //unit移動
                         aa.UnitGroup.Add(itemUnitGroup);
                     }
-                    //これでは出撃してないユニットも全部消えてしまう
+                    //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
                     item.UnitGroup.Clear();
                 }
+
+                mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+
                 //出撃ウィンドウを消す
                 {
                     var ri = (Frame)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.windowSortieMenu);

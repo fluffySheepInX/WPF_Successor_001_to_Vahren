@@ -1639,244 +1639,246 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasMain.Children.Add(backCanvas);
             }
 
-            ////ユニット
-            //中点
-            decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count / 2);
-            //線の端
-            Point hidariTakasa = new Point(0, canvas.Height / 2);
-            Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
-            //ユニットの端の位置を算出
-            if (this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count % 2 == 0)
+            ////自軍ユニット
             {
-                ////偶数
-                //これは正しくないが、案が思い浮かばない
-                hidariTakasa.X = (migiTakasa.X / 2) - ((double)countMeHalf * 32);
-                migiTakasa.X = (migiTakasa.X / 2) + ((double)countMeHalf * 32);
-
-                hidariTakasa.Y = (migiTakasa.Y * 0.75) - ((double)countMeHalf * (takasaMapTip / 2));
-                migiTakasa.Y = (migiTakasa.Y * 0.75) + ((double)countMeHalf * (takasaMapTip / 2));
-            }
-            else
-            {
-                ////奇数
-                //これは正しくないが、案が思い浮かばない
-                hidariTakasa.X = (migiTakasa.X / 2) - (((double)countMeHalf + 1) * 32);
-                migiTakasa.X = (migiTakasa.X / 2) + (((double)countMeHalf + 1) * 32);
-
-                hidariTakasa.Y = (migiTakasa.Y * 0.75) - (((double)countMeHalf + 1) * (takasaMapTip / 2));
-                migiTakasa.Y = (migiTakasa.Y * 0.75) + (((double)countMeHalf + 1) * (takasaMapTip / 2));
-            }
-
-            //自軍前衛
-            foreach (var item in this.ClassGameStatus
-                        .ClassBattleUnits.SortieUnitGroup
-                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
-            {
-                //比率
-                Point hiritu = new Point()
+                //中点
+                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count / 2);
+                //線の端
+                Point hidariTakasa = new Point(0, canvas.Height / 2);
+                Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
+                //ユニットの端の位置を算出
+                if (this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count % 2 == 0)
                 {
-                    X = item.ListClassUnit.Count - 1,
-                    Y = 0
-                };
+                    ////偶数
+                    //これは正しくないが、案が思い浮かばない
+                    hidariTakasa.X = (migiTakasa.X / 2) - ((double)countMeHalf * 32);
+                    migiTakasa.X = (migiTakasa.X / 2) + ((double)countMeHalf * 32);
 
-                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
-                {
-                    List<string> strings = new List<string>();
-                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("040_ChipImage");
-                    strings.Add(itemListClassUnit.value.Image);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-
-                    var bi = new BitmapImage(new Uri(path));
-                    ImageBrush image = new ImageBrush();
-                    image.Stretch = Stretch.Fill;
-                    image.ImageSource = bi;
-                    Button button = new Button();
-                    button.Background = image;
-                    button.Width = 32;
-                    button.Height = 32;
-                    Canvas canvasChip = new Canvas();
-                    //固有の情報
-                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
-                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
-                    canvasChip.Children.Add(button);
-                    canvasChip.Width = 32;
-                    canvasChip.Height = 32;
-                    //内分点の公式
-                    double left = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    double top = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    if (item.ListClassUnit.Count == 1)
-                    {
-                        left = (hidariTakasa.X + migiTakasa.X) / 2;
-                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
-                    }
-                    canvasChip.Margin = new Thickness()
-                    {
-                        Left = left,
-                        Top = top - 96
-                    };
-                    itemListClassUnit.value.NowPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
-                    };
-                    itemListClassUnit.value.OrderPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
-                    };
-
-                    Canvas.SetZIndex(canvasChip, 99);
-                    canvas.Children.Add(canvasChip);
+                    hidariTakasa.Y = (migiTakasa.Y * 0.75) - ((double)countMeHalf * (takasaMapTip / 2));
+                    migiTakasa.Y = (migiTakasa.Y * 0.75) + ((double)countMeHalf * (takasaMapTip / 2));
                 }
-            }
-            //自軍中衛
-            foreach (var item in this.ClassGameStatus
-                        .ClassBattleUnits.SortieUnitGroup
-                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
-            {
-                //比率
-                Point hiritu = new Point()
+                else
                 {
-                    X = item.ListClassUnit.Count - 1,
-                    Y = 0
-                };
+                    ////奇数
+                    //これは正しくないが、案が思い浮かばない
+                    hidariTakasa.X = (migiTakasa.X / 2) - (((double)countMeHalf + 1) * 32);
+                    migiTakasa.X = (migiTakasa.X / 2) + (((double)countMeHalf + 1) * 32);
 
-                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
-                {
-                    List<string> strings = new List<string>();
-                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("040_ChipImage");
-                    strings.Add(itemListClassUnit.value.Image);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-
-                    var bi = new BitmapImage(new Uri(path));
-                    ImageBrush image = new ImageBrush();
-                    image.Stretch = Stretch.Fill;
-                    image.ImageSource = bi;
-                    Button button = new Button();
-                    button.Background = image;
-                    button.Width = 32;
-                    button.Height = 32;
-
-                    Canvas canvasChip = new Canvas();
-                    //固有の情報
-                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
-                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
-                    canvasChip.Children.Add(button);
-                    canvasChip.Width = 32;
-                    canvasChip.Height = 32;
-                    //内分点の公式
-                    double left = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    double top = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    if (item.ListClassUnit.Count == 1)
-                    {
-                        left = (hidariTakasa.X + migiTakasa.X) / 2;
-                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
-                    }
-                    canvasChip.Margin = new Thickness()
-                    {
-                        Left = left,
-                        Top = top
-                    };
-                    itemListClassUnit.value.NowPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
-                    };
-                    itemListClassUnit.value.OrderPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
-                    };
-
-                    Canvas.SetZIndex(canvasChip, 99);
-                    canvas.Children.Add(canvasChip);
+                    hidariTakasa.Y = (migiTakasa.Y * 0.75) - (((double)countMeHalf + 1) * (takasaMapTip / 2));
+                    migiTakasa.Y = (migiTakasa.Y * 0.75) + (((double)countMeHalf + 1) * (takasaMapTip / 2));
                 }
-            }
-            //自軍後衛
-            foreach (var item in this.ClassGameStatus
-                        .ClassBattleUnits.SortieUnitGroup
-                        .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
-            {
-                //比率
-                Point hiritu = new Point()
+
+                //自軍前衛
+                foreach (var item in this.ClassGameStatus
+                            .ClassBattleUnits.SortieUnitGroup
+                            .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
                 {
-                    X = item.ListClassUnit.Count - 1,
-                    Y = 0
-                };
-
-                foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
-                {
-                    List<string> strings = new List<string>();
-                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("040_ChipImage");
-                    strings.Add(itemListClassUnit.value.Image);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-
-                    var bi = new BitmapImage(new Uri(path));
-                    ImageBrush image = new ImageBrush();
-                    image.Stretch = Stretch.Fill;
-                    image.ImageSource = bi;
-                    Button button = new Button();
-                    button.Background = image;
-                    button.Width = 32;
-                    button.Height = 32;
-
-                    Canvas canvasChip = new Canvas();
-                    //固有の情報
-                    canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
-                    canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                    canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
-                    canvasChip.Children.Add(button);
-                    canvasChip.Width = 32;
-                    canvasChip.Height = 32;
-                    //内分点の公式
-                    double left = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    double top = (
-                                    ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
-                                    )
-                                    / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
-                    if (item.ListClassUnit.Count == 1)
+                    //比率
+                    Point hiritu = new Point()
                     {
-                        left = (hidariTakasa.X + migiTakasa.X) / 2;
-                        top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                        X = item.ListClassUnit.Count - 1,
+                        Y = 0
+                    };
+
+                    foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                    {
+                        List<string> strings = new List<string>();
+                        strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                        strings.Add("040_ChipImage");
+                        strings.Add(itemListClassUnit.value.Image);
+                        string path = System.IO.Path.Combine(strings.ToArray());
+
+                        var bi = new BitmapImage(new Uri(path));
+                        ImageBrush image = new ImageBrush();
+                        image.Stretch = Stretch.Fill;
+                        image.ImageSource = bi;
+                        Button button = new Button();
+                        button.Background = image;
+                        button.Width = 32;
+                        button.Height = 32;
+                        Canvas canvasChip = new Canvas();
+                        //固有の情報
+                        canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                        canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        canvasChip.Children.Add(button);
+                        canvasChip.Width = 32;
+                        canvasChip.Height = 32;
+                        //内分点の公式
+                        double left = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        double top = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        if (item.ListClassUnit.Count == 1)
+                        {
+                            left = (hidariTakasa.X + migiTakasa.X) / 2;
+                            top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                        }
+                        canvasChip.Margin = new Thickness()
+                        {
+                            Left = left,
+                            Top = top - 192
+                        };
+                        itemListClassUnit.value.NowPosi = new Point()
+                        {
+                            X = left,
+                            Y = top - 192
+                        };
+                        itemListClassUnit.value.OrderPosi = new Point()
+                        {
+                            X = left,
+                            Y = top - 192
+                        };
+
+                        Canvas.SetZIndex(canvasChip, 99);
+                        canvas.Children.Add(canvasChip);
                     }
-                    canvasChip.Margin = new Thickness()
+                }
+                //自軍中衛
+                foreach (var item in this.ClassGameStatus
+                            .ClassBattleUnits.SortieUnitGroup
+                            .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
+                {
+                    //比率
+                    Point hiritu = new Point()
                     {
-                        Left = left,
-                        Top = top + 96
-                    };
-                    itemListClassUnit.value.NowPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
-                    };
-                    itemListClassUnit.value.OrderPosi = new Point()
-                    {
-                        X = left,
-                        Y = top
+                        X = item.ListClassUnit.Count - 1,
+                        Y = 0
                     };
 
-                    Canvas.SetZIndex(canvasChip, 99);
-                    canvas.Children.Add(canvasChip);
+                    foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                    {
+                        List<string> strings = new List<string>();
+                        strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                        strings.Add("040_ChipImage");
+                        strings.Add(itemListClassUnit.value.Image);
+                        string path = System.IO.Path.Combine(strings.ToArray());
+
+                        var bi = new BitmapImage(new Uri(path));
+                        ImageBrush image = new ImageBrush();
+                        image.Stretch = Stretch.Fill;
+                        image.ImageSource = bi;
+                        Button button = new Button();
+                        button.Background = image;
+                        button.Width = 32;
+                        button.Height = 32;
+
+                        Canvas canvasChip = new Canvas();
+                        //固有の情報
+                        canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                        canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        canvasChip.Children.Add(button);
+                        canvasChip.Width = 32;
+                        canvasChip.Height = 32;
+                        //内分点の公式
+                        double left = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        double top = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        if (item.ListClassUnit.Count == 1)
+                        {
+                            left = (hidariTakasa.X + migiTakasa.X) / 2;
+                            top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                        }
+                        canvasChip.Margin = new Thickness()
+                        {
+                            Left = left,
+                            Top = top - 86
+                        };
+                        itemListClassUnit.value.NowPosi = new Point()
+                        {
+                            X = left,
+                            Y = top - 86
+                        };
+                        itemListClassUnit.value.OrderPosi = new Point()
+                        {
+                            X = left,
+                            Y = top - 86
+                        };
+
+                        Canvas.SetZIndex(canvasChip, 99);
+                        canvas.Children.Add(canvasChip);
+                    }
+                }
+                //自軍後衛
+                foreach (var item in this.ClassGameStatus
+                            .ClassBattleUnits.SortieUnitGroup
+                            .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
+                {
+                    //比率
+                    Point hiritu = new Point()
+                    {
+                        X = item.ListClassUnit.Count - 1,
+                        Y = 0
+                    };
+
+                    foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
+                    {
+                        List<string> strings = new List<string>();
+                        strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                        strings.Add("040_ChipImage");
+                        strings.Add(itemListClassUnit.value.Image);
+                        string path = System.IO.Path.Combine(strings.ToArray());
+
+                        var bi = new BitmapImage(new Uri(path));
+                        ImageBrush image = new ImageBrush();
+                        image.Stretch = Stretch.Fill;
+                        image.ImageSource = bi;
+                        Button button = new Button();
+                        button.Background = image;
+                        button.Width = 32;
+                        button.Height = 32;
+
+                        Canvas canvasChip = new Canvas();
+                        //固有の情報
+                        canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
+                        canvasChip.Tag = itemListClassUnit.value.ID.ToString();
+                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        canvasChip.Children.Add(button);
+                        canvasChip.Width = 32;
+                        canvasChip.Height = 32;
+                        //内分点の公式
+                        double left = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        double top = (
+                                        ((hiritu.X - itemListClassUnit.index) * hidariTakasa.Y) + (itemListClassUnit.index * migiTakasa.Y)
+                                        )
+                                        / (itemListClassUnit.index + (hiritu.X - itemListClassUnit.index));
+                        if (item.ListClassUnit.Count == 1)
+                        {
+                            left = (hidariTakasa.X + migiTakasa.X) / 2;
+                            top = (hidariTakasa.Y + migiTakasa.Y) / 2;
+                        }
+                        canvasChip.Margin = new Thickness()
+                        {
+                            Left = left,
+                            Top = top
+                        };
+                        itemListClassUnit.value.NowPosi = new Point()
+                        {
+                            X = left,
+                            Y = top
+                        };
+                        itemListClassUnit.value.OrderPosi = new Point()
+                        {
+                            X = left,
+                            Y = top
+                        };
+
+                        Canvas.SetZIndex(canvasChip, 99);
+                        canvas.Children.Add(canvasChip);
+                    }
                 }
             }
 
@@ -5320,11 +5322,19 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Application.Current.Dispatcher.Invoke((Action)(() =>
                         {
-                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "Chip" + classUnit.ID.ToString());
-                            if (re2 != null)
+                            try
                             {
-                                re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "Chip" + classUnit.ID.ToString());
+                                if (re2 != null)
+                                {
+                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                //移動中にゲームを落とすとエラーになるので暫定的に
+                                //throw;
                             }
                         }));
                     });

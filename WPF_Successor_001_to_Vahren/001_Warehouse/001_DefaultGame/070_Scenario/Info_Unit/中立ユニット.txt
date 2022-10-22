@@ -2,7 +2,7 @@
 {
 	name = "鬼火";
 	race = "human";
-	image = "chipGene001.png";
+	image = "ghostFire.png";
 	friend = "LineInfantryM14";
 	merce = "LineInfantryM14";
 	staff = "LineInfantryM14";

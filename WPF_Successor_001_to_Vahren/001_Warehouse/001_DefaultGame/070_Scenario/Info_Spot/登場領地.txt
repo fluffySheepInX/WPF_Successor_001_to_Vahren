@@ -36,7 +36,7 @@ NewFormatSpot spot0002
 	image = "099_SNOW2.png";
 	x = "2700";
 	y = "600";
-	map = "wefwefwefwefw";
+	map = "sabaku";
 
 	#滅亡等で中立になった時のユニット
 	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
