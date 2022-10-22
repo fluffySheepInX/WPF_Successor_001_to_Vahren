@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -296,6 +297,7 @@ namespace WPF_Successor_001_to_Vahren
 
         private ClassConfigGameTitle _classConfigGameTitle = new ClassConfigGameTitle();
 
+        private const double constantInterval = 16.6;
 
         #endregion
 
@@ -360,9 +362,12 @@ namespace WPF_Successor_001_to_Vahren
 
                 // タイマー60FPSで始動
                 DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Background);
-                //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
                 timer.Interval = TimeSpan.FromSeconds((double)1 / 60);
-                timer.Tick += (x, s) => { TimerAction60FPS(); };
+                timer.Tick += (x, s) =>
+                {
+                    TimerAction60FPS();
+                    KeepInterval(timer);
+                };
                 this.Closing += (x, s) => { timer.Stop(); };
                 timer.Start();
 
@@ -378,6 +383,17 @@ namespace WPF_Successor_001_to_Vahren
                 MessageBox.Show("Error.Number is 2:" + Environment.NewLine + err.Message);
                 throw;
             }
+        }
+
+        private static void KeepInterval(DispatcherTimer timer)
+        {
+            var now = DateTime.Now;
+            var nowMilliseconds = now.TimeOfDay.TotalMilliseconds;
+            // 16.6から、例えば24.9/16.6の余りである8.3を引くことで、
+            // 次の実行が16.6から8.3となり結果的に1秒間60回実行が保たれる
+            var timerInterval = constantInterval -
+                                nowMilliseconds % constantInterval;
+            timer.Interval = TimeSpan.FromMilliseconds(timerInterval);
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1293,10 +1309,13 @@ namespace WPF_Successor_001_to_Vahren
             //ri.Tag = new ClassPowerAndCity(this.ClassGameStatus.SelectionPowerAndCity.ClassPower, this.ClassGameStatus.SelectionPowerAndCity.ClassSpot);
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
-            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeInDecidePower(); };
-            timerAfterFadeIn.Start();
+            this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            this.timerAfterFadeIn.Tick += (x, s) => 
+            { 
+                TimerAction60FPSAfterFadeInDecidePower();
+                KeepInterval(this.timerAfterFadeIn);
+            };
+            this.timerAfterFadeIn.Start();
 
             this.FadeIn = true;
         }
@@ -1905,11 +1924,18 @@ namespace WPF_Successor_001_to_Vahren
 
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
-            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            timerAfterFadeIn.Tick -= (x, s) => { TimerAction60FPSAfterFadeInDecidePower(); };
-            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSAfterFadeInBattleStart(); };
-            timerAfterFadeIn.Start();
+            this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            this.timerAfterFadeIn.Tick -= (x, s) => 
+            { 
+                TimerAction60FPSAfterFadeInDecidePower();
+                KeepInterval(this.timerAfterFadeIn);
+            };
+            this.timerAfterFadeIn.Tick += (x, s) => 
+            { 
+                TimerAction60FPSAfterFadeInBattleStart();
+                KeepInterval(this.timerAfterFadeIn);
+            };
+            this.timerAfterFadeIn.Start();
         }
 
         private void SetWindowTitle(int targetNumber)
@@ -5195,11 +5221,18 @@ namespace WPF_Successor_001_to_Vahren
 
             //開戦スレッド実行
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            //timer.Interval = new TimeSpan(0, 0, 0, 60 / 1000);
-            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            timerAfterFadeIn.Tick -= (x, s) => { TimerAction60FPSAfterFadeInBattleStart(); };
-            timerAfterFadeIn.Tick += (x, s) => { TimerAction60FPSBattle(); };
-            timerAfterFadeIn.Start();
+            this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            this.timerAfterFadeIn.Tick -= (x, s) => 
+            { 
+                TimerAction60FPSAfterFadeInBattleStart();
+                KeepInterval(this.timerAfterFadeIn);
+            };
+            this.timerAfterFadeIn.Tick += (x, s) => 
+            { 
+                TimerAction60FPSBattle();
+                KeepInterval(this.timerAfterFadeIn);
+            };
+            this.timerAfterFadeIn.Start();
 
             //工事中
             ////スキルスレッド開始
