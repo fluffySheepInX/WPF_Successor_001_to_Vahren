@@ -419,6 +419,12 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
             }
 
+            //防衛ユニット設定
+            foreach (var item in convSpots.ClassSpot.UnitGroup)
+            {
+                mainWindow.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Add(item);
+            }
+
             mainWindow.FadeOut = true;
 
             mainWindow.delegateBattleMap = mainWindow.SetBattleMap;
