@@ -19,11 +19,19 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region FKey
-        private (string,int) fkey;
-        public (string,int) FKey
+        private (string, int) fkey;
+        public (string, int) FKey
         {
             get { return fkey; }
             set { fkey = value; }
+        }
+        #endregion
+        #region SortKey
+        private int sortKey;
+        public int SortKey
+        {
+            get { return sortKey; }
+            set { sortKey = value; }
         }
         #endregion
         #region Func

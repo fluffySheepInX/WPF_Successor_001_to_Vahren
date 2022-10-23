@@ -139,7 +139,7 @@ NewFormatUnit JothianRoarcy
 	defense = "100";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "5";
+	speed   = "25";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";

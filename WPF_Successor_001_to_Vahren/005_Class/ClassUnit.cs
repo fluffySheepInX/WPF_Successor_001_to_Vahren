@@ -391,16 +391,25 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _escape_range = value; }
         }
         #endregion
-        #region Skill
-        private List<string> skill = new List<string>();
+        #region SkillName
+        private List<string> skillName = new List<string>();
 
-        public List<string> Skill
+        public List<string> SkillName
+        {
+            get { return skillName; }
+            set { skillName = value; }
+        }
+        #endregion
+        #region Skill
+        private List<ClassSkill> skill = new List<ClassSkill>();
+
+        public List<ClassSkill> Skill
         {
             get { return skill; }
             set { skill = value; }
         }
-
         #endregion
+
 
         #region FlagMove
         private bool flagMove;
@@ -446,5 +455,51 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { vecMove = value; }
         }
         #endregion
+
+        #region FlagMoveSkill
+        private bool flagMoveSkill;
+
+        public bool FlagMoveSkill
+        {
+            get { return flagMoveSkill; }
+            set { flagMoveSkill = value; }
+        }
+
+        #endregion
+        #region FlagMovingSkill
+        private bool flagMovingSkill;
+        public bool FlagMovingSkill
+        {
+            get { return flagMovingSkill; }
+            set { flagMovingSkill = value; }
+        }
+        #endregion
+        #region NowPosi
+        private Point nowPosiSkill;
+
+        public Point NowPosiSkill
+        {
+            get { return nowPosiSkill; }
+            set { nowPosiSkill = value; }
+        }
+        #endregion
+        #region OrderPosiSkill
+        private Point orderPosiSkill;
+
+        public Point OrderPosiSkill
+        {
+            get { return orderPosiSkill; }
+            set { orderPosiSkill = value; }
+        }
+        #endregion
+        #region VecMoveSkill
+        private Point vecMoveSkill;
+        public Point VecMoveSkill
+        {
+            get { return vecMoveSkill; }
+            set { vecMoveSkill = value; }
+        }
+        #endregion
+
     }
 }

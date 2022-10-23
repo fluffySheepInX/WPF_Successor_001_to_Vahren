@@ -17,6 +17,7 @@
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\001_TitleImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\010_EventImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\020_BattleUnitImage\" />
+    <Folder Include="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\" />
   </ItemGroup>
 
   <ItemGroup>

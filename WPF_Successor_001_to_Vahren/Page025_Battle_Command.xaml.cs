@@ -45,7 +45,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var item in mainWindow.ClassGameStatus
             .ClassBattleUnits.SortieUnitGroup)
             {
-                foreach (var itemGroupBy in item.ListClassUnit.GroupBy(x => x.Skill))
+                foreach (var itemGroupBy in item.ListClassUnit.GroupBy(x => x.SkillName))
                 {
                     list.AddRange(itemGroupBy.Key.ToList());
                 }

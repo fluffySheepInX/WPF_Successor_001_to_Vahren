@@ -3331,6 +3331,23 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 // Skill 終わり
 
+                // unitのスキル名からスキルクラスを探し、unitに格納
+                foreach (var itemUnit in this.ClassGameStatus.ListUnit)
+                {
+                    foreach (var itemSkillName in itemUnit.SkillName)
+                    {
+                        var x = this.ClassGameStatus.ListSkill
+                                .Where(x => x.NameTag == itemSkillName)
+                                .FirstOrDefault();
+                        if (x == null)
+                        {
+                            continue;
+                        }
+
+                        itemUnit.Skill.Add(x);
+                    }
+                }
+
                 // Event
                 {
                     string targetString = "event";
@@ -3418,6 +3435,22 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     var re = first.Value.Replace(Environment.NewLine, "").Split("*").ToList();
                     classSkill.FKey = (re[0], int.Parse(re[1]));
+                }
+            }
+            //sortkey
+            {
+                var sortkey =
+                    new Regex(GetPat("sortkey"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(sortkey);
+                if (first == null)
+                {
+                    classSkill.SortKey = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.SortKey = int.Parse(re);
                 }
             }
             //func
@@ -5144,11 +5177,11 @@ namespace WPF_Successor_001_to_Vahren
                 var first = CheckMatchElement(skill);
                 if (first == null)
                 {
-                    classUnit.Skill = new List<string>();
+                    classUnit.SkillName = new List<string>();
                 }
                 else
                 {
-                    classUnit.Skill = first.Value
+                    classUnit.SkillName = first.Value
                                         .Replace(Environment.NewLine, "")
                                         .Replace(" ", "")
                                         .Split(",").ToList();
@@ -5482,7 +5515,7 @@ namespace WPF_Successor_001_to_Vahren
 
             while (flag1 == true)
             {
-                Thread.Sleep(5);
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
                 break;
                 await Task.Run(() =>
                 {
@@ -5520,10 +5553,13 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Start();
 
             //工事中
-            ////スキルスレッド開始
-            //var t = Task.Run(TaskBattleSkill);
-            //移動スレッド開始
+            //スキルスレッド開始
+            var t = Task.Run(TaskBattleSkill);
+            ////移動スレッド開始
+            //出撃ユニット
             var tt = Task.Run(TaskBattleMoveAsync);
+            //防衛ユニット
+            var tDef = Task.Run(TaskBattleMoveDefAsync);
 
         }
 
@@ -5571,7 +5607,82 @@ namespace WPF_Successor_001_to_Vahren
 
         private void TaskBattleSkill()
         {
+            while (true)
+            {
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
 
+                //出撃ユニット
+                foreach (var item in this.ClassGameStatus
+                .ClassBattleUnits.SortieUnitGroup)
+                {
+                    foreach (var itemGroupBy in item.ListClassUnit)
+                    {
+                        //スキル優先順位確認
+                        foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
+                        {
+                            //スキル射程範囲確認
+                            var xA = itemGroupBy.NowPosi;
+                            foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                            {
+                                foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
+                                {
+                                    //三平方の定理から射程内か確認
+
+                                    var xB = itemDefUnitList.NowPosi;
+                                    double teihen = xA.X - xB.X;
+                                    double takasa = xA.Y - xB.Y;
+                                    double syahen = (teihen * teihen) + (takasa * takasa);
+                                    double kyori = Math.Sqrt(syahen);
+
+                                    double xAHankei = (32 / 2) + itemSkill.Range;
+                                    double xBHankei = 32 / 2;
+
+                                    bool check = true;
+                                    if (kyori > (xAHankei + xBHankei))
+                                    {
+                                        check = false;
+                                    }
+                                    //チェック
+                                    if (check == false)
+                                    {
+                                        continue;
+                                    }
+
+                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosi.X, Y = itemGroupBy.NowPosi.Y };
+                                    var calc0 = ClassCalcVec.ReturnVecDistance(
+                                                    from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
+                                                    to: itemDefUnitList.NowPosi
+                                                    );
+                                    itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
+                                    itemGroupBy.FlagMovingSkill = true;
+
+                                    //Image出す
+                                    {
+                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        {
+                                            Canvas canvas = new Canvas();
+                                            canvas.Background = Brushes.Red;
+                                            canvas.Height = itemSkill.H;
+                                            canvas.Width = itemSkill.W;
+                                            canvas.Margin = new Thickness()
+                                            {
+                                                Left = itemGroupBy.NowPosi.X,
+                                                Top = itemGroupBy.NowPosi.Y
+                                            };
+                                            canvas.Name = "skillEffect" + itemGroupBy.ID;
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                            re1.Children.Add(canvas);
+                                        }));
+                                    }
+
+                                    //スキル発動スレッド開始
+                                    var t = Task.Run(() => TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         private Task TaskBattleMoveAsync()
         {
@@ -5587,7 +5698,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
                         {
-                            //スキルスレッド開始
+                            //移動スレッド開始
                             var calc0 = ClassCalcVec.ReturnVecDistance(
                                 from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
                                 to: itemGroupBy.OrderPosi
@@ -5600,6 +5711,35 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
+        private Task TaskBattleMoveDefAsync()
+        {
+            while (true)
+            {
+                //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+
+                foreach (var item in this.ClassGameStatus
+                .ClassBattleUnits.DefUnitGroup)
+                {
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
+                    {
+                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
+                        {
+                            //移動スレッド開始
+                            var calc0 = ClassCalcVec.ReturnVecDistance(
+                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
+                                to: itemGroupBy.OrderPosi
+                                );
+                            itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                            itemGroupBy.FlagMoving = true;
+                            var t = Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy));
+                        }
+                    }
+                }
+            }
+        }
+
+
         private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit)
         {
             //移動し過ぎを防止
@@ -5649,6 +5789,70 @@ namespace WPF_Successor_001_to_Vahren
                             catch (Exception)
                             {
                                 //移動中にゲームを落とすとエラーになるので暫定的に
+                                //throw;
+                            }
+                        }));
+                    });
+                }
+
+                counter--;
+
+                if (counter <= 0)
+                {
+                    throw new Exception("ErrorNumber:000001");
+                }
+
+            }
+        }
+
+        private async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill)
+        {
+            //移動し過ぎを防止
+            int counter = 100;
+
+            while (true)
+            {
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+
+                if (classUnit.NowPosiSkill.X < classUnit.OrderPosiSkill.X + 5
+                    && classUnit.NowPosiSkill.X > classUnit.OrderPosiSkill.X - 5
+                    && classUnit.NowPosiSkill.Y < classUnit.OrderPosiSkill.Y + 5
+                    && classUnit.NowPosiSkill.Y > classUnit.OrderPosiSkill.Y - 5)
+                {
+                    classUnit.OrderPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X,
+                        Y = classUnit.NowPosiSkill.Y
+                    };
+                    return;
+                }
+                else
+                {
+                    if (classUnit.VecMoveSkill.X == 0 && classUnit.VecMoveSkill.Y == 0)
+                    {
+                        classUnit.VecMoveSkill = new Point() { X = 0.5, Y = 0.5 };
+                    }
+                    classUnit.NowPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * classSkill.Speed),
+                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * classSkill.Speed)
+                    };
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            try
+                            {
+                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                                if (re2 != null)
+                                {
+                                    re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                //攻撃中にゲームを落とすとエラーになるので暫定的に
                                 //throw;
                             }
                         }));
