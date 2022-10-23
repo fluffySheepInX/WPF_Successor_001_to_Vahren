@@ -330,8 +330,12 @@ namespace WPF_Successor_001_to_Vahren
             try
             {
                 MessageBox.Show("ゲームエンジンとしてこういうことが出来ますよというプレゼンであり、" + System.Environment.NewLine + "デフォシナではないことご了承下さい");
-                //this.WindowStyle = WindowStyle.None;
+                // 初期状態でフルスクリーンにする。F11キーを押すとウインドウ表示になる。
+                this.WindowStyle = WindowStyle.None;
                 this.WindowState = WindowState.Maximized;
+                // ウインドウ表示で始めたい場合は、上をコメントアウトして、下のコメントを解除する。
+                //this.WindowStyle = WindowStyle.SingleBorderWindow;
+                //this.WindowState = WindowState.Normal;
                 this.DataContext = new
                 {
                     title = this.GameTitle,
@@ -353,12 +357,12 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.Background = System.Windows.Media.Brushes.Black;
                 this.canvasMain.Background = System.Windows.Media.Brushes.Black;
-                this.canvasMain.Margin = new Thickness()
-                {
-                    Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
-                    Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2),
-                };
-                this.WindowStyle = WindowStyle.SingleBorderWindow;
+                //this.canvasMain.Margin = new Thickness()
+                //{
+                //    Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
+                //    Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2),
+                //};
+                //this.WindowStyle = WindowStyle.SingleBorderWindow;
 
                 // タイマー60FPSで始動
                 DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Background);
@@ -403,9 +407,26 @@ namespace WPF_Successor_001_to_Vahren
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            // ESCキーを押すと終了する。
             if (e.Key == Key.Escape)
             {
                 this.Close();
+            }
+            // F11キーを押すとフルスクリーン状態を切り替える。
+            else if (e.Key == Key.F11)
+            {
+                if (WindowState == WindowState.Maximized)
+                {
+                    // 最大化中なら、通常サイズにする。
+                    this.WindowStyle = WindowStyle.SingleBorderWindow; // タイトルバーと境界線を表示します。
+                    this.WindowState = WindowState.Normal;
+                }
+                else
+                {
+                    // 通常サイズか最小化中なら、最大化する。
+                    this.WindowStyle = WindowStyle.None; // タイトルバーと境界線を非表示にします。
+                    this.WindowState = WindowState.Maximized;
+                }
             }
         }
 
@@ -415,6 +436,25 @@ namespace WPF_Successor_001_to_Vahren
             var si = e.NewSize;
             this._sizeClientWinWidth = (int)si.Width;
             this._sizeClientWinHeight = (int)si.Height;
+
+            if (this.WindowState == WindowState.Maximized)
+            {
+                // 最大化中なら、キャンバスをフルスクリーンの中央に置く。
+                this.canvasMain.Margin = new Thickness()
+                {
+                    Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
+                    Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
+                };
+            }
+            else
+            {
+                // 通常サイズか最小化中なら、キャンバスをウインドウの左上位置に置く。
+                this.canvasMain.Margin = new Thickness()
+                {
+                    Top = 0,
+                    Left = 0
+                };
+            }
         }
 
         /// <summary>
@@ -2151,7 +2191,7 @@ namespace WPF_Successor_001_to_Vahren
                 Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
                 Frame frame = new Frame();
                 frame.Source = uri;
-                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 250 - 60, 0, 0);
+                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 310 - 60, 0, 0);
                 frame.Name = StringName.windowBattleCommand;
                 Canvas.SetZIndex(frame, 99);
                 this.canvasMain.Children.Add(frame);
@@ -2160,7 +2200,7 @@ namespace WPF_Successor_001_to_Vahren
                 Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
                 Frame frame = new Frame();
                 frame.Source = uri;
-                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 60, 0, 0);
+                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 120, 0, 0);
                 frame.Name = StringName.windowBattleCommand;
                 Canvas.SetZIndex(frame, 99);
                 this.canvasMain.Children.Add(frame);

@@ -10,8 +10,12 @@
         ContentRendered="MainWindow_ContentRendered"
         KeyDown="MainWindow_KeyDown" 
         Closing="MainWindow_Closing"
-        Height="300"
-        Width="300"
+        Height="1000"
+        Width="1800"
+        MinHeight="1000"
+        MinWidth="1800"
+        Top="0"
+        Left="0"
         >
     <Canvas x:Name="canvasTop" Opacity="1" Background="Transparent" SizeChanged="canvasTop_SizeChanged">
         <Canvas x:Name="canvasMain"
