@@ -896,7 +896,7 @@ namespace WPF_Successor_001_to_Vahren
             if (classSpots.Count == 0)
             {
                 //自国と隣接してないので出撃できない。
-                return; 
+                return;
             }
             MessageBox.Show("出撃します");
 
@@ -1424,12 +1424,22 @@ namespace WPF_Successor_001_to_Vahren
 
         private void WindowMapBattleUnit_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            long name = long.Parse((string)((Canvas)sender).Tag);
+            var can = (Canvas)sender;
+            var bor = (Border)can.Parent;
+            long name = long.Parse((string)(can).Tag);
             foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
             {
                 var re = item.ListClassUnit.Where(x => x.ID == name).FirstOrDefault();
                 if (re != null)
                 {
+                    bor.BorderThickness = new Thickness()
+                    {
+                        Left = 3,
+                        Top = 3,
+                        Right = 3,
+                        Bottom = 3
+                    };
+                    bor.BorderBrush = Brushes.DarkRed;
                     re.FlagMove = true;
                     break;
                 }
@@ -1443,6 +1453,7 @@ namespace WPF_Successor_001_to_Vahren
                 throw new Exception();
             }
 
+            //SortieUnitGroupではなくプレイヤー側でないとダメ
             foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
             {
                 var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
@@ -1451,6 +1462,15 @@ namespace WPF_Successor_001_to_Vahren
                     re.OrderPosi = e.GetPosition(ri);
                     re.FlagMove = false;
                     re.FlagMoving = false;
+
+                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
+                    re2.BorderThickness = new Thickness()
+                    {
+                        Left = 0,
+                        Top = 0,
+                        Right = 0,
+                        Bottom = 0
+                    };
                     break;
                 }
             }
@@ -1751,11 +1771,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
                     {
-                        List<string> strings = new List<string>();
-                        strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                        strings.Add("040_ChipImage");
-                        strings.Add(itemListClassUnit.value.Image);
-                        string path = System.IO.Path.Combine(strings.ToArray());
+                        string path = GetPathTipImage(itemListClassUnit);
 
                         var bi = new BitmapImage(new Uri(path));
                         ImageBrush image = new ImageBrush();
@@ -1787,7 +1803,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top - 192
@@ -1803,8 +1824,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top - 192
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
                 //出撃中衛
@@ -1858,7 +1879,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top - 86
@@ -1874,8 +1900,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top - 86
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
                 //出撃後衛
@@ -1929,7 +1955,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top
@@ -1945,8 +1976,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
             }
@@ -2032,7 +2063,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top + 192
@@ -2048,8 +2084,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top + 192
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
                 //防衛中衛
@@ -2103,7 +2139,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top + 86
@@ -2119,8 +2160,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top + 86
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
                 //防衛後衛
@@ -2174,7 +2215,12 @@ namespace WPF_Successor_001_to_Vahren
                             left = (hidariTakasa.X + migiTakasa.X) / 2;
                             top = (hidariTakasa.Y + migiTakasa.Y) / 2;
                         }
-                        canvasChip.Margin = new Thickness()
+                        //Border
+                        Border border = new Border();
+                        border.Name = "border" + itemListClassUnit.value.ID.ToString();
+                        border.BorderThickness = new Thickness();
+                        border.Child = canvasChip;
+                        border.Margin = new Thickness()
                         {
                             Left = left,
                             Top = top
@@ -2190,8 +2236,8 @@ namespace WPF_Successor_001_to_Vahren
                             Y = top
                         };
 
-                        Canvas.SetZIndex(canvasChip, 99);
-                        canvas.Children.Add(canvasChip);
+                        Canvas.SetZIndex(border, 99);
+                        canvas.Children.Add(border);
                     }
                 }
             }
@@ -2231,6 +2277,16 @@ namespace WPF_Successor_001_to_Vahren
                 KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Start();
+        }
+
+        private string GetPathTipImage((ClassUnit value, int index) itemListClassUnit)
+        {
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+            strings.Add("040_ChipImage");
+            strings.Add(itemListClassUnit.value.Image);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            return path;
         }
 
         private void SetWindowTitle(int targetNumber)
@@ -5523,6 +5579,8 @@ namespace WPF_Successor_001_to_Vahren
             //移動し過ぎを防止
             int counter = 500;
 
+            //プレイヤー側リーダーへ視点移動
+            //まだ未実装
             while (flag1 == true)
             {
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
@@ -5752,66 +5810,73 @@ namespace WPF_Successor_001_to_Vahren
 
         private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit)
         {
-            //移動し過ぎを防止
-            int counter = 100;
-
-            while (true)
+            try
             {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
-                //await Task.Delay((int)(Math.Floor(((double)1 / 60) * 100000)));
-                if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
-                    && classUnit.NowPosi.X > classUnit.OrderPosi.X - 5
-                    && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 5
-                    && classUnit.NowPosi.Y > classUnit.OrderPosi.Y - 5)
+                //移動し過ぎを防止
+                int counter = 100;
+
+                while (true)
                 {
-                    classUnit.OrderPosi = new Point()
+                    Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                    //await Task.Delay((int)(Math.Floor(((double)1 / 60) * 100000)));
+                    if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
+                        && classUnit.NowPosi.X > classUnit.OrderPosi.X - 5
+                        && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 5
+                        && classUnit.NowPosi.Y > classUnit.OrderPosi.Y - 5)
                     {
-                        X = classUnit.NowPosi.X,
-                        Y = classUnit.NowPosi.Y
-                    };
-                    classUnit.FlagMoving = false;
-                    return;
-                }
-                else
-                {
-                    if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
-                    {
-                        classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
-                    }
-                    classUnit.NowPosi = new Point()
-                    {
-                        X = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed),
-                        Y = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed)
-                    };
-                    await Task.Run(() =>
-                    {
-                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        classUnit.OrderPosi = new Point()
                         {
-                            try
+                            X = classUnit.NowPosi.X,
+                            Y = classUnit.NowPosi.Y
+                        };
+                        classUnit.FlagMoving = false;
+                        return;
+                    }
+                    else
+                    {
+                        if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
+                        {
+                            classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
+                        }
+                        classUnit.NowPosi = new Point()
+                        {
+                            X = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed),
+                            Y = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed)
+                        };
+                        await Task.Run(() =>
+                        {
+                            Application.Current.Dispatcher.Invoke((Action)(() =>
                             {
-                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "Chip" + classUnit.ID.ToString());
-                                if (re2 != null)
+                                try
                                 {
-                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                    if (re2 != null)
+                                    {
+                                        re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                    }
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                //移動中にゲームを落とすとエラーになるので暫定的に
-                                //throw;
-                            }
-                        }));
-                    });
+                                catch (Exception)
+                                {
+                                    //移動中にゲームを落とすとエラーになるので暫定的に
+                                    throw;
+                                }
+                            }));
+                        });
+                    }
+
+                    counter--;
+
+                    if (counter <= 0)
+                    {
+                        throw new Exception("ErrorNumber:000001");
+                    }
+
                 }
-
-                counter--;
-
-                if (counter <= 0)
-                {
-                    throw new Exception("ErrorNumber:000001");
-                }
-
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -5849,9 +5914,9 @@ namespace WPF_Successor_001_to_Vahren
                     };
                     await Task.Run(() =>
                     {
-                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        try
                         {
-                            try
+                            Application.Current.Dispatcher.Invoke((Action)(() =>
                             {
                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
                                 var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
@@ -5859,13 +5924,13 @@ namespace WPF_Successor_001_to_Vahren
                                 {
                                     re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                //攻撃中にゲームを落とすとエラーになるので暫定的に
-                                //throw;
-                            }
-                        }));
+                            }));
+                        }
+                        catch (Exception)
+                        {
+                            //攻撃中にゲームを落とすとエラーになるので暫定的に
+                            //throw;
+                        }
                     });
                 }
 
