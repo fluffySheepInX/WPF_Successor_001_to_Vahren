@@ -8,8 +8,8 @@
  
 # Features
  
- ゲームエンジン
- *ARCHITECTURE.mdに主幹クラスについて記載（UMLで書けという話ですがポンチ絵で失礼！
+ * ゲームエンジン
+ * ARCHITECTURE.mdに主幹クラスについて記載（UMLで書けという話ですがポンチ絵で失礼！
  
 # Requirement
   
