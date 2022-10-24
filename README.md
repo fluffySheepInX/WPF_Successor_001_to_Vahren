@@ -43,7 +43,7 @@ VisualStudioで実行して下さい
  
 # 不具合
 
-* モニターの右側にタスクバー表示だと、いろいろおかしくなる。
+* 銃を使用した際の挙動
 
 # License 
 "ローガン" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).

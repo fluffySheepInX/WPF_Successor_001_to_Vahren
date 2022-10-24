@@ -415,7 +415,7 @@ namespace WPF_Successor_001_to_Vahren
             // F11キーを押すとフルスクリーン状態を切り替える。
             else if (e.Key == Key.F11)
             {
-                if (WindowState == WindowState.Maximized)
+                if (this.WindowState == WindowState.Maximized)
                 {
                     // 最大化中なら、通常サイズにする。
                     this.WindowStyle = WindowStyle.SingleBorderWindow; // タイトルバーと境界線を表示します。
