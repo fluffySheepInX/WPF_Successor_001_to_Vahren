@@ -857,6 +857,12 @@ namespace WPF_Successor_001_to_Vahren
             //自ターンチェック
             //CPUタイムに押されても平気なように
 
+            //所属チェック
+            if (classPowerAndCity.ClassPower.NameTag == this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+            {
+                return; //自国には攻め込まない。
+            }
+
             ////隣接チェック
             //国に関係なく隣接都市名を抽出
             List<string> NameRinsetuSpot = new List<string>();
@@ -887,7 +893,11 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classSpots.Add(ge);
             }
-
+            if (classSpots.Count == 0)
+            {
+                //自国と隣接してないので出撃できない。
+                return; 
+            }
             MessageBox.Show("出撃します");
 
             Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
