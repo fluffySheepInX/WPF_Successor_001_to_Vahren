@@ -419,7 +419,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return flagMove; }
             set { flagMove = value; }
         }
-
         #endregion
         #region FlagMoving
         private bool flagMoving;
@@ -429,6 +428,24 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { flagMoving = value; }
         }
         #endregion
+        #region FlagMoveDispose
+        private bool flagMoveDispose = false;
+
+        public bool FlagMoveDispose
+        {
+            get { return flagMoveDispose; }
+            set { flagMoveDispose = value; }
+        }
+        #endregion
+        //#region FlagMoveDisposeOK
+        //private bool flagMoveDisposeOK = false;
+
+        //public bool FlagMoveDisposeOK
+        //{
+        //    get { return flagMoveDisposeOK; }
+        //    set { flagMoveDisposeOK = value; }
+        //}
+        //#endregion
         #region NowPosi
         private Point nowPosi;
 

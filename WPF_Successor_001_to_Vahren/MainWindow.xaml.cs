@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
@@ -1459,7 +1460,12 @@ namespace WPF_Successor_001_to_Vahren
                 var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
                 if (re != null)
                 {
-                    re.OrderPosi = e.GetPosition(ri);
+                    var nowOrderPosi = e.GetPosition(ri);
+                    if (re.FlagMoving = true && re.OrderPosi != nowOrderPosi)
+                    {
+                        re.FlagMoveDispose = true;
+                    }
+                    re.OrderPosi = nowOrderPosi;
                     re.FlagMove = false;
                     re.FlagMoving = false;
 
@@ -5683,7 +5689,7 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.SortieUnitGroup)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit)
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
                     {
                         //スキル優先順位確認
                         foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
@@ -5728,6 +5734,12 @@ namespace WPF_Successor_001_to_Vahren
                                     {
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
+                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, "skillEffect" + itemGroupBy.ID);
+                                            if (re2 != null)
+                                            {
+                                                this.canvasMain.Children.Remove(re2);
+                                            }
+
                                             Canvas canvas = new Canvas();
                                             canvas.Background = Brushes.Red;
                                             canvas.Height = itemSkill.H;
@@ -5754,6 +5766,7 @@ namespace WPF_Successor_001_to_Vahren
         }
         private Task TaskBattleMoveAsync()
         {
+            Dictionary<long,(Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
             while (true)
             {
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
@@ -5773,7 +5786,18 @@ namespace WPF_Successor_001_to_Vahren
                                 );
                             itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                             itemGroupBy.FlagMoving = true;
-                            var t = Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy));
+                            if (t.TryGetValue(itemGroupBy.ID,out (Task, CancellationTokenSource) value))
+                            {
+                                if (value.Item1 != null)
+                                {
+                                    value.Item2.Cancel();
+                                    t.Remove(itemGroupBy.ID);
+                                }
+                            }
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy, token)), tokenSource);
+                            t.Add(itemGroupBy.ID,aaa);
                         }
                     }
                 }
@@ -5781,6 +5805,8 @@ namespace WPF_Successor_001_to_Vahren
         }
         private Task TaskBattleMoveDefAsync()
         {
+            Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
+
             while (true)
             {
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
@@ -5800,7 +5826,18 @@ namespace WPF_Successor_001_to_Vahren
                                 );
                             itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                             itemGroupBy.FlagMoving = true;
-                            var t = Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy));
+                            if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
+                            {
+                                if (value.Item1 != null)
+                                {
+                                    value.Item2.Cancel();
+                                    t.Remove(itemGroupBy.ID);
+                                }
+                            }
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy, token)), tokenSource);
+                            t.Add(itemGroupBy.ID, aaa);
                         }
                     }
                 }
@@ -5808,7 +5845,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
 
-        private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit)
+        private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token)
         {
             try
             {
@@ -5817,6 +5854,11 @@ namespace WPF_Successor_001_to_Vahren
 
                 while (true)
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
                     Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
                     //await Task.Delay((int)(Math.Floor(((double)1 / 60) * 100000)));
                     if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
@@ -5834,6 +5876,11 @@ namespace WPF_Successor_001_to_Vahren
                     }
                     else
                     {
+                        if (classUnit.FlagMoving == false)
+                        {
+                            return;
+                        }
+                        
                         if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
                         {
                             classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
@@ -5899,6 +5946,8 @@ namespace WPF_Successor_001_to_Vahren
                         X = classUnit.NowPosiSkill.X,
                         Y = classUnit.NowPosiSkill.Y
                     };
+                    classUnit.FlagMovingSkill = false;
+
                     return;
                 }
                 else
