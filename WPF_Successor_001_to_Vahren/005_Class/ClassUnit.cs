@@ -288,8 +288,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region Speed
-        private int _speed;
-        public int Speed
+        private double _speed;
+        public double Speed
         {
             get { return _speed; }
             set { _speed = value; }

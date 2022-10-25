@@ -5071,7 +5071,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 else
                 {
-                    classUnit.Speed = Convert.ToInt32(first.Value);
+                    classUnit.Speed = Convert.ToDouble(first.Value);
                 }
             }
             {
@@ -5627,7 +5627,8 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Start();
 
             //工事中
-            //スキルスレッド開始
+            ////スキルスレッド開始
+            //出撃ユニット
             var t = Task.Run(TaskBattleSkill);
             ////移動スレッド開始
             //出撃ユニット
@@ -5683,8 +5684,8 @@ namespace WPF_Successor_001_to_Vahren
         {
             while (true)
             {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
-
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                bool flagAttack = false;
                 //出撃ユニット
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.SortieUnitGroup)
@@ -5701,28 +5702,30 @@ namespace WPF_Successor_001_to_Vahren
                                 foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                 {
                                     //三平方の定理から射程内か確認
-
-                                    var xB = itemDefUnitList.NowPosi;
-                                    double teihen = xA.X - xB.X;
-                                    double takasa = xA.Y - xB.Y;
-                                    double syahen = (teihen * teihen) + (takasa * takasa);
-                                    double kyori = Math.Sqrt(syahen);
-
-                                    double xAHankei = (32 / 2) + itemSkill.Range;
-                                    double xBHankei = 32 / 2;
-
-                                    bool check = true;
-                                    if (kyori > (xAHankei + xBHankei))
                                     {
-                                        check = false;
-                                    }
-                                    //チェック
-                                    if (check == false)
-                                    {
-                                        continue;
+                                        var xB = itemDefUnitList.NowPosi;
+                                        double teihen = xA.X - xB.X;
+                                        double takasa = xA.Y - xB.Y;
+                                        double syahen = (teihen * teihen) + (takasa * takasa);
+                                        double kyori = Math.Sqrt(syahen);
+
+                                        double xAHankei = (32 / 2) + itemSkill.Range;
+                                        double xBHankei = 32 / 2;
+
+                                        bool check = true;
+                                        if (kyori > (xAHankei + xBHankei))
+                                        {
+                                            check = false;
+                                        }
+                                        //チェック
+                                        if (check == false)
+                                        {
+                                            continue;
+                                        }
                                     }
 
                                     itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosi.X, Y = itemGroupBy.NowPosi.Y };
+                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosi.X, Y = itemDefUnitList.NowPosi.Y };
                                     var calc0 = ClassCalcVec.ReturnVecDistance(
                                                     from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
                                                     to: itemDefUnitList.NowPosi
@@ -5734,10 +5737,11 @@ namespace WPF_Successor_001_to_Vahren
                                     {
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
-                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, "skillEffect" + itemGroupBy.ID);
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID);
                                             if (re2 != null)
                                             {
-                                                this.canvasMain.Children.Remove(re2);
+                                                re1.Children.Remove(re2);
                                             }
 
                                             Canvas canvas = new Canvas();
@@ -5746,19 +5750,34 @@ namespace WPF_Successor_001_to_Vahren
                                             canvas.Width = itemSkill.W;
                                             canvas.Margin = new Thickness()
                                             {
-                                                Left = itemGroupBy.NowPosi.X,
-                                                Top = itemGroupBy.NowPosi.Y
+                                                Left = itemGroupBy.NowPosiSkill.X,
+                                                Top = itemGroupBy.NowPosiSkill.Y
                                             };
                                             canvas.Name = "skillEffect" + itemGroupBy.ID;
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
                                             re1.Children.Add(canvas);
                                         }));
                                     }
 
                                     //スキル発動スレッド開始
                                     var t = Task.Run(() => TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill));
+                                    flagAttack = true;
+                                    break;
+                                }
+
+                                if (flagAttack == true)
+                                {
+                                    break;
                                 }
                             }
+                            if (flagAttack == true)
+                            {
+                                break;
+                            }
+                        }
+                        if (flagAttack == true)
+                        {
+                            flagAttack = false;
+                            break;
                         }
                     }
                 }
@@ -5766,11 +5785,11 @@ namespace WPF_Successor_001_to_Vahren
         }
         private Task TaskBattleMoveAsync()
         {
-            Dictionary<long,(Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
+            Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
             while (true)
             {
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.SortieUnitGroup)
@@ -5786,7 +5805,7 @@ namespace WPF_Successor_001_to_Vahren
                                 );
                             itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                             itemGroupBy.FlagMoving = true;
-                            if (t.TryGetValue(itemGroupBy.ID,out (Task, CancellationTokenSource) value))
+                            if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
                             {
                                 if (value.Item1 != null)
                                 {
@@ -5797,7 +5816,7 @@ namespace WPF_Successor_001_to_Vahren
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
                             (Task, CancellationTokenSource) aaa = new(Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy, token)), tokenSource);
-                            t.Add(itemGroupBy.ID,aaa);
+                            t.Add(itemGroupBy.ID, aaa);
                         }
                     }
                 }
@@ -5810,7 +5829,7 @@ namespace WPF_Successor_001_to_Vahren
             while (true)
             {
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 foreach (var item in this.ClassGameStatus
                 .ClassBattleUnits.DefUnitGroup)
@@ -5880,7 +5899,7 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             return;
                         }
-                        
+
                         if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
                         {
                             classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
@@ -5930,11 +5949,12 @@ namespace WPF_Successor_001_to_Vahren
         private async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill)
         {
             //移動し過ぎを防止
-            int counter = 100;
+            //長い攻撃だとカウンターが降り切れてしまう。どうしたものか。
+            int counter = 1000;
 
             while (true)
             {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 if (classUnit.NowPosiSkill.X < classUnit.OrderPosiSkill.X + 5
                     && classUnit.NowPosiSkill.X > classUnit.OrderPosiSkill.X - 5
@@ -5947,6 +5967,18 @@ namespace WPF_Successor_001_to_Vahren
                         Y = classUnit.NowPosiSkill.Y
                     };
                     classUnit.FlagMovingSkill = false;
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                            if (re2 != null)
+                            {
+                                re1.Children.Remove(re2);
+                            }
+                        }));
+                    });
 
                     return;
                 }
@@ -5987,7 +6019,28 @@ namespace WPF_Successor_001_to_Vahren
 
                 if (counter <= 0)
                 {
-                    throw new Exception("ErrorNumber:000001");
+                    classUnit.OrderPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X,
+                        Y = classUnit.NowPosiSkill.Y
+                    };
+                    classUnit.FlagMovingSkill = false;
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                            if (re2 != null)
+                            {
+                                re1.Children.Remove(re2);
+                            }
+                        }));
+                    });
+
+                    // エラーログ出力としたい
+                    //throw new Exception("ErrorNumber:000001");
+                    return;
                 }
 
             }
