@@ -14,7 +14,7 @@
 	cost    = "10";
 	medical = "0";
 	hasExp  = "0";
-	hp      = "1500";
+	hp      = "100";
 	mp      = "500";
 	attack  = "70";
 	defense = "70";

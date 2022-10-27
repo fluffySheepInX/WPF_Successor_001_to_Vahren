@@ -5644,18 +5644,19 @@ namespace WPF_Successor_001_to_Vahren
                 bool flgaDefHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
                 {
-                    foreach (var item in itemDefUnitGroup.ListClassUnit)
+                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
-                        if (item.Hp >= 1)
-                        {
-                            flgaDefHp = true;
-                        }
+                        flgaDefHp = true;
                     }
                 }
 
                 if (flgaDefHp == false)
                 {
                     //defの負け
+                    //タスクキル
+                    //画面戻る
+                    //領土変更
+                    //メッセージ
                     return;
                 }
             }
@@ -5663,12 +5664,9 @@ namespace WPF_Successor_001_to_Vahren
                 bool flgaAttackHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
                 {
-                    foreach (var item in itemDefUnitGroup.ListClassUnit)
+                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
-                        if (item.Hp >= 1)
-                        {
-                            flgaAttackHp = true;
-                        }
+                        flgaAttackHp = true;
                     }
                 }
 
@@ -5869,7 +5867,7 @@ namespace WPF_Successor_001_to_Vahren
             try
             {
                 //移動し過ぎを防止
-                int counter = 100;
+                int counter = 1000;
 
                 while (true)
                 {
@@ -5878,8 +5876,7 @@ namespace WPF_Successor_001_to_Vahren
                         break;
                     }
 
-                    Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
-                    //await Task.Delay((int)(Math.Floor(((double)1 / 60) * 100000)));
+                    Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
                     if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
                         && classUnit.NowPosi.X > classUnit.OrderPosi.X - 5
                         && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 5
@@ -5961,11 +5958,6 @@ namespace WPF_Successor_001_to_Vahren
                     && classUnit.NowPosiSkill.Y < classUnit.OrderPosiSkill.Y + 5
                     && classUnit.NowPosiSkill.Y > classUnit.OrderPosiSkill.Y - 5)
                 {
-                    classUnit.OrderPosiSkill = new Point()
-                    {
-                        X = classUnit.NowPosiSkill.X,
-                        Y = classUnit.NowPosiSkill.Y
-                    };
                     classUnit.FlagMovingSkill = false;
                     await Task.Run(() =>
                     {
@@ -5979,6 +5971,46 @@ namespace WPF_Successor_001_to_Vahren
                             }
                         }));
                     });
+
+                    //体力計算処理
+                    //どちらがプレイヤー側かで分ける
+                    if (true)
+                    {
+                        foreach (var item in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                        {
+                            var re = item.ListClassUnit.Where(x => x.NowPosi.X <= classUnit.NowPosiSkill.X + 5
+                                                        && x.NowPosi.X >= classUnit.NowPosiSkill.X - 5
+                                                        && x.NowPosi.Y <= classUnit.NowPosiSkill.Y + 5
+                                                        && x.NowPosi.Y >= classUnit.NowPosiSkill.Y - 5);
+
+                            foreach (var itemRe in re)
+                            {
+                                itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
+                                if (itemRe.Hp <= 0)
+                                {
+                                    item.ListClassUnit.Remove(itemRe);
+                                    await Task.Run(() =>
+                                    {
+                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        {
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                            if (re2 != null)
+                                            {
+                                                re1.Children.Remove(re2);
+                                            }
+                                        }));
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    classUnit.OrderPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X,
+                        Y = classUnit.NowPosiSkill.Y
+                    };
 
                     return;
                 }
