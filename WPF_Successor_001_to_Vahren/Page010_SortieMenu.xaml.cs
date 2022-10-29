@@ -425,6 +425,9 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Add(item);
             }
 
+            //出兵元情報を格納
+            Application.Current.Properties["selectedItem"] = selectedItem;
+
             mainWindow.FadeOut = true;
 
             mainWindow.delegateBattleMap = mainWindow.SetBattleMap;

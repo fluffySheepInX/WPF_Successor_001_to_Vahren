@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
@@ -38,7 +40,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _selectionCityPoint = value; }
         }
         #endregion
-
         #region SelectionPowerAndCity
         private ClassPowerAndCity _selectionPowerAndCity = new ClassPowerAndCity();
         public ClassPowerAndCity SelectionPowerAndCity
@@ -100,7 +101,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listSkill = value; }
         }
         #endregion
-
         #region ListEvent
         private List<ClassEvent> listEvent = new List<ClassEvent>();
         public List<ClassEvent> ListEvent
@@ -118,7 +118,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { nowTurn = value; }
         }
         #endregion
-
         #region NowCountPower
         private int nowCountPower = -1;
         public int NowCountPower
@@ -127,7 +126,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { nowCountPower = value; }
         }
         #endregion
-
         #region NowCountSpot
         private int nowCountSpot = -1;
         public int NowCountSelectionPowerSpot
@@ -143,6 +141,30 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _classBattleUnits; }
             set { _classBattleUnits = value; }
+        }
+        #endregion
+        #region TaskBattleSkill
+        private (Task, CancellationTokenSource) taskBattleSkill;
+        public (Task, CancellationTokenSource) TaskBattleSkill
+        {
+            get { return taskBattleSkill; }
+            set { taskBattleSkill = value; }
+        }
+        #endregion
+        #region TaskBattleMoveAsync
+        private (Task, CancellationTokenSource) taskBattleMoveAsync;
+        public (Task, CancellationTokenSource) TaskBattleMoveAsync
+        {
+            get { return taskBattleMoveAsync; }
+            set { taskBattleMoveAsync = value; }
+        }
+        #endregion
+        #region TaskBattleMoveDefAsync
+        private (Task, CancellationTokenSource) taskBattleMoveDefAsync;
+        public (Task, CancellationTokenSource) TaskBattleMoveDefAsync
+        {
+            get { return taskBattleMoveDefAsync; }
+            set { taskBattleMoveDefAsync = value; }
         }
         #endregion
 
@@ -186,7 +208,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _currentPointBattle = value; }
         }
         #endregion
-
 
         #region WindowStrategyMenu
         private Page005_StrategyMenu _windowStrategyMenu = new Page005_StrategyMenu();

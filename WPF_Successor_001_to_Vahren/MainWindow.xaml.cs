@@ -313,6 +313,8 @@ namespace WPF_Successor_001_to_Vahren
         public DelegateNewGameAfterFadeIn? delegateNewGameAfterFadeIn = null;
         public delegate void DelegateBattleMap();
         public DelegateBattleMap? delegateBattleMap = null;
+        public delegate void DelegateMapRenderedFromBattle();
+        public DelegateMapRenderedFromBattle? delegateMapRenderedFromBattle = null;
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
         public readonly CountdownEvent condition = new CountdownEvent(1);
@@ -3088,9 +3090,209 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
+        private void SetMapStrategyFromBattle()
+        {
+            this.canvasMain.Children.Clear();
 
+            this.canvasMain.Background = Brushes.Black;
 
+            {
+                Canvas canvas = new Canvas();
+                canvas.Height = this.CanvasMainHeight;
+                canvas.Width = this.CanvasMainWidth;
+                canvas.Margin = new Thickness()
+                {
+                    Left = 0,
+                    Top = 0
+                };
+                canvas.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
+                canvas.Name = StringName.windowMapStrategy;
+                canvas.MouseMove += GridMapStrategy_MouseMove;
+                canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
+                canvas.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
+                canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
+                canvas.MouseLeave += GridMapStrategy_MouseLeave;
+
+                Point mapPoint = this.ClassGameStatus.Camera;
+
+                Grid grid = new Grid();
+                grid.Name = StringName.gridMapStrategy;
+                grid.Height = this.CanvasMainHeight * 2;
+                grid.Width = this.CanvasMainWidth * 2;
+                grid.Margin = new Thickness()
+                {
+                    Left = -(this.CanvasMainWidth / 2),
+                    Top = -(this.CanvasMainHeight / 2)
+                };
+
+                // mapImage読み込み
+                {
+                    List<string> strings = new List<string>();
+                    strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("005_BackgroundImage");
+                    strings.Add("015_MapImage");
+                    strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
+                    string path = System.IO.Path.Combine(strings.ToArray());
+
+                    this.ClassGameStatus.CurrentPoint =
+                            new Point((grid.Width / 2) - ((grid.Width / 2) / 2),
+                                (grid.Height / 2) - ((grid.Height / 2) / 2));
+
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                    Image img = new Image();
+                    img.Height = grid.Height;
+                    img.Width = grid.Width;
+                    img.Stretch = Stretch.Fill;
+                    img.Source = bitimg1;
+                    img.Margin = new Thickness()
+                    {
+                        Left = 0,
+                        Top = 0
+                    };
+                    grid.Children.Add(img);
+                }
+
+                //spot読み込み
+                {
+                    //現シナリオで使用するスポットを抽出する
+                    List<ClassSpot> result = new List<ClassSpot>();
+                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
+                    {
+                        foreach (var item2 in this.ClassGameStatus.AllListSpot)
+                        {
+                            if (item == item2.NameTag)
+                            {
+                                result.Add(item2);
+                            }
+                        }
+                    }
+
+                    int hei = 32;
+
+                    //spotをlineで繋ぐ
+                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
+                    {
+                        var ext1 = result.Where(x => x.NameTag == item.Item1).FirstOrDefault();
+                        if (ext1 == null)
+                        {
+                            continue;
+                        }
+                        var ext2 = result.Where(x => x.NameTag == item.Item2).FirstOrDefault();
+                        if (ext2 == null)
+                        {
+                            continue;
+                        }
+                        Line line = new Line();
+                        line.X1 = ext1.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
+                        line.Y1 = ext1.Y + (hei / 2);
+                        line.X2 = ext2.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
+                        line.Y2 = ext2.Y + (hei / 2);
+                        line.Stroke = Brushes.Black;
+                        line.StrokeThickness = 3;
+                        grid.Children.Add(line);
+                    }
+
+                    //spotを出す
+                    foreach (var item in result.Select((value, index) => (value, index)))
+                    {
+                        Grid gridButton = new Grid();
+                        gridButton.HorizontalAlignment = HorizontalAlignment.Left;
+                        gridButton.VerticalAlignment = VerticalAlignment.Top;
+                        gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
+                        gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
+                        gridButton.Tag = item.value.Index;
+                        gridButton.Margin = new Thickness()
+                        {
+                            Left = item.value.X,
+                            Top = item.value.Y
+                        };
+                        //grid.AllowDrop = false;
+
+                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
+                        Image img = new Image();
+                        img.Stretch = Stretch.Fill;
+                        img.Source = bitimg1;
+
+                        int fontSizePlus = 5;
+                        int widthIcon = 32;
+                        TextBlock tbDate1 = new TextBlock();
+                        tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
+                        tbDate1.VerticalAlignment = VerticalAlignment.Top;
+                        tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
+                        tbDate1.Text = item.value.Name;
+                        tbDate1.Height = 40;
+                        tbDate1.Margin = new Thickness { Left = 15, Top = hei + 10 };
+                        gridButton.Children.Add(tbDate1);
+
+                        Button button = new Button();
+                        button.Name = StringName.buttonClassPowerAndCity + item.index;
+                        button.HorizontalAlignment = HorizontalAlignment.Left;
+                        button.VerticalAlignment = VerticalAlignment.Top;
+                        button.Content = img;
+                        button.Height = hei;
+                        button.Width = widthIcon;
+                        button.Margin = new Thickness
+                        {
+                            Left = (gridButton.Width / 2) - (bitimg1.Width / 2),
+                            Top = 0
+                        };
+
+                        // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
+                        bool ch = false;
+                        for (int i = 0; i < ClassGameStatus.ListPower.Count; i++)
+                        {
+                            foreach (var item3 in ClassGameStatus.ListPower[i].ListMember)
+                            {
+                                if (item3 == item.value.NameTag)
+                                {
+                                    // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
+                                    var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
+                                    button.Tag = classPowerAndCity;
+                                    //ついでに、スポットの属する勢力名を設定
+                                    var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
+                                    if (ge != null)
+                                    {
+                                        ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
+                                    }
+                                    ch = true;
+                                    break;
+                                }
+                            }
+
+                            if (ch == true)
+                            {
+                                break;
+                            }
+                        }
+
+                        //このタイミングで、そのボタンタグに何も設定されていない場合、無所属である
+                        if (button.Tag is not ClassPowerAndCity)
+                        {
+                            button.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
+                        }
+
+                        button.Background = Brushes.Transparent;
+                        button.Foreground = Brushes.Transparent;
+                        button.Background = Brushes.Transparent;
+                        button.BorderBrush = Brushes.Transparent;
+                        //button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
+                        button.Click += ButtonSelectionCity_click;
+                        button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
+                        gridButton.Children.Add(button);
+
+                        grid.Children.Add(gridButton);
+                    }
+
+                }
+
+                canvas.Children.Add(grid);
+                this.canvasMain.Children.Add(canvas);
+            }
+
+            //メッセージ
+            MessageBox.Show("戦闘が終了しました。");
+        }
 
         private void Set_List_ClassInfo(int gameTitleNumber)
         {
@@ -5397,6 +5599,11 @@ namespace WPF_Successor_001_to_Vahren
                 delegateBattleMap();
                 delegateBattleMap = null;
             }
+            if (delegateMapRenderedFromBattle != null)
+            {
+                delegateMapRenderedFromBattle();
+                delegateMapRenderedFromBattle = null;
+            }
 
             if (this.FadeIn == true
                 || this.FadeInExecution == true)
@@ -5629,17 +5836,33 @@ namespace WPF_Successor_001_to_Vahren
             //工事中
             ////スキルスレッド開始
             //出撃ユニット
-            var t = Task.Run(TaskBattleSkill);
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
+                this.ClassGameStatus.TaskBattleSkill = a;
+            }
             ////移動スレッド開始
             //出撃ユニット
-            var tt = Task.Run(TaskBattleMoveAsync);
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                this.ClassGameStatus.TaskBattleMoveAsync = a;
+            }
             //防衛ユニット
-            var tDef = Task.Run(TaskBattleMoveDefAsync);
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveDefAsync(token)), tokenSource);
+                this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+            }
 
         }
 
         private void TimerAction60FPSBattle()
         {
+            //攻撃側勝利
             {
                 bool flgaDefHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
@@ -5652,14 +5875,95 @@ namespace WPF_Successor_001_to_Vahren
 
                 if (flgaDefHp == false)
                 {
-                    //defの負け
+                    ////defの負け
+
+                    this.timerAfterFadeIn.Stop();
+
                     //タスクキル
+                    if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
+                    }
+                    if (this.ClassGameStatus.TaskBattleMoveAsync.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleMoveAsync.Item2.Cancel();
+                    }
+                    if (this.ClassGameStatus.TaskBattleMoveDefAsync.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
+                    }
+
                     //画面戻る
-                    //領土変更
-                    //メッセージ
+
+                    this.FadeOut = true;
+
+                    this.delegateMapRenderedFromBattle = SetMapStrategyFromBattle;
+
+                    this.FadeIn = true;
+
+                    //部隊所属領地変更
+                    {
+                        //出撃先領地
+                        var spots = Application.Current.Properties["selectSpots"];
+                        if (spots == null)
+                        {
+                            return;
+                        }
+
+                        var convSpots = spots as ClassPowerAndCity;
+                        if (convSpots == null)
+                        {
+                            return;
+                        }
+
+                        //出撃元領地
+                        var selectedItem = Application.Current.Properties["selectedItem"];
+                        if (selectedItem == null)
+                        {
+                            return;
+                        }
+
+                        var selectedItemClassSpot = selectedItem as ClassSpot;
+                        if (selectedItemClassSpot == null)
+                        {
+                            return;
+                        }
+
+                        //出撃先領地情報
+                        var aa = this.ClassGameStatus.AllListSpot
+                                .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
+                                .First();
+
+                        //spotの所属情報を書き換え
+                        convSpots.ClassSpot.PowerNameTag = selectedItemClassSpot.PowerNameTag;
+                        aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
+
+                        ////unitの所属情報を書き換え
+                        //防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する
+                        aa.UnitGroup.Clear();
+                        foreach (var item in this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == selectedItemClassSpot.NameTag))
+                        {
+                            foreach (var itemUnitGroup in item.UnitGroup)
+                            {
+                                itemUnitGroup.Spot = convSpots.ClassSpot;
+                                itemUnitGroup.FlagDisplay = true;
+                                //unit移動
+                                aa.UnitGroup.Add(itemUnitGroup);
+                            }
+                            //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
+                            item.UnitGroup.Clear();
+                        }
+                    }
+
+                    //片付け
+                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+
                     return;
                 }
             }
+            //防衛側勝利
             {
                 bool flgaAttackHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
@@ -5672,16 +5976,51 @@ namespace WPF_Successor_001_to_Vahren
 
                 if (flgaAttackHp == false)
                 {
-                    //defの負け
+                    ////defの負け
+
+                    this.timerAfterFadeIn.Stop();
+
+                    //タスクキル
+                    if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
+                    }
+                    if (this.ClassGameStatus.TaskBattleMoveAsync.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleMoveAsync.Item2.Cancel();
+                    }
+                    if (this.ClassGameStatus.TaskBattleMoveDefAsync.Item1 != null)
+                    {
+                        this.ClassGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
+                    }
+
+                    //画面戻る
+
+                    this.FadeOut = true;
+
+                    this.delegateMapRenderedFromBattle = SetMapStrategyFromBattle;
+
+                    this.FadeIn = true;
+
+                    //片付け
+                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+
                     return;
                 }
             }
         }
 
-        private void TaskBattleSkill()
+        private void TaskBattleSkill(CancellationToken token)
         {
             while (true)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
                 bool flagAttack = false;
                 //出撃ユニット
@@ -5781,11 +6120,16 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-        private Task TaskBattleMoveAsync()
+        private void TaskBattleMoveAsync(CancellationToken cancelToken)
         {
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
             while (true)
             {
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
@@ -5820,12 +6164,17 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-        private Task TaskBattleMoveDefAsync()
+        private void TaskBattleMoveDefAsync(CancellationToken cancelToken)
         {
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
 
             while (true)
             {
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
@@ -5964,10 +6313,13 @@ namespace WPF_Successor_001_to_Vahren
                         Application.Current.Dispatcher.Invoke((Action)(() =>
                         {
                             var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                            if (re2 != null)
+                            if (re1 != null)
                             {
-                                re1.Children.Remove(re2);
+                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                                if (re2 != null)
+                                {
+                                    re1.Children.Remove(re2);
+                                }
                             }
                         }));
                     });
@@ -5994,10 +6346,13 @@ namespace WPF_Successor_001_to_Vahren
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
                                             var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                            if (re2 != null)
+                                            if (re1 != null)
                                             {
-                                                re1.Children.Remove(re2);
+                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                                if (re2 != null)
+                                                {
+                                                    re1.Children.Remove(re2);
+                                                }
                                             }
                                         }));
                                     });
@@ -6032,10 +6387,13 @@ namespace WPF_Successor_001_to_Vahren
                             Application.Current.Dispatcher.Invoke((Action)(() =>
                             {
                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                                if (re2 != null)
+                                if (re1 != null)
                                 {
-                                    re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
+                                    var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                                    if (re2 != null)
+                                    {
+                                        re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
+                                    }
                                 }
                             }));
                         }
