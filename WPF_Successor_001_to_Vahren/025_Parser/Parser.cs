@@ -92,6 +92,7 @@ namespace WPF_Successor_001_to_Vahren._025_Parser
             this.PrefixParseFns.Add(TokenType.PUSHCOUNTPOWER, this.ParseSystemFunctionLiteral);
             this.PrefixParseFns.Add(TokenType.PUSHSPOT, this.ParseSystemFunctionLiteral);
             this.PrefixParseFns.Add(TokenType.YET, this.ParseSystemFunctionLiteral);
+            this.PrefixParseFns.Add(TokenType.ISALIVE, this.ParseSystemFunctionLiteral);
         }
         private void RegisterInfixParseFns()
         {

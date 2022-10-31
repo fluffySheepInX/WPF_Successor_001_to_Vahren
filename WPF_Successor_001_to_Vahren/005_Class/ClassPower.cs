@@ -16,6 +16,16 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _index = value; }
         }
         #endregion
+        #region IsDownfall
+        private bool isDownfall = false;
+        public bool IsDownfall
+        {
+            get { return isDownfall; }
+            set { isDownfall = value; }
+        }
+        #endregion
+
+
         #region NameTag
         private string _nameTag = string.Empty;
         public string NameTag

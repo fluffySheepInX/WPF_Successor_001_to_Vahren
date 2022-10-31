@@ -44,5 +44,6 @@
         PUSHCOUNTPOWER,
         PUSHSPOT,
         YET,
+        ISALIVE,
     }
 }

@@ -170,6 +170,34 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                             }
                         }
                     }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.ISALIVE)
+                    {
+                        if (this.window != null)
+                        {
+                            var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
+                            var intRe = re.Item1 as IntegerObject;
+                            if (intRe == null) return null;
+
+                            int powerIndex = intRe.Value;
+                            if (powerIndex == -1) return this.False;
+
+                            var ev = this.ClassGameStatus.ListPower
+                                        .Where(x => x.Index == powerIndex)
+                                        .FirstOrDefault();
+                            if (ev == null)
+                            {
+                                return this.False;
+                            }
+                            if (ev.IsDownfall == true)
+                            {
+                                return this.False;
+                            }
+                            else
+                            {
+                                return this.True;
+                            }
+                        }
+                    }
 
                     return null;
                 case DialogLiteral dialogLiteral:
@@ -310,6 +338,16 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
 
             switch (op)
             {
+                case "||":
+                    if (left is BooleanObject leftBooleanObject && right is BooleanObject rightBooleanObject)
+                    {
+                        if (leftBooleanObject.Value == true || rightBooleanObject.Value == true)
+                        {
+                            return ToBooleanObject(true);
+                        }
+                    }
+                    return ToBooleanObject(false);
+                case "&&":
                 case "==":
                     return ToBooleanObject(left == right);
                 case "!=":
