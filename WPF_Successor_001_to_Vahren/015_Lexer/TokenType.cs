@@ -43,5 +43,6 @@
         STOREPLAYERPOWER,
         PUSHCOUNTPOWER,
         PUSHSPOT,
+        YET,
     }
 }

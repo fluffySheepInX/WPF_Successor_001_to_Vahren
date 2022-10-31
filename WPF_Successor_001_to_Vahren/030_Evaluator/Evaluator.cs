@@ -146,6 +146,31 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                                             new IntegerObject(getPo.ListNowMember.Count));
                         }
                     }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.YET)
+                    {
+                        if (this.window != null)
+                        {
+                            string nameEvent = systemFunctionLiteral.Parameters[0].Value;
+                            if (nameEvent == string.Empty) return this.False;
+
+                            var ev = this.ClassGameStatus.ListEvent
+                                        .Where(x => x.Name == nameEvent)
+                                        .FirstOrDefault();
+                            if (ev == null)
+                            {
+                                return this.False;
+                            }
+                            if (ev.Yet == true)
+                            {
+                                return this.True;
+                            }
+                            else
+                            {
+                                return this.False;
+                            }
+                        }
+                    }
+
                     return null;
                 case DialogLiteral dialogLiteral:
                     if (dialogLiteral.Token.Type == TokenType.DIALOG)
@@ -176,19 +201,21 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     {
                         return null;
                     }
-                    var ev = this.ClassGameStatus.ListEvent
-                        .Where(x => x.Name == eventLiteral.Parameters[0].Value)
-                        .FirstOrDefault();
-                    if (ev == null)
                     {
-                        return null;
-                    }
+                        var ev = this.ClassGameStatus.ListEvent
+                            .Where(x => x.Name == eventLiteral.Parameters[0].Value)
+                            .FirstOrDefault();
+                        if (ev == null)
+                        {
+                            return null;
+                        }
 
-                    var evaluator = new Evaluator();
-                    evaluator.ClassGameStatus = this.ClassGameStatus;
-                    evaluator.window = this.window;
-                    evaluator.Eval(ev.Root, enviroment);
-                    ev.Yet = false;
+                        var evaluator = new Evaluator();
+                        evaluator.ClassGameStatus = this.ClassGameStatus;
+                        evaluator.window = this.window;
+                        evaluator.Eval(ev.Root, enviroment);
+                        ev.Yet = false;
+                    }
 
                     return null;
 

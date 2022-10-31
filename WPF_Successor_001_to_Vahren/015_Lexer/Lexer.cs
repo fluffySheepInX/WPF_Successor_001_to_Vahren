@@ -38,6 +38,7 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
         { "storePlayerPower", TokenType.STOREPLAYERPOWER },
         { "pushCountPower", TokenType.PUSHCOUNTPOWER },
         { "pushSpot", TokenType.PUSHSPOT },
+        { "yet", TokenType.YET },
         };
         #endregion
 
