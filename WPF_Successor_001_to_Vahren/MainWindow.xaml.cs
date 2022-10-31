@@ -458,6 +458,42 @@ namespace WPF_Successor_001_to_Vahren
                     Left = 0
                 };
             }
+
+            // 幅が変更されたら、UIの位置を調節する。
+            if (e.WidthChanged == true)
+            {
+                // 難易度選択ボタンが存在するなら、横位置だけ変更する。
+                foreach (var item in this.canvasMain.Children.OfType<Button>())
+                {
+                    switch (item.Tag.ToString())
+                    {
+                        case "0": // Easy
+                        case "1": // Normal
+                        case "2": // Hard
+                        case "3": // Luna
+                            int startSpaceLeft = 30;
+                            double currentTop = item.Margin.Top;
+                            double newLeft;
+                            // ウインドウがキャンバスよりも大きい場合
+                            if (si.Width >= this.CanvasMainWidth)
+                            {
+                                newLeft = this.CanvasMainWidth - item.Width - startSpaceLeft;
+                            }
+                            // ウインドウがキャンバスよりも小さい場合
+                            else
+                            {
+                                newLeft = si.Width - item.Width - startSpaceLeft;
+                            }
+
+                            item.Margin = new Thickness()
+                            {
+                                Top = currentTop,
+                                Left = newLeft,
+                            };
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
