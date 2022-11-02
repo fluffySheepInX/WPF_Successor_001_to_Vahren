@@ -441,85 +441,38 @@ namespace WPF_Successor_001_to_Vahren
             this._sizeClientWinWidth = (int)si.Width;
             this._sizeClientWinHeight = (int)si.Height;
 
-            // キャンバスをフルスクリーンの中央に置く。
+            // canvasMain を常にウインドウの中央に置く。
             this.canvasMain.Margin = new Thickness()
             {
                 Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
                 Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
             };
-            this.canvasUI.Margin = new Thickness()
+
+            double newTop, newLeft;
+            // canvasUI をウインドウの右上隅に置く。
+            if (this._sizeClientWinHeight > this.CanvasMainHeight)
             {
-                Top = 0,
-                Left = 0
+                newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
+            }
+            else
+            {
+                // ウインドウの高さが低い場合は上端に合わせる。
+                newTop = 0;
+            }
+            if (this._sizeClientWinWidth > this.CanvasMainWidth)
+            {
+                newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
+            }
+            else
+            {
+                // ウインドウの横幅が狭い場合は右端に合わせる。
+                newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
+            }
+            this.canvasUIRightTop.Margin = new Thickness()
+            {
+                Top = newTop,
+                Left = newLeft
             };
-
-            // 幅が変更されたら、UIの位置を調節する。
-            if (e.WidthChanged == true)
-            {
-                // 難易度選択ボタンが存在するなら、横位置だけ変更する。
-                foreach (var item in this.canvasUI.Children.OfType<Button>())
-                {
-                    switch (item.Tag.ToString())
-                    {
-                        case "0": // Easy
-                        case "1": // Normal
-                        case "2": // Hard
-                        case "3": // Luna
-                            double currentTop = item.Margin.Top;
-                            double newLeft;
-                            // ウインドウがキャンバスよりも大きい場合
-                            if (si.Width >= this.CanvasMainWidth)
-                            {
-                                newLeft = this.canvasMain.Margin.Left+ this.CanvasMainWidth - item.Width - this.startSpaceLeft;
-                            }
-                            // ウインドウがキャンバスよりも小さい場合
-                            else
-                            {
-                                newLeft = si.Width - item.Width - startSpaceLeft;
-                            }
-
-                            item.Margin = new Thickness()
-                            {
-                                Top = currentTop,
-                                Left = newLeft,
-                            };
-                            break;
-                    }
-                }
-            }
-            if (e.HeightChanged == true)
-            {
-                int counter = 0;
-                foreach (var item in this.canvasUI.Children.OfType<Button>())
-                {
-                    switch (item.Tag.ToString())
-                    {
-                        case "0": // Easy
-                        case "1": // Normal
-                        case "2": // Hard
-                        case "3": // Luna
-                            double newTop;
-                            // ウインドウがキャンバスよりも大きい場合
-                            if (si.Height >= this.CanvasMainHeight)
-                            {
-                                newTop = this.canvasMain.Margin.Top + ((50 * counter) + this.startSpaceTop);
-                            }
-                            // ウインドウがキャンバスよりも小さい場合
-                            else
-                            {
-                                newTop = 0 + ((50 * counter) + this.startSpaceTop);
-                            }
-
-                            item.Margin = new Thickness()
-                            {
-                                Top = newTop,
-                                Left = item.Margin.Left,
-                            };
-                            break;
-                    }
-                    counter++;
-                }
-            }
         }
 
         /// <summary>
@@ -1644,7 +1597,7 @@ namespace WPF_Successor_001_to_Vahren
             //}
 
             Canvas.SetZIndex(this.canvasMain, 90);
-            Canvas.SetZIndex(this.canvasUI, 99);
+            Canvas.SetZIndex(this.canvasUIRightTop, 99);
 
             SetWindowTitle(targetNumber: 0);
         }
@@ -2389,12 +2342,13 @@ namespace WPF_Successor_001_to_Vahren
 
                     button.Margin = new Thickness()
                     {
-                        Top = this.canvasMain.Margin.Top + ((50 * item.index) + this.startSpaceTop),
+                        Top = (50 * item.index) + this.startSpaceTop,
                         Left = this.CanvasMainWidth - button.Width - startSpaceLeft,
                     };
+                    
                     Canvas.SetZIndex(button, 99);
 
-                    this.canvasUI.Children.Add(button);
+                    this.canvasUIRightTop.Children.Add(button);
                 }
             }
             // Play BGM
