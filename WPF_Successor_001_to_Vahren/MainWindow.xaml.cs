@@ -2475,6 +2475,7 @@ namespace WPF_Successor_001_to_Vahren
         private void SetWindowMainMenu()
         {
             this.canvasMain.Children.Clear();
+            this.canvasUIRightTop.Children.Clear();
 
             this.canvasMain.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
