@@ -494,6 +494,32 @@ namespace WPF_Successor_001_to_Vahren
 
             this.FadeIn = true;
         }
+
+        /// <summary>
+        /// シナリオ選択画面でマウスが右クリックされた時の処理
+        /// タイトル画面に戻る
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ScenarioSelection_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+            this.FadeOut = true;
+
+            this.delegateMainWindowContentRendered = MainWindowContentRendered;
+
+            this.FadeIn = true;
+        }
+
+        /// <summary>
+        /// ボタン等を右クリックした際に、親コントロールが反応しないようにする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Disable_MouseEvent(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
+        }
+
         /// <summary>
         /// シナリオ選択画面でいずれかのシナリオボタンが押された時の処理
         /// 押されたボタンに対応する番号(aに代入されている)のシナリオを呼び出す
@@ -759,6 +785,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = 0
                 };
                 canvas.Name = StringName.windowMainMenuRightTop;
+                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
                 {
                     // 枠
                     var rectangleInfo = new Rectangle();
@@ -810,6 +837,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = canvas.Height
                 };
                 canvas.Name = StringName.windowMainMenuRightUnder;
+                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
                 {
                     // 枠
                     var rectangleInfo = new Rectangle();
@@ -1016,6 +1044,7 @@ namespace WPF_Successor_001_to_Vahren
                 Top = 0
             };
             canvas.Name = StringName.windowSelectionPower;
+            canvas.MouseRightButtonUp += SelectionPower_MouseRightButtonUp;
             {
                 //LeftTop
                 {
@@ -1436,6 +1465,18 @@ namespace WPF_Successor_001_to_Vahren
                     ri.Children.Remove(windowSelectionPower);
                 }
             }
+        }
+
+        /// <summary>
+        /// 勢力情報キャンバスを右クリックしたら閉じるようにする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectionPower_MouseRightButtonUp(object sender, MouseEventArgs e)
+        {
+            ButtonSelectionPowerRemove_click(sender, e);
+
+            e.Handled = true;
         }
 
         #endregion
@@ -2318,6 +2359,9 @@ namespace WPF_Successor_001_to_Vahren
 
         private void SetWindowTitle(int targetNumber)
         {
+            // 既に何か表示されてたら消す (Now Loading... の画像とか)
+            this.canvasMain.Children.Clear();
+
             // Display Background
             this.canvasMain.Background = GetTitleImage(targetNumber);
 
@@ -2503,6 +2547,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = 0
                 };
                 canvas.Name = StringName.windowMainMenuLeftTop;
+                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
                 {
                     // 枠
                     var rectangleInfo = new Rectangle();
@@ -2535,6 +2580,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Tag = item.index;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
+                        button.MouseRightButtonUp += Disable_MouseEvent;
 
                         canvas.Children.Add(button);
                     }
@@ -2556,6 +2602,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = canvas.Height
                 };
                 canvas.Name = StringName.windowMainMenuLeftUnder;
+                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
                 {
                     // 枠下
                     {
@@ -2622,6 +2669,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Tag = tag + item.index;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
+                        button.MouseRightButtonUp += Disable_MouseEvent;
 
                         canvas.Children.Add(button);
                     }
