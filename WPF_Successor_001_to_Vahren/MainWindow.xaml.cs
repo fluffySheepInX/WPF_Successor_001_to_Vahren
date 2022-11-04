@@ -1036,12 +1036,12 @@ namespace WPF_Successor_001_to_Vahren
 
             Canvas canvas = new Canvas();
             canvas.Background = Brushes.Transparent;
-            canvas.Height = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.Y + this.ClassConfigGameTitle.WindowSelectionPowerUnit.Y + spaceMargin + spaceMargin + 100;
-            canvas.Width = (this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.X * 2) + spaceMargin;
+            canvas.Height = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.Y + this.ClassConfigGameTitle.WindowSelectionPowerUnit.Y + spaceMargin * 5;
+            canvas.Width = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.X + this.ClassConfigGameTitle.WindowSelectionPowerImage.X + spaceMargin * 5;
             canvas.Margin = new Thickness()
             {
-                Left = 0,
-                Top = 0
+                Left = (this.CanvasMainWidth - canvas.Width) / 2,
+                Top = (this.CanvasMainHeight - canvas.Height) / 2
             };
             canvas.Name = StringName.windowSelectionPower;
             canvas.MouseRightButtonUp += SelectionPower_MouseRightButtonUp;
@@ -1050,7 +1050,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     Grid gridSelectionPower = new Grid();
                     gridSelectionPower.Background = Brushes.DarkGray;
-                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.Y;
+                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerImage.Y + spaceMargin * 2;
                     gridSelectionPower.Width = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.X;
                     gridSelectionPower.Margin = new Thickness()
                     {
