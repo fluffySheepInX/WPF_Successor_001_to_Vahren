@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -1031,6 +1032,14 @@ namespace WPF_Successor_001_to_Vahren
                     result.Y + (this.ClassGameStatus.GridCityWidthAndHeight.Y / 2)
                     );
             }
+            //else
+            //{
+            //    this.ClassGameStatus.SelectionCityPoint = new Point
+            //        (
+            //        classPowerAndCity.ClassSpot.X,
+            //        classPowerAndCity.ClassSpot.Y
+            //        );
+            //}
 
             int spaceMargin = 5;
 
@@ -1050,7 +1059,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     Grid gridSelectionPower = new Grid();
                     gridSelectionPower.Background = Brushes.DarkGray;
-                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerImage.Y + spaceMargin * 2;
+                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.Y;
                     gridSelectionPower.Width = this.ClassConfigGameTitle.WindowSelectionPowerLeftTop.X;
                     gridSelectionPower.Margin = new Thickness()
                     {
@@ -1297,7 +1306,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     Grid gridSelectionPower = new Grid();
                     gridSelectionPower.Background = Brushes.DarkRed;
-                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerImage.Y + spaceMargin;
+                    gridSelectionPower.Height = this.ClassConfigGameTitle.WindowSelectionPowerImage.Y + spaceMargin * 2;
                     gridSelectionPower.Width = this.ClassConfigGameTitle.WindowSelectionPowerImage.X;
                     gridSelectionPower.Margin = new Thickness()
                     {
@@ -2955,8 +2964,6 @@ namespace WPF_Successor_001_to_Vahren
                         }
                     }
 
-                    int hei = 32;
-
                     //spotをlineで繋ぐ
                     foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
                     {
@@ -2971,10 +2978,10 @@ namespace WPF_Successor_001_to_Vahren
                             continue;
                         }
                         Line line = new Line();
-                        line.X1 = ext1.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
-                        line.Y1 = ext1.Y + (hei / 2);
-                        line.X2 = ext2.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
-                        line.Y2 = ext2.Y + (hei / 2);
+                        line.X1 = ext1.X;
+                        line.Y1 = ext1.Y;
+                        line.X2 = ext2.X;
+                        line.Y2 = ext2.Y;
                         line.Stroke = Brushes.Black;
                         line.StrokeThickness = 3;
                         grid.Children.Add(line);
@@ -2991,41 +2998,52 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Tag = item.value.Index;
                         gridButton.Margin = new Thickness()
                         {
-                            Left = item.value.X,
-                            Top = item.value.Y
+                            Left = item.value.X - gridButton.Width / 2,
+                            Top = item.value.Y - gridButton.Height / 2
                         };
                         //grid.AllowDrop = false;
 
                         BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
                         Image img = new Image();
-                        img.Stretch = Stretch.Fill;
                         img.Source = bitimg1;
 
                         int fontSizePlus = 5;
-                        int widthIcon = 32;
+                        // 将来的には、領地アイコンのサイズを spot 構造体で指定する。
+                        //// 標準は 32、とりあえず（32, 40, 48）で実験する。
+                        //int spot_size = 32 + (item.index % 3) * 8;
+                        int spot_size = 32;
+
                         TextBlock tbDate1 = new TextBlock();
-                        tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
-                        tbDate1.VerticalAlignment = VerticalAlignment.Top;
+                        tbDate1.HorizontalAlignment = HorizontalAlignment.Center;
+                        tbDate1.VerticalAlignment = VerticalAlignment.Bottom;
                         tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
                         tbDate1.Text = item.value.Name;
-                        tbDate1.Height = 40;
-                        tbDate1.Margin = new Thickness { Left = 15, Top = hei + 10 };
+                        // 領地アイコンと領地名の間隔は GridCityWidthAndHeight.Y によって決まる。
+                        tbDate1.Height = (gridButton.Height - spot_size) / 2;
+                        tbDate1.Margin = new Thickness { Left = 2 };
                         gridButton.Children.Add(tbDate1);
+
+                        // 文字を重ねて影を付ける。横は中央なので 2差、縦は下辺なので 1差
+                        TextBlock tbDate2 = new TextBlock();
+                        tbDate2.HorizontalAlignment = tbDate1.HorizontalAlignment;
+                        tbDate2.VerticalAlignment = tbDate1.VerticalAlignment;
+                        tbDate2.FontSize = tbDate1.FontSize;
+                        tbDate2.Text = tbDate1.Text;
+                        tbDate2.Height = tbDate1.Height;
+                        tbDate2.Foreground = Brushes.White;
+                        tbDate2.Margin = new Thickness { Bottom = 1 };
+                        gridButton.Children.Add(tbDate2);
 
                         Button button = new Button();
                         button.Name = StringName.buttonClassPowerAndCity + item.index;
-                        button.HorizontalAlignment = HorizontalAlignment.Left;
-                        button.VerticalAlignment = VerticalAlignment.Top;
+                        button.HorizontalAlignment = HorizontalAlignment.Center;
+                        button.VerticalAlignment = VerticalAlignment.Center;
                         button.Content = img;
-                        button.Height = hei;
-                        button.Width = widthIcon;
-                        button.Margin = new Thickness
-                        {
-                            Left = (gridButton.Width / 2) - (bitimg1.Width / 2),
-                            Top = 0
-                        };
+                        button.Height = spot_size;
+                        button.Width = spot_size;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
+                        string flag_path = string.Empty;
                         bool ch = false;
                         for (int i = 0; i < ClassGameStatus.ListPower.Count; i++)
                         {
@@ -3042,6 +3060,8 @@ namespace WPF_Successor_001_to_Vahren
                                     {
                                         ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
                                     }
+                                    // 旗画像のパスを取得する
+                                    flag_path = ClassGameStatus.ListPower[i].FlagPath;
                                     ch = true;
                                     break;
                                 }
@@ -3067,6 +3087,46 @@ namespace WPF_Successor_001_to_Vahren
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
                         gridButton.Children.Add(button);
+
+                        // 旗を表示する
+                        if (flag_path != string.Empty)
+                        {
+                            BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
+                            // 旗のアニメーションは 64 * 32 ドットを想定
+                            CroppedBitmap[] animationImages = new CroppedBitmap[2];
+                            Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+                            animationImages[0] = new CroppedBitmap(flag_bitimg, rect);
+                            rect = new Int32Rect(32, 0, 32, 32);
+                            animationImages[1] = new CroppedBitmap(flag_bitimg, rect);
+
+                            // 500 ms ごとにフレーム切り替え、全体で 1000 ms になる。
+                            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
+                            for (int i = 0; i < 2; i++)
+                            {
+                                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
+                                key.KeyTime = new TimeSpan(0, 0, 0, 0, 500 * i);
+                                key.Value = animationImages[i];
+                                animation.KeyFrames.Add(key);
+                            }
+                            animation.RepeatBehavior = RepeatBehavior.Forever;
+                            animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
+
+                            Image flag_img = new Image();
+                            //flag_img.Source = flag_bitimg;
+                            flag_img.BeginAnimation(Image.SourceProperty, animation);
+                            flag_img.Height = 32;
+                            flag_img.Width = 32;
+                            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
+                            flag_img.VerticalAlignment = VerticalAlignment.Top;
+                            // 旗アイコンと領地アイコンのずれ具合を設定する
+                            flag_img.Margin = new Thickness
+                            {
+                                Left = flag_img.Width / 2,
+                                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
+                            };
+
+                            gridButton.Children.Add(flag_img);
+                        }
 
                         grid.Children.Add(gridButton);
                     }
@@ -3237,8 +3297,6 @@ namespace WPF_Successor_001_to_Vahren
                         }
                     }
 
-                    int hei = 32;
-
                     //spotをlineで繋ぐ
                     foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
                     {
@@ -3253,10 +3311,10 @@ namespace WPF_Successor_001_to_Vahren
                             continue;
                         }
                         Line line = new Line();
-                        line.X1 = ext1.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
-                        line.Y1 = ext1.Y + (hei / 2);
-                        line.X2 = ext2.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2);
-                        line.Y2 = ext2.Y + (hei / 2);
+                        line.X1 = ext1.X;
+                        line.Y1 = ext1.Y;
+                        line.X2 = ext2.X;
+                        line.Y2 = ext2.Y;
                         line.Stroke = Brushes.Black;
                         line.StrokeThickness = 3;
                         grid.Children.Add(line);
@@ -3273,41 +3331,47 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Tag = item.value.Index;
                         gridButton.Margin = new Thickness()
                         {
-                            Left = item.value.X,
-                            Top = item.value.Y
+                            Left = item.value.X - gridButton.Width / 2,
+                            Top = item.value.Y - gridButton.Height / 2
                         };
                         //grid.AllowDrop = false;
 
                         BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
                         Image img = new Image();
-                        img.Stretch = Stretch.Fill;
                         img.Source = bitimg1;
 
                         int fontSizePlus = 5;
-                        int widthIcon = 32;
+                        int spot_size = 32 + (item.index % 3) * 8;
+
                         TextBlock tbDate1 = new TextBlock();
-                        tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
-                        tbDate1.VerticalAlignment = VerticalAlignment.Top;
+                        tbDate1.HorizontalAlignment = HorizontalAlignment.Center;
+                        tbDate1.VerticalAlignment = VerticalAlignment.Bottom;
                         tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
                         tbDate1.Text = item.value.Name;
-                        tbDate1.Height = 40;
-                        tbDate1.Margin = new Thickness { Left = 15, Top = hei + 10 };
+                        tbDate1.Height = (gridButton.Height - spot_size) / 2;
+                        tbDate1.Margin = new Thickness { Left = 2 };
                         gridButton.Children.Add(tbDate1);
+
+                        TextBlock tbDate2 = new TextBlock();
+                        tbDate2.HorizontalAlignment = tbDate1.HorizontalAlignment;
+                        tbDate2.VerticalAlignment = tbDate1.VerticalAlignment;
+                        tbDate2.FontSize = tbDate1.FontSize;
+                        tbDate2.Text = tbDate1.Text;
+                        tbDate2.Height = tbDate1.Height;
+                        tbDate2.Foreground = Brushes.White;
+                        tbDate2.Margin = new Thickness { Bottom = 1 };
+                        gridButton.Children.Add(tbDate2);
 
                         Button button = new Button();
                         button.Name = StringName.buttonClassPowerAndCity + item.index;
-                        button.HorizontalAlignment = HorizontalAlignment.Left;
-                        button.VerticalAlignment = VerticalAlignment.Top;
+                        button.HorizontalAlignment = HorizontalAlignment.Center;
+                        button.VerticalAlignment = VerticalAlignment.Center;
                         button.Content = img;
-                        button.Height = hei;
-                        button.Width = widthIcon;
-                        button.Margin = new Thickness
-                        {
-                            Left = (gridButton.Width / 2) - (bitimg1.Width / 2),
-                            Top = 0
-                        };
+                        button.Height = spot_size;
+                        button.Width = spot_size;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
+                        string flag_path = string.Empty;
                         bool ch = false;
                         for (int i = 0; i < ClassGameStatus.ListPower.Count; i++)
                         {
@@ -3324,6 +3388,7 @@ namespace WPF_Successor_001_to_Vahren
                                     {
                                         ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
                                     }
+                                    flag_path = ClassGameStatus.ListPower[i].FlagPath;
                                     ch = true;
                                     break;
                                 }
@@ -3349,6 +3414,43 @@ namespace WPF_Successor_001_to_Vahren
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
                         gridButton.Children.Add(button);
+
+                        // 旗を表示する
+                        if (flag_path != string.Empty)
+                        {
+                            BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
+                            CroppedBitmap[] animationImages = new CroppedBitmap[2];
+                            Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+                            animationImages[0] = new CroppedBitmap(flag_bitimg, rect);
+                            rect = new Int32Rect(32, 0, 32, 32);
+                            animationImages[1] = new CroppedBitmap(flag_bitimg, rect);
+
+                            // 500 ms ごとにフレーム切り替え、全体で 1000 ms になる。
+                            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
+                            for (int i = 0; i < 2; i++)
+                            {
+                                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
+                                key.KeyTime = new TimeSpan(0, 0, 0, 0, 500 * i);
+                                key.Value = animationImages[i];
+                                animation.KeyFrames.Add(key);
+                            }
+                            animation.RepeatBehavior = RepeatBehavior.Forever;
+                            animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
+
+                            Image flag_img = new Image();
+                            flag_img.BeginAnimation(Image.SourceProperty, animation);
+                            flag_img.Height = 32;
+                            flag_img.Width = 32;
+                            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
+                            flag_img.VerticalAlignment = VerticalAlignment.Top;
+                            // 旗アイコンと領地アイコンのずれ具合を設定する
+                            flag_img.Margin = new Thickness
+                            {
+                                Left = flag_img.Width / 2,
+                                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
+                            };
+                            gridButton.Children.Add(flag_img);
+                        }
 
                         grid.Children.Add(gridButton);
                     }
