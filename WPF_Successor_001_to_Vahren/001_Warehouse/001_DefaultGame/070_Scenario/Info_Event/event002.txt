@@ -20,19 +20,21 @@
 	let b = yet(world_first_sc_one);
 	if (b) {
 		event(world_first_sc_one);
-		return;
+		return -1;
 	}
 
 	//テスト用
-	if ((npp == 3) && (isAlive(pp))) {
-		dialog("戦場の砂が荒ぶる──。");
-		return;
+	let c = yet(world_first_sc_b);
+	if (c) {
+		event(world_first_sc_b);
+		return -1;
 	}
 	
 	//クリア判定
-//	if (npp == 1 && isAlive(pp)){
-//		setGameClear()
-//		exit(――ローガントゥーガ・デモ――$０１．東アイディオール株式会社　ＥＮＤ)
-//	}
+	if ((npp == 3) && (isAlive(pp))){
+		dialog("――ローガントゥーガ・デモ――@@０１．東アイディオール株式会社　ＥＮＤ");
+		displayGameResult();
+		return -1;
+	}
 
 ->

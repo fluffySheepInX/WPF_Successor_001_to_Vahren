@@ -1,4 +1,4 @@
-﻿event we1
+﻿teste we1
 <-
 	let a = isPlayer(pOne);
 	let b = yet(opOne);

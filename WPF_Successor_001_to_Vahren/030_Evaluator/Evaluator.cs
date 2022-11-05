@@ -79,9 +79,9 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     return this.EvalIfExpression(ifExpression, enviroment);
                 case ReturnStatement returnStatement:
                     {
-                        var value = this.Eval(returnStatement.ReturnValue, enviroment);
-                        if (value == null) return null;
-                        return new ReturnValue(value);
+                        //var value = this.Eval(returnStatement.ReturnValue, enviroment);
+                        //if (value == null) return null;
+                        return new ReturnValue(new IntegerObject(-1));
                     }
                 case LetStatement letStatement:
                     {
@@ -198,6 +198,19 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                             }
                         }
                     }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.DISPLAYGAMERESULT)
+                    {
+                        if (this.window != null)
+                        {
+                            Uri uri = new Uri("/Page030_GameResult.xaml", UriKind.Relative);
+                            Frame frame = new Frame();
+                            frame.Source = uri;
+                            frame.Margin = new Thickness(0, 0, 0, 0);
+                            frame.Name = StringName.windowGameResult;
+                            this.window.canvasMain.Children.Add(frame);
+                            Application.Current.Properties["window"] = this.window;
+                        }
+                    }
 
                     return null;
                 case DialogLiteral dialogLiteral:
@@ -273,7 +286,8 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 result = this.Eval(statement, enviroment);
                 if (result == null)
                 {
-                    return this.Null;
+                    continue;
+                    //return this.Null;
                 }
                 if (result.Type() == ObjectType.RETURN_VALUE) return result;
             }

@@ -45,5 +45,6 @@
         PUSHSPOT,
         YET,
         ISALIVE,
+        DISPLAYGAMERESULT,
     }
 }

@@ -1,0 +1,14 @@
+﻿event world_first_sc_b
+<-
+	let sentak = -1;
+	select(sentak, "イベント@@「現状説明」");
+	if (sentak == -1) {
+		dialog("skipしました。");
+		return -1;
+	}
+
+	dialog("戦場の砂が荒ぶる──。");
+
+	msg("──────@@────");
+
+->

@@ -1,0 +1,24 @@
+﻿<Page x:Class="WPF_Successor_001_to_Vahren.Page030_GameResult"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="1600"
+      Background="AliceBlue"
+      Title="Page030_GameResult">
+    <Border BorderBrush="Black" BorderThickness="4" Height="800" Width="1600" Background="#454545" >
+        <Canvas Width="1600" Margin="6,6,-14,6">
+            <Label Width="198" Height="50" Foreground="White" FontSize="30" HorizontalAlignment="Left" Canvas.Left="10" VerticalAlignment="Center" Canvas.Top="10">ゲームクリア！</Label>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" HorizontalAlignment="Center" Canvas.Left="10" VerticalAlignment="Top" Canvas.Top="60">戦績：</Label>
+            <Button x:Name="btnBackTitle" Content="タイトル画面へ戻る" HorizontalAlignment="Center" FontSize="25" VerticalAlignment="Top" Height="102" Canvas.Left="10" Canvas.Top="668" Width="510" Click="btnBackTitle_Click"/>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" Canvas.Left="10" Canvas.Top="110" Content="出撃勝利数⇒" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" Canvas.Left="10" Canvas.Top="160" Content="防衛勝利数⇒" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" Canvas.Left="10" Canvas.Top="210" Content="獲得領土数⇒" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" Canvas.Left="10" Canvas.Top="260" Content="最終資産額⇒" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <Label Width="198" Height="50" Foreground="White" FontSize="25" Canvas.Left="10" Canvas.Top="310" Content="最終影響力⇒" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+
+        </Canvas>
+    </Border>
+</Page>

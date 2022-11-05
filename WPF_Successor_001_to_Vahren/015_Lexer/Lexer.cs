@@ -40,6 +40,7 @@ namespace WPF_Successor_001_to_Vahren._015_Lexer
         { "pushSpot", TokenType.PUSHSPOT },
         { "yet", TokenType.YET },
         { "isAlive", TokenType.ISALIVE },
+        { "displayGameResult", TokenType.DISPLAYGAMERESULT },
         };
         #endregion
 

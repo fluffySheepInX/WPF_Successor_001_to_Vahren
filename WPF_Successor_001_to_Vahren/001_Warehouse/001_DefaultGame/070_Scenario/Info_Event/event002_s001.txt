@@ -3,7 +3,8 @@
 	let sentak = -1;
 	select(sentak, "イベント@@「OP:東アイディオール株式会社」");
 	if (sentak == -1) {
-		return;
+		dialog("skipしました。");
+		return -1;
 	}
 
 	dialog("熱狂が軍隊を包んでいます。@@しかし、提督の目には暗い色が微かに灯っています。");
@@ -35,10 +36,10 @@
 	if (worldevent_one == 0) {
 		talk(AbelIrijhorn,"「武器と弾薬を最優先で」");
 	}
-	else if (worldevent_one == 1) {
+	if (worldevent_one == 1) {
 		talk(AbelIrijhorn,"「食料を最優先で」");
 	}
-	else if (worldevent_one == 2) {
+	if (worldevent_one == 2) {
 		talk(AbelIrijhorn,"「有刺鉄線、及び工具を最優先で」");
 	}
 

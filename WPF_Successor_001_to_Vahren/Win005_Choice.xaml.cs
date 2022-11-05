@@ -75,6 +75,7 @@ namespace WPF_Successor_001_to_Vahren
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //閉じるボタン用
             var hwnd = new WindowInteropHelper(this).Handle;
             SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
         }
