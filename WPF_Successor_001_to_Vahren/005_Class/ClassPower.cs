@@ -101,9 +101,20 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _text = value; }
         }
         #endregion
-        #region ListMember
+        #region ListInitMember
         /// <summary>
         /// 開始時の領地。
+        /// </summary>
+        private List<string> _listInitMember = new List<string>();
+        public List<string> ListInitMember
+        {
+            get { return _listInitMember; }
+            set { _listInitMember = value; }
+        }
+        #endregion
+        #region ListMember
+        /// <summary>
+        /// 現在の領地。
         /// </summary>
         private List<string> _listMember = new List<string>();
         public List<string> ListMember

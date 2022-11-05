@@ -1207,7 +1207,8 @@ namespace WPF_Successor_001_to_Vahren
                     gridSelectionPower.VerticalAlignment = VerticalAlignment.Top;
                     gridSelectionPower.HorizontalAlignment = HorizontalAlignment.Left;
 
-                    foreach (var item in classPowerAndCity.ClassPower.ListMember)
+                    //勢力選択画面なのでListInitMemberでOK
+                    foreach (var item in classPowerAndCity.ClassPower.ListInitMember)
                     {
                         var ext = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item);
                         foreach (var itemSpot in ext)
@@ -2398,7 +2399,7 @@ namespace WPF_Successor_001_to_Vahren
                         Top = (50 * item.index) + this.startSpaceTop,
                         Left = this.CanvasMainWidth - button.Width - startSpaceLeft,
                     };
-                    
+
                     Canvas.SetZIndex(button, 99);
 
                     this.canvasUIRightTop.Children.Add(button);
@@ -2995,7 +2996,6 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.VerticalAlignment = VerticalAlignment.Top;
                         gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
                         gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
-                        gridButton.Tag = item.value.Index;
                         gridButton.Margin = new Thickness()
                         {
                             Left = item.value.X - gridButton.Width / 2,
@@ -3079,6 +3079,14 @@ namespace WPF_Successor_001_to_Vahren
                             button.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
                         }
 
+                        //戦闘後の旗設定の為
+                        var aaaaaa = button.Tag as ClassPowerAndCity;
+                        if (aaaaaa != null)
+                        {
+                            gridButton.Tag = aaaaaa;
+                            gridButton.Name = aaaaaa.ClassSpot.NameTag;
+                        }
+
                         button.Background = Brushes.Transparent;
                         button.Foreground = Brushes.Transparent;
                         button.Background = Brushes.Transparent;
@@ -3089,44 +3097,16 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Children.Add(button);
 
                         // 旗を表示する
-                        if (flag_path != string.Empty)
+                        Image flag_img = new Image();
+                        flag_img.Name = "flag_img" + gridButton.Name;
+                        if (aaaaaa != null)
                         {
-                            BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
-                            // 旗のアニメーションは 64 * 32 ドットを想定
-                            CroppedBitmap[] animationImages = new CroppedBitmap[2];
-                            Int32Rect rect = new Int32Rect(0, 0, 32, 32);
-                            animationImages[0] = new CroppedBitmap(flag_bitimg, rect);
-                            rect = new Int32Rect(32, 0, 32, 32);
-                            animationImages[1] = new CroppedBitmap(flag_bitimg, rect);
-
-                            // 500 ms ごとにフレーム切り替え、全体で 1000 ms になる。
-                            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
-                            for (int i = 0; i < 2; i++)
+                            if (aaaaaa.ClassPower.FlagPath != String.Empty)
                             {
-                                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
-                                key.KeyTime = new TimeSpan(0, 0, 0, 0, 500 * i);
-                                key.Value = animationImages[i];
-                                animation.KeyFrames.Add(key);
+                                flag_img = DisplayFlag(gridButton, spot_size, flag_path);
                             }
-                            animation.RepeatBehavior = RepeatBehavior.Forever;
-                            animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
-
-                            Image flag_img = new Image();
-                            //flag_img.Source = flag_bitimg;
-                            flag_img.BeginAnimation(Image.SourceProperty, animation);
-                            flag_img.Height = 32;
-                            flag_img.Width = 32;
-                            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
-                            flag_img.VerticalAlignment = VerticalAlignment.Top;
-                            // 旗アイコンと領地アイコンのずれ具合を設定する
-                            flag_img.Margin = new Thickness
-                            {
-                                Left = flag_img.Width / 2,
-                                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
-                            };
-
-                            gridButton.Children.Add(flag_img);
                         }
+                        gridButton.Children.Add(flag_img);
 
                         grid.Children.Add(gridButton);
                     }
@@ -3328,7 +3308,6 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.VerticalAlignment = VerticalAlignment.Top;
                         gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
                         gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
-                        gridButton.Tag = item.value.Index;
                         gridButton.Margin = new Thickness()
                         {
                             Left = item.value.X - gridButton.Width / 2,
@@ -3341,7 +3320,7 @@ namespace WPF_Successor_001_to_Vahren
                         img.Source = bitimg1;
 
                         int fontSizePlus = 5;
-                        int spot_size = 32 + (item.index % 3) * 8;
+                        int spot_size = 32;
 
                         TextBlock tbDate1 = new TextBlock();
                         tbDate1.HorizontalAlignment = HorizontalAlignment.Center;
@@ -3392,6 +3371,7 @@ namespace WPF_Successor_001_to_Vahren
                                     ch = true;
                                     break;
                                 }
+
                             }
 
                             if (ch == true)
@@ -3406,6 +3386,14 @@ namespace WPF_Successor_001_to_Vahren
                             button.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
                         }
 
+                        //戦闘後の旗設定の為
+                        var aaaaaa = button.Tag as ClassPowerAndCity;
+                        if (aaaaaa != null)
+                        {
+                            gridButton.Tag = aaaaaa;
+                            gridButton.Name = aaaaaa.ClassSpot.NameTag;
+                        }
+
                         button.Background = Brushes.Transparent;
                         button.Foreground = Brushes.Transparent;
                         button.Background = Brushes.Transparent;
@@ -3416,41 +3404,16 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Children.Add(button);
 
                         // 旗を表示する
-                        if (flag_path != string.Empty)
+                        Image flag_img = new Image();
+                        flag_img.Name = "flag_img" + gridButton.Name;
+                        if (aaaaaa != null)
                         {
-                            BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
-                            CroppedBitmap[] animationImages = new CroppedBitmap[2];
-                            Int32Rect rect = new Int32Rect(0, 0, 32, 32);
-                            animationImages[0] = new CroppedBitmap(flag_bitimg, rect);
-                            rect = new Int32Rect(32, 0, 32, 32);
-                            animationImages[1] = new CroppedBitmap(flag_bitimg, rect);
-
-                            // 500 ms ごとにフレーム切り替え、全体で 1000 ms になる。
-                            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
-                            for (int i = 0; i < 2; i++)
+                            if (aaaaaa.ClassPower.FlagPath != String.Empty)
                             {
-                                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
-                                key.KeyTime = new TimeSpan(0, 0, 0, 0, 500 * i);
-                                key.Value = animationImages[i];
-                                animation.KeyFrames.Add(key);
+                                flag_img = DisplayFlag(gridButton, spot_size, flag_path);
                             }
-                            animation.RepeatBehavior = RepeatBehavior.Forever;
-                            animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
-
-                            Image flag_img = new Image();
-                            flag_img.BeginAnimation(Image.SourceProperty, animation);
-                            flag_img.Height = 32;
-                            flag_img.Width = 32;
-                            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
-                            flag_img.VerticalAlignment = VerticalAlignment.Top;
-                            // 旗アイコンと領地アイコンのずれ具合を設定する
-                            flag_img.Margin = new Thickness
-                            {
-                                Left = flag_img.Width / 2,
-                                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
-                            };
-                            gridButton.Children.Add(flag_img);
                         }
+                        gridButton.Children.Add(flag_img);
 
                         grid.Children.Add(gridButton);
                     }
@@ -3463,6 +3426,45 @@ namespace WPF_Successor_001_to_Vahren
 
             //メッセージ
             MessageBox.Show("戦闘が終了しました。");
+        }
+
+        public Image DisplayFlag(Grid gridButton, int spot_size, string flag_path)
+        {
+            BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
+            // 旗のアニメーションは 64 * 32 ドットを想定
+            CroppedBitmap[] animationImages = new CroppedBitmap[2];
+            Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+            animationImages[0] = new CroppedBitmap(flag_bitimg, rect);
+            rect = new Int32Rect(32, 0, 32, 32);
+            animationImages[1] = new CroppedBitmap(flag_bitimg, rect);
+
+            // 500 ms ごとにフレーム切り替え、全体で 1000 ms になる。
+            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
+            for (int i = 0; i < 2; i++)
+            {
+                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
+                key.KeyTime = new TimeSpan(0, 0, 0, 0, 500 * i);
+                key.Value = animationImages[i];
+                animation.KeyFrames.Add(key);
+            }
+            animation.RepeatBehavior = RepeatBehavior.Forever;
+            animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
+
+            Image flag_img = new Image();
+            //flag_img.Source = flag_bitimg;
+            flag_img.BeginAnimation(Image.SourceProperty, animation);
+            flag_img.Height = 32;
+            flag_img.Width = 32;
+            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
+            flag_img.VerticalAlignment = VerticalAlignment.Top;
+            // 旗アイコンと領地アイコンのずれ具合を設定する
+            flag_img.Margin = new Thickness
+            {
+                Left = flag_img.Width / 2,
+                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
+            };
+
+            return flag_img;
         }
 
         private void Set_List_ClassInfo(int gameTitleNumber)
@@ -4946,6 +4948,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     throw new Exception();
                 }
+                classPower.ListInitMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
                 classPower.ListMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
             }
             {
@@ -6108,6 +6111,10 @@ namespace WPF_Successor_001_to_Vahren
                         //spotの所属情報を書き換え
                         convSpots.ClassSpot.PowerNameTag = selectedItemClassSpot.PowerNameTag;
                         aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
+                        var po = this.ClassGameStatus.ListPower
+                                .Where(x => x.NameTag == convSpots.ClassSpot.PowerNameTag)
+                                .First();
+                        po.ListMember.Add(convSpots.ClassSpot.NameTag);
 
                         ////unitの所属情報を書き換え
                         //防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する

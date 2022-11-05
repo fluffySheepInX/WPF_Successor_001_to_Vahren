@@ -377,6 +377,34 @@ namespace WPF_Successor_001_to_Vahren
                 //spotの所属情報を書き換え
                 convSpots.ClassSpot.PowerNameTag = selectedItem.PowerNameTag;
                 aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
+                var po = mainWindow.ClassGameStatus.ListPower
+                            .Where(x => x.NameTag == selectedItem.PowerNameTag)
+                            .First();
+                po.ListMember.Add(convSpots.ClassSpot.NameTag);
+
+                convSpots.ClassPower.ListMember.Add(selectedItem.NameTag);
+
+                var ri = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, convSpots.ClassSpot.NameTag);
+                if (ri == null)
+                {
+                    throw new Exception();
+                }
+                var flag = (Image)LogicalTreeHelper.FindLogicalNode(ri, "flag_img"+ convSpots.ClassSpot.NameTag);
+                if (flag == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    mainWindow.canvasMain.Children.Remove(flag);
+
+                    // 旗を表示する
+                    Image flag_img = new Image();
+                    flag_img.Name = convSpots.ClassSpot.NameTag;
+                    flag_img = mainWindow.DisplayFlag(ri, 32, po.FlagPath);
+                    ri.Children.Add(flag_img);
+                }
+
                 //unitの所属情報を書き換え
                 foreach (var item in mainWindow.ClassGameStatus.AllListSpot.Where(x=>x.NameTag == selectedItem.NameTag))
                 {
@@ -397,14 +425,14 @@ namespace WPF_Successor_001_to_Vahren
 
                 //出撃ウィンドウを消す
                 {
-                    var ri = (Frame)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.windowSortieMenu);
-                    if (ri != null)
+                    var frame = (Frame)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.windowSortieMenu);
+                    if (frame != null)
                     {
-                        mainWindow.canvasMain.Children.Remove(ri);
+                        mainWindow.canvasMain.Children.Remove(frame);
                     }
                 }
                 //message
-                MessageBox.Show(selectedItem.Name+ "を占領しました！");
+                MessageBox.Show(convSpots.ClassSpot.Name+ "を占領しました！");
 
                 return;
             }
