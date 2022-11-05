@@ -1028,18 +1028,18 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.ClassGameStatus.SelectionCityPoint = new Point
                     (
-                    result.X + (this.ClassGameStatus.GridCityWidthAndHeight.X / 2),
-                    result.Y + (this.ClassGameStatus.GridCityWidthAndHeight.Y / 2)
+                    result.X,
+                    result.Y
                     );
             }
-            //else
-            //{
-            //    this.ClassGameStatus.SelectionCityPoint = new Point
-            //        (
-            //        classPowerAndCity.ClassSpot.X,
-            //        classPowerAndCity.ClassSpot.Y
-            //        );
-            //}
+            else
+            {
+                this.ClassGameStatus.SelectionCityPoint = new Point
+                    (
+                    classPowerAndCity.ClassSpot.X,
+                    classPowerAndCity.ClassSpot.Y
+                    );
+            }
 
             int spaceMargin = 5;
 
@@ -1442,19 +1442,8 @@ namespace WPF_Successor_001_to_Vahren
                     ri.Children.Remove(windowSelectionPower);
                 }
             }
-
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy == null)
-            {
-                return;
-            }
-
-            gridMapStrategy.Margin = new Thickness()
-            {
-                Left = -(this.CanvasMainWidth / 2),
-                Top = -(this.CanvasMainHeight / 2)
-            };
         }
+
         /// <summary>
         /// 勢力選択画面で取り消しした時の処理
         /// </summary>
@@ -3371,7 +3360,6 @@ namespace WPF_Successor_001_to_Vahren
                                     ch = true;
                                     break;
                                 }
-
                             }
 
                             if (ch == true)
@@ -5853,35 +5841,31 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
             bool flag1 = true;
-            double baseDataX = gridMapStrategy.Margin.Left;
-            double baseDataY = gridMapStrategy.Margin.Top;
 
             ClassVec classVec = new ClassVec();
+            // 現在の Margin
             classVec.X = gridMapStrategy.Margin.Left;
             classVec.Y = gridMapStrategy.Margin.Top;
-            classVec.CenterPoint = new Point(gridMapStrategy.Width / 2, gridMapStrategy.Height / 2);
-            classVec.Target = this.ClassGameStatus.SelectionCityPoint;
+
+            // 目標にする領地の座標をウインドウ中央にするための Margin
+            classVec.Target = new Point(
+                this.CanvasMainWidth / 2 - this.ClassGameStatus.SelectionCityPoint.X,
+                this.CanvasMainHeight / 2 - this.ClassGameStatus.SelectionCityPoint.Y
+            );
             classVec.Speed = 10;
             classVec.Set();
-
-            //移動し過ぎを防止
-            int counter = 500;
 
             while (flag1 == true)
             {
                 Thread.Sleep(5);
 
-                double resultX = 0;
-                double resultY = 0;
-                //どれだけ移動したかを算出、それを移動量と称す
-                resultX = +(gridMapStrategy.Margin.Left - baseDataX);
-                resultY = +(gridMapStrategy.Margin.Top - baseDataY);
-                //移動量を選択勢力の町座標に足す。その結果が中央に来れば（画面中央付近に来れば）ループから抜け出す
-                if ((classVec.CenterPoint.X + 100 > this.ClassGameStatus.SelectionCityPoint.X + resultX
-                    && classVec.CenterPoint.X - 100 < this.ClassGameStatus.SelectionCityPoint.X + resultX)
-                    &&
-                    (classVec.CenterPoint.Y + 100 > this.ClassGameStatus.SelectionCityPoint.Y + resultY
-                    && classVec.CenterPoint.Y - 100 < this.ClassGameStatus.SelectionCityPoint.Y + resultY))
+                // 移動後の距離を試算して、同じままか、あるいは遠ざかってるなら、ループから抜け出す
+                double current_distanceX = classVec.Target.X - gridMapStrategy.Margin.Left;
+                double current_distanceY = classVec.Target.Y - gridMapStrategy.Margin.Top;
+                double next_distanceX = current_distanceX - (classVec.Vec.X * classVec.Speed);
+                double next_distanceY = current_distanceY - (classVec.Vec.Y * classVec.Speed);
+                if (next_distanceX * next_distanceX + next_distanceY * next_distanceY 
+                    >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
                 {
                     flag1 = false;
                     break;
@@ -5899,13 +5883,6 @@ namespace WPF_Successor_001_to_Vahren
                         };
                     }));
                 });
-
-                counter--;
-
-                if (counter <= 0)
-                {
-                    throw new Exception();
-                }
             }
 
             //イベント実行

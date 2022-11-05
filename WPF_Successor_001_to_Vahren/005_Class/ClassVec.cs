@@ -20,13 +20,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _speed = value; }
         }
 
-        private Point _centerPoint;
-
-        public Point CenterPoint
-        {
-            get { return _centerPoint; }
-            set { _centerPoint = value; }
-        }
         private Point _target;
 
         public Point Target
@@ -59,25 +52,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             double xMove = (this.Vec.X * this.Speed);
             double yMove = (this.Vec.Y * this.Speed);
-            double resultX = 0;
-            double resultY = 0;
-            if (Target.X > this.CenterPoint.X)
-            {
-                resultX = targetFrom.X - xMove;
-            }
-            else
-            {
-                resultX = targetFrom.X + xMove;
-            }
-
-            if (Target.Y > this.CenterPoint.Y)
-            {
-                resultY = targetFrom.Y - yMove;
-            }
-            else
-            {
-                resultY = targetFrom.Y + yMove;
-            }
+            double resultX = targetFrom.X + xMove;
+            double resultY = targetFrom.Y + yMove;
             return new Point(resultX, resultY);
         }
 
