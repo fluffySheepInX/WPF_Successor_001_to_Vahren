@@ -36,6 +36,25 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _vec = value; }
         }
 
+        /// <summary>
+        /// 移動後の距離を試算して、標的に接近中なら false
+        /// 距離が同じままか、あるいは遠ざかってるなら true を返す
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns></returns>
+        public bool Hit(Point current)
+        {
+            double current_distanceX = this.Target.X - current.X;
+            double current_distanceY = this.Target.Y - current.Y;
+            double next_distanceX = current_distanceX - (this.Vec.X * this.Speed);
+            double next_distanceY = current_distanceY - (this.Vec.Y * this.Speed);
+            if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void Set()
         {
             var calc0 = ReturnVecDistance(from: new Point(this.X, this.Y), to: Target);

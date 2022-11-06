@@ -1011,14 +1011,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             {
-                var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
+                var ri2 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, StringName.windowSelectionPowerMini);
                 if (ri2 != null)
                 {
-                    var ri3 = (Grid)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowSelectionPowerMini);
-                    if (ri3 != null)
-                    {
-                        ri2.Children.Remove(ri3);
-                    }
+                    this.canvasUIRightTop.Children.Remove(ri2);
                 }
             }
 
@@ -1464,6 +1460,13 @@ namespace WPF_Successor_001_to_Vahren
                     ri.Children.Remove(windowSelectionPower);
                 }
             }
+
+            var ri2 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, StringName.windowSelectionPowerMini);
+            if (ri2 == null)
+            {
+                // 勢力一覧ウィンドウを出す
+                ListSelectionPowerMini();
+            }
         }
 
         /// <summary>
@@ -1540,6 +1543,90 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
+        /// <summary>
+        /// 勢力一覧ウィンドウのボタンを押した時の処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void ButtonSelectionPowerMini_click(Object sender, EventArgs e)
+        {
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassPower)
+            {
+                return;
+            }
+
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy == null)
+            {
+                return;
+            }
+
+            double target_X = 0, target_Y = 0;
+            int spot_count = 0;
+            var classPower = (ClassPower)cast.Tag;
+            foreach (var item in classPower.ListInitMember)
+            {
+                var spot = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
+                if (spot != null)
+                {
+                    target_X = spot.X;
+                    target_Y = spot.Y;
+                    spot_count += 1;
+                }
+                // とりあえず、最初の領地だけ参照する。
+                // 将来的には、全ての領地の座標の平均値にする予定
+                break;
+            }
+
+            if (spot_count > 0)
+            {
+                // 目標にする座標をウインドウ中央にする
+                /*
+                gridMapStrategy.Margin = new Thickness()
+                {
+                    Top = this.CanvasMainHeight / 2 - target_Y,
+                    Left = this.CanvasMainWidth / 2 - target_X
+                };
+                */
+
+                ClassVec classVec = new ClassVec();
+                // 現在の Margin
+                classVec.X = gridMapStrategy.Margin.Left;
+                classVec.Y = gridMapStrategy.Margin.Top;
+
+                // 目標にする領地の座標をウインドウ中央にするための Margin
+                classVec.Target = new Point(
+                    this.CanvasMainWidth / 2 - target_X,
+                    this.CanvasMainHeight / 2 - target_Y
+                );
+                classVec.Speed = 20;
+                classVec.Set();
+
+                while (true)
+                {
+                    Thread.Sleep(5);
+
+                    if (classVec.Hit(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top)))
+                    {
+                        break;
+                    }
+
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            var ge = classVec.Get(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top));
+                            gridMapStrategy.Margin = new Thickness()
+                            {
+                                Left = ge.X,
+                                Top = ge.Y
+                            };
+                        }));
+                    });
+                }
+            }
+        }
 
         #region Method
         private void ReadFileOrderDocument()
@@ -1640,6 +1727,91 @@ namespace WPF_Successor_001_to_Vahren
             Canvas.SetZIndex(this.canvasUIRightTop, 99);
 
             SetWindowTitle(targetNumber: 0);
+        }
+
+        /// <summary>
+        /// 勢力一覧ウィンドウの表示
+        /// </summary>
+        private void ListSelectionPowerMini()
+        {
+            int fontSizePlus = 5;
+            int hei = 50;
+            int widthIcon = 350;
+
+            Grid gridPower = new Grid();
+            gridPower.HorizontalAlignment = HorizontalAlignment.Left;
+            gridPower.VerticalAlignment = VerticalAlignment.Top;
+            gridPower.Height = (ClassGameStatus.ListPower.Count) * hei;
+            gridPower.Width = widthIcon;
+            gridPower.Name = StringName.windowSelectionPowerMini;
+            // ウインドウの右上に配置する
+            gridPower.Margin = new Thickness()
+            {
+                Left = this.CanvasMainWidth - widthIcon,
+                Top = 0
+            };
+            //grid.AllowDrop = false;
+            foreach (var item in ClassGameStatus.ListPower.Select((value, index) => (value, index)))
+            {
+                Grid gridPowerButton = new Grid();
+                BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.FlagPath));
+                //旗を加工する処理を入れたい
+                Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+                var destimg = new CroppedBitmap(bitimg1, rect);
+
+                Image img = new Image();
+                // 拡大せずに 32 x 32 のままで表示する
+                //img.Stretch = Stretch.Fill;
+                //img.Source = bitimg1;
+                img.Source = destimg;
+                img.Height = 32;
+                img.Width = 32;
+                img.HorizontalAlignment = HorizontalAlignment.Left;
+                img.Margin = new Thickness { Left = 4, Top = 0 };
+                gridPowerButton.Children.Add(img);
+
+                TextBlock tbDate1 = new TextBlock();
+                tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
+                tbDate1.VerticalAlignment = VerticalAlignment.Center;
+                tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
+                tbDate1.Text = item.value.Name;
+                tbDate1.Foreground = Brushes.White;
+                tbDate1.Margin = new Thickness { Left = 4 + 32 + 14, Top = 0 };
+
+                gridPowerButton.HorizontalAlignment = HorizontalAlignment.Left;
+                gridPowerButton.VerticalAlignment = VerticalAlignment.Top;
+                gridPowerButton.Height = hei;
+                gridPowerButton.Width = widthIcon;
+                gridPowerButton.Margin = new Thickness()
+                {
+                    Left = 0,
+                    Top = 0
+                };
+                gridPowerButton.Children.Add(tbDate1);
+
+                // 半透明のブラシを作成する (黒の50%)
+                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
+                mySolidColorBrush.Opacity = 0.5;
+
+                Button button = new Button();
+                button.HorizontalAlignment = HorizontalAlignment.Left;
+                button.VerticalAlignment = VerticalAlignment.Top;
+                button.Content = gridPowerButton;
+                button.Height = hei;
+                button.Width = widthIcon;
+                button.Margin = new Thickness
+                {
+                    Left = 0,
+                    Top = item.index * hei
+                };
+                button.Tag = item.value;
+                //button.Background = Brushes.Black;
+                button.Background = mySolidColorBrush;
+                button.Click += ButtonSelectionPowerMini_click;
+                gridPower.Children.Add(button);
+            }
+
+            this.canvasUIRightTop.Children.Add(gridPower);
         }
 
         /// <summary>
@@ -3102,90 +3274,12 @@ namespace WPF_Successor_001_to_Vahren
 
                 }
 
-                // 勢力ウィンドウを出す
-                {
-                    int fontSizePlus = 5;
-                    int hei = 50;
-                    int widthIcon = 350;
-
-                    Grid gridPower = new Grid();
-                    gridPower.HorizontalAlignment = HorizontalAlignment.Left;
-                    gridPower.VerticalAlignment = VerticalAlignment.Top;
-                    gridPower.Height = (ClassGameStatus.ListPower.Count) * 50;
-                    gridPower.Width = widthIcon;
-                    gridPower.Name = StringName.windowSelectionPowerMini;
-                    //+leftにすれば有効サイズの右端になる
-                    gridPower.Margin = new Thickness()
-                    {
-                        Left = this.canvasMain.Width + this.canvasMain.Margin.Left - widthIcon,
-                        Top = 0
-                    };
-                    //grid.AllowDrop = false;
-                    foreach (var item in ClassGameStatus.ListPower.Select((value, index) => (value, index)))
-                    {
-                        Grid gridPowerButton = new Grid();
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.FlagPath));
-                        //旗を加工する処理を入れたい
-                        Int32Rect rect = new Int32Rect(0, 0, 32, 32);
-                        var destimg = new CroppedBitmap(bitimg1, rect);
-
-                        Image img = new Image();
-                        img.Stretch = Stretch.Fill;
-                        //img.Source = bitimg1;
-                        img.Source = destimg;
-                        img.Height = hei;
-                        img.Width = hei;
-                        img.HorizontalAlignment = HorizontalAlignment.Left;
-                        img.Margin = new Thickness { Left = 0, Top = 0 };
-                        gridPowerButton.Children.Add(img);
-
-                        TextBlock tbDate1 = new TextBlock();
-                        tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
-                        tbDate1.VerticalAlignment = VerticalAlignment.Top;
-                        tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
-                        tbDate1.Text = item.value.Name;
-                        tbDate1.Foreground = Brushes.White;
-                        tbDate1.Height = hei;
-                        tbDate1.Margin = new Thickness { Left = hei + 15, Top = 10 };
-
-                        gridPowerButton.HorizontalAlignment = HorizontalAlignment.Left;
-                        gridPowerButton.VerticalAlignment = VerticalAlignment.Top;
-                        gridPowerButton.Height = hei;
-                        gridPowerButton.Width = widthIcon;
-                        gridPowerButton.Margin = new Thickness()
-                        {
-                            Left = 0,
-                            Top = 0
-                        };
-                        gridPowerButton.Children.Add(tbDate1);
-
-                        Button button = new Button();
-                        button.HorizontalAlignment = HorizontalAlignment.Left;
-                        button.VerticalAlignment = VerticalAlignment.Top;
-                        button.Content = gridPowerButton;
-                        button.Height = hei;
-                        button.Width = widthIcon;
-                        button.Margin = new Thickness
-                        {
-                            Left = 0,
-                            Top = item.index * hei
-                        };
-                        button.Tag = item.value;
-                        button.Background = Brushes.Black;
-                        //button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
-                        //button.Click += ScenarioSelectionButton_click;
-                        gridPower.Children.Add(button);
-
-                    }
-                    Canvas.SetZIndex(gridPower, 99);
-                    canvas.Children.Add(gridPower);
-                }
-
-
                 canvas.Children.Add(grid);
                 this.canvasMain.Children.Add(canvas);
             }
 
+            // 勢力一覧ウィンドウを出す
+            ListSelectionPowerMini();
         }
 
         private void SetMapStrategyFromBattle()
