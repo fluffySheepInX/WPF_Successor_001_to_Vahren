@@ -126,11 +126,15 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //ターン終了時処理
-
+            this.Visibility = Visibility.Hidden;
             //ターン加算
 
+            // AI呼び出し
+
+            // AI呼び出し後に下を行う
             //ターン開始時処理
             mainWindow.ExecuteEvent();
+            this.Visibility = Visibility.Visible;
         }
     }
 }

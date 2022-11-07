@@ -1,0 +1,216 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControlStrategyMenuLeft"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             Height="65" 
+             Width="400">
+    <Grid>
+        <Border Grid.Column="0" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="5">
+            <StackPanel Orientation="Horizontal">
+                <!--人材雇用-->
+                <Button Width="65" Background="Transparent" ToolTip="人材雇用">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Rectangle Stroke="#29acca" RenderTransformOrigin="0.5,0.5" Height="16" Canvas.Left="-4.717" Canvas.Top="-0.056" Width="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="47.288"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+
+                        </Rectangle>
+                        <Path Data="M136,139.33333 L144.83333,197.16666 178.0401,164.42767 z" 
+                              Fill="Silver" Height="28" 
+                              Stroke="#29acca" Stretch="Fill" Width="21" HorizontalAlignment="Left" Canvas.Left="-13.5" Canvas.Top="-20" VerticalAlignment="Top"/>
+                    </Canvas>
+                </Button>
+                <!--カード確認-->
+                <Button Width="65" Background="Transparent" ToolTip="カード確認">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Rectangle Fill="Silver" Stroke="#29acca" RenderTransformOrigin="0.5,0.5" Height="16" Canvas.Left="-12.717" 
+                                   Canvas.Top="-20.056" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="88.553"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle HorizontalAlignment="Left" Height="19" Margin="0,0,0,0" Stroke="#29acca" VerticalAlignment="Top" Width="4" Canvas.Left="-10.25" Canvas.Top="2.25" RenderTransformOrigin="0.5,0.5">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="13.911"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle HorizontalAlignment="Center" Height="19" Stroke="#29acca" VerticalAlignment="Center" Width="4" Canvas.Left="-2.25" Canvas.Top="2.25" RenderTransformOrigin="0.5,0.5">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-0.024"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Rectangle Height="19" Stroke="#29acca" Width="4" Canvas.Left="7.75" Canvas.Top="2.25" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-18.025"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+
+                    </Canvas>
+                </Button>
+                <!--外交-->
+                <Button Width="65" Background="Transparent" ToolTip="外交">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Rectangle Stroke="#29acca" Fill="Silver" RenderTransformOrigin="0.5,0.5" Height="16" Canvas.Left="-12.717" Canvas.Top="-21.059" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0.083"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+
+                        </Rectangle>
+                        <Rectangle Stroke="#29acca" RenderTransformOrigin="0.5,0.5" Height="28" Canvas.Left="-12.724" Canvas.Top="-6.058" Width="10" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0.083"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+
+                        </Rectangle>
+                    </Canvas>
+                </Button>
+                <!--ターン委任-->
+                <Button Width="65" Background="Transparent" ToolTip="ターン委任">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Path Data="M136,139.33333 L144.83333,197.16666 178.0401,164.42767 z" 
+                              Fill="Silver" Height="19" 
+                              Stroke="#29acca" Stretch="Fill" Width="14" HorizontalAlignment="Left" Canvas.Left="-8.097" Canvas.Top="-25.316" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-94.083"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="M136,139.33333 L144.83333,197.16666 178.0401,164.42767 z" 
+                            Fill="Silver" Height="19" 
+                            Stroke="#29acca" Stretch="Fill" Width="14" Canvas.Left="-18.097" Canvas.Top="-9.816" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-187.941"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="M136,139.33333 L144.83333,197.16666 178.0401,164.42767 z" 
+                            Fill="Silver" Height="17" 
+                            Stroke="#29acca" Stretch="Fill" Width="15" Canvas.Left="-4.126" Canvas.Top="3.802" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-261.197"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="M136,139.33333 L144.83333,197.16666 178.0401,164.42767 z" 
+                            Fill="Silver" Height="19" 
+                            Stroke="#29acca" Stretch="Fill" Width="14" Canvas.Left="8.737" Canvas.Top="-12.982" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-364.308"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                    </Canvas>
+                </Button>
+                <!--静観-->
+                <Button Width="65" Background="Transparent" ToolTip="静観">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Ellipse Height="32" Stroke="#29acca" Width="43" StrokeThickness="5" HorizontalAlignment="Left" Canvas.Left="-21.5" Canvas.Top="-16" VerticalAlignment="Top"/>
+                    </Canvas>
+                </Button>
+                <!--機能-->
+                <Button Width="65" Background="Transparent" ToolTip="機能">
+                    <Canvas>
+                        <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
+                        </Ellipse>
+                        <Rectangle Stroke="#29acca" RenderTransformOrigin="0.5,0.5" Height="11" Canvas.Left="-10.641" Canvas.Top="-7.326" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="102.802"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+
+                        </Rectangle>
+                        <Path Data="M359.16667,302.16667 L358.16666,290.16666 364.33332,290.83332 365.87498,298.83332 370.09619,299.49999 374.0727,292.49999 377.60737,293.16666 371.66715,304.33332" Fill="Silver" Height="15" Stroke="#29acca" Stretch="Fill" Width="19" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" Canvas.Left="-5.833" Canvas.Top="-24.833" VerticalAlignment="Top">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="5.107"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="M359.16667,302.16667 L358.16666,290.16666 364.33332,290.83332 365.87498,298.83332 370.09619,299.49999 374.0727,292.49999 377.60737,293.16666 371.66715,304.33332" Fill="Silver" Height="15" Stroke="#29acca" Stretch="Fill" Width="17" RenderTransformOrigin="0.5,0.5" Canvas.Left="-14.332" Canvas.Top="6.292" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-177.617"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                    </Canvas>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

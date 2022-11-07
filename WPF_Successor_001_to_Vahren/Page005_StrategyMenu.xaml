@@ -5,16 +5,16 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
       mc:Ignorable="d" 
-      d:DesignHeight="350" d:DesignWidth="400"
+      Height="350" Width="400"
       Title="Page005_StrategyMenu"
-      Background="AliceBlue"
+      Background="Transparent"
       >
-    <Grid>
-        <Border  Height="300" Width="350" Margin="0,0,0,0" Background="#454545" BorderBrush="Black" BorderThickness="5">
+    <Grid Background="Transparent">
+        <Border Grid.Column="1" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="5">
             <Canvas>
                 <Image Stretch="Fill" Margin="0,6,0,0" Height="32" Width="32" Name="imgFlag"></Image>
                 <Label Width="250" Height="40" FontSize="23" Margin="34,0,0,0" Foreground="White" Content="test" Name="lblNamePower"></Label>
-                <ScrollViewer Width="191" Height="250" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <ScrollViewer Width="189" Height="290" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top">
                     <StackPanel>
                         <Canvas Height="30">
                             <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="軍資金"></Label>
@@ -54,23 +54,27 @@
                         </Canvas>
                     </StackPanel>
                 </ScrollViewer>
-                <Border  Height="96" Width="96" Background="#454545" BorderBrush="Black" BorderThickness="5" Canvas.Left="212" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <Image Stretch="Fill" Height="96" Width="96" Name="imgFace"/>
+                <Border  Height="130" Width="130" Background="#454545" BorderBrush="Black" BorderThickness="5" Canvas.Left="221" Canvas.Top="40" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Image Stretch="Fill" Name="imgFace"/>
                 </Border>
-                <ScrollViewer Width="144" Height="149" Canvas.Top="141" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="196">
-                    <StackPanel>
-                        <Button x:Name="btnTurnEnd" Height="40" FontSize="20" Content="ターン終了" Click="btnTurnEnd_Click"></Button>
-                        <Button Height="40" FontSize="20" Content="人材雇用"></Button>
-                        <Button Height="40" FontSize="20" Content="カード確認"></Button>
-                        <Button Height="40" FontSize="20" Content="外交"></Button>
-                        <Button Height="40" FontSize="20" Content="内政"></Button>
-                        <Button Height="40" FontSize="20" Content="ターン委任"></Button>
-                        <Button Height="40" FontSize="20" Content="静観"></Button>
-                        <Button Height="40" FontSize="20" Content="機能"></Button>
-                    </StackPanel>
-                </ScrollViewer>
+                <Button x:Name="btnTurnEnd" Height="155" FontSize="20" Click="btnTurnEnd_Click" Canvas.Left="195" Canvas.Top="175" Width="185" Background="Black">
+                    <Canvas>
+                        <Label Canvas.Left="-87" Canvas.Top="-71" Foreground="#FFD80E0E">ターン終了</Label>
+                        <Path Data="M-63.5,-63.5 L-127,-127 -148.16667,-106.84127 -84.1627,-49.388889 -106.3373,-31.246032 -164.79763,-87.690477 -183.85361,-71.563493 -114.14881,-7.0555568 -55.9779,-49.38889 z" Fill="Silver" Height="89" Stroke="#29acca" StrokeThickness="8" Stretch="Fill" Width="88" RenderTransformOrigin="0.5,0.5" Canvas.Left="-24" Canvas.Top="-46">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-45.799"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                        </Path>
+                        <Path Data="M263.08722,259.42419 L215.5872,261.25751 256.85493,297.1605 z" Fill="Silver" HorizontalAlignment="Left" Height="42" Margin="0,0,0,0" Stroke="#29acca" StrokeThickness="8" Stretch="Fill" VerticalAlignment="Top" Width="48" Canvas.Left="-54.333" Canvas.Top="-1"/>
+
+                    </Canvas>
+                </Button>
             </Canvas>
         </Border>
-
     </Grid>
 </Page>

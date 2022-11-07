@@ -23,6 +23,11 @@
                 Width="{Binding canvasMainWidth}" 
                 Height="{Binding canvasMainHeight}">
         </Canvas>
+        <Canvas x:Name="canvasUIRightBottom" 
+                Panel.ZIndex="10"
+                Width="{Binding canvasMainWidth}" 
+                Height="{Binding canvasMainHeight}">
+        </Canvas>
         <Canvas x:Name="canvasMain"
                 Panel.ZIndex="5" 
                 HorizontalAlignment="Left" 

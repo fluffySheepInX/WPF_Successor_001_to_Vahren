@@ -449,31 +449,61 @@ namespace WPF_Successor_001_to_Vahren
                 Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
             };
 
-            double newTop, newLeft;
-            // canvasUI をウインドウの右上隅に置く。
-            if (this._sizeClientWinHeight > this.CanvasMainHeight)
+            // canvasUIRightTop をウインドウの右上隅に置く。
             {
-                newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
+                double newTop, newLeft;
+                if (this._sizeClientWinHeight > this.CanvasMainHeight)
+                {
+                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
+                }
+                else
+                {
+                    // ウインドウの高さが低い場合は上端に合わせる。
+                    newTop = 0;
+                }
+                if (this._sizeClientWinWidth > this.CanvasMainWidth)
+                {
+                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
+                }
+                else
+                {
+                    // ウインドウの横幅が狭い場合は右端に合わせる。
+                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
+                }
+                this.canvasUIRightTop.Margin = new Thickness()
+                {
+                    Top = newTop,
+                    Left = newLeft
+                };
             }
-            else
+            // canvasUIRightBottom をウインドウの右下隅に置く。
             {
-                // ウインドウの高さが低い場合は上端に合わせる。
-                newTop = 0;
+                double newTop, newLeft;
+                if (this._sizeClientWinHeight > this.CanvasMainHeight)
+                {
+                    newTop = ((this._sizeClientWinHeight / 2) + (this.CanvasMainHeight / 2)) - this.canvasUIRightBottom.Height;
+                }
+                else
+                {
+                    // ウインドウの高さが低い場合は下端に合わせる。
+                    newTop = (this.CanvasMainHeight / 2) - this.canvasUIRightBottom.Height;
+                }
+                if (this._sizeClientWinWidth > this.CanvasMainWidth)
+                {
+                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
+                }
+                else
+                {
+                    // ウインドウの横幅が狭い場合は右端に合わせる。
+                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
+                }
+                this.canvasUIRightBottom.Margin = new Thickness()
+                {
+                    Top = newTop,
+                    Left = newLeft
+                };
             }
-            if (this._sizeClientWinWidth > this.CanvasMainWidth)
-            {
-                newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
-            }
-            else
-            {
-                // ウインドウの横幅が狭い場合は右端に合わせる。
-                newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
-            }
-            this.canvasUIRightTop.Margin = new Thickness()
-            {
-                Top = newTop,
-                Left = newLeft
-            };
+
         }
 
         /// <summary>
@@ -1104,7 +1134,6 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasUIRightTop.Children.Remove(ri2);
                 }
             }
-
 
             var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(classPowerAndCity.ClassPower.MasterTag)).FirstOrDefault();
             if (result != null)
@@ -1816,6 +1845,7 @@ namespace WPF_Successor_001_to_Vahren
 
             Canvas.SetZIndex(this.canvasMain, 90);
             Canvas.SetZIndex(this.canvasUIRightTop, 99);
+            Canvas.SetZIndex(this.canvasUIRightBottom, 99);
 
             SetWindowTitle(targetNumber: 0);
         }
@@ -2623,6 +2653,8 @@ namespace WPF_Successor_001_to_Vahren
         {
             // 既に何か表示されてたら消す (Now Loading... の画像とか)
             this.canvasMain.Children.Clear();
+            this.canvasUIRightTop.Children.Clear();
+            this.canvasUIRightBottom.Children.Clear();
 
             // Display Background
             this.canvasMain.Background = GetTitleImage(targetNumber);
@@ -2782,6 +2814,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             this.canvasMain.Children.Clear();
             this.canvasUIRightTop.Children.Clear();
+            this.canvasUIRightBottom.Children.Clear();
 
             this.canvasMain.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
@@ -6865,9 +6898,6 @@ namespace WPF_Successor_001_to_Vahren
 
         private void SetWindowStrategyMenu()
         {
-            int widthCanvas = 350;
-            int HeightCanvas = 350;
-
             //Uri uri = new Uri("/Page005_StrategyMenu.xaml", UriKind.Relative);
             //frame.Source = uri;
 
@@ -6878,15 +6908,35 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.ClassGameStatus.WindowStrategyMenu = new Page005_StrategyMenu();
             }
-            this.ClassGameStatus.WindowStrategyMenu.SetData();
-            frame.Navigate(this.ClassGameStatus.WindowStrategyMenu);
-            frame.Margin = new Thickness()
+
+            double widthCanvas = this.ClassGameStatus.WindowStrategyMenu.Width;
+            double HeightCanvas = this.ClassGameStatus.WindowStrategyMenu.Height;
             {
-                Left = this.canvasMain.Width + this.canvasMain.Margin.Left - widthCanvas,
-                Top = this.canvasMain.Height + this.canvasMain.Margin.Top - HeightCanvas
-            };
-            frame.Name = StringName.canvasWindowStrategy;
-            this.canvasMain.Children.Add(frame);
+
+                this.ClassGameStatus.WindowStrategyMenu.SetData();
+                frame.Navigate(this.ClassGameStatus.WindowStrategyMenu);
+                frame.Margin = new Thickness()
+                {
+                    Left = this.canvasUIRightBottom.Width - widthCanvas,
+                    Top = this.canvasUIRightBottom.Height - HeightCanvas
+                };
+                frame.Name = StringName.canvasWindowStrategy;
+                this.canvasUIRightBottom.Children.Add(frame);
+            }
+
+            {
+                var userC = new UserControlStrategyMenuLeft();
+                double widthCanvasuserC = userC.Width;
+                double HeightCanvasuserC = userC.Height;
+                userC.Margin = new Thickness()
+                {
+                    Left = this.canvasUIRightBottom.Width - widthCanvas - widthCanvasuserC,
+                    Top = this.canvasUIRightBottom.Height - HeightCanvasuserC
+                };
+                userC.Name = StringName.canvasWindowStrategyLeft;
+                this.canvasUIRightBottom.Children.Add(userC);
+
+            }
 
             //TODO https://yudachi-shinko.blogspot.com/2019/09/wpfframepage.html
             while (frame.CanGoBack)
