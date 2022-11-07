@@ -486,8 +486,9 @@ namespace WPF_Successor_001_to_Vahren
                 else
                 {
                     // ウインドウの高さが低い場合は下端に合わせる。
-                    newTop = (this.CanvasMainHeight / 2) - this.canvasUIRightBottom.Height;
+                    newTop = (this._sizeClientWinHeight) - this.canvasUIRightBottom.Height;
                 }
+
                 if (this._sizeClientWinWidth > this.CanvasMainWidth)
                 {
                     newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
@@ -6925,16 +6926,19 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             {
-                var userC = new UserControlStrategyMenuLeft();
-                double widthCanvasuserC = userC.Width;
-                double HeightCanvasuserC = userC.Height;
-                userC.Margin = new Thickness()
+                if (this.ClassGameStatus.WindowStrategyMenu == null)
+                {
+                    this.ClassGameStatus.UserControlStrategyMenuLeft = new UserControlStrategyMenuLeft();
+                }
+                double widthCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Width;
+                double HeightCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Height;
+                this.ClassGameStatus.UserControlStrategyMenuLeft.Margin = new Thickness()
                 {
                     Left = this.canvasUIRightBottom.Width - widthCanvas - widthCanvasuserC,
                     Top = this.canvasUIRightBottom.Height - HeightCanvasuserC
                 };
-                userC.Name = StringName.canvasWindowStrategyLeft;
-                this.canvasUIRightBottom.Children.Add(userC);
+                this.ClassGameStatus.UserControlStrategyMenuLeft.Name = StringName.canvasWindowStrategyLeft;
+                this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.UserControlStrategyMenuLeft);
 
             }
 

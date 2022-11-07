@@ -127,6 +127,7 @@ namespace WPF_Successor_001_to_Vahren
 
             //ターン終了時処理
             this.Visibility = Visibility.Hidden;
+            mainWindow.ClassGameStatus.UserControlStrategyMenuLeft.Visibility = Visibility.Hidden;
             //ターン加算
 
             // AI呼び出し
@@ -135,6 +136,7 @@ namespace WPF_Successor_001_to_Vahren
             //ターン開始時処理
             mainWindow.ExecuteEvent();
             this.Visibility = Visibility.Visible;
+            mainWindow.ClassGameStatus.UserControlStrategyMenuLeft.Visibility = Visibility.Visible;
         }
     }
 }
