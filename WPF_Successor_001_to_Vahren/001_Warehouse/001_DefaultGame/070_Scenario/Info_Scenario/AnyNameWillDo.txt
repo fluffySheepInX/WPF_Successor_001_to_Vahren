@@ -28,7 +28,8 @@ NewFormatScenario sc1
 	#
 	# デフォでは横900,縦500でぴったりになります。
 	#
-	scenario_image="test_900x500.gif";
+	#scenario_image="test_900x500.gif";
+	scenario_image="sc.png";
 
 	#
 	#省略時は0。シナリオ選択画面(タイトル画面で難易度を選択した後の画面)での並び順を定めます。

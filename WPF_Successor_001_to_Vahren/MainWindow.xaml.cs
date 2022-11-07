@@ -839,20 +839,28 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 canvas.Name = StringName.windowMainMenuRightUnder;
                 canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
+                canvas.MouseEnter += ImageScenarioSelection_MouseEnter;
+                canvas.MouseLeave += ImageScenarioSelection_MouseLeave;
+                canvas.Background = Brushes.Transparent;
                 {
-                    // 枠
-                    var rectangleInfo = new Rectangle();
-                    rectangleInfo.Fill = ReturnBaseColor();
-                    rectangleInfo.Height = canvas.Height;
-                    rectangleInfo.Width = this.CanvasMainWidth / 2;
-                    rectangleInfo.Stroke = new SolidColorBrush(Colors.Gray);
-                    rectangleInfo.StrokeThickness = 5;
-                    rectangleInfo.Margin = new Thickness()
-                    {
-                        Left = 0,
-                        Top = 0,
-                    };
-                    canvas.Children.Add(rectangleInfo);
+                    // 最初の画像を一枚だけ表示する
+
+                    //gifをどこかで使うかもしれないので一応残す
+                    //// 枠
+                    //var rectangleInfo = new Rectangle();
+                    //rectangleInfo.Fill = ReturnBaseColor();
+                    //rectangleInfo.Height = canvas.Height;
+                    //rectangleInfo.Width = this.CanvasMainWidth / 2;
+                    //rectangleInfo.Stroke = new SolidColorBrush(Colors.Gray);
+                    //rectangleInfo.StrokeThickness = 5;
+                    //rectangleInfo.Margin = new Thickness()
+                    //{
+                    //    Left = 0,
+                    //    Top = 0,
+                    //};
+                    //canvas.Children.Add(rectangleInfo);
+                    //image.Stretch = Stretch.Fill;
+                    //ImageBehavior.SetAnimatedSource(image, bi);
 
                     // get target path.
                     List<string> strings = new List<string>();
@@ -866,13 +874,91 @@ namespace WPF_Successor_001_to_Vahren
                     Image image = new Image();
                     image.Width = canvas.Width;
                     image.Height = canvas.Height;
-                    image.Stretch = Stretch.Fill;
-                    ImageBehavior.SetAnimatedSource(image, bi);
+                    // アスペクト比を維持する。
+                    image.Stretch = Stretch.Uniform;
+                    image.Source = bi;
+                    image.Name = "ScenarioImage";
+                    image.Tag = tag;
                     canvas.Children.Add(image);
                 }
                 this.canvasMain.Children.Add(canvas);
             }
 
+        }
+
+        // シナリオ選択画面で右下キャンバスにマウス・カーソルを乗せた時
+        private void ImageScenarioSelection_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var image = (Image)LogicalTreeHelper.FindLogicalNode((Canvas)sender, "ScenarioImage");
+            if (image != null)
+            {
+                // get target path.
+                List<string> strings = new List<string>();
+                strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                strings.Add("005_BackgroundImage");
+                strings.Add("005_MenuImage");
+                strings.Add(this.ListClassScenarioInfo[Convert.ToInt32(image.Tag)].ScenarioImage);
+                string base_path = System.IO.Path.Combine(strings.ToArray());
+                base_path = System.IO.Path.ChangeExtension(base_path, string.Empty);
+                base_path = base_path.Substring(0, base_path.Length - 1);
+
+                ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
+
+                // 最初のフレームは指定された画像 (image.Source) を使う
+                DiscreteObjectKeyFrame key0 = new DiscreteObjectKeyFrame();
+                key0.KeyTime = TimeSpan.Zero;
+                key0.Value = image.Source;
+                animation.KeyFrames.Add(key0);
+
+                // 次のフレームからは連番で探す（最大99枚まで、多いと重くなる？）
+                int frame_span = 1000;
+                int num;
+                for (num = 1; num < 100; num++)
+                {
+                    string number_path = base_path + num;
+
+                    // JPG, PNG, GIF の順番に探す
+                    string find_path = number_path + ".jpg";
+                    if (System.IO.File.Exists(find_path) == false)
+                    {
+                        find_path = number_path + ".png";
+                        if (System.IO.File.Exists(find_path) == false)
+                        {
+                            find_path = number_path + ".gif";
+                            if (System.IO.File.Exists(find_path) == false)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    BitmapImage bi = new BitmapImage(new Uri(find_path));
+
+                    DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
+                    key.KeyTime = new TimeSpan(0, 0, 0, 0, frame_span * num);
+                    key.Value = bi;
+                    animation.KeyFrames.Add(key);
+                }
+                // 他の画像を見つけた時だけアニメーションを開始する
+                if (num > 1)
+                {
+                    animation.RepeatBehavior = RepeatBehavior.Forever;
+                    animation.Duration = new TimeSpan(0, 0, 0, 0, frame_span * num);
+                    image.BeginAnimation(Image.SourceProperty, animation);
+                }
+            }
+        }
+
+        // シナリオ選択画面で右下キャンバスからマウス・カーソルを離した時
+        private void ImageScenarioSelection_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var image = (Image)LogicalTreeHelper.FindLogicalNode((Canvas)sender, "ScenarioImage");
+            if (image != null)
+            {
+                // アニメーションを取り除く
+                image.BeginAnimation(Image.SourceProperty, null);
+
+                // 最初に表示してた画像 (image.Source) に戻る
+            }
         }
 
         private void ButtonSelectionCity_click(object sender, EventArgs e)
@@ -5953,7 +6039,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-            bool flag1 = true;
 
             ClassVec classVec = new ClassVec();
             // 現在の Margin
@@ -5968,19 +6053,12 @@ namespace WPF_Successor_001_to_Vahren
             classVec.Speed = 10;
             classVec.Set();
 
-            while (flag1 == true)
+            while (true)
             {
                 Thread.Sleep(5);
 
-                // 移動後の距離を試算して、同じままか、あるいは遠ざかってるなら、ループから抜け出す
-                double current_distanceX = classVec.Target.X - gridMapStrategy.Margin.Left;
-                double current_distanceY = classVec.Target.Y - gridMapStrategy.Margin.Top;
-                double next_distanceX = current_distanceX - (classVec.Vec.X * classVec.Speed);
-                double next_distanceY = current_distanceY - (classVec.Vec.Y * classVec.Speed);
-                if (next_distanceX * next_distanceX + next_distanceY * next_distanceY 
-                    >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
+                if (classVec.Hit(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top)))
                 {
-                    flag1 = false;
                     break;
                 }
 
