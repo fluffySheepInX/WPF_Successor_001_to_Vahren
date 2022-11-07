@@ -7,10 +7,11 @@
 	#次にjpgを探す
 	#無ければエラー
 	flag = "flag1";
-	master = "sonosa";
-	home = "s001";
+	master = "FlammLavoie";
+	home = "spot0006";
 	head = "将軍";
 	diff = "低";
+	enable_select = "off";
 	text ="
 
 	"帝王はどこにでもいて、どこにもいない"
@@ -21,7 +22,7 @@
 	しかし力不足であることを関係者は承知しており、
 	よって株式会社という駒を副帝が用意した。
 ";
-	member = "s001";
+	member = "spot0006";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
 }
 NewFormatPower sc1_p2
@@ -50,7 +51,7 @@ NewFormatPower sc1_p3
 	name = "ヤイバ王国もとい山賊同盟";
 	money = "10000";
 	flag = "flag3";
-	master = "yaiba";
+	master = "YaibaDagest";
 	home = "spot0001";
 	head = "賊長";
 	diff = "高";

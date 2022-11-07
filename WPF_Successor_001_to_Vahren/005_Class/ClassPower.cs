@@ -93,6 +93,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _diff = value; }
         }
         #endregion
+        #region EnableSelect
+        private string _enableSelect = string.Empty;
+        public string EnableSelect
+        {
+            get { return _enableSelect; }
+            set { _enableSelect = value; }
+        }
+        #endregion
         #region Text
         private string _text = string.Empty;
         public string Text

@@ -1,4 +1,5 @@
-﻿NewFormatUnit AbelIrijhorn
+﻿//東アイディオール株式会社
+NewFormatUnit AbelIrijhorn
 {
 	name = "アーベル・イリイホーン";
 	help = "やがて悲しき重圧の新提督";
@@ -190,6 +191,105 @@ NewFormatUnit MabateRoarcy
 	magic   = "100";
 	magDef  = "100";
 	speed   = "5";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}
+
+//館エレイル帝国
+NewFormatUnit FlammLavoie
+{
+	name = "フラーム・ラヴォアイ";
+	help = "さらば暗黒の時代";
+	race = "human";
+	class = "DragoonFrancesca";	
+	image = "chip003.png";
+	dead    = "……！";
+	retreat = "……！";
+	join    = "……！";
+	face = "face009.png";
+	
+	#部下に出来る種類
+	friend = "DragoonFrancesca";
+	
+	merce = "DragoonFrancesca";
+	staff = "DragoonFrancesca";
+	initMember = "DragoonFrancesca*7";
+
+	formation = "1";
+	skill = "gun01";
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "15";
+	dext    = "50";
+	move    = "200";
+	hprec   = "100";
+	mprec   = "100";
+	exp     = "100";
+	exp_mul = "100";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "30";
+	loyal = "100";
+	alive_per = "100";
+	escape_range = "-1";
+}
+//ヤイバ王国もとい山賊同盟
+NewFormatUnit YaibaDagest
+{
+	name = "ヤイバ・ダゲースト";
+	help = "俺が来た！";
+	race = "human";
+	class = "DragoonFrancesca";	
+	image = "chip003.png";
+	dead    = "……！";
+	retreat = "……！";
+	join    = "……！";
+	face = "face010.png";
+	
+	#部下に出来る種類
+	friend = "DragoonFrancesca";
+	
+	merce = "DragoonFrancesca";
+	staff = "DragoonFrancesca";
+	initMember = "DragoonFrancesca*7";
+
+	formation = "1";
+	skill = "gun01";
+
+	level = "3";
+	level_max = "100";
+	price   = "10000";
+	cost    = "100";
+	medical = "0";
+	hasExp  = "999";
+	hp      = "4000";
+	mp      = "500";
+	attack  = "100";
+	defense = "100";
+	magic   = "100";
+	magDef  = "100";
+	speed   = "15";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";

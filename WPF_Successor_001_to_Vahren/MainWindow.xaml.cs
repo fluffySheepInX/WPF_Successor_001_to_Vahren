@@ -874,6 +874,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
         }
+
         private void ButtonSelectionCity_click(object sender, EventArgs e)
         {
             if (this.NowSituation == Situation.PlayerTurn)
@@ -1132,6 +1133,10 @@ namespace WPF_Successor_001_to_Vahren
                     //決定ボタン
                     {
                         Button button = new Button();
+                        if (classPowerAndCity.ClassPower.EnableSelect == "off")
+                        {
+                            button.IsEnabled = false;
+                        }
                         button.HorizontalAlignment = HorizontalAlignment.Left;
                         button.VerticalAlignment = VerticalAlignment.Top;
                         button.Content = "決定";
@@ -1170,7 +1175,7 @@ namespace WPF_Successor_001_to_Vahren
                         tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
                         tbDate1.VerticalAlignment = VerticalAlignment.Top;
                         tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
-                        tbDate1.Text = classPowerAndCity.ClassPower.Text.Replace(" ", String.Empty).Replace("\t", String.Empty).Replace("　", String.Empty);
+                        tbDate1.Text = classPowerAndCity.ClassPower.Text.Replace(" ", String.Empty).Replace("\t", String.Empty).Replace("　", String.Empty).Replace("〇", "　");
                         tbDate1.TextWrapping = TextWrapping.Wrap;
                         tbDate1.Height = textHeight;
                         tbDate1.Width = 380;
@@ -5019,6 +5024,20 @@ namespace WPF_Successor_001_to_Vahren
                 else
                 {
                     classPower.Text = first.Value;
+                }
+            }
+            {
+                var enable_select =
+                    new Regex(GetPat("enable_select"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(enable_select);
+                if (first == null)
+                {
+                    classPower.EnableSelect = "on";
+                }
+                else
+                {
+                    classPower.EnableSelect = "off";
                 }
             }
             {

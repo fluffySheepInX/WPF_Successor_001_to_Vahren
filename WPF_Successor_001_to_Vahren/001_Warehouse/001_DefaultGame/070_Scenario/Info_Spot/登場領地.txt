@@ -51,6 +51,7 @@ NewFormatSpot spot0003
 	x = "2600";
 	y = "450";
 	map = "wefwefwefwefw";
+	member = "YaibaDagest";
 }
 
 NewFormatSpot spot0004
@@ -71,7 +72,17 @@ NewFormatSpot spot0005
 	map = "wefwefwefwefw";
 }
 
-spot s001
+NewFormatSpot spot0006
+{
+	name = "アイストゥールゥ";
+	image = "099_SNOW2.png";
+	x = "2100";
+	y = "700";
+	map = "wefwefwefwefw";
+	member = "FlammLavoie";
+}
+
+ssss s001
 {
 	name = アイストゥールゥ
 	member@sc1 = kibogamineMaurice,yokohamaWinston,yamadaAlice,yamanasiThom
