@@ -347,6 +347,9 @@ namespace WPF_Successor_001_to_Vahren
                     canvasMainWidth = this.CanvasMainWidth,
                     canvasMainHeight = this.CanvasMainHeight
                 };
+                // コントロールのプロパティの標準値を指定する
+                // ツールチップが表示されるまでの時間を最小にする。
+                ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(0));
             }
             catch (Exception err)
             {
@@ -481,12 +484,12 @@ namespace WPF_Successor_001_to_Vahren
                 double newTop, newLeft;
                 if (this._sizeClientWinHeight > this.CanvasMainHeight)
                 {
-                    newTop = ((this._sizeClientWinHeight / 2) + (this.CanvasMainHeight / 2)) - this.canvasUIRightBottom.Height;
+                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
                 }
                 else
                 {
                     // ウインドウの高さが低い場合は下端に合わせる。
-                    newTop = (this._sizeClientWinHeight) - this.canvasUIRightBottom.Height;
+                    newTop = this._sizeClientWinHeight - this.CanvasMainHeight;
                 }
 
                 if (this._sizeClientWinWidth > this.CanvasMainWidth)
@@ -649,7 +652,23 @@ namespace WPF_Successor_001_to_Vahren
 
             var thickness = new Thickness();
             thickness.Left = ri.Margin.Left + (this.ClassGameStatus.CurrentPoint.X - this.ClassGameStatus.StartPoint.X);
+            if (thickness.Left > this.CanvasMainWidth / 2)
+            {
+                thickness.Left = this.CanvasMainWidth / 2;
+            }
+            if (thickness.Left < this.CanvasMainWidth / 2 - ri.Width)
+            {
+                thickness.Left = this.CanvasMainWidth / 2 - ri.Width;
+            }
             thickness.Top = ri.Margin.Top + (this.ClassGameStatus.CurrentPoint.Y - this.ClassGameStatus.StartPoint.Y);
+            if (thickness.Top > this.CanvasMainHeight / 2)
+            {
+                thickness.Top = this.CanvasMainHeight / 2;
+            }
+            if (thickness.Top < this.CanvasMainHeight / 2 - ri.Height)
+            {
+                thickness.Top = this.CanvasMainHeight / 2 - ri.Height;
+            }
             ri.Margin = thickness;
 
             this.ClassGameStatus.StartPoint = this.ClassGameStatus.CurrentPoint;
