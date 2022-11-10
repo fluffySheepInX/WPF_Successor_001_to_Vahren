@@ -12,7 +12,7 @@
 	#
 	#将来的には数式も対応予定
 	#
-	x = "2400";
+	x = "2580";
 
 	#必須項目
 	#
@@ -20,22 +20,39 @@
 	#マップの下の端が高さのサイズ
 	#つまりグラフと向きが逆
 	#
-	y = "600";
+	y = "590";
 
 	#初期人材
-	member = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy";
+	member = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 
 	#戦闘マップ
 	map = "wefwefwefwefw";
-
 }
+NewFormatSpot spot0009
+{
+	name = "ハラーハッフ";
+	image = "099_SNOW2.png";
+	x = "2800";
+	y = "680";
+	map = "wefwefwefwefw";
+}
+NewFormatSpot spot0010
+{
+	name = "ニュージ";
+	image = "099_SNOW2.png";
+	x = "2650";
+	y = "680";
+	map = "wefwefwefwefw";
+}
+
+
 
 NewFormatSpot spot0002
 {
 	name = "ハリヤル";
 	image = "099_SNOW2.png";
-	x = "2700";
-	y = "600";
+	x = "2750";
+	y = "550";
 	map = "sabaku";
 
 	#滅亡等で中立になった時のユニット
@@ -48,18 +65,34 @@ NewFormatSpot spot0003
 {
 	name = "ホウリイ";
 	image = "099_WASTE6.png";
-	x = "2600";
-	y = "450";
+	x = "2700";
+	y = "400";
 	map = "wefwefwefwefw";
 	member = "YaibaDagest";
+}
+NewFormatSpot spot0007
+{
+	name = "テイヤリ";
+	image = "099_SNOW2.png";
+	x = "2600";
+	y = "300";
+	map = "wefwefwefwefw";
+}
+NewFormatSpot spot0008
+{
+	name = "サーノウ";
+	image = "099_SNOW2.png";
+	x = "2700";
+	y = "250";
+	map = "wefwefwefwefw";
 }
 
 NewFormatSpot spot0004
 {
 	name = "ギリアイル";
 	image = "099_WASTE6.png";
-	x = "2500";
-	y = "500";
+	x = "2650";
+	y = "450";
 	map = "sabaku";
 }
 
@@ -67,19 +100,27 @@ NewFormatSpot spot0005
 {
 	name = "ウィーチェ";
 	image = "099_WASTE6.png";
-	x = "2250";
+	x = "2280";
 	y = "650";
 	map = "wefwefwefwefw";
+}
+NewFormatSpot spot0011
+{
+	name = "ランダーロール";
+	image = "099_SNOW2.png";
+	x = "2450";
+	y = "670";
+	map = "wefwefwefwefw";
+	member = "FlammLavoie";
 }
 
 NewFormatSpot spot0006
 {
 	name = "アイストゥールゥ";
 	image = "099_SNOW2.png";
-	x = "2100";
-	y = "700";
+	x = "2180";
+	y = "730";
 	map = "wefwefwefwefw";
-	member = "FlammLavoie";
 }
 
 ssss s001

@@ -151,6 +151,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _voice_type = value; }
         }
         #endregion
+        #region Talent
+        private string _talent = string.Empty;
+        public string Talent
+        {
+            get { return _talent; }
+            set { _talent = value; }
+        }
+        #endregion
         #region Friend
         private string _friend = string.Empty;
         public string Friend

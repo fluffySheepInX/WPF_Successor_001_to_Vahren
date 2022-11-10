@@ -1155,7 +1155,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(classPowerAndCity.ClassPower.MasterTag)).FirstOrDefault();
+            var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(new(classPowerAndCity.ClassPower.MasterTag, 0))).FirstOrDefault();
             if (result != null)
             {
                 this.ClassGameStatus.SelectionCityPoint = new Point
@@ -1351,7 +1351,7 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             foreach (var itemMember in itemSpot.ListMember.Select((value, index) => (value, index)))
                             {
-                                var unit = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemMember.value).FirstOrDefault();
+                                var unit = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemMember.value.Item1 && x.Talent == "on").FirstOrDefault();
                                 if (unit == null)
                                 {
                                     continue;
@@ -1499,27 +1499,20 @@ namespace WPF_Successor_001_to_Vahren
                 //メンバー配置
                 foreach (var itemMember in itemSpot.ListMember)
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(itemMember)).FirstOrDefault();
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(itemMember.Item1)).FirstOrDefault();
                     if (info == null)
                     {
                         continue;
                     }
-                    var classUnit = new List<ClassUnit>();
-                    var deep = info.DeepCopy();
-                    deep.ID = this.ClassGameStatus.IDCount;
-                    this.ClassGameStatus.SetIDCount();
-                    classUnit.Add(deep);
 
-                    //データ構造のミス
-                    //ここでも以下のようにすべきだった
-                    //var classUnit = new List<ClassUnit>();
-                    //for (int i = 0; i < ListWanderingMonster.Item2; i++)
-                    //{
-                    //    var deep = info.DeepCopy();
-                    //    deep.ID = this.ClassGameStatus.IDCount;
-                    //    this.ClassGameStatus.SetIDCount();
-                    //    classUnit.Add(deep);
-                    //}
+                    var classUnit = new List<ClassUnit>();
+                    for (int i = 0; i < itemMember.Item2; i++)
+                    {
+                        var deep = info.DeepCopy();
+                        deep.ID = this.ClassGameStatus.IDCount;
+                        this.ClassGameStatus.SetIDCount();
+                        classUnit.Add(deep);
+                    }
 
                     itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
                 }
@@ -3394,7 +3387,6 @@ namespace WPF_Successor_001_to_Vahren
 
                         button.Background = Brushes.Transparent;
                         button.Foreground = Brushes.Transparent;
-                        button.Background = Brushes.Transparent;
                         button.BorderBrush = Brushes.Transparent;
                         //button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ButtonSelectionCity_click;
@@ -4634,11 +4626,24 @@ namespace WPF_Successor_001_to_Vahren
                 var first = CheckMatchElement(member);
                 if (first == null)
                 {
-                    classSpot.ListMember = new List<string>();
+                    classSpot.ListMember = new List<(string, int)>();
                 }
                 else
                 {
-                    classSpot.ListMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    var tete = new List<(string, int)>();
+                    foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(","))
+                    {
+                        if (item.Contains("*") == true)
+                        {
+                            var tete2 = item.Split("*");
+                            tete.Add(new(tete2[0], Convert.ToInt32(tete2[1])));
+                        }
+                        else
+                        {
+                            tete.Add(new (item, 1));
+                        }
+                    }
+                    classSpot.ListMember = tete;
                 }
             }
             //map
@@ -4943,7 +4948,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 else
                 {
-                    classScenario.DisplayListSpot = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    classScenario.DisplayListSpot = first.Value.Replace("\t", "").Replace(Environment.NewLine, "").Split(",").ToList();
                 }
             }
             //spot_capacity
@@ -5436,6 +5441,20 @@ namespace WPF_Successor_001_to_Vahren
                 else
                 {
                     classUnit.Voice_type = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
+            {
+                var talent =
+                    new Regex(GetPat("talent"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(talent);
+                if (first == null)
+                {
+                    classUnit.Talent = "off";
+                }
+                else
+                {
+                    classUnit.Talent = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             {

@@ -89,8 +89,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ListMember
-        private List<string> _listMember = new List<string>();
-        public List<string> ListMember
+        private List<(string, int)> _listMember = new List<(string, int)>();
+        public List<(string, int)> ListMember
         {
             get { return _listMember; }
             set { _listMember = value; }

@@ -11,7 +11,9 @@ NewFormatUnit AbelIrijhorn
 	join    = "私が上の人間に欲していることはただ一つ。じっと座っていること。ただそれだけだ。";
 	face = "face001.png";
 	voice_type = "AbelIrijhorn";
-	
+	#onで人材
+	talent = "on";
+
 	#部下に出来る種類
 	friend = "LineInfantryM14";
 	
@@ -68,6 +70,7 @@ NewFormatUnit VictodyRoyle
 	join    = "提督どこー？";
 	face = "face002.png";
 	voice_type = "VictodyRoyle";
+	talent = "on";
 	friend = "LineInfantryM14";
 	merce = "LineInfantryM14";
 	staff = "LineInfantryM14";
@@ -116,6 +119,7 @@ NewFormatUnit JothianRoarcy
 	join    = "いくらでも膝を折りましょう。貴方が名君であるならば";
 	face = "face003.png";
 	voice_type = "JothianRoarcy";
+	talent = "on";
 	
 	#部下に出来る種類
 	friend = "DragoonFrancesca";
@@ -167,7 +171,8 @@ NewFormatUnit MabateRoarcy
 	join    = "新入社員です！私のお兄ちゃんのこともよろしく！";
 	face = "face005.png";
 	voice_type = "MabateRoarcy";
-	
+	talent = "on";
+
 	#部下に出来る種類
 	friend = "HowitzerC11";
 	
@@ -217,6 +222,7 @@ NewFormatUnit FlammLavoie
 	retreat = "……！";
 	join    = "……！";
 	face = "face009.png";
+	talent = "on";
 	
 	#部下に出来る種類
 	friend = "DragoonFrancesca";
@@ -266,6 +272,7 @@ NewFormatUnit YaibaDagest
 	retreat = "……！";
 	join    = "……！";
 	face = "face010.png";
+	talent = "on";
 	
 	#部下に出来る種類
 	friend = "DragoonFrancesca";

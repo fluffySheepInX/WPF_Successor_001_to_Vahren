@@ -78,7 +78,10 @@ NewFormatScenario sc1
 
 	#必須項目
 	#登場する領地
-	spot = "spot0001,spot0002,spot0003,spot0004,spot0005,spot0006,s001,spot0099,spot0098";
+	spot = "spot0001,spot0002,spot0003,spot0004,
+			spot0005,spot0006,spot0007,spot0008,
+			spot0009,spot0010,spot0011,
+			s001,spot0099,spot0098";
 
 	#全て出す
 	#未実装
@@ -94,10 +97,16 @@ NewFormatScenario sc1
 	
 	#繋げる
 	linkSpot(spot0001, spot0004);
+	linkSpot(spot0001, spot0009);
+	linkSpot(spot0001, spot0010);
 	linkSpot(spot0004, spot0003);
+	linkSpot(spot0003, spot0007);
+	linkSpot(spot0003, spot0008);
 	linkSpot(spot0004, spot0002);
-	linkSpot(spot0001, spot0005);
+	linkSpot(spot0001, spot0011);
+	linkSpot(spot0011, spot0005);
 	linkSpot(spot0005, spot0006);
+	linkSpot(spot0007, spot0008);
 
 	#最大出撃数
 	war_capacity = "16";
