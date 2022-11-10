@@ -6926,7 +6926,7 @@ namespace WPF_Successor_001_to_Vahren
             Frame frame = new Frame();
             if (this.ClassGameStatus.WindowStrategyMenu == null)
             {
-                this.ClassGameStatus.WindowStrategyMenu = new Page005_StrategyMenu();
+                this.ClassGameStatus.WindowStrategyMenu = new UserControl005_StrategyMenu();
             }
 
             double widthCanvas = this.ClassGameStatus.WindowStrategyMenu.Width;
@@ -6945,20 +6945,19 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             {
-                if (this.ClassGameStatus.WindowStrategyMenu == null)
-                {
-                    this.ClassGameStatus.UserControlStrategyMenuLeft = new UserControlStrategyMenuLeft();
-                }
-                double widthCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Width;
-                double HeightCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Height;
-                this.ClassGameStatus.UserControlStrategyMenuLeft.Margin = new Thickness()
-                {
-                    Left = this.canvasUIRightBottom.Width - widthCanvas - widthCanvasuserC,
-                    Top = this.canvasUIRightBottom.Height - HeightCanvasuserC
-                };
-                this.ClassGameStatus.UserControlStrategyMenuLeft.Name = StringName.canvasWindowStrategyLeft;
-                this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.UserControlStrategyMenuLeft);
-
+                //if (this.ClassGameStatus.WindowStrategyMenu == null)
+                //{
+                //    this.ClassGameStatus.UserControlStrategyMenuLeft = new UserControlStrategyMenuLeft();
+                //}
+                //double widthCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Width;
+                //double HeightCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Height;
+                //this.ClassGameStatus.UserControlStrategyMenuLeft.Margin = new Thickness()
+                //{
+                //    Left = this.canvasUIRightBottom.Width - widthCanvas - widthCanvasuserC,
+                //    Top = this.canvasUIRightBottom.Height - HeightCanvasuserC
+                //};
+                //this.ClassGameStatus.UserControlStrategyMenuLeft.Name = StringName.canvasWindowStrategyLeft;
+                //this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.UserControlStrategyMenuLeft);
             }
 
             //TODO https://yudachi-shinko.blogspot.com/2019/09/wpfframepage.html

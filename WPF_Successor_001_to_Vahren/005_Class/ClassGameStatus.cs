@@ -210,19 +210,11 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region WindowStrategyMenu
-        private Page005_StrategyMenu _windowStrategyMenu = new Page005_StrategyMenu();
-        public Page005_StrategyMenu WindowStrategyMenu
+        private UserControl005_StrategyMenu _windowStrategyMenu = new UserControl005_StrategyMenu();
+        public UserControl005_StrategyMenu WindowStrategyMenu
         {
             get { return _windowStrategyMenu; }
             set { _windowStrategyMenu = value; }
-        }
-        #endregion
-        #region UserControlStrategyMenuLeft
-        private UserControlStrategyMenuLeft _userControlStrategyMenuLeft = new UserControlStrategyMenuLeft();
-        public UserControlStrategyMenuLeft UserControlStrategyMenuLeft
-        {
-            get { return _userControlStrategyMenuLeft; }
-            set { _userControlStrategyMenuLeft = value; }
         }
         #endregion
     }
