@@ -2047,7 +2047,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
-
+                    List<(BitmapImage, int, int)> listTakaiObj = new List<(BitmapImage, int, int)>();
                     foreach (var itemCol in this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData
                                             .Select((value, index) => (value, index)))
                     {
@@ -2056,7 +2056,6 @@ namespace WPF_Successor_001_to_Vahren
                             map.TryGetValue(itemRow.value.Tip, out string? value);
                             if (value == null) continue;
 
-                            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
                             var bi = new BitmapImage(new Uri(value));
                             ImageBrush image = new ImageBrush();
                             image.Stretch = Stretch.Fill;
@@ -2067,17 +2066,48 @@ namespace WPF_Successor_001_to_Vahren
                             //rotateTransform2.CenterY = 50;
                             //image.RelativeTransform = rotateTransform2;
 
-                            path.Fill = image;
-                            path.Stretch = Stretch.Fill;
-                            path.StrokeThickness = 0;
-                            path.Data = Geometry.Parse("M 0," + takasaMapTip / 2 + " L " + yokoMapTip / 2 + "," + takasaMapTip + " L " + yokoMapTip + "," + takasaMapTip / 2 + " L " + yokoMapTip / 2 + ",0 Z");
-                            path.Margin = new Thickness()
+                            if (bi.PixelHeight > 32)
                             {
-                                Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
-                            };
-                            canvas.Children.Add(path);
+                                listTakaiObj.Add(new(bi, itemCol.index, itemRow.index));
+                            }
+                            else
+                            {
+                                System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                                path.Fill = image;
+                                path.Stretch = Stretch.Fill;
+                                path.StrokeThickness = 0;
+                                path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
+                                                        + " L " + yokoMapTip / 2 + "," + takasaMapTip
+                                                        + " L " + yokoMapTip + "," + takasaMapTip / 2
+                                                        + " L " + yokoMapTip / 2 + ",0 Z");
+                                path.Margin = new Thickness()
+                                {
+                                    Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
+                                    Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                                };
+                                canvas.Children.Add(path);
+                            }
                         }
+                    }
+
+                    foreach (var item in listTakaiObj.OrderBy(x => x.Item2).ThenByDescending(y => y.Item3))
+                    {
+                        ImageBrush image = new ImageBrush();
+                        image.Stretch = Stretch.Fill;
+                        image.ImageSource = item.Item1;
+
+                        System.Windows.Shapes.Rectangle rectangle = new Rectangle();
+                        rectangle.Fill = image;
+                        rectangle.Stretch = Stretch.Fill;
+                        rectangle.StrokeThickness = 0;
+                        rectangle.Width = yokoMapTip;
+                        rectangle.Height = item.Item1.PixelHeight;
+                        rectangle.Margin = new Thickness()
+                        {
+                            Left = (item.Item2 * (yokoMapTip / 2)) + (item.Item3 * (yokoMapTip / 2)),
+                            Top = ((canvas.Height / 2) + (item.Item2 * (takasaMapTip / 2)) + (item.Item3 * (-(takasaMapTip / 2)))) - (item.Item1.PixelHeight - takasaMapTip / 2)
+                        };
+                        canvas.Children.Add(rectangle);
                     }
                 }
 
@@ -4640,7 +4670,7 @@ namespace WPF_Successor_001_to_Vahren
                         }
                         else
                         {
-                            tete.Add(new (item, 1));
+                            tete.Add(new(item, 1));
                         }
                     }
                     classSpot.ListMember = tete;
