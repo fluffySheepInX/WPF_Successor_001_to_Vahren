@@ -1985,7 +1985,7 @@ namespace WPF_Successor_001_to_Vahren
             //マップそのもの
             Canvas canvas = new Canvas();
             int takasaMapTip = 32;
-            int yokoMapTip = 48;
+            int yokoMapTip = 64;
             canvas.Name = StringName.windowMapBattle;
             canvas.Background = Brushes.Black;
             canvas.MouseMove += CanvasMapBattle_MouseMove;
@@ -2011,9 +2011,8 @@ namespace WPF_Successor_001_to_Vahren
                 else
                 {
                     {
-                        canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32
-                                            + (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 16);
-                        canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * 32;
+                        canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * yokoMapTip;
+                        canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * takasaMapTip;
                         canvas.Margin = new Thickness()
                         {
                             Left = ((
@@ -6710,10 +6709,13 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                    if (re2 != null)
+                                    if (re1 != null)
                                     {
-                                        re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                        if (re2 != null)
+                                        {
+                                            re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                        }
                                     }
                                 }
                                 catch (Exception)
