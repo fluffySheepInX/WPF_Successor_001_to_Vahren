@@ -109,6 +109,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { listEvent = value; }
         }
         #endregion
+        #region ListObject
+        private List<ClassObjectMapTip> _listObject = new List<ClassObjectMapTip>();
+        public List<ClassObjectMapTip> ListObject
+        {
+            get { return _listObject; }
+            set { _listObject = value; }
+        }
+        #endregion
 
         #region NowTurn
         private int nowTurn = -1;

@@ -59,4 +59,9 @@
             ,
         status
     }
+    public enum MapTipObjectType
+    {
+        WALL2
+        , GATE
+    }
 }

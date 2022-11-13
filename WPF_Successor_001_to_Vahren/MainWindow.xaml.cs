@@ -4081,6 +4081,56 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 // Event 終わり
 
+                //object
+                {
+                    string targetString = "NewFormatObject";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    var scenarioMatches = new Regex(@"Object[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                    if (listMatches != null)
+                    {
+                        if (listMatches.Count < 1)
+                        {
+                            // データがないので次
+                        }
+                        else
+                        {
+                            foreach (var getData in listMatches)
+                            {
+                                //enumを使うべき？
+                                int kind = 0;
+                                {
+                                    //このコードだとNewFormatObjectTest等が通るのでよくない
+                                    string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                    if (String.Compare(join, targetString, true) == 0)
+                                    {
+                                        kind = 0;
+                                    }
+                                    else
+                                    {
+                                        kind = 1;
+                                    }
+                                }
+
+                                if (kind == 0)
+                                {
+                                    ClassGameStatus.ListObject.Add(GetClassObjNewFormat(getData.Value));
+                                }
+                                else
+                                {
+                                    //ClassGameStatus.ListObject.Add(GetClassObj(getData.Value));
+                                }
+                            }
+                        }
+                    }
+                }
+                //object 終わり
+
                 //正規表現終わり
 
                 //インデックスを張っておく
@@ -4094,6 +4144,73 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
             }
+        }
+
+        private ClassObjectMapTip GetClassObjNewFormat(string value)
+        {
+            ClassObjectMapTip classObjectMapTip = new ClassObjectMapTip();
+
+            // コメント行を取り除く
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("#") == true)
+                    {
+                        var data = line[i].Split("#");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
+
+            //nameTag
+            {
+                var nameTag = new Regex(GetPatTag("NewFormatObject"), RegexOptions.IgnoreCase)
+                                .Matches(value);
+                var first = CheckMatchElement(nameTag);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classObjectMapTip.NameTag = first.Value.Replace(Environment.NewLine, "");
+            }
+
+            //type
+            {
+                var type =
+                    new Regex(GetPat("type"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(type);
+                if (first == null)
+                {
+                    //classObjectMapTip.Type = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classObjectMapTip.Type = (MapTipObjectType)Enum.Parse(typeof(MapTipObjectType), re, true);
+                }
+            }
+
+            //no_wall2
+            {
+                var no_wall2 =
+                    new Regex(GetPat("no_wall2"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(no_wall2);
+                if (first == null)
+                {
+                    classObjectMapTip.NoWall2 = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classObjectMapTip.NoWall2 = int.Parse(re);
+                }
+            }
+
+            return classObjectMapTip;
         }
 
         private ClassSkill GetClassSkillNewFormat(string value)

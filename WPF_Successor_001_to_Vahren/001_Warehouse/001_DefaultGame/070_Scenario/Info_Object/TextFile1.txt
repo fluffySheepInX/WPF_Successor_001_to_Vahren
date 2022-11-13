@@ -1,22 +1,31 @@
-﻿NewFormatObject wall
+﻿NewFormatObject fwall1
 {
-	#省略するとobject構造体の名前がそのままイメージ名
-	#image.datにあるイメージ名を指定
-	#image = "wall1";
-
 	#wall2	通行不可。攻撃側の飛び道具だけが貫通不可になります
 	type = "wall2";
 
 	#type = wall2で攻撃側飛び道具がすり抜ける確率です。
 	no_wall2 = "80";
 	
+	#省略するとobject構造体の名前がそのままイメージ名
+	#image.datにあるイメージ名を指定
+	#image = "wall1";
 	#建造物足元の当たり半径。省略時は16です。
-	radius = "32";
-
+	#radius = "32";
 	#横サイズ
-	w = "64";
+	#w = "64";
 	#縦サイズ
-	h = "74";
+	#h = "74";
 	#アルファ値
-	a = "255";
+	#a = "255";
+}
+
+NewFormatObject fwall2
+{
+	type = "wall2";
+	no_wall2 = "80";
+}
+
+NewFormatObject fgate1
+{
+	type = "gate";
 }
