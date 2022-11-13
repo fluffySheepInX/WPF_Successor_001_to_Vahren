@@ -2098,6 +2098,14 @@ namespace WPF_Successor_001_to_Vahren
                         image.ImageSource = item.Item1;
 
                         System.Windows.Shapes.Rectangle rectangle = new Rectangle();
+                        ClassMapTipRectangle classMapTipRectangle = new ClassMapTipRectangle();
+                        classMapTipRectangle.TipName = System.IO.Path.GetFileNameWithoutExtension(item.Item1.UriSource.AbsolutePath);
+                        classMapTipRectangle.LogicalXY = new Thickness()
+                        {
+                            Left = (item.Item2 * (yokoMapTip / 2)) + (item.Item3 * (yokoMapTip / 2)),
+                            Top = ((canvas.Height / 2) + (item.Item2 * (takasaMapTip / 2)) + (item.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                        };
+                        rectangle.Tag = classMapTipRectangle;
                         rectangle.Fill = image;
                         rectangle.Stretch = Stretch.Fill;
                         rectangle.StrokeThickness = 0;
@@ -6789,6 +6797,31 @@ namespace WPF_Successor_001_to_Vahren
         {
             try
             {
+                List<Rectangle> getMap = new List<Rectangle>();
+                await Task.Run(() =>
+                {
+                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                    {
+                        try
+                        {
+                            // あらかじめ障害物の配列を作る。
+                            var canv = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                            if (canv != null)
+                            {
+                                for (int i = 0; i < canv.Children.Count; i++)
+                                {
+                                    if (canv.Children[i] is Rectangle target) getMap.Add(target);
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            //移動中にゲームを落とすとエラーになるので暫定的に
+                            throw;
+                        }
+                    }));
+                });
+
                 //移動し過ぎを防止
                 int counter = 1000;
 
@@ -6824,24 +6857,47 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
                         }
-                        classUnit.NowPosi = new Point()
-                        {
-                            X = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed),
-                            Y = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed)
-                        };
+
+                        double nowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed);
+                        double nowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed);
+
                         await Task.Run(() =>
                         {
                             Application.Current.Dispatcher.Invoke((Action)(() =>
                             {
                                 try
                                 {
-                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                    if (re1 != null)
+                                    bool ch = true;
+                                    var targetTip = getMap
+                                                        .Where(x => ((ClassMapTipRectangle)x.Tag).LogicalXY.Left <= nowPosiX 
+                                                                && (((ClassMapTipRectangle)x.Tag).LogicalXY.Left + 64) >= nowPosiX)
+                                                        .Where(y => ((ClassMapTipRectangle)y.Tag).LogicalXY.Top <= nowPosiY 
+                                                                && (((ClassMapTipRectangle)y.Tag).LogicalXY.Top + 32) >= nowPosiY);
+                                    foreach (Rectangle item in targetTip)
                                     {
-                                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                        if (re2 != null)
+                                        var ob = this.ClassGameStatus.ListObject.Where(x => x.NameTag == ((ClassMapTipRectangle)item.Tag).TipName).First();
+                                        if (ob.Type == MapTipObjectType.WALL2 || ob.Type == MapTipObjectType.GATE)
                                         {
-                                            re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                            ch = false;
+                                        }
+                                    }
+
+                                    if (ch == true)
+                                    {
+                                        classUnit.NowPosi = new Point()
+                                        {
+                                            X = nowPosiX,
+                                            Y = nowPosiY
+                                        };
+
+                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                        if (re1 != null)
+                                        {
+                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                            if (re2 != null)
+                                            {
+                                                re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                            }
                                         }
                                     }
                                 }
