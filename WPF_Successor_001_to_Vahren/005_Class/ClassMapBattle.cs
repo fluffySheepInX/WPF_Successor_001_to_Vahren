@@ -88,5 +88,25 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { building = value; }
         }
         #endregion
+
+        #region Houkou
+        private string houkou = string.Empty;
+
+        public string Houkou
+        {
+            get { return houkou; }
+            set { houkou = value; }
+        }
+        #endregion
+
+        #region Zinkei
+        private string zinkei = string.Empty;
+
+        public string Zinkei
+        {
+            get { return zinkei; }
+            set { zinkei = value; }
+        }
+        #endregion
     }
 }

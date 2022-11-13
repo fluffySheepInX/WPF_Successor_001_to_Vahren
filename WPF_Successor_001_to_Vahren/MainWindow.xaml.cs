@@ -2055,37 +2055,39 @@ namespace WPF_Successor_001_to_Vahren
                             map.TryGetValue(itemRow.value.Tip, out string? value);
                             if (value == null) continue;
 
-                            var bi = new BitmapImage(new Uri(value));
-                            ImageBrush image = new ImageBrush();
-                            image.Stretch = Stretch.Fill;
-                            image.ImageSource = bi;
-
                             //RotateTransform rotateTransform2 = new RotateTransform(45);
                             //rotateTransform2.CenterX = 25;
                             //rotateTransform2.CenterY = 50;
                             //image.RelativeTransform = rotateTransform2;
 
-                            if (bi.PixelHeight > 32)
+                            if (itemRow.value.Building != string.Empty)
                             {
-                                listTakaiObj.Add(new(bi, itemCol.index, itemRow.index));
-                            }
-                            else
-                            {
-                                System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
-                                path.Fill = image;
-                                path.Stretch = Stretch.Fill;
-                                path.StrokeThickness = 0;
-                                path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
-                                                        + " L " + yokoMapTip / 2 + "," + takasaMapTip
-                                                        + " L " + yokoMapTip + "," + takasaMapTip / 2
-                                                        + " L " + yokoMapTip / 2 + ",0 Z");
-                                path.Margin = new Thickness()
+                                map.TryGetValue(itemRow.value.Building, out string? value2);
+                                if (value2 != null)
                                 {
-                                    Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                    Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
-                                };
-                                canvas.Children.Add(path);
+                                    var build = new BitmapImage(new Uri(value2));
+                                    listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                                }
                             }
+
+                            var bi = new BitmapImage(new Uri(value));
+                            ImageBrush image = new ImageBrush();
+                            image.Stretch = Stretch.Fill;
+                            image.ImageSource = bi;
+                            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                            path.Fill = image;
+                            path.Stretch = Stretch.Fill;
+                            path.StrokeThickness = 0;
+                            path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
+                                                    + " L " + yokoMapTip / 2 + "," + takasaMapTip
+                                                    + " L " + yokoMapTip + "," + takasaMapTip / 2
+                                                    + " L " + yokoMapTip / 2 + ",0 Z");
+                            path.Margin = new Thickness()
+                            {
+                                Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
+                                Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                            };
+                            canvas.Children.Add(path);
                         }
                     }
 
@@ -3195,8 +3197,16 @@ namespace WPF_Successor_001_to_Vahren
                         else
                         {
                             MapDetail mapDetail = new MapDetail();
-                            map.TryGetValue(re[i].Replace(System.Environment.NewLine, string.Empty), out string? mapValue);
+                            var sonomama = re[i].Replace(System.Environment.NewLine, string.Empty);
+                            var splitA = sonomama.Split("*");
+                            map.TryGetValue(splitA[0], out string? mapValue);
                             if (mapValue != null) mapDetail.Tip = mapValue;
+                            map.TryGetValue(splitA[1], out string? mapValue2);
+                            if (mapValue2 != null) mapDetail.Building = mapValue2;
+                            map.TryGetValue(splitA[2], out string? mapValue3);
+                            if (mapValue3 != null) mapDetail.Houkou = mapValue3;
+                            map.TryGetValue(splitA[3], out string? mapValue4);
+                            if (mapValue4 != null) mapDetail.Zinkei = mapValue4;
                             classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
                         }
                     }

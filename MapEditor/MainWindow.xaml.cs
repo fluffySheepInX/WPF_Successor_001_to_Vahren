@@ -28,8 +28,9 @@ namespace MapEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<List<string>>? MapData { get; set; } = null;
+        public List<List<(string, string, string, string)>>? MapData { get; set; } = null;
         public string NameSelectionMapTip { get; set; } = string.Empty;
+        public bool NameSelectionMapTipObj { get; set; } = false;
         public int TipSize { get; set; } = 64;
         public int BorSize { get; set; } = 4;
 
@@ -54,14 +55,14 @@ namespace MapEditor
             gridMaptip.Height = (size * wrapCanvas.Rows);
             gridMaptip.Width = (size * wrapCanvas.Columns);
 
-            MapData = new List<List<string>>();
+            MapData = new List<List<(string, string, string, string)>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<string>());
+                MapData.Add(new List<(string, string, string, string)>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add("");
+                    MapData[i].Add(("", "", "", ""));
                     DisplayGrid(size, i, j);
                 }
             }
@@ -81,13 +82,13 @@ namespace MapEditor
 
             if (MapData != null)
             {
-                if (MapData[col][hei] == String.Empty)
+                if (MapData[col][hei].Item1 == String.Empty)
                 {
                     canvas.Background = Brushes.AliceBlue;
                 }
                 else
                 {
-                    var bi = new BitmapImage(new Uri(MapData[col][hei]));
+                    var bi = new BitmapImage(new Uri(MapData[col][hei].Item1));
                     Image image = new Image();
                     image.Width = slTipSize.Value * 12.8;
                     image.Height = slTipSize.Value * 12.8;
@@ -165,7 +166,8 @@ namespace MapEditor
 
             {
                 var re = ((Image)((Canvas)sender).Children[0]);
-                this.NameSelectionMapTip = ((BitmapImage)re.Source).UriSource.LocalPath;
+                var bi = (BitmapImage)re.Source;
+                this.NameSelectionMapTip = (bi).UriSource.LocalPath;
                 //MessageBox.Show(NameSelectionMapTip);
                 var reB = ((Border)((Canvas)sender).Parent);
                 reB.BorderBrush = Brushes.Red;
@@ -173,6 +175,14 @@ namespace MapEditor
                 //var reCan = ((Canvas)sender);
                 //reCan.Height = TipSize - 8;
                 //reCan.Width = TipSize - 8;
+                if (bi.Height > 32)
+                {
+                    NameSelectionMapTipObj = true;
+                }
+                else
+                {
+                    NameSelectionMapTipObj = false;
+                }
             }
         }
         private void ButtonMap_MouseEnter(object sender, RoutedEventArgs e)
@@ -210,7 +220,18 @@ namespace MapEditor
                 return;
             }
             var strings = abc.Split(",");
-            MapData[int.Parse(strings[0])][int.Parse(strings[1])] = this.NameSelectionMapTip;
+            int first = int.Parse(strings[0]);
+            int second = int.Parse(strings[1]);
+            if (this.NameSelectionMapTipObj == true)
+            {
+                MapData[first][second]
+                    = new(MapData[first][second].Item1, this.NameSelectionMapTip, MapData[first][second].Item3, MapData[first][second].Item4);
+            }
+            else
+            {
+                MapData[first][second]
+                    = new(this.NameSelectionMapTip, MapData[first][second].Item2, MapData[first][second].Item3, MapData[first][second].Item4);
+            }
 
             target.Children.Clear();
             var bi = new BitmapImage(new Uri(this.NameSelectionMapTip));
@@ -237,14 +258,14 @@ namespace MapEditor
             gridMaptip.Height = (size * wrapCanvas.Rows);
             gridMaptip.Width = (size * wrapCanvas.Columns);
 
-            MapData = new List<List<string>>();
+            MapData = new List<List<(string, string, string, string)>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<string>());
+                MapData.Add(new List<(string, string, string, string)>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add("");
+                    MapData[i].Add(new("", "", "", ""));
                     DisplayGrid(size, i, j);
                 }
             }
@@ -306,14 +327,14 @@ namespace MapEditor
                 return;
             }
 
-            MapData = new List<List<string>>();
+            MapData = new List<List<(string, string, string, string)>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<string>());
+                MapData.Add(new List<(string, string, string, string)>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add(this.NameSelectionMapTip);
+                    MapData[i].Add(new(this.NameSelectionMapTip, "", "", ""));
                 }
             }
 
@@ -355,19 +376,41 @@ namespace MapEditor
             }
 
             List<string> groupString = new List<string>();
-            for (int i = 0; i < MapData.Count; i++)
+            List<string> groupString2 = new List<string>();
             {
-                var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
-                foreach (var item in b)
+                for (int i = 0; i < MapData.Count; i++)
                 {
-                    groupString.Add(item.Key);
+                    var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
+                    foreach (var item in b)
+                    {
+                        groupString.Add(item.Key.Item1);
+                    }
+                }
+                for (int i = 0; i < MapData.Count; i++)
+                {
+                    var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
+                    foreach (var item in b)
+                    {
+                        if (item.Key.Item2 == String.Empty)
+                        {
+                            continue;
+                        }
+                        groupString2.Add(item.Key.Item2);
+                    }
                 }
             }
             var reGroupString = groupString.GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
+            var reGroupString2 = groupString2.GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
             List<string> target = new List<string>();
-            foreach (var item in reGroupString)
             {
-                target.Add(item.Key);
+                foreach (var item in reGroupString)
+                {
+                    target.Add(item.Key);
+                }
+                foreach (var item in reGroupString2)
+                {
+                    target.Add(item.Key);
+                }
             }
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -386,12 +429,45 @@ namespace MapEditor
             {
                 for (int k = 0; k < MapData[i].Count; k++)
                 {
-                    targetString.TryGetValue(MapData[i][k], out string? value);
+                    targetString.TryGetValue(MapData[i][k].Item1, out string? value);
                     if (value == null)
                     {
                         continue;
                     }
-                    stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(value) + ",");
+                    string value2 = "";
+                    targetString.TryGetValue(MapData[i][k].Item2, out string? getValue2);
+                    if (getValue2 == null)
+                    {
+                        value2 = "null";
+                    }
+                    else
+                    {
+                        value2 = getValue2;
+                    }
+                    string houkou;
+                    if (MapData[i][k].Item3 == String.Empty)
+                    {
+                        houkou = "null";
+                    }
+                    else
+                    {
+                        houkou = MapData[i][k].Item3;
+                    }
+                    string zinkei;
+                    if (MapData[i][k].Item4 == String.Empty)
+                    {
+                        zinkei = "null";
+                    }
+                    else
+                    {
+                        zinkei = MapData[i][k].Item4;
+                    }
+
+                    stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(value) +
+                                    "*" + System.IO.Path.GetFileNameWithoutExtension(value2) +
+                                    "*" + houkou +
+                                    "*" + zinkei +
+                                    ",");
                 }
                 //改行
                 stringBuilder.AppendLine("@,");
