@@ -6798,32 +6798,34 @@ namespace WPF_Successor_001_to_Vahren
             try
             {
                 List<Rectangle> getMap = new List<Rectangle>();
-                await Task.Run(() =>
+                // あらかじめ障害物の配列を作る。
                 {
-                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                    await Task.Run(() =>
                     {
-                        try
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
                         {
-                            // あらかじめ障害物の配列を作る。
-                            var canv = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                            if (canv != null)
+                            try
                             {
-                                for (int i = 0; i < canv.Children.Count; i++)
+                                var canv = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                if (canv != null)
                                 {
-                                    if (canv.Children[i] is Rectangle target) getMap.Add(target);
+                                    for (int i = 0; i < canv.Children.Count; i++)
+                                    {
+                                        if (canv.Children[i] is Rectangle target) getMap.Add(target);
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception)
-                        {
-                            //移動中にゲームを落とすとエラーになるので暫定的に
-                            throw;
-                        }
-                    }));
-                });
+                            catch (Exception)
+                            {
+                                //移動中にゲームを落とすとエラーになるので暫定的に
+                                throw;
+                            }
+                        }));
+                    });
+                }
 
-                //移動し過ぎを防止
-                int counter = 1000;
+                ////移動し過ぎを防止
+                //int counter = 1000;
 
                 while (true)
                 {
@@ -6868,19 +6870,8 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     bool ch = true;
-                                    var targetTip = getMap
-                                                        .Where(x => ((ClassMapTipRectangle)x.Tag).LogicalXY.Left <= nowPosiX 
-                                                                && (((ClassMapTipRectangle)x.Tag).LogicalXY.Left + 64) >= nowPosiX)
-                                                        .Where(y => ((ClassMapTipRectangle)y.Tag).LogicalXY.Top <= nowPosiY 
-                                                                && (((ClassMapTipRectangle)y.Tag).LogicalXY.Top + 32) >= nowPosiY);
-                                    foreach (Rectangle item in targetTip)
-                                    {
-                                        var ob = this.ClassGameStatus.ListObject.Where(x => x.NameTag == ((ClassMapTipRectangle)item.Tag).TipName).First();
-                                        if (ob.Type == MapTipObjectType.WALL2 || ob.Type == MapTipObjectType.GATE)
-                                        {
-                                            ch = false;
-                                        }
-                                    }
+                                    var targetTip = GetRecObj(getMap, nowPosiX, nowPosiY);
+                                    ch = CheckRecObj(ch, targetTip);
 
                                     if (ch == true)
                                     {
@@ -6900,6 +6891,55 @@ namespace WPF_Successor_001_to_Vahren
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        nowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
+                                        nowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
+                                        //行列変換
+                                        var resultConv = ConvertVec90(nowPosiX, nowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
+                                        nowPosiX = resultConv.Item1;
+                                        nowPosiY = resultConv.Item2;
+
+                                        bool ch2 = true;
+                                        var targetTip2 = GetRecObj(getMap, nowPosiX, nowPosiY);
+                                        ch2 = CheckRecObj(ch2, targetTip2);
+
+                                        if (ch2 == true)
+                                        {
+                                            classUnit.NowPosi = new Point()
+                                            {
+                                                X = nowPosiX,
+                                                Y = nowPosiY
+                                            };
+
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                            if (re1 != null)
+                                            {
+                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                                if (re2 != null)
+                                                {
+                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                                }
+                                            }
+
+                                            //再計算する
+                                            var calc0 = ClassCalcVec.ReturnVecDistance(
+                                                from: new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y),
+                                                to: classUnit.OrderPosi
+                                                );
+                                            classUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                                        }
+                                        else
+                                        {
+                                            classUnit.OrderPosi = new Point()
+                                            {
+                                                X = classUnit.NowPosi.X,
+                                                Y = classUnit.NowPosi.Y
+                                            };
+                                            classUnit.FlagMoving = false;
+                                            return;
+                                        }
+                                    }
                                 }
                                 catch (Exception)
                                 {
@@ -6910,12 +6950,12 @@ namespace WPF_Successor_001_to_Vahren
                         });
                     }
 
-                    counter--;
+                    //counter--;
 
-                    if (counter <= 0)
-                    {
-                        throw new Exception("ErrorNumber:000001");
-                    }
+                    //if (counter <= 0)
+                    //{
+                    //    throw new Exception("ErrorNumber:000001");
+                    //}
 
                 }
             }
@@ -6923,6 +6963,42 @@ namespace WPF_Successor_001_to_Vahren
             {
                 throw;
             }
+        }
+
+        private bool CheckRecObj(bool ch, IEnumerable<Rectangle> targetTip)
+        {
+            foreach (Rectangle item in targetTip)
+            {
+                var ob = this.ClassGameStatus.ListObject.Where(x => x.NameTag == ((ClassMapTipRectangle)item.Tag).TipName).FirstOrDefault();
+                if (ob != null)
+                {
+                    if (ob.Type == MapTipObjectType.WALL2 || ob.Type == MapTipObjectType.GATE)
+                    {
+                        ch = false;
+                    }
+                }
+            }
+
+            return ch;
+        }
+
+        private static IEnumerable<Rectangle> GetRecObj(List<Rectangle> getMap, double nowPosiX, double nowPosiY)
+        {
+            return getMap
+                                .Where(x => ((ClassMapTipRectangle)x.Tag).LogicalXY.Left <= nowPosiX
+                                        && (((ClassMapTipRectangle)x.Tag).LogicalXY.Left + 64) >= nowPosiX)
+                                .Where(y => ((ClassMapTipRectangle)y.Tag).LogicalXY.Top <= nowPosiY
+                                        && (((ClassMapTipRectangle)y.Tag).LogicalXY.Top + 32) >= nowPosiY);
+        }
+
+        public (double, double) ConvertVec90(double x, double y, double vecX, double vecY)
+        {
+            //(cos90*(x-vecX))+(-sin90*(y-vecY)) = x
+            //(sin90*(x-vecX))+(cos90*(y-vecY)) = y
+            double resultX = (0 * (x - vecX)) + (-1 * (y - vecY));
+            double resultY = (1 * (x - vecX)) + (0 * (y - vecY));
+
+            return (resultX + x, resultY + y);
         }
 
         private async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill)
