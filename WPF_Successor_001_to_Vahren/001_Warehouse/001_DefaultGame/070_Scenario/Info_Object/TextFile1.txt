@@ -28,4 +28,10 @@ NewFormatObject fwall2
 NewFormatObject fgate1
 {
 	type = "gate";
+	#城壁値。
+	#castle*100が城壁のHPとなります。
+	#VTでは城壁のdefenseとmagdefはゼロですが、ローガンでは変更出来るようにしました。
+	castle = "100";
+	castle_defense = "100";
+	castle_magdef = "100";
 }
