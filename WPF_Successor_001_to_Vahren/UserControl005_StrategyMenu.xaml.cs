@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// Page005_StrategyMenu.xaml の相互作用ロジック
+    /// UserControl005_StrategyMenu.xaml の相互作用ロジック
     /// </summary>
     public partial class UserControl005_StrategyMenu : UserControl
     {

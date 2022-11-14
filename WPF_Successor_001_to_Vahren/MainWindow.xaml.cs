@@ -1958,11 +1958,6 @@ namespace WPF_Successor_001_to_Vahren
             //{
             //    throw new Exception();
             //}
-            //var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            //if (ri == null)
-            //{
-            //    throw new Exception();
-            //}
             //var ri3 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.canvasWindowStrategy);
             //if (ri3 == null)
             //{
@@ -1980,7 +1975,12 @@ namespace WPF_Successor_001_to_Vahren
             //}
 
             //this.canvasMain.Children.Remove(ri);
-            //this.canvasMain.Children.Remove(ri2);
+            var ri2 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightBottom, StringName.canvasStrategyMenu);
+            if (ri2 == null)
+            {
+                throw new Exception();
+            }
+            this.canvasUIRightBottom.Children.Remove(ri2);
 
             //マップそのもの
             Canvas canvas = new Canvas();
@@ -7157,7 +7157,6 @@ namespace WPF_Successor_001_to_Vahren
 
             Application.Current.Properties["window"] = this;
 
-            Frame frame = new Frame();
             if (this.ClassGameStatus.WindowStrategyMenu == null)
             {
                 this.ClassGameStatus.WindowStrategyMenu = new UserControl005_StrategyMenu();
@@ -7166,16 +7165,14 @@ namespace WPF_Successor_001_to_Vahren
             double widthCanvas = this.ClassGameStatus.WindowStrategyMenu.Width;
             double HeightCanvas = this.ClassGameStatus.WindowStrategyMenu.Height;
             {
-
                 this.ClassGameStatus.WindowStrategyMenu.SetData();
-                frame.Navigate(this.ClassGameStatus.WindowStrategyMenu);
-                frame.Margin = new Thickness()
+                this.ClassGameStatus.WindowStrategyMenu.Margin = new Thickness()
                 {
                     Left = this.canvasUIRightBottom.Width - widthCanvas,
                     Top = this.canvasUIRightBottom.Height - HeightCanvas
                 };
-                frame.Name = StringName.canvasWindowStrategy;
-                this.canvasUIRightBottom.Children.Add(frame);
+                this.ClassGameStatus.WindowStrategyMenu.Name = StringName.canvasStrategyMenu;
+                this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.WindowStrategyMenu);
             }
 
             {
@@ -7195,10 +7192,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //TODO https://yudachi-shinko.blogspot.com/2019/09/wpfframepage.html
-            while (frame.CanGoBack)
-            {
-                frame.RemoveBackEntry();
-            }
+            //while (frame.CanGoBack)
+            //{
+            //    frame.RemoveBackEntry();
+            //}
         }
 
         private SolidColorBrush ReturnBaseColor()
