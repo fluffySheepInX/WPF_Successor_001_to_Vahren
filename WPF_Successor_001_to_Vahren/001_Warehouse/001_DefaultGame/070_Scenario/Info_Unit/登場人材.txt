@@ -56,6 +56,10 @@ NewFormatUnit AbelIrijhorn
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "草原";
 }
 
 NewFormatUnit VictodyRoyle
@@ -105,6 +109,10 @@ NewFormatUnit VictodyRoyle
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "草原";
 }
 
 NewFormatUnit JothianRoarcy
@@ -157,6 +165,10 @@ NewFormatUnit JothianRoarcy
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "草原";
 }
 
 NewFormatUnit MabateRoarcy
@@ -208,6 +220,10 @@ NewFormatUnit MabateRoarcy
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "砲兵";
 }
 
 //館エレイル帝国
@@ -259,6 +275,10 @@ NewFormatUnit FlammLavoie
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "草原";
 }
 //ヤイバ王国もとい山賊同盟
 NewFormatUnit YaibaDagest
@@ -309,4 +329,8 @@ NewFormatUnit YaibaDagest
 	loyal = "100";
 	alive_per = "100";
 	escape_range = "-1";
+	#財政値
+	finance = "1000";
+	#移動タイプ
+	movetype = "草原";
 }

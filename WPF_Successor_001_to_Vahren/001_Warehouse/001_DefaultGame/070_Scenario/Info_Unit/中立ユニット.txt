@@ -31,4 +31,6 @@
 	summon_max = "5";
 	no_knock = "30";
 	escape_range = "-1";
+
+	movetype = "草原";
 }

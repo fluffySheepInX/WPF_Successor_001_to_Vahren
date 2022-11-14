@@ -167,7 +167,7 @@ namespace WPF_Successor_001_to_Vahren
                 var tar = mainWindow.ClassGameStatus.AllListSpot
                     .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
                     .First();
-                foreach (var item in tar.UnitGroup.Where(x=>x.Spot.NameTag == targetPowerAndCity.ClassSpot.NameTag))
+                foreach (var item in tar.UnitGroup.Where(x => x.Spot.NameTag == targetPowerAndCity.ClassSpot.NameTag))
                 {
                     StackPanel stackPanelUnit = new StackPanel();
                     stackPanelUnit.Orientation = Orientation.Horizontal;
@@ -561,10 +561,10 @@ namespace WPF_Successor_001_to_Vahren
                 lis.Add(cloneExt);
                 convTag.ClassPowerAndCity.ClassSpot.UnitGroup
                     .Add(
-                    new ClassHorizontalUnit() 
+                    new ClassHorizontalUnit()
                     {
-                        FlagDisplay = true, 
-                        ListClassUnit = lis 
+                        FlagDisplay = true,
+                        ListClassUnit = lis
                     });
             }
 
@@ -643,6 +643,73 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            //skill
+            {
+                this.spSkill.Children.Clear();
+
+                foreach (var item in coovTag.ClassUnit.Skill)
+                {
+                    var result = mainWindow.ClassGameStatus.ListSkill.Where(x => x.NameTag == item.NameTag).FirstOrDefault();
+                    if (result == null)
+                    {
+                        continue;
+                    }
+                    Canvas canvas = new Canvas();
+                    canvas.HorizontalAlignment = HorizontalAlignment.Left;
+                    canvas.VerticalAlignment = VerticalAlignment.Top;
+                    canvas.Margin = new Thickness(0, 0, 0, 0);
+                    foreach (var itemIcon in Enumerable.Reverse(result.Icon).ToList())
+                    {
+                        List<string> strings = new List<string>();
+                        strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                        strings.Add("041_ChipImageSkill");
+                        strings.Add(itemIcon);
+                        string path = System.IO.Path.Combine(strings.ToArray());
+
+                        var bi = new BitmapImage(new Uri(path));
+                        Image image = new Image();
+                        image.Stretch = Stretch.Fill;
+                        image.Source = bi;
+                        image.Margin = new Thickness(0, 0, 0, 0);
+                        image.Height = 32;
+                        image.Width = 32;
+                        image.HorizontalAlignment = HorizontalAlignment.Left;
+                        image.VerticalAlignment = VerticalAlignment.Top;
+                        canvas.Children.Add(image);
+                    }
+
+                    Button button = new Button();
+                    button.Content = canvas;
+                    button.HorizontalAlignment = HorizontalAlignment.Left;
+                    button.VerticalAlignment = VerticalAlignment.Top;
+                    button.Width = 32;
+                    button.Height = 32;
+                    button.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    button.VerticalContentAlignment = VerticalAlignment.Top;
+                    this.spSkill.Children.Add(button);
+                }
+            }
+
+            //status
+            {
+                this.lblMoveType.Content = coovTag.ClassUnit.MoveType;
+                this.lblHP.Content = coovTag.ClassUnit.Hp;
+                this.lblMP.Content = coovTag.ClassUnit.Mp;
+                this.lblAttack.Content = coovTag.ClassUnit.Attack;
+                this.lblDef.Content = coovTag.ClassUnit.Defense;
+                this.lblMagic.Content = coovTag.ClassUnit.Magic;
+                this.lblMagicDef.Content = coovTag.ClassUnit.MagDef;
+                this.lblSpeed.Content = coovTag.ClassUnit.Speed;
+                //Dext = 技術 ?
+                this.lblTech.Content = coovTag.ClassUnit.Dext;
+                //hprecではないか？
+                this.lblHealHP.Content = coovTag.ClassUnit.Heal_max;
+                //mprecではないか？
+                this.lblHealMP.Content = "";
+                this.lblMove.Content = coovTag.ClassUnit.Move;
+                this.lblSummon.Content = coovTag.ClassUnit.Summon_max;
+                this.lblFinance.Content = coovTag.ClassUnit.Finance;
+            }
         }
     }
 }

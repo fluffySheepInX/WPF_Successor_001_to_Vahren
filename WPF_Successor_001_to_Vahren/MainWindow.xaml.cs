@@ -3738,6 +3738,11 @@ namespace WPF_Successor_001_to_Vahren
             return flag_img;
         }
 
+        /// <summary>
+        /// 各種構造体データ読み込み
+        /// </summary>
+        /// <param name="gameTitleNumber"></param>
+        /// <exception cref="Exception"></exception>
         private void Set_List_ClassInfo(int gameTitleNumber)
         {
             // get target path.
@@ -3767,6 +3772,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            //ファイル毎に繰り返し
             foreach (var item in files)
             {
                 string readAllLines;
@@ -3990,7 +3996,7 @@ namespace WPF_Successor_001_to_Vahren
                             }
                             else
                             {
-                                ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
+                                //ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
                             }
                         }
                     }
@@ -4048,23 +4054,6 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 // Skill 終わり
-
-                // unitのスキル名からスキルクラスを探し、unitに格納
-                foreach (var itemUnit in this.ClassGameStatus.ListUnit)
-                {
-                    foreach (var itemSkillName in itemUnit.SkillName)
-                    {
-                        var x = this.ClassGameStatus.ListSkill
-                                .Where(x => x.NameTag == itemSkillName)
-                                .FirstOrDefault();
-                        if (x == null)
-                        {
-                            continue;
-                        }
-
-                        itemUnit.Skill.Add(x);
-                    }
-                }
 
                 // Event
                 {
@@ -4157,6 +4146,24 @@ namespace WPF_Successor_001_to_Vahren
                     ClassGameStatus.ListPower[i].Index = i;
                 }
 
+            }
+            //ファイル毎に繰り返し 終了
+
+            // unitのスキル名からスキルクラスを探し、unitに格納
+            foreach (var itemUnit in this.ClassGameStatus.ListUnit)
+            {
+                foreach (var itemSkillName in itemUnit.SkillName)
+                {
+                    var x = this.ClassGameStatus.ListSkill
+                            .Where(x => x.NameTag == itemSkillName)
+                            .FirstOrDefault();
+                    if (x == null)
+                    {
+                        continue;
+                    }
+
+                    itemUnit.Skill.Add(x);
+                }
             }
         }
 
@@ -6064,6 +6071,37 @@ namespace WPF_Successor_001_to_Vahren
                                         .Split(",").ToList();
                 }
             }
+
+            {
+                var finance =
+                    new Regex(GetPat("finance"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(finance);
+                if (first == null)
+                {
+                    classUnit.Finance = 0;
+                }
+                else
+                {
+                    classUnit.Finance = Convert.ToInt32(first.Value);
+                }
+            }
+            {
+                var movetype =
+                    new Regex(GetPat("movetype"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(movetype);
+                if (first == null)
+                {
+                    classUnit.MoveType = string.Empty;
+                }
+                else
+                {
+                    classUnit.MoveType = first.Value
+                                        .Replace(Environment.NewLine, "");
+                }
+            }
+
 
             //ここですべきでない
             //classUnit.ID = this.ClassGameStatus.IDCount;

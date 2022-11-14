@@ -417,7 +417,22 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { skill = value; }
         }
         #endregion
-
+        #region Finance
+        private int _finance;
+        public int Finance
+        {
+            get { return _finance; }
+            set { _finance = value; }
+        }
+        #endregion
+        #region MoveType
+        private string _moveType = string.Empty;
+        public string MoveType
+        {
+            get { return _moveType; }
+            set { _moveType = value; }
+        }
+        #endregion
 
         #region FlagMove
         private bool flagMove;

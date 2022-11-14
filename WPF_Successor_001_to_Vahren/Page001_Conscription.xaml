@@ -12,21 +12,83 @@
             <TabControl VerticalContentAlignment="Top" VerticalAlignment="Top" Height="886" Width="892" Background="#454545">
                 <TabItem Header="兵士徴兵・ステータス" Height="40" FontSize="30">
                     <Canvas>
-                        <Border x:Name="borLeftInfo" Height="529" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="4" Visibility="Visible" Canvas.Left="15" Canvas.Top="200">
+                        <Border x:Name="borLeftInfo" Height="628" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="4" Visibility="Visible" Canvas.Left="15" Canvas.Top="200" HorizontalAlignment="Center" VerticalAlignment="Top">
                             <Canvas>
                                 <Label Width="390" Height="40" FontSize="23" Margin="0,0,0,0" Foreground="White" Content="test" Name="lblNameTarget"></Label>
                                 <Border BorderBrush="Black" Margin="15,50,0,0" BorderThickness="3">
                                     <Image Stretch="Fill" Margin="0,0,0,0" Height="96" Width="96" Name="imgFace"></Image>
                                 </Border>
-                                <Border BorderBrush="Black" BorderThickness="3" Height="341" Canvas.Left="15" Canvas.Top="170">
-                                    <StackPanel x:Name="spStatus" Width="170" Height="338" VerticalAlignment="Top">
+                                <Border BorderBrush="Black" BorderThickness="3" Height="440" Canvas.Left="15" Canvas.Top="170" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                    <StackPanel x:Name="spStatus" Width="170" VerticalAlignment="Top">
                                         <Canvas Height="30">
                                             <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="移動"></Label>
-                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="草原" Name="lblMove"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="草原" Name="lblMoveType"></Label>
                                         </Canvas>
                                         <Canvas Height="30">
                                             <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="HP"></Label>
-                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="9999999" Name="lblHP"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblHP"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="MP"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblMP"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="攻撃"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblAttack"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="防御"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblDef"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="魔力"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblMagic"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="魔抵抗"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblMagicDef"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="素早さ"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblSpeed"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="技術"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblTech"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="HP回復"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblHealHP"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="MP回復"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblHealMP"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="移動力"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblMove"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="召喚"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblSummon"></Label>
+                                        </Canvas>
+                                        <Canvas Height="30">
+                                            <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="財政力"></Label>
+                                            <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" 
+                                                   HorizontalContentAlignment="Right" Content="9999999" Name="lblFinance"></Label>
                                         </Canvas>
                                     </StackPanel>
                                 </Border>
