@@ -3465,6 +3465,9 @@ namespace WPF_Successor_001_to_Vahren
             ListSelectionPowerMini();
         }
 
+        /// <summary>
+        /// 戦闘終了後の処理
+        /// </summary>
         private void SetMapStrategyFromBattle()
         {
             this.canvasMain.Children.Clear();
@@ -3691,6 +3694,9 @@ namespace WPF_Successor_001_to_Vahren
 
             //メッセージ
             MessageBox.Show("戦闘が終了しました。");
+
+            // 勢力メニューウィンドウを表示する
+            SetWindowStrategyMenu();
         }
 
         public Image DisplayFlag(Grid gridButton, int spot_size, string flag_path)
