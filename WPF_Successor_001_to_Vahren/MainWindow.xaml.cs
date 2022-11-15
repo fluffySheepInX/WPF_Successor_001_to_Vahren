@@ -2076,6 +2076,14 @@ namespace WPF_Successor_001_to_Vahren
                             image.ImageSource = bi;
                             System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
                             path.Fill = image;
+                            if (itemRow.value.BoueiButaiNoIti == true)
+                            {
+                                path.Tag = "Bouei";
+                            }
+                            if (itemRow.value.KougekiButaiNoIti == true)
+                            {
+                                path.Tag = "Kougeki";
+                            }
                             path.Stretch = Stretch.Fill;
                             path.StrokeThickness = 0;
                             path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
@@ -2144,6 +2152,22 @@ namespace WPF_Successor_001_to_Vahren
                 //線の端
                 Point hidariTakasa = new Point(0, canvas.Height / 2);
                 Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
+                for (int i = 0; i < canvas.Children.Count; i++)
+                {
+                    if (canvas.Children[i] is System.Windows.Shapes.Path ppp)
+                    {
+                        string? taggg = Convert.ToString(ppp.Tag);
+                        if (taggg != null)
+                        {
+                            if (taggg == "Kougeki")
+                            {
+                                //中点としたいが思いつかない
+                                //xxx = ppp.Margin.Left;
+                                //xxx = ppp.Margin.Top;
+                            }
+                        }
+                    }
+                }
                 //ユニットの端の位置を算出
                 if (this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count % 2 == 0)
                 {
@@ -2398,15 +2422,31 @@ namespace WPF_Successor_001_to_Vahren
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
+                for (int i = 0; i < canvas.Children.Count; i++)
+                {
+                    if (canvas.Children[i] is System.Windows.Shapes.Path ppp)
+                    {
+                        string? taggg = Convert.ToString(ppp.Tag);
+                        if (taggg != null)
+                        {
+                            if (taggg == "Bouei")
+                            {
+                                //中点としたいが思いつかない
+                                //xxx = ppp.Margin.Left;
+                                //xxx = ppp.Margin.Top;
+                            }
+                        }
+                    }
+                }
                 //ユニットの端の位置を算出
                 if (this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
                     hidariTakasa.X = (canvas.Width * 0.75) - ((double)countMeHalf * 32);
-                    migiTakasa.X = (canvas.Width * 0.75) + ((double)countMeHalf * 32);
-
                     hidariTakasa.Y = (canvas.Height * 0.25) - ((double)countMeHalf * (takasaMapTip / 2));
+
+                    migiTakasa.X = (canvas.Width * 0.75) + ((double)countMeHalf * 32);
                     migiTakasa.Y = (canvas.Height * 0.25) + ((double)countMeHalf * (takasaMapTip / 2));
                 }
                 else
@@ -2414,9 +2454,9 @@ namespace WPF_Successor_001_to_Vahren
                     ////奇数
                     //これは正しくないが、案が思い浮かばない
                     hidariTakasa.X = (canvas.Width * 0.75) - (((double)countMeHalf + 1) * 32);
-                    migiTakasa.X = (canvas.Width * 0.75) + (((double)countMeHalf + 1) * 32);
-
                     hidariTakasa.Y = (canvas.Height * 0.25) - (((double)countMeHalf + 1) * (takasaMapTip / 2));
+
+                    migiTakasa.X = (canvas.Width * 0.75) + (((double)countMeHalf + 1) * 32);
                     migiTakasa.Y = (canvas.Height * 0.25) + (((double)countMeHalf + 1) * (takasaMapTip / 2));
                 }
 
@@ -3215,6 +3255,17 @@ namespace WPF_Successor_001_to_Vahren
                             if (mapValue3 != null) mapDetail.Houkou = mapValue3;
                             map.TryGetValue(splitA[3], out string? mapValue4);
                             if (mapValue4 != null) mapDetail.Zinkei = mapValue4;
+                            if (splitA.Length == 5)
+                            {
+                                if (splitA[4] == "kougeki")
+                                {
+                                    mapDetail.KougekiButaiNoIti = true;
+                                }
+                                if (splitA[4] == "bouei")
+                                {
+                                    mapDetail.BoueiButaiNoIti = true;
+                                }
+                            }
                             classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
                         }
                     }

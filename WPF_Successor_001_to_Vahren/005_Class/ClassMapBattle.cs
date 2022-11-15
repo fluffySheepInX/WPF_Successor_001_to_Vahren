@@ -108,5 +108,22 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { zinkei = value; }
         }
         #endregion
+
+        #region KougekiButaiNoIti
+        private bool kougekiButaiNoIti;
+        public bool KougekiButaiNoIti
+        {
+            get { return kougekiButaiNoIti; }
+            set { kougekiButaiNoIti = value; }
+        }
+        #endregion
+        #region BoueiButaiNoIti
+        private bool boueiButaiNoIti;
+        public bool BoueiButaiNoIti
+        {
+            get { return boueiButaiNoIti; }
+            set { boueiButaiNoIti = value; }
+        }
+        #endregion
     }
 }

@@ -45,12 +45,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
 
         #endregion
-        #region IsReader
-        private bool _isReader = false;
-        public bool IsReader
+        #region IsLeader
+        private bool _isLeader = false;
+        public bool IsLeader
         {
-            get { return _isReader; }
-            set { _isReader = value; }
+            get { return _isLeader; }
+            set { _isLeader = value; }
         }
         #endregion
 
