@@ -5,6 +5,8 @@
 # Image
  
  ![image](https://github.com/fluffySheepInX/WPF_Successor_001_to_Vahren/blob/master003/WPF_Successor_001_to_Vahren/001_Warehouse/001_DefaultGame/001_SystemImage/image_game.PNG)
+ ![image](https://github.com/fluffySheepInX/WPF_Successor_001_to_Vahren/blob/master003/Tosi.png)
+ ![image](https://github.com/fluffySheepInX/WPF_Successor_001_to_Vahren/blob/master003/Sentou.png)
  
 # Features
  

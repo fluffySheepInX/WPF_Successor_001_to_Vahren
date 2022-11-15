@@ -16,6 +16,14 @@ namespace WPF_Successor_001_to_Vahren
     /// </summary>
     public partial class App : Application
     {
+        #region Application_Startup
+        /// <summary>
+        /// 最初に実行される
+        /// デバッグ用に作成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="Exception"></exception>
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             if (e.Args.Length == 0)
@@ -138,7 +146,8 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
         }
-
+        #endregion
+        #region GetClassTestBattle
         private ClassTestBattle GetClassTestBattle(string value)
         {
             ClassTestBattle classTestBattle = new ClassTestBattle();
@@ -191,5 +200,6 @@ namespace WPF_Successor_001_to_Vahren
 
             return classTestBattle;
         }
+        #endregion
     }
 }
