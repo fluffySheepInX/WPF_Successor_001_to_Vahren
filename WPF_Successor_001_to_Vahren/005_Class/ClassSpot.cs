@@ -117,13 +117,11 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         #region UnitGroup
         private List<ClassHorizontalUnit> _unitGroup = new List<ClassHorizontalUnit>();
-
         public List<ClassHorizontalUnit> UnitGroup
         {
             get { return _unitGroup; }
             set { _unitGroup = value; }
         }
-
         #endregion
     }
 }

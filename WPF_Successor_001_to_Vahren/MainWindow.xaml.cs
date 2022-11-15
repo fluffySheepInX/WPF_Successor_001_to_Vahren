@@ -6167,7 +6167,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
 
-        private Match? CheckMatchElement(MatchCollection scenarioName)
+        public static Match? CheckMatchElement(MatchCollection scenarioName)
         {
             if (scenarioName == null)
             {
@@ -6189,7 +6189,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private string GetPat(string name)
+        public static string GetPat(string name)
         {
             string a = @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\"";))";
             return a;

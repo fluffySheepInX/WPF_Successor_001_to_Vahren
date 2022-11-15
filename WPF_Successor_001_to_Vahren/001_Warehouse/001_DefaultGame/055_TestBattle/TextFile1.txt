@@ -1,0 +1,11 @@
+﻿TestBattle ca
+{
+	#戦闘マップ
+	map = "ca";
+	#出撃
+	memberKougeki = "ghostFireNoGun,ghostFireNoGun,ghostFireNoGun,ghostFireNoGun,ghostFireNoGun";
+	#防衛
+	memberBouei = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
+	#プレイヤー
+	player = "bouei";
+}
