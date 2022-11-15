@@ -10,6 +10,7 @@
  
  * ゲームエンジン
  * ARCHITECTURE.mdに主幹クラスについて記載（UMLで書けという話ですがポンチ絵で失礼！
+ * ARCHITECTUREUNIT.mdに都市駐屯ユニットについて記載
  
 # Requirement
   
@@ -42,10 +43,6 @@ VisualStudioで実行して下さい
  
  ファイル「001_Warehouse」直下の「リクエスト.txt」にまとめました。
  
-# 不具合
-
-* 銃を使用した際の挙動
-
 # License 
 "ローガン" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
