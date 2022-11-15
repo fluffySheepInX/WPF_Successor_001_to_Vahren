@@ -26,7 +26,7 @@
                         <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="+5%" Name="lblNameIncomeCorrection"></Label>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="領土数"></Label>
+                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="領地数"></Label>
                         <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameNumberSpot"></Label>
                     </Canvas>
                     <Canvas Height="30">

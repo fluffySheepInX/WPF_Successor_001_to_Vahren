@@ -80,13 +80,23 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.lblNameIncomeCorrection.Content = "";
             }
-            //領土数
+            //領地数
             {
-                this.lblNameNumberSpot.Content = "";
+                this.lblNameNumberSpot.Content = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count;
             }
             //ユニット数
             {
-                this.lblNameNumberUnit.Content = "";
+                string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
+                int unit_count = 0;
+                var list_spot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
+                foreach (var item_spot in list_spot)
+                {
+                    foreach (var item_group in item_spot.UnitGroup)
+                    {
+                        unit_count += item_group.ListClassUnit.Count;
+                    }
+                }
+                this.lblNameNumberUnit.Content = unit_count;
             }
             //維持費
             {
