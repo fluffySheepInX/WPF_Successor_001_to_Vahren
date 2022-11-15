@@ -2161,7 +2161,12 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             if (taggg == "Kougeki")
                             {
-                                //中点としたいが思いつかない
+                                //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
+                                //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
+                                //目標点P(Xp, Yp) とのズレを算出
+
+                                //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+
                                 //xxx = ppp.Margin.Left;
                                 //xxx = ppp.Margin.Top;
                             }
@@ -2431,7 +2436,12 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             if (taggg == "Bouei")
                             {
-                                //中点としたいが思いつかない
+                                //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
+                                //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
+                                //目標点P(Xp, Yp) とのズレを算出
+
+                                //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+
                                 //xxx = ppp.Margin.Left;
                                 //xxx = ppp.Margin.Top;
                             }
