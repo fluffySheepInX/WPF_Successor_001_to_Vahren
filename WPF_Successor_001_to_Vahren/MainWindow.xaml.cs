@@ -1703,17 +1703,17 @@ namespace WPF_Successor_001_to_Vahren
                 var spot = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
                 if (spot != null)
                 {
-                    target_X = spot.X;
-                    target_Y = spot.Y;
+                    target_X += spot.X;
+                    target_Y += spot.Y;
                     spot_count += 1;
                 }
-                // とりあえず、最初の領地だけ参照する。
-                // 将来的には、全ての領地の座標の平均値にする予定
-                break;
             }
 
             if (spot_count > 0)
             {
+                target_X /= spot_count;
+                target_Y /= spot_count;
+
                 // 目標にする座標をウインドウ中央にする
                 /*
                 gridMapStrategy.Margin = new Thickness()
