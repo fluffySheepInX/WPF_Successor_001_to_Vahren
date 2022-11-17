@@ -45,7 +45,7 @@ namespace WPF_Successor_001_to_Vahren
                 BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                 Int32Rect rect = new Int32Rect(0, 0, 32, 32);
                 var destimg = new CroppedBitmap(bitimg1, rect);
-                this.imgFlag.Source = bitimg1;
+                this.imgFlag.Source = destimg;
             }
             //勢力名
             {
