@@ -451,6 +451,8 @@ namespace WPF_Successor_001_to_Vahren
                 Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
                 Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
             };
+            // canvasUI も canvasMain と同じく中央に置く。
+            this.canvasUI.Margin = this.canvasMain.Margin;
 
             // canvasUIRightTop をウインドウの右上隅に置く。
             {
@@ -1105,15 +1107,71 @@ namespace WPF_Successor_001_to_Vahren
 
             var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
 
+/*
             Uri uri = new Uri("/Page001_Conscription.xaml", UriKind.Relative);
             Frame frame = new Frame();
             frame.Source = uri;
             frame.Margin = new Thickness(0, 0, 0, 0);
             frame.Name = StringName.windowConscription;
             this.canvasMain.Children.Add(frame);
+*/
             Application.Current.Properties["window"] = this;
             Application.Current.Properties["ClassPowerAndCity"] = classPowerAndCity;
+
+
+            // 領地ウインドウ
+            var windowSpot = new UserControl006_Spot();
+            windowSpot.Tag = classPowerAndCity;
+            // ウインドウの左上が領地の場所になるように配置する
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy != null)
+            {
+                windowSpot.Margin = new Thickness()
+                {
+                    Left = gridMapStrategy.Margin.Left + classPowerAndCity.ClassSpot.X - 40,
+                    Top = gridMapStrategy.Margin.Top + classPowerAndCity.ClassSpot.Y - 40
+                };
+            }
+            // 登録されてるウインドウを調べる
+            int window_id = 1;
+            int window_count = this.ClassGameStatus.ListWindowSpot.Count;
+            if (window_count > 0)
+            {
+                // 使用中のウインドウ番号の最大値 + 1 にする
+                window_id = this.ClassGameStatus.ListWindowSpot[window_count - 1] + 1;
+
+                // 同じ領地ウインドウが存在するか調べる
+                foreach (int item_id in this.ClassGameStatus.ListWindowSpot)
+                {
+                    var ri = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "WindowSpot" + item_id.ToString());
+                    if (ri == null)
+                    {
+                        // 番号が登録されてるのに、ウインドウが存在しない場合は、
+                        // 登録抹消するのを忘れたものとして、番号を再利用する。
+                        window_id = item_id;
+                    }
+                    else
+                    {
+                        var ri2 = (ClassPowerAndCity)ri.Tag;
+                        if (ri2.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                        {
+                            // 領地ウインドウを既に開いてる場合は、古い方を閉じる
+                            this.canvasUI.Children.Remove(ri);
+                            ri = null;
+                            // 同じ番号を使ってウインドウを登録する
+                            window_id = item_id;
+                            break;
+                        }
+                    }
+                }
+            }
+            this.ClassGameStatus.ListWindowSpot.Add(window_id);
+            windowSpot.Name = "WindowSpot" + window_id.ToString();
+            windowSpot.SetData();
+            this.canvasUI.Children.Add(windowSpot);
+
         }
+
         /// <summary>
         /// 勢力選択画面での勢力情報表示
         /// 決定ボタン押下時「ButtonSelectionPowerDecide_click」
@@ -1856,10 +1914,6 @@ namespace WPF_Successor_001_to_Vahren
             //        this.config = (Config)serializer.Deserialize(fs);
             //}
 
-            Canvas.SetZIndex(this.canvasMain, 90);
-            Canvas.SetZIndex(this.canvasUIRightTop, 99);
-            Canvas.SetZIndex(this.canvasUIRightBottom, 99);
-
             SetWindowTitle(targetNumber: 0);
         }
 
@@ -1981,6 +2035,10 @@ namespace WPF_Successor_001_to_Vahren
                 throw new Exception();
             }
             this.canvasUIRightBottom.Children.Remove(ri2);
+
+            // 開いてる子ウインドウを全て閉じて、登録を抹消する
+            this.canvasUI.Children.Clear();
+            this.ClassGameStatus.ListWindowSpot.Clear();
 
             //マップそのもの
             Canvas canvas = new Canvas();
@@ -6273,8 +6331,6 @@ namespace WPF_Successor_001_to_Vahren
 
                     // this.fade.Children.Countが1になる
                     this.fade.Children.Add(rect);
-
-                    Canvas.SetZIndex(this.fade, 100);
                 }
 
                 return;

@@ -19,12 +19,7 @@ namespace WPF_Successor_001_to_Vahren
 
         public void SetData()
         {
-            var window = Application.Current.Properties["window"];
-            if (window == null)
-            {
-                return;
-            }
-            var mainWindow = window as MainWindow;
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
                 return;
@@ -118,19 +113,19 @@ namespace WPF_Successor_001_to_Vahren
 
         private void btnTurnEnd_Click(object sender, RoutedEventArgs e)
         {
-            var window = Application.Current.Properties["window"];
-            if (window == null)
-            {
-                return;
-            }
-            var mainWindow = window as MainWindow;
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
                 return;
             }
 
+            // 開いてる子ウインドウを全て閉じて、登録を抹消する
+            mainWindow.canvasUI.Children.Clear();
+            mainWindow.ClassGameStatus.ListWindowSpot.Clear();
+
             //ターン終了時処理
             this.Visibility = Visibility.Hidden;
+
             //ターン加算
 
             // AI呼び出し

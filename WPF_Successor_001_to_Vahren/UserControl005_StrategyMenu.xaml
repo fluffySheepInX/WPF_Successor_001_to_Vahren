@@ -64,12 +64,16 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Margin="0,0,2,2">
-                    <Border Height="100" Width="100" Background="#454545" BorderBrush="White" BorderThickness="2">
-                        <Canvas IsHitTestVisible="False">
+                    <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="28"/>
+                    </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Height="100" Width="100" Background="#454545" BorderBrush="White" BorderThickness="2">
                             <Image Height="96" Width="96" Stretch="Fill" Name="imgFace"/>
-                            <Button Margin="-5,90">ターン終了</Button>
-                        </Canvas>
-                    </Border>
+                        </Border>
+                        <Label Grid.Row="1" Padding="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#575757" Background="#F1F2F7" BorderBrush="#767676" BorderThickness="1" Content="ターン終了" />
+                    </Grid>
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="0" Margin="0,0,2,2" Background="Transparent" ToolTip="人材雇用">
                     <Canvas>

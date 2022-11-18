@@ -225,5 +225,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _windowStrategyMenu = value; }
         }
         #endregion
+
+        #region WindowSpot
+        private List<int> _listWindowSpot = new List<int>();
+        public List<int> ListWindowSpot
+        {
+            get { return _listWindowSpot; }
+            set { _listWindowSpot = value; }
+        }
+        #endregion
+
     }
 }
