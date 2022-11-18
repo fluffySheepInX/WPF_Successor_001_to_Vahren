@@ -18,26 +18,32 @@
         Left="0"
         >
     <Canvas x:Name="canvasTop" Opacity="1" Background="Transparent" SizeChanged="canvasTop_SizeChanged">
-        <Canvas x:Name="canvasUIRightTop" 
-                Panel.ZIndex="10"
-                Width="{Binding canvasMainWidth}" 
+        <Canvas x:Name="canvasUIRightTop"
+                Panel.ZIndex="99"
+                Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}">
         </Canvas>
-        <Canvas x:Name="canvasUIRightBottom" 
-                Panel.ZIndex="10"
-                Width="{Binding canvasMainWidth}" 
+        <Canvas x:Name="canvasUIRightBottom"
+                Panel.ZIndex="99"
+                Width="{Binding canvasMainWidth}"
+                Height="{Binding canvasMainHeight}">
+        </Canvas>
+        <Canvas x:Name="canvasUI"
+                Panel.ZIndex="100"
+                Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}">
         </Canvas>
         <Canvas x:Name="canvasMain"
-                Panel.ZIndex="5" 
-                HorizontalAlignment="Left" 
+                Panel.ZIndex="90"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}"
                 >
         </Canvas>
-        <Canvas x:Name="fade" Opacity="1" 
-                Panel.ZIndex="2" Background="Transparent" 
+        <Canvas x:Name="fade" Opacity="1"
+                Panel.ZIndex="100"
+                Background="Transparent" 
                 IsHitTestVisible="False"
                 Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}"
