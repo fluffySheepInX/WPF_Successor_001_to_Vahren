@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="480">
+             d:DesignHeight="600" d:DesignWidth="480"
+             >
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseLeftButtonUp="win_MouseLeftButtonUp"
             MouseMove="win_MouseMove"
-            MouseLeave="win_MouseLeave"
             MouseRightButtonUp="btnClose_Click"
             >
         <Border Height="600" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />

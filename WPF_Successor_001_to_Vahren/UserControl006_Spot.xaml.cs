@@ -92,75 +92,64 @@ namespace WPF_Successor_001_to_Vahren
             // キャンバスから自身を取り除く
             // ガベージ・コレクタが掃除してくれるか不明
             mainWindow.canvasUI.Children.Remove(this);
-
-            e.Handled = true;
         }
 
         #region ウインドウ移動
-        private bool _isMouse;
-        public bool IsMouse
-        {
-            get { return _isMouse; }
-            set { _isMouse = value; }
-        }
+        private bool _isDrag = false; // 外部に公開する必要なし
         private Point _startPoint;
-        public Point StartPoint
-        {
-            get { return _startPoint; }
-            set { _startPoint = value; }
-        }
 
         private void win_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
+            if (mainWindow != null)
             {
-                return;
+                // 最前面に移動させる
+                try
+                {
+                    int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
+                       .Where(x => x != this)
+                       .Select(x => Panel.GetZIndex(x))
+                       .Max();
+                    Canvas.SetZIndex(this, maxZ + 1);
+                }
+                catch (InvalidOperationException)
+                {
+                    // 比較する子ウインドウがなければそのまま
+                }
             }
 
-            // 最前面に移動させる
-            try
+            // ドラッグを開始する
+            UIElement el = (UIElement)sender;
+            if (el != null)
             {
-                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                   .Where(x => x != this)
-                   .Select(x => Panel.GetZIndex(x))
-                   .Max();
-                Canvas.SetZIndex(this, maxZ + 1);
+                _isDrag = true;
+                _startPoint = e.GetPosition(el);
+                el.CaptureMouse();
             }
-            catch (InvalidOperationException)
-            {
-                // 比較する子ウインドウがなければそのまま
-            }
-
-            this.IsMouse = true;
-            this.StartPoint = e.GetPosition(this);
-            e.Handled = true;
         }
         private void win_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            this.IsMouse = false;
-            e.Handled = true;
+            // ドラック中なら終了する
+            if (_isDrag == true)
+            {
+                UIElement el = (UIElement)sender;
+                el.ReleaseMouseCapture();
+                _isDrag = false;
+            }
         }
         private void win_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.IsMouse == false)
+            // ドラック中
+            if (_isDrag == true)
             {
-                return;
+                UIElement el = (UIElement)sender;
+                Point pt = e.GetPosition(el);
+
+                var thickness = new Thickness();
+                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
+                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
+                this.Margin = thickness;
             }
-
-            Point CurrentPoint = e.GetPosition(this);
-
-            var thickness = new Thickness();
-            thickness.Left = this.Margin.Left + (CurrentPoint.X - this.StartPoint.X);
-            thickness.Top = this.Margin.Top + (CurrentPoint.Y - this.StartPoint.Y);
-            this.Margin = thickness;
-
-            e.Handled = true;
-        }
-        private void win_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.IsMouse = false;
-            e.Handled = true;
         }
         #endregion
 
