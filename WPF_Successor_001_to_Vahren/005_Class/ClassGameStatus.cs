@@ -176,12 +176,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region IsMouse
-        private bool _isMouse;
-        public bool IsMouse
+        #region IsDrag
+        private bool _isDrag = false;
+        public bool IsDrag
         {
-            get { return _isMouse; }
-            set { _isMouse = value; }
+            get { return _isDrag; }
+            set { _isDrag = value; }
         }
         #endregion
         #region StartPoint
@@ -190,30 +190,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _startPoint; }
             set { _startPoint = value; }
-        }
-        #endregion
-        #region CurrentPoint
-        private Point _currentPoint;
-        public Point CurrentPoint
-        {
-            get { return _currentPoint; }
-            set { _currentPoint = value; }
-        }
-        #endregion
-        #region StartPointBattle
-        private Point _startPointBattle;
-        public Point StartPointBattle
-        {
-            get { return _startPointBattle; }
-            set { _startPointBattle = value; }
-        }
-        #endregion
-        #region CurrentPointBattle
-        private Point _currentPointBattle;
-        public Point CurrentPointBattle
-        {
-            get { return _currentPointBattle; }
-            set { _currentPointBattle = value; }
         }
         #endregion
 
