@@ -614,133 +614,102 @@ namespace WPF_Successor_001_to_Vahren
         #region マップ移動
         private void GridMapStrategy_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            if (ri == null)
+            // ドラッグを開始する
+            UIElement el = sender as UIElement;
+            if (el != null)
             {
-                throw new Exception();
+                this.ClassGameStatus.IsDrag = true;
+                this.ClassGameStatus.StartPoint = e.GetPosition(el);
+                el.CaptureMouse();
             }
-
-            this.ClassGameStatus.IsMouse = true;
-            this.ClassGameStatus.StartPoint = e.GetPosition(ri);
-
-            e.Handled = true;
         }
         private void GridMapStrategy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            this.ClassGameStatus.IsMouse = false;
-
-            e.Handled = true;
+            // ドラック中なら終了する
+            if (this.ClassGameStatus.IsDrag == true)
+            {
+                UIElement el = sender as UIElement;
+                el.ReleaseMouseCapture();
+                this.ClassGameStatus.IsDrag = false;
+            }
         }
         private void GridMapStrategy_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.ClassGameStatus.IsMouse == false)
+            // ドラック中
+            if (this.ClassGameStatus.IsDrag == true)
             {
-                return;
-            }
+                var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+                if (ri != null)
+                {
+                    UIElement el = sender as UIElement;
+                    Point pt = e.GetPosition(el);
 
-            var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (ri == null)
-            {
-                throw new Exception();
-            }
-            var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            if (ri == null)
-            {
-                throw new Exception();
-            }
+                    var thickness = new Thickness();
+                    thickness.Left = ri.Margin.Left + (pt.X - this.ClassGameStatus.StartPoint.X);
+                    if (thickness.Left > this.CanvasMainWidth / 2)
+                    {
+                        thickness.Left = this.CanvasMainWidth / 2;
+                    }
+                    if (thickness.Left < this.CanvasMainWidth / 2 - ri.Width)
+                    {
+                        thickness.Left = this.CanvasMainWidth / 2 - ri.Width;
+                    }
+                    thickness.Top = ri.Margin.Top + (pt.Y - this.ClassGameStatus.StartPoint.Y);
+                    if (thickness.Top > this.CanvasMainHeight / 2)
+                    {
+                        thickness.Top = this.CanvasMainHeight / 2;
+                    }
+                    if (thickness.Top < this.CanvasMainHeight / 2 - ri.Height)
+                    {
+                        thickness.Top = this.CanvasMainHeight / 2 - ri.Height;
+                    }
+                    ri.Margin = thickness;
 
-            Point getPoint = e.GetPosition(ri2);
-            this.ClassGameStatus.CurrentPoint = getPoint;
-
-            var thickness = new Thickness();
-            thickness.Left = ri.Margin.Left + (this.ClassGameStatus.CurrentPoint.X - this.ClassGameStatus.StartPoint.X);
-            if (thickness.Left > this.CanvasMainWidth / 2)
-            {
-                thickness.Left = this.CanvasMainWidth / 2;
+                    this.ClassGameStatus.StartPoint = pt; // senderと移動対象が異なるので、開始位置を更新する
+                }
             }
-            if (thickness.Left < this.CanvasMainWidth / 2 - ri.Width)
-            {
-                thickness.Left = this.CanvasMainWidth / 2 - ri.Width;
-            }
-            thickness.Top = ri.Margin.Top + (this.ClassGameStatus.CurrentPoint.Y - this.ClassGameStatus.StartPoint.Y);
-            if (thickness.Top > this.CanvasMainHeight / 2)
-            {
-                thickness.Top = this.CanvasMainHeight / 2;
-            }
-            if (thickness.Top < this.CanvasMainHeight / 2 - ri.Height)
-            {
-                thickness.Top = this.CanvasMainHeight / 2 - ri.Height;
-            }
-            ri.Margin = thickness;
-
-            this.ClassGameStatus.StartPoint = this.ClassGameStatus.CurrentPoint;
-
-            e.Handled = true;
-        }
-        private void GridMapStrategy_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.ClassGameStatus.IsMouse = false;
-
-            e.Handled = true;
         }
 
         #region Battle
         private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-            if (ri == null)
+            // ドラッグを開始する
+            UIElement el = sender as UIElement;
+            if (el != null)
             {
-                throw new Exception();
+                this.ClassGameStatus.IsDrag = true;
+                this.ClassGameStatus.StartPoint = e.GetPosition(el);
+                el.CaptureMouse();
             }
-
-            this.ClassGameStatus.IsMouse = true;
-            this.ClassGameStatus.StartPointBattle = e.GetPosition(ri);
-
-            e.Handled = true;
         }
         private void CanvasMapBattle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            this.ClassGameStatus.IsMouse = false;
-
-            e.Handled = true;
+            // ドラック中なら終了する
+            if (this.ClassGameStatus.IsDrag == true)
+            {
+                UIElement el = sender as UIElement;
+                el.ReleaseMouseCapture();
+                this.ClassGameStatus.IsDrag = false;
+            }
         }
         private void CanvasMapBattle_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.ClassGameStatus.IsMouse == false)
+            // ドラック中
+            if (this.ClassGameStatus.IsDrag == true)
             {
-                return;
+                var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                if (ri != null)
+                {
+                    UIElement el = sender as UIElement;
+                    Point pt = e.GetPosition(el);
+
+                    var thickness = new Thickness();
+                    thickness.Left = ri.Margin.Left + (pt.X - this.ClassGameStatus.StartPoint.X);
+                    thickness.Top = ri.Margin.Top + (pt.Y - this.ClassGameStatus.StartPoint.Y);
+                    ri.Margin = thickness;
+                }
             }
-
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapBattle);
-            if (ri == null)
-            {
-                throw new Exception();
-            }
-            var ri2 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-            if (ri == null)
-            {
-                throw new Exception();
-            }
-
-            Point getPoint = e.GetPosition(ri2);
-            this.ClassGameStatus.CurrentPointBattle = getPoint;
-
-            var thickness = new Thickness();
-            thickness.Left = ri2.Margin.Left + (this.ClassGameStatus.CurrentPointBattle.X - this.ClassGameStatus.StartPointBattle.X);
-            thickness.Top = ri2.Margin.Top + (this.ClassGameStatus.CurrentPointBattle.Y - this.ClassGameStatus.StartPointBattle.Y);
-            ri2.Margin = thickness;
-
-            //this.ClassGameStatus.StartPointBattle = this.ClassGameStatus.CurrentPointBattle;
-
-            e.Handled = true;
         }
-        private void CanvasMapBattle_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.ClassGameStatus.IsMouse = false;
-
-            e.Handled = true;
-        }
-
         #endregion
 
         #endregion
@@ -2049,7 +2018,6 @@ namespace WPF_Successor_001_to_Vahren
             canvas.MouseMove += CanvasMapBattle_MouseMove;
             canvas.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
-            canvas.MouseLeave += CanvasMapBattle_MouseLeave;
             canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
             {
 
@@ -3373,7 +3341,6 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
                 canvas.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
-                canvas.MouseLeave += GridMapStrategy_MouseLeave;
 
                 Point mapPoint = this.ClassGameStatus.Camera;
 
@@ -3395,10 +3362,6 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add("015_MapImage");
                     strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
                     string path = System.IO.Path.Combine(strings.ToArray());
-
-                    this.ClassGameStatus.CurrentPoint =
-                            new Point((grid.Width / 2) - ((grid.Width / 2) / 2),
-                                (grid.Height / 2) - ((grid.Height / 2) / 2));
 
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     Image img = new Image();
@@ -3609,7 +3572,6 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
                 canvas.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
-                canvas.MouseLeave += GridMapStrategy_MouseLeave;
 
                 Point mapPoint = this.ClassGameStatus.Camera;
 
@@ -3631,10 +3593,6 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add("015_MapImage");
                     strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
                     string path = System.IO.Path.Combine(strings.ToArray());
-
-                    this.ClassGameStatus.CurrentPoint =
-                            new Point((grid.Width / 2) - ((grid.Width / 2) / 2),
-                                (grid.Height / 2) - ((grid.Height / 2) / 2));
 
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     Image img = new Image();
