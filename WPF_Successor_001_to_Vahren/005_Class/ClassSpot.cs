@@ -85,6 +85,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return _gain; }
             set { _gain = value; }
         }
+        private int _initgain = 0;
+        public int InitGain
+        {
+            get { return _initgain; }
+            set { _initgain = value; }
+        }
         #endregion
 
         // 城壁値
@@ -95,6 +101,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return _castle; }
             set { _castle = value; }
         }
+        private int _initcastle = 0;
+        public int InitCastle
+        {
+            get { return _initcastle; }
+            set { _initcastle = value; }
+        }
         #endregion
 
         // 部隊駐留数
@@ -104,6 +116,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _capacity; }
             set { _capacity = value; }
+        }
+        private int _initcapacity = 0;
+        public int InitCapacity
+        {
+            get { return _initcapacity; }
+            set { _initcapacity = value; }
         }
         #endregion
 
