@@ -61,7 +61,7 @@ NewFormatPower sc1_p3
 	王国を名乗った。
 	ま、名乗るのはご自由に……。
 ";
-	member = "spot0003,spot0007,spot0008";
+	member = "spot0003,spot0007";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
 }
 
