@@ -40,6 +40,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
+            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
 
             //旗は存在する時だけ
             if (classPowerAndCity.ClassPower.FlagPath != string.Empty)
@@ -59,6 +60,25 @@ namespace WPF_Successor_001_to_Vahren
                 //this.lblNameSpot.Content = this.Name; // ウインドウ番号を表示する実験用
                 this.lblNameSpot.Content = classPowerAndCity.ClassSpot.Name;
             }
+            //経済値
+            {
+                this.lblGain.Content = classPowerAndCity.ClassSpot.Gain;
+            }
+            //城壁値
+            {
+                this.lblCastle.Content = classPowerAndCity.ClassSpot.Castle;
+            }
+            //部隊駐留数
+            {
+                int count = mainWindow.ClassGameStatus.AllListSpot
+                    .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                    .First()
+                    .UnitGroup
+                    .Where(x => x.Spot.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                    .Count();
+                this.lblMemberCount.Content = count.ToString() + "/" + spot_capacity.ToString();
+            }
+
 
             // 最前面に配置する
             try

@@ -3379,6 +3379,9 @@ namespace WPF_Successor_001_to_Vahren
 
                 //spot読み込み
                 {
+                    //シナリオで設定されてる標準の駐留数
+                    int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
+
                     //現シナリオで使用するスポットを抽出する
                     List<ClassSpot> result = new List<ClassSpot>();
                     foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
@@ -3387,6 +3390,11 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             if (item == item2.NameTag)
                             {
+                                // 領地の駐留数が指定されてなければ、シナリオ標準値を使う。
+                                if (item2.Capacity < 1)
+                                {
+                                    item2.Capacity = default_capacity;
+                                }
                                 result.Add(item2);
                             }
                         }
@@ -4871,6 +4879,39 @@ namespace WPF_Successor_001_to_Vahren
                     throw new Exception();
                 }
                 classSpot.Y = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //Gain
+            {
+                var match_result =
+                    new Regex(GetPat("gain"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.Gain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //Castle
+            {
+                var match_result =
+                    new Regex(GetPat("castle"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.Castle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //Capacity
+            {
+                var match_result =
+                    new Regex(GetPat("capacity"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.Capacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //member
             {
