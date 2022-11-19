@@ -77,6 +77,36 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        // 経済値
+        #region Gain
+        private int _gain = 0;
+        public int Gain
+        {
+            get { return _gain; }
+            set { _gain = value; }
+        }
+        #endregion
+
+        // 城壁値
+        #region Castle
+        private int _castle = 0;
+        public int Castle
+        {
+            get { return _castle; }
+            set { _castle = value; }
+        }
+        #endregion
+
+        // 部隊駐留数
+        #region Capacity
+        private int _capacity = 0;
+        public int Capacity
+        {
+            get { return _capacity; }
+            set { _capacity = value; }
+        }
+        #endregion
+
         //選択したスポットがどこの勢力に属するかはClassPowerAndCityで見る
 
         #region PowerNameTag
