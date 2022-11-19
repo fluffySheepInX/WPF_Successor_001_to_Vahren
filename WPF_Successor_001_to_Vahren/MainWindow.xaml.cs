@@ -4821,7 +4821,7 @@ namespace WPF_Successor_001_to_Vahren
             //name
             {
                 var name =
-                    new Regex(@"(?<=name[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    new Regex(GetPat("name"), RegexOptions.IgnoreCase)
                     .Matches(value);
                 var first = CheckMatchElement(name);
                 if (first == null)
@@ -4833,7 +4833,7 @@ namespace WPF_Successor_001_to_Vahren
             //image
             {
                 var image =
-                    new Regex(@"(?<=image[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    new Regex(GetPat("image"), RegexOptions.IgnoreCase)
                     .Matches(value);
                 var first = CheckMatchElement(image);
                 if (first == null)
@@ -4851,7 +4851,7 @@ namespace WPF_Successor_001_to_Vahren
             //x
             {
                 var x =
-                    new Regex(@"(?<=x[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    new Regex(GetPat("x"), RegexOptions.IgnoreCase)
                     .Matches(value);
                 var first = CheckMatchElement(x);
                 if (first == null)
@@ -4863,7 +4863,7 @@ namespace WPF_Successor_001_to_Vahren
             //y
             {
                 var y =
-                    new Regex(@"(?<=y[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    new Regex(GetPat("y"), RegexOptions.IgnoreCase)
                     .Matches(value);
                 var first = CheckMatchElement(y);
                 if (first == null)
@@ -4903,7 +4903,7 @@ namespace WPF_Successor_001_to_Vahren
             //map
             {
                 var map =
-                    new Regex(@"(?<=map[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                    new Regex(GetPat("map"), RegexOptions.IgnoreCase)
                     .Matches(value);
                 var first = CheckMatchElement(map);
                 if (first == null)

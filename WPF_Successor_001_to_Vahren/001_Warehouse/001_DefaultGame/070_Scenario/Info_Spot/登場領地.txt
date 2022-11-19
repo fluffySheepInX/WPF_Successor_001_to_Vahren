@@ -85,6 +85,7 @@ NewFormatSpot spot0008
 	x = "2700";
 	y = "250";
 	map = "wefwefwefwefw";
+	capacity = "12";
 }
 
 NewFormatSpot spot0004
