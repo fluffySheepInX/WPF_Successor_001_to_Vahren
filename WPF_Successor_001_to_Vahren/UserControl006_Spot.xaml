@@ -27,7 +27,7 @@
 
         <StackPanel Orientation="Horizontal" Margin="10,100,0,0">
             <Label FontSize="20" Foreground="White" Content="経済" />
-            <Label FontSize="20" Foreground="White" Content="1000" Name="lblIncome" />
+            <Label FontSize="20" Foreground="White" Content="1000" Name="lblGain" />
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="城壁" />
             <Label FontSize="20" Foreground="White" Content="50" Name="lblCastle" />
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="戦力" />
@@ -35,6 +35,11 @@
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="部隊" />
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
+
+        <ScrollViewer Width="460" Height="440" Canvas.Left="10" Canvas.Top="150" Background="Black" >
+            <StackPanel>
+            </StackPanel>
+        </ScrollViewer>
 
     </Canvas>
 </UserControl>

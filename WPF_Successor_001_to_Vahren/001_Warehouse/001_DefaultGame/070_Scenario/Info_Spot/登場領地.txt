@@ -77,6 +77,9 @@ NewFormatSpot spot0007
 	x = "2600";
 	y = "300";
 	map = "wefwefwefwefw";
+	gain = "50";
+	castle = "5";
+	capacity = "10";
 }
 NewFormatSpot spot0008
 {
@@ -85,6 +88,8 @@ NewFormatSpot spot0008
 	x = "2700";
 	y = "250";
 	map = "wefwefwefwefw";
+	gain = "100";
+	castle = "10";
 	capacity = "12";
 }
 

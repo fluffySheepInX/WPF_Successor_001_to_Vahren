@@ -597,6 +597,9 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
+            // シナリオ開始時にデータを初期化する
+            InitializeGameData();
+
             this.ClassGameStatus.Camera = new Point()
             {
                 X = ((-this.CanvasMainWidth) + (this.CanvasMainWidth / 2)),
@@ -3108,6 +3111,33 @@ namespace WPF_Successor_001_to_Vahren
             Thread.Sleep(10);
         }
 
+        // シナリオごとにデータを初期化する関数
+        private void InitializeGameData()
+        {
+            //シナリオで設定されてる標準の駐留数
+            int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
+
+            // 後から追加するかもしれないので、全ての領地を初期化する
+            foreach (var item in this.ClassGameStatus.AllListSpot)
+            {
+                // とりあえず、初期値をそのまま使う
+                // 将来的には、シナリオによって初期値が違う場合も考慮すること
+                item.Gain = item.InitGain;
+                item.Castle = item.InitCastle;
+
+                // 領地の駐留数が指定されてなければ、シナリオの規定値を使う
+                if (item.InitCapacity < 1)
+                {
+                    item.Capacity = default_capacity;
+                }
+                else
+                {
+                    item.Capacity = item.InitCapacity;
+                }
+            }
+
+        }
+
         private void SetListClassMapBattle(int gameTitleNumber)
         {
             // get target path.
@@ -4871,6 +4901,39 @@ namespace WPF_Successor_001_to_Vahren
                     throw new Exception();
                 }
                 classSpot.Y = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+            }
+            //Gain
+            {
+                var match_result =
+                    new Regex(GetPat("gain"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.InitGain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //Castle
+            {
+                var match_result =
+                    new Regex(GetPat("castle"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.InitCastle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //Capacity
+            {
+                var match_result =
+                    new Regex(GetPat("capacity"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(match_result);
+                if (first != null)
+                {
+                    classSpot.InitCapacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //member
             {
