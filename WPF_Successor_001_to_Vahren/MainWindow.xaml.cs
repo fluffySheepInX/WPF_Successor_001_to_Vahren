@@ -597,6 +597,9 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
+            // シナリオ開始時にデータを初期化する
+            InitializeGameData();
+
             this.ClassGameStatus.Camera = new Point()
             {
                 X = ((-this.CanvasMainWidth) + (this.CanvasMainWidth / 2)),
@@ -3108,6 +3111,33 @@ namespace WPF_Successor_001_to_Vahren
             Thread.Sleep(10);
         }
 
+        // シナリオごとにデータを初期化する関数
+        private void InitializeGameData()
+        {
+            //シナリオで設定されてる標準の駐留数
+            int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
+
+            // 後から追加するかもしれないので、全ての領地を初期化する
+            foreach (var item in this.ClassGameStatus.AllListSpot)
+            {
+                // とりあえず、初期値をそのまま使う
+                // 将来的には、シナリオによって初期値が違う場合も考慮すること
+                item.Gain = item.InitGain;
+                item.Castle = item.InitCastle;
+
+                // 領地の駐留数が指定されてなければ、シナリオの規定値を使う
+                if (item.InitCapacity < 1)
+                {
+                    item.Capacity = default_capacity;
+                }
+                else
+                {
+                    item.Capacity = item.InitCapacity;
+                }
+            }
+
+        }
+
         private void SetListClassMapBattle(int gameTitleNumber)
         {
             // get target path.
@@ -3379,9 +3409,6 @@ namespace WPF_Successor_001_to_Vahren
 
                 //spot読み込み
                 {
-                    //シナリオで設定されてる標準の駐留数
-                    int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
-
                     //現シナリオで使用するスポットを抽出する
                     List<ClassSpot> result = new List<ClassSpot>();
                     foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
@@ -3390,11 +3417,6 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             if (item == item2.NameTag)
                             {
-                                // 領地の駐留数が指定されてなければ、シナリオ標準値を使う。
-                                if (item2.Capacity < 1)
-                                {
-                                    item2.Capacity = default_capacity;
-                                }
                                 result.Add(item2);
                             }
                         }
@@ -4888,7 +4910,7 @@ namespace WPF_Successor_001_to_Vahren
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.Gain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.InitGain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //Castle
@@ -4899,7 +4921,7 @@ namespace WPF_Successor_001_to_Vahren
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.Castle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.InitCastle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //Capacity
@@ -4910,7 +4932,7 @@ namespace WPF_Successor_001_to_Vahren
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.Capacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.InitCapacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //member
