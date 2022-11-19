@@ -79,7 +79,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         // 経済値
         #region Gain
-        private int _gain = 0;
+        private int _gain;
         public int Gain
         {
             get { return _gain; }
@@ -95,7 +95,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         // 城壁値
         #region Castle
-        private int _castle = 0;
+        private int _castle;
         public int Castle
         {
             get { return _castle; }
@@ -111,7 +111,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         // 部隊駐留数
         #region Capacity
-        private int _capacity = 0;
+        private int _capacity;
         public int Capacity
         {
             get { return _capacity; }
