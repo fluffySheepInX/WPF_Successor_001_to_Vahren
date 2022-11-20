@@ -31,12 +31,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region UnitGroup
-        private List<ClassHorizontalUnit> _unitGroup = new List<ClassHorizontalUnit>();
-        public List<ClassHorizontalUnit> UnitGroup
+        #region ListMemberBouei
+        private List<(string, int)> _listMemberBouei = new List<(string, int)>();
+        public List<(string, int)> ListMemberBouei
         {
-            get { return _unitGroup; }
-            set { _unitGroup = value; }
+            get { return _listMemberBouei; }
+            set { _listMemberBouei = value; }
         }
         #endregion
 

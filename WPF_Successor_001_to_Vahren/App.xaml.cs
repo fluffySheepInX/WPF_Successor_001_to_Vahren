@@ -70,6 +70,7 @@ namespace WPF_Successor_001_to_Vahren
                         }
 
                         //ファイル毎に繰り返し
+                        ClassTestBattle classTestBattle = new ClassTestBattle();
                         foreach (var item in files)
                         {
                             string readAllLines;
@@ -125,7 +126,6 @@ namespace WPF_Successor_001_to_Vahren
                                         }
                                     }
 
-                                    ClassTestBattle classTestBattle = new ClassTestBattle();
                                     if (kind == 0)
                                     {
                                         classTestBattle = GetClassTestBattle(getData.Value);
@@ -138,6 +138,10 @@ namespace WPF_Successor_001_to_Vahren
                             }
 
                         }
+
+                        CreateMap(classTestBattle);
+
+                        StartupUri = null;
                     }
 
                     break;
@@ -196,9 +200,73 @@ namespace WPF_Successor_001_to_Vahren
                     classTestBattle.Player = first.Value;
                 }
             }
+            //memberKougeki
+            {
+                var member =
+                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatComma("memberKougeki"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(member);
+                if (first == null)
+                {
+                    classTestBattle.ListMember = new List<(string, int)>();
+                }
+                else
+                {
+                    var tete = new List<(string, int)>();
+                    foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(","))
+                    {
+                        if (item.Contains("*") == true)
+                        {
+                            var tete2 = item.Split("*");
+                            tete.Add(new(tete2[0], Convert.ToInt32(tete2[1])));
+                        }
+                        else
+                        {
+                            tete.Add(new(item, 1));
+                        }
+                    }
+                    classTestBattle.ListMember = tete;
+                }
+            }
+            //memberBouei
+            {
+                var member =
+                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatComma("memberBouei"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(member);
+                if (first == null)
+                {
+                    classTestBattle.ListMemberBouei = new List<(string, int)>();
+                }
+                else
+                {
+                    var tete = new List<(string, int)>();
+                    foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(","))
+                    {
+                        if (item.Contains("*") == true)
+                        {
+                            var tete2 = item.Split("*");
+                            tete.Add(new(tete2[0], Convert.ToInt32(tete2[1])));
+                        }
+                        else
+                        {
+                            tete.Add(new(item, 1));
+                        }
+                    }
+                    classTestBattle.ListMemberBouei = tete;
+                }
+            }
 
 
             return classTestBattle;
+        }
+        #endregion
+        #region Map生成
+        private static void CreateMap(ClassTestBattle classTestBattle)
+        {
+            Win010_TestBattle window = new Win010_TestBattle();
+
+            window.ShowDialog();
         }
         #endregion
     }

@@ -1079,14 +1079,14 @@ namespace WPF_Successor_001_to_Vahren
 
             var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
 
-/*
-            Uri uri = new Uri("/Page001_Conscription.xaml", UriKind.Relative);
-            Frame frame = new Frame();
-            frame.Source = uri;
-            frame.Margin = new Thickness(0, 0, 0, 0);
-            frame.Name = StringName.windowConscription;
-            this.canvasMain.Children.Add(frame);
-*/
+            /*
+                        Uri uri = new Uri("/Page001_Conscription.xaml", UriKind.Relative);
+                        Frame frame = new Frame();
+                        frame.Source = uri;
+                        frame.Margin = new Thickness(0, 0, 0, 0);
+                        frame.Name = StringName.windowConscription;
+                        this.canvasMain.Children.Add(frame);
+            */
             Application.Current.Properties["window"] = this;
             Application.Current.Properties["ClassPowerAndCity"] = classPowerAndCity;
 
@@ -2002,11 +2002,10 @@ namespace WPF_Successor_001_to_Vahren
 
             //this.canvasMain.Children.Remove(ri);
             var ri2 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightBottom, StringName.canvasStrategyMenu);
-            if (ri2 == null)
+            if (ri2 != null)
             {
-                throw new Exception();
+                this.canvasUIRightBottom.Children.Remove(ri2);
             }
-            this.canvasUIRightBottom.Children.Remove(ri2);
 
             // 開いてる子ウインドウを全て閉じて、登録を抹消する
             this.canvasUI.Children.Clear();
@@ -6285,13 +6284,13 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         /// <summary>
-        /// これいる？上で良い気がする
+        /// これいる？GetPatで良い気がする
         /// member = "aaa,bbb,ccc"
         /// など
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private string GetPatComma(string name)
+        public static string GetPatComma(string name)
         {
             return @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))";
         }
