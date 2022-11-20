@@ -8,6 +8,7 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <PublishSingleFile>true</PublishSingleFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

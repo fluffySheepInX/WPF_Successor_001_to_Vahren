@@ -397,7 +397,7 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        private static void KeepInterval(DispatcherTimer timer)
+        public static void KeepInterval(DispatcherTimer timer)
         {
             var now = DateTime.Now;
             var nowMilliseconds = now.TimeOfDay.TotalMilliseconds;
@@ -6295,7 +6295,7 @@ namespace WPF_Successor_001_to_Vahren
             return @"(?<=[\s\n]+" + name + @"[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))";
         }
 
-        private string GetPatTag(string name)
+        public static string GetPatTag(string name)
         {
             return @"(?<=" + name + @"[\s]*)([\S\n]+?)(?=[\s]|{)";
         }
@@ -6518,6 +6518,8 @@ namespace WPF_Successor_001_to_Vahren
             //ストラテジーメニュー表示
             SetWindowStrategyMenu();
         }
+
+        #region Battle
 
         /// <summary>
         /// マップ生成後に実行
@@ -7325,6 +7327,8 @@ namespace WPF_Successor_001_to_Vahren
 
             }
         }
+
+        #endregion
 
         /// <summary>
         /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。

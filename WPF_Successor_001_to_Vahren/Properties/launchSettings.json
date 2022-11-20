@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "WPF_Successor_001_to_Vahren": {
+      "commandName": "Project"
+    },
+    "debug battle": {
+      "commandName": "Project",
+      "commandLineArgs": "/debug /battle"
+    }
+  }
+}
