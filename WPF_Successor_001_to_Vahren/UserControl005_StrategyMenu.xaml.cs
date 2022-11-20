@@ -69,11 +69,18 @@ namespace WPF_Successor_001_to_Vahren
             }
             //総収入
             {
-                this.lblNameTotalIncome.Content = "";
+                string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
+                int gain_sum = 0;
+                var list_spot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
+                foreach (var item_spot in list_spot)
+                {
+                    gain_sum += item_spot.Gain;
+                }
+                this.lblNameTotalGain.Content = gain_sum;
             }
             //収入補正
             {
-                this.lblNameIncomeCorrection.Content = "";
+                this.lblNameGainCorrection.Content = "";
             }
             //領地数
             {

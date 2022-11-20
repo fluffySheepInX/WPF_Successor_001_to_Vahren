@@ -19,11 +19,11 @@
                     </Canvas>
                     <Canvas Height="30">
                         <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="総収入"></Label>
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="9999999" Name="lblNameTotalIncome"></Label>
+                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="9999999" Name="lblNameTotalGain"></Label>
                     </Canvas>
                     <Canvas Height="30">
                         <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="収入補正"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="+5%" Name="lblNameIncomeCorrection"></Label>
+                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="+5%" Name="lblNameGainCorrection"></Label>
                     </Canvas>
                     <Canvas Height="30">
                         <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="領地数"></Label>
@@ -76,6 +76,8 @@
                     </Grid>
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="0" Margin="0,0,2,2" Background="Transparent" ToolTip="人材雇用">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f91d;" /><!--手をつなぐ人-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
@@ -94,8 +96,11 @@
                               Fill="Silver" Height="28" 
                               Stroke="#29acca" Stretch="Fill" Width="21" HorizontalAlignment="Left" Canvas.Left="-13.5" Canvas.Top="-20" VerticalAlignment="Top"/>
                     </Canvas>
+-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="1" Margin="0,0,2,2" Background="Transparent" ToolTip="カード確認">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f0cf;" /><!--ジョーカー-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
@@ -140,10 +145,12 @@
                                 </TransformGroup>
                             </Rectangle.RenderTransform>
                         </Rectangle>
-
                     </Canvas>
+-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="外交">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f5e8;" /><!--左向きの吹き出し-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
@@ -170,8 +177,11 @@
 
                         </Rectangle>
                     </Canvas>
+-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="ターン委任">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f502;" /><!--1回リピート-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
@@ -224,15 +234,21 @@
                             </Path.RenderTransform>
                         </Path>
                     </Canvas>
+-->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="静観">
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="静観" >
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x267E;" /><!--無限-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
                         <Ellipse Height="32" Stroke="#29acca" Width="43" StrokeThickness="5" HorizontalAlignment="Left" Canvas.Left="-21.5" Canvas.Top="-16" VerticalAlignment="Top"/>
                     </Canvas>
+-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="機能">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x2699;" /><!--ギア-->
+<!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
                         </Ellipse>
@@ -268,10 +284,13 @@
                             </Path.RenderTransform>
                         </Path>
                     </Canvas>
+-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="市場">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f3f0;" /><!--西洋の城-->
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="探索">
+                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f575;" /><!--探偵-->
                 </Button>
             </Grid>
         </Canvas>

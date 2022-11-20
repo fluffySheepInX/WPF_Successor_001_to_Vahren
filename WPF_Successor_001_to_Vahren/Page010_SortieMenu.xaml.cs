@@ -434,6 +434,13 @@ namespace WPF_Successor_001_to_Vahren
                 //message
                 MessageBox.Show(convSpots.ClassSpot.Name+ "を占領しました！");
 
+                // 勢力メニューを更新する
+                var uc5 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUIRightBottom, StringName.canvasStrategyMenu);
+                if (uc5 != null)
+                {
+                    uc5.DisplayPowerStatus(mainWindow);
+                }
+
                 return;
             }
 
