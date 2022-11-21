@@ -54,7 +54,7 @@ namespace WPF_Successor_001_to_Vahren
                         var b = System.IO.Directory.CreateDirectory(System.IO.Path.Combine(strings.ToArray()));
                         _classConfigGameTitle.DirectoryGameTitle.Add(b);
 
-                        strings.Add("055_TestBattle");
+                        strings.Add("070_Scenario");
                         string path = System.IO.Path.Combine(strings.ToArray());
 
                         // get file.
@@ -174,6 +174,111 @@ namespace WPF_Successor_001_to_Vahren
 
                                 // Map 終わり
                             }
+
+                            // Unit
+                            {
+                                string targetString = "NewFormatUnit";
+                                // 大文字かっこも入るが、上でチェックしている
+                                // \sは空行や改行など
+                                var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                                var scenarioMatches = new Regex(@"Unit[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                                var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                                listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                                if (listMatches == null)
+                                {
+                                    // データがない！
+                                    throw new Exception();
+                                }
+                                if (listMatches.Count < 1)
+                                {
+                                    // データがないので次
+                                }
+                                else
+                                {
+                                    foreach (var getData in listMatches)
+                                    {
+                                        //enumを使うべき？
+                                        int kind = 0;
+                                        {
+                                            //このコードだとNewFormatUnitTest等が通るのでよくない
+                                            string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                            if (String.Compare(join, targetString, true) == 0)
+                                            {
+                                                kind = 0;
+                                            }
+                                            else
+                                            {
+                                                kind = 1;
+                                            }
+                                        }
+
+                                        if (kind == 0)
+                                        {
+                                            classGameStatus.ListUnit.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassUnitNewFormat(getData.Value));
+                                        }
+                                        else
+                                        {
+                                            //ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
+                                        }
+                                    }
+                                }
+                            }
+                            // Unit 終わり
+
+                            // Skill
+                            {
+                                string targetString = "NewFormatSkill";
+                                // 大文字かっこも入るが、上でチェックしている
+                                // \sは空行や改行など
+                                var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                                var scenarioMatches = new Regex(@"Skill[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                                var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                                listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                                if (listMatches == null)
+                                {
+                                    // データがない！
+                                    throw new Exception();
+                                }
+                                if (listMatches.Count < 1)
+                                {
+                                    // データがないので次
+                                }
+                                else
+                                {
+                                    foreach (var getData in listMatches)
+                                    {
+                                        //enumを使うべき？
+                                        int kind = 0;
+                                        {
+                                            //このコードだとNewFormatUnitTest等が通るのでよくない
+                                            string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                            if (String.Compare(join, targetString, true) == 0)
+                                            {
+                                                kind = 0;
+                                            }
+                                            else
+                                            {
+                                                kind = 1;
+                                            }
+                                        }
+
+                                        if (kind == 0)
+                                        {
+                                            classGameStatus.ListSkill.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassSkillNewFormat(getData.Value));
+                                        }
+                                        else
+                                        {
+                                            //ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
+                                        }
+                                    }
+                                }
+                            }
+                            // Skill 終わり
+
                         }
 
                         CreateMap(classTestBattle, _classConfigGameTitle, classGameStatus);

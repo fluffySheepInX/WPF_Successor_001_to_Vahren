@@ -4340,7 +4340,7 @@ namespace WPF_Successor_001_to_Vahren
             return classObjectMapTip;
         }
 
-        private ClassSkill GetClassSkillNewFormat(string value)
+        public static ClassSkill GetClassSkillNewFormat(string value)
         {
             ClassSkill classSkill = new ClassSkill();
 
@@ -5553,7 +5553,7 @@ namespace WPF_Successor_001_to_Vahren
             return classPower;
         }
 
-        private ClassUnit GetClassUnitNewFormat(string value)
+        public static ClassUnit GetClassUnitNewFormat(string value)
         {
             ClassUnit classUnit = new ClassUnit();
 

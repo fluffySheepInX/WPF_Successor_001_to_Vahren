@@ -113,6 +113,49 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
             }
 
+            foreach (var item in this.classTestBattle.ListMember)
+            {
+                for (int i = 0; i < item.Item2; i++)
+                {
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(item.Item1)).FirstOrDefault();
+                    if (info == null)
+                    {
+                        continue;
+                    }
+
+                    var classUnit = new List<ClassUnit>();
+                    var deep = info.DeepCopy();
+                    deep.ID = this.ClassGameStatus.IDCount;
+                    this.ClassGameStatus.SetIDCount();
+                    classUnit.Add(deep);
+
+                    ClassHorizontalUnit aaa = new ClassHorizontalUnit();
+                    aaa.ListClassUnit = classUnit;
+                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Add(aaa);
+                }
+            }
+            foreach (var item in this.classTestBattle.ListMemberBouei)
+            {
+                for (int i = 0; i < item.Item2; i++)
+                {
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(item.Item1)).FirstOrDefault();
+                    if (info == null)
+                    {
+                        continue;
+                    }
+
+                    var classUnit = new List<ClassUnit>();
+                    var deep = info.DeepCopy();
+                    deep.ID = this.ClassGameStatus.IDCount;
+                    this.ClassGameStatus.SetIDCount();
+                    classUnit.Add(deep);
+
+                    ClassHorizontalUnit aaa = new ClassHorizontalUnit();
+                    aaa.ListClassUnit = classUnit;
+                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Add(aaa);
+                }
+            }
+
             SetBattleMap();
         }
 
@@ -900,6 +943,7 @@ namespace WPF_Successor_001_to_Vahren
                 TimerAction60FPSAfterFadeInBattleStart();
                 MainWindow.KeepInterval(this.timerAfterFadeIn);
             };
+            AfterFadeIn = true;
             this.timerAfterFadeIn.Start();
         }
 
@@ -1203,15 +1247,6 @@ namespace WPF_Successor_001_to_Vahren
         private async void TimerAction60FPSAfterFadeInBattleStart()
         {
             if (AfterFadeIn == false)
-            {
-                return;
-            }
-            var rec = this.fade.Children[this.fade.Children.Count - 1] as System.Windows.Shapes.Rectangle;
-            if (rec == null)
-            {
-                throw new Exception();
-            }
-            if (rec.Height > 0)
             {
                 return;
             }
