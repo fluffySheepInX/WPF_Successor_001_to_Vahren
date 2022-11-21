@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="480"
+             d:DesignHeight="700" d:DesignWidth="480"
              >
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
@@ -13,7 +13,7 @@
             MouseMove="win_MouseMove"
             MouseRightButtonUp="btnClose_Click"
             >
-        <Border Height="600" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+        <Border Height="700" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
         <Border Height="44" Width="420" BorderBrush="White" BorderThickness="2" Margin="8,8,0,0" />
         <Image Stretch="Fill" Margin="14,14,0,0" Height="32" Width="32" Name="imgFlag" />
         <Label Width="375" Margin="50,10,0,0" FontSize="23" Foreground="White" Content="東京タワーランド２階" Name="lblNameSpot" />
@@ -36,8 +36,37 @@
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
 
-        <ScrollViewer Width="460" Height="440" Canvas.Left="10" Canvas.Top="150" Background="Black" >
-            <StackPanel>
+        <ScrollViewer Name="scrTroop" Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Visible"
+                MouseRightButtonUp="Disable_MouseEvent"
+                >
+            <StackPanel Name="stkUnitList">
+/*
+                <StackPanel Orientation="Horizontal" Height="68">
+                    <StackPanel>
+                        <Button Height="30" Margin="2" FontSize="15" Content="出撃" />
+                        <ComboBox Width="44" Height="30" Margin="2" FontSize="15">
+                            <ComboBoxItem Content="F" Background="Red" Foreground="White" />
+                            <ComboBoxItem Content="M" Background="Green" Foreground="White" />
+                            <ComboBoxItem Content="B" Background="Blue" Foreground="White" />
+                        </ComboBox>
+                    </StackPanel>
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0">
+                        <StackPanel>
+                            <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
+                            <Label Padding="-5" Height="20" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199" />
+                        </StackPanel>
+                    </Button>
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                </StackPanel>
+*/
             </StackPanel>
         </ScrollViewer>
 
