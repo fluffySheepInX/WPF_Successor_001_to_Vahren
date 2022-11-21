@@ -42,7 +42,7 @@
                 MouseRightButtonUp="Disable_MouseEvent"
                 >
             <StackPanel Name="stkUnitList">
-/*
+                <!--
                 <StackPanel Orientation="Horizontal" Height="68">
                     <StackPanel>
                         <Button Height="30" Margin="2" FontSize="15" Content="出撃" />
@@ -66,7 +66,7 @@
                     <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
                     <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
                 </StackPanel>
-*/
+-->
             </StackPanel>
         </ScrollViewer>
 
