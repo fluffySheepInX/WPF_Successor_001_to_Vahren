@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +27,8 @@ namespace WPF_Successor_001_to_Vahren
             InitializeComponent();
         }
 
+        // 最初に呼び出した時
         public void SetData()
-        {
-            DisplaySpotStatus();
-        }
-
-        public void DisplaySpotStatus()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -39,8 +36,169 @@ namespace WPF_Successor_001_to_Vahren
             	return;
             }
 
+            DisplaySpotStatus(mainWindow);
+
+            // 最前面に配置する
+            try
+            {
+                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
+                   .Where(x => x != this)
+                   .Select(x => Panel.GetZIndex(x))
+                   .Max();
+                Canvas.SetZIndex(this, maxZ + 1);
+            }
+            catch (InvalidOperationException)
+            {
+                // 比較する子ウインドウがなければそのまま
+            }
+        }
+
+        // 領地のユニットを変更した際に、ユニット表示だけを更新する
+        public void UpdateSpotUnit(MainWindow mainWindow)
+        {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
+
+            // プレイヤーが操作可能かどうか
+            bool isControl = false;
+            if (classPowerAndCity.ClassPower.NameTag ==             mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+            {
+                // 同じ勢力なら、操作できる
+                isControl = true;
+            }
+
+            // 陣形リスト
+            ObservableCollection<ClassFormation> formation = new ObservableCollection<ClassFormation>();
+            formation.Add(new ClassFormation() { Id = 0, Formation = _010_Enum.Formation.F });
+            formation.Add(new ClassFormation() { Id = 1, Formation = _010_Enum.Formation.M });
+            formation.Add(new ClassFormation() { Id = 2, Formation = _010_Enum.Formation.B });
+
+            // 画像のディレクトリ
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("040_ChipImage");
+            string pathDirectory = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
+
+            // 最初に全て消去する
+            this.stkUnitList.Children.Clear();
+
+            var listTroop = mainWindow.ClassGameStatus.AllListSpot
+                .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                .First()
+                .UnitGroup;
+            // 全ての部隊を表示する（駐留数の制限を超えていても許容する）
+            int i = 0, j;
+            foreach (var itemTroop in listTroop)
+            {
+                // 部隊のパネル
+                StackPanel stkTroop = new StackPanel();
+                stkTroop.Name = "stkTroop" + i.ToString();
+                stkTroop.Orientation = Orientation.Horizontal;
+                stkTroop.Height = 68;
+
+                // 部隊メンバー
+                j = 0;
+                foreach (var itemUnit in itemTroop.ListClassUnit)
+                {
+                    // 部隊の陣形はリーダー（先頭のユニット）を参照する
+                    if (j == 0)
+                    {
+                        if (isControl)
+                        {
+                            // 操作パネル
+                            StackPanel stkControl = new StackPanel();
+                            stkControl.Name = "stkControl" + i.ToString();
+
+                            // 出撃ボタン
+                            Button btnSelect = new Button();
+                            btnSelect.Name = "btnSelect" + i.ToString();
+                            btnSelect.Height = 30;
+                            btnSelect.Margin = new Thickness(2);
+                            btnSelect.FontSize = 15;
+                            btnSelect.Content = "出撃";
+                            stkControl.Children.Add(btnSelect);
+
+                            // 陣形コンボボックス
+                            ComboBox cmbFormation = new ComboBox();
+                            cmbFormation.Name = "cmbFormation" + i.ToString();
+                            cmbFormation.Height = 30;
+                            cmbFormation.Width = 44;
+                            cmbFormation.Margin = new Thickness(2);
+                            cmbFormation.SelectedValuePath = "Id";
+                            cmbFormation.DisplayMemberPath = "Formation";
+                            cmbFormation.ItemsSource = formation;
+                            cmbFormation.FontSize = 15;
+                            cmbFormation.SelectedIndex = itemUnit.Formation.Id;
+                            stkControl.Children.Add(cmbFormation);
+                            stkTroop.Children.Add(stkControl);
+                        }
+                        else
+                        {
+                            // 操作できない場合は、陣形だけ表示する
+                            Grid grid = new Grid();
+                            grid.Width = 48;
+                            Label label = new Label();
+                            label.Background = SystemColors.WindowBrush;
+                            label.Width = 30;
+                            label.Height = 30;
+                            label.FontSize = 15;
+                            label.Content = itemUnit.Formation.Formation;
+                            grid.Children.Add(label);
+                            stkTroop.Children.Add(grid);
+                        }
+                    }
+
+                    // ユニットのボタン
+                    Button btnUnit = new Button();
+                    btnUnit.Name = "btnUnit" + i.ToString() + "_" + j.ToString();
+                    btnUnit.Height = 68;
+                    btnUnit.Width = 48;
+                    btnUnit.Background = Brushes.Transparent;
+                    btnUnit.BorderThickness = new Thickness(0);
+
+                    // ユニットのパネル
+                    StackPanel stkUnit = new StackPanel();
+                    stkUnit.Name = "stkUnit" + i.ToString() + "_" + j.ToString();
+
+                    // ユニットの画像
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(pathDirectory + itemUnit.Image));
+                    Image imgUnit = new Image();
+                    imgUnit.Name = "imgUnit" + i.ToString() + "_" + j.ToString();
+                    imgUnit.Source = bitimg1;
+                    imgUnit.Height = 48;
+                    imgUnit.Width = 48;
+                    // 画像本来のピクセルサイズで表示する場合は、PixelWidth と PixelHeight を指定する
+                    //imgUnit.Height = bitimg1.PixelHeight;
+                    //imgUnit.Width = bitimg1.PixelWidth;
+                    stkUnit.Children.Add(imgUnit);
+
+                    // ユニットのレベル
+                    Label lblLevel = new Label();
+                    lblLevel.Name = "lblLevel" + i.ToString() + "_" + j.ToString();
+                    lblLevel.Height = 20;
+                    lblLevel.FontSize = 15;
+                    lblLevel.Padding = new Thickness(-5);
+                    lblLevel.Foreground = Brushes.White;
+                    lblLevel.HorizontalAlignment = HorizontalAlignment.Center;
+                    lblLevel.Content = "lv" + itemUnit.Level;
+                    stkUnit.Children.Add(lblLevel);
+                    btnUnit.Content = stkUnit;
+
+                    stkTroop.Children.Add(btnUnit);
+                    j++;
+                }
+
+                this.stkUnitList.Children.Add(stkTroop);
+                i++;
+            }
+            
+            
+            
+        }
+
+        // 既に表示されていて、表示を更新する際
+        public void DisplaySpotStatus(MainWindow mainWindow)
+        {
+            var classPowerAndCity = (ClassPowerAndCity)this.Tag;
 
             //旗は存在する時だけ
             if (classPowerAndCity.ClassPower.FlagPath != string.Empty)
@@ -70,6 +228,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             //部隊駐留数
             {
+                int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
                 int count = mainWindow.ClassGameStatus.AllListSpot
                     .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
                     .First()
@@ -78,21 +237,12 @@ namespace WPF_Successor_001_to_Vahren
                     .Count();
                 this.lblMemberCount.Content = count.ToString() + "/" + spot_capacity.ToString();
             }
+            //ユニット
+            {
+                UpdateSpotUnit(mainWindow);
+            }
 
 
-            // 最前面に配置する
-            try
-            {
-                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                   .Where(x => x != this)
-                   .Select(x => Panel.GetZIndex(x))
-                   .Max();
-                Canvas.SetZIndex(this, maxZ + 1);
-            }
-            catch (InvalidOperationException)
-            {
-                // 比較する子ウインドウがなければそのまま
-            }
 
         }
 
@@ -172,6 +322,12 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
         #endregion
+
+        // ボタン等を右クリックした際に、親コントロールが反応しないようにする
+        private void Disable_MouseEvent(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
+        }
 
     }
 }
