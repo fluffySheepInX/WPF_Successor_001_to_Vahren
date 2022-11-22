@@ -43,7 +43,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
                    .Where(x => x != this)
-                   .Select(x => Panel.GetZIndex(x))
+                   .Select(x => Canvas.GetZIndex(x))
                    .Max();
                 Canvas.SetZIndex(this, maxZ + 1);
             }
@@ -160,18 +160,17 @@ namespace WPF_Successor_001_to_Vahren
 
                     // ユニットのパネル
                     StackPanel stkUnit = new StackPanel();
-                    stkUnit.Name = "stkUnit" + i.ToString() + "_" + j.ToString();
 
                     // ユニットの画像
                     BitmapImage bitimg1 = new BitmapImage(new Uri(pathDirectory + itemUnit.Image));
                     Image imgUnit = new Image();
                     imgUnit.Name = "imgUnit" + i.ToString() + "_" + j.ToString();
                     imgUnit.Source = bitimg1;
-                    imgUnit.Height = tile_width;
                     imgUnit.Width = tile_width;
+                    imgUnit.Height = tile_width;
                     // 画像本来のピクセルサイズで表示する場合は、PixelWidth と PixelHeight を指定する
-                    //imgUnit.Height = bitimg1.PixelHeight;
                     //imgUnit.Width = bitimg1.PixelWidth;
+                    //imgUnit.Height = bitimg1.PixelHeight;
                     stkUnit.Children.Add(imgUnit);
 
                     // ユニットのレベル
@@ -270,7 +269,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ユニットをドラッグ移動する際の、移動先を作る
-        private void MakeDropTarget_Unit(MainWindow mainWindow)
+        private void MakeDropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id)
         {
             // とりあえず、同じ領地上だけ考える
             // 将来的には、他の領地にもドラッグ移動できるようにする
@@ -297,7 +296,19 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget_" + this.Name + "_Unit" + i.ToString() + "_" + j.ToString();
                     border.BorderThickness = new Thickness(2);
-                    border.BorderBrush = Brushes.Aqua;
+                    // ドラッグ中のユニットの位置を暗くする
+                    if ( (i == troop_id) && (j == member_id) )
+                    {
+                        // 半透明のブラシを作成する (黒の33%)
+                        SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
+                        mySolidColorBrush.Opacity = 0.33;
+                        border.Background = mySolidColorBrush;
+                        border.BorderBrush = Brushes.Red;
+                    }
+                    else
+                    {
+                        border.BorderBrush = Brushes.Aqua;
+                    }
                     border.Width = tile_width;
                     border.Height = tile_height;
                     this.canvasSpotUnit.Children.Add(border);
@@ -352,7 +363,7 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
-        // ユニットをドラッグ移動する際の、移動先を作る
+        // ユニットをドラッグ移動する際に、移動先を作る
         private void RemoveDropTarget_Unit(MainWindow mainWindow)
         {
             // とりあえず、同じ領地上だけ考える
@@ -383,15 +394,22 @@ namespace WPF_Successor_001_to_Vahren
             }
             */
             
-/*
-IEnumerable<myType> collection = control.Children.OfType<myType>(); 
-where control is the root element of the window.
-
-EDIT - As pointed out in the comments. This only goes one level deep. See the accepted answer for an option that goes deeper.
-*/
-
         }
 
+        private static BitmapSource FrameworkElementToBitmapSource(FrameworkElement element)
+        {
+            element.UpdateLayout();
+            var width = element.ActualWidth;
+            var height = element.ActualHeight;
+            var dv = new DrawingVisual();
+            using (var dc = dv.RenderOpen())
+            {
+                dc.DrawRectangle(new BitmapCacheBrush(element), null, new Rect(0, 0, width, height));
+            }
+            var rtb = new RenderTargetBitmap((int)width, (int)height, 96d, 96d, PixelFormats.Pbgra32);
+            rtb.Render(dv);
+            return rtb;
+        }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
@@ -425,7 +443,7 @@ EDIT - As pointed out in the comments. This only goes one level deep. See the ac
                 {
                     int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
                        .Where(x => x != this)
-                       .Select(x => Panel.GetZIndex(x))
+                       .Select(x => Canvas.GetZIndex(x))
                        .Max();
                     Canvas.SetZIndex(this, maxZ + 1);
                 }
@@ -491,7 +509,7 @@ EDIT - As pointed out in the comments. This only goes one level deep. See the ac
                 {
                     int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
                        .Where(x => x != this)
-                       .Select(x => Panel.GetZIndex(x))
+                       .Select(x => Canvas.GetZIndex(x))
                        .Max();
                     Canvas.SetZIndex(this, maxZ + 1);
                 }
@@ -503,62 +521,119 @@ EDIT - As pointed out in the comments. This only goes one level deep. See the ac
         }
 
         #region ユニットのドラッグ移動
+        private bool _isDragUnit = false;
+
         private void unit_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
+            if (mainWindow == null)
             {
-                // 最前面に移動させる
-                try
-                {
-                    int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                       .Where(x => x != this)
-                       .Select(x => Panel.GetZIndex(x))
-                       .Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-                catch (InvalidOperationException)
-                {
-                    // 比較する子ウインドウがなければそのまま
-                }
+                return;
+            }
 
-                // ドロップ先を作る
-                MakeDropTarget_Unit(mainWindow);
+            // 最前面に移動させる
+            try
+            {
+                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
+                   .Where(x => x != this)
+                   .Select(x => Canvas.GetZIndex(x))
+                   .Max();
+                Canvas.SetZIndex(this, maxZ + 1);
+            }
+            catch (InvalidOperationException)
+            {
+                // 比較する子ウインドウがなければそのまま
             }
 
             // ドラッグを開始する
             UIElement el = (UIElement)sender;
             if (el != null)
             {
-                _isDrag = true;
+                // ドロップ先を作る
+                string unit_name = ((Button)sender).Name;
+                string unit_id = unit_name.Replace("btnUnit", String.Empty);
+                string[] array =  unit_id.Split('_');
+                int troop_id = Int32.Parse(array[0]);
+                int member_id = Int32.Parse(array[1]);
+                MakeDropTarget_Unit(mainWindow, troop_id, member_id);
+
+
+                // 画像をキャプチャして、ドラッグさせる Imageコントロールを作成する
+                BitmapSource bitimg1 = FrameworkElementToBitmapSource((FrameworkElement)el);
+                Image imgDrag = new Image();
+                imgDrag.Name = "DragImage";
+                imgDrag.Source = bitimg1;
+                imgDrag.Width = bitimg1.PixelWidth;
+                imgDrag.Height = bitimg1.PixelHeight;
+                imgDrag.Stretch = Stretch.None;
+                mainWindow.canvasUI.Children.Add(imgDrag);
+
+
+/*
+                // ボタンのユニット画像を使う場合はこちら
+                BitmapImage bitimg1 = null;
+                var ri = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasSpotUnit, "imgUnit" + unit_id);
+                if (ri != null)
+                {
+                    bitimg1 = (BitmapImage)ri.Source;
+                }
+                Image imgDrag = new Image();
+                imgDrag.Name = "DragImage";
+                imgDrag.Source = bitimg1;
+                imgDrag.Width = 48;
+                imgDrag.Height = 48;
+                mainWindow.canvasUI.Children.Add(imgDrag);
+*/
+
+
+                // ドラッグ画像をウインドウよりも前面に移動させる
+                Canvas.SetZIndex(imgDrag, Canvas.GetZIndex(this) + 1);
+
+                // ボタンの位置に置く
+                Point pos = el.TranslatePoint(new Point(0, 0), mainWindow.canvasUI);
+                Canvas.SetLeft(imgDrag, pos.X);
+                Canvas.SetTop(imgDrag, pos.Y);
+
                 _startPoint = e.GetPosition(el);
-                el.CaptureMouse();
-                el.MouseRightButtonUp += unit_MouseRightButtonUp;
+                _isDragUnit = true;
+
+                // ドラッグ画像に対して、イベントを追加する
+                imgDrag.CaptureMouse();
+                imgDrag.MouseRightButtonUp += unit_MouseRightButtonUp;
+                imgDrag.MouseMove += unit_MouseMove;
             }
         }
         private void unit_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
 
             // ドラック中なら終了する
-            if (_isDrag == true)
+            if (_isDragUnit == true)
             {
                 var mainWindow = (MainWindow)Application.Current.MainWindow;
                 if (mainWindow != null)
                 {
                     // ドロップ先を取り除く
                     RemoveDropTarget_Unit(mainWindow);
+
+                    // ドラッグ画像を取り除く
+                    var ri = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DragImage");
+                    if (ri != null)
+                    {
+                        mainWindow.canvasUI.Children.Remove(ri);
+                    }
                 }
 
                 UIElement el = (UIElement)sender;
                 el.ReleaseMouseCapture();
                 el.MouseRightButtonUp -= unit_MouseRightButtonUp;
-                _isDrag = false;
+                el.MouseMove -= unit_MouseMove;
+                _isDragUnit = false;
             }
         }
         private void unit_MouseMove(object sender, MouseEventArgs e)
         {
             // ドラック中
-            if (_isDrag == true)
+            if (_isDragUnit == true)
             {
                 UIElement el = (UIElement)sender;
                 Point pt = e.GetPosition(el);
