@@ -624,6 +624,8 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.IsDrag = true;
                 this.ClassGameStatus.StartPoint = e.GetPosition(el);
                 el.CaptureMouse();
+                el.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
+                el.MouseMove += GridMapStrategy_MouseMove;
             }
         }
         private void GridMapStrategy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -633,6 +635,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 UIElement el = sender as UIElement;
                 el.ReleaseMouseCapture();
+                el.MouseLeftButtonUp -= GridMapStrategy_MouseLeftButtonUp;
+                el.MouseMove -= GridMapStrategy_MouseMove;
                 this.ClassGameStatus.IsDrag = false;
             }
         }
@@ -683,6 +687,8 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.IsDrag = true;
                 this.ClassGameStatus.StartPoint = e.GetPosition(el);
                 el.CaptureMouse();
+                el.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
+                el.MouseMove += CanvasMapBattle_MouseMove;
             }
         }
         private void CanvasMapBattle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -692,6 +698,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 UIElement el = sender as UIElement;
                 el.ReleaseMouseCapture();
+                el.MouseLeftButtonUp -= CanvasMapBattle_MouseLeftButtonUp;
+                el.MouseMove -= CanvasMapBattle_MouseMove;
                 this.ClassGameStatus.IsDrag = false;
             }
         }
@@ -2017,8 +2025,6 @@ namespace WPF_Successor_001_to_Vahren
             int yokoMapTip = 64;
             canvas.Name = StringName.windowMapBattle;
             canvas.Background = Brushes.Black;
-            canvas.MouseMove += CanvasMapBattle_MouseMove;
-            canvas.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
             canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
             {
@@ -3366,9 +3372,7 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
                 canvas.Name = StringName.windowMapStrategy;
-                canvas.MouseMove += GridMapStrategy_MouseMove;
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
-                canvas.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
 
                 Point mapPoint = this.ClassGameStatus.Camera;
@@ -3597,9 +3601,7 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
                 canvas.Name = StringName.windowMapStrategy;
-                canvas.MouseMove += GridMapStrategy_MouseMove;
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
-                canvas.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
 
                 Point mapPoint = this.ClassGameStatus.Camera;
