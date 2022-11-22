@@ -202,8 +202,6 @@ namespace WPF_Successor_001_to_Vahren
             int yokoMapTip = 64;
             canvas.Name = StringName.windowMapBattle;
             canvas.Background = Brushes.Black;
-            canvas.MouseMove += CanvasMapBattle_MouseMove;
-            canvas.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
             canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
             {
@@ -1067,6 +1065,8 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.IsDrag = true;
                 this.ClassGameStatus.StartPoint = e.GetPosition(el);
                 el.CaptureMouse();
+                el.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
+                el.MouseMove += CanvasMapBattle_MouseMove;
             }
         }
         private void CanvasMapBattle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -1076,6 +1076,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 UIElement el = sender as UIElement;
                 el.ReleaseMouseCapture();
+                el.MouseLeftButtonUp -= CanvasMapBattle_MouseLeftButtonUp;
+                el.MouseMove -= CanvasMapBattle_MouseMove;
                 this.ClassGameStatus.IsDrag = false;
             }
         }

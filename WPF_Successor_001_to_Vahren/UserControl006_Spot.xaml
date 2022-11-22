@@ -9,8 +9,6 @@
              >
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
-            MouseLeftButtonUp="win_MouseLeftButtonUp"
-            MouseMove="win_MouseMove"
             MouseRightButtonUp="btnClose_Click"
             >
         <Border Height="700" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
@@ -36,13 +34,15 @@
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
 
-        <ScrollViewer Name="scrTroop" Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
+        <ScrollViewer Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
+                MouseLeftButtonUp="Raise_ZOrder"
                 MouseRightButtonUp="Disable_MouseEvent"
                 >
-            <StackPanel Name="stkUnitList">
-                <!--
+            <Canvas Name="canvasSpotUnit" Width="400" Height="500" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Gray">
+
+<!--
                 <StackPanel Orientation="Horizontal" Height="68">
                     <StackPanel>
                         <Button Height="30" Margin="2" FontSize="15" Content="出撃" />
@@ -67,7 +67,8 @@
                     <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
                 </StackPanel>
 -->
-            </StackPanel>
+
+            </Canvas>
         </ScrollViewer>
 
     </Canvas>

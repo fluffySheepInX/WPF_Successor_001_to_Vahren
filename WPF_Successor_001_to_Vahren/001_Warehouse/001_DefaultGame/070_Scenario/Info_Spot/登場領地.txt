@@ -35,6 +35,9 @@ NewFormatSpot spot0009
 	x = "2800";
 	y = "680";
 	map = "wefwefwefwefw";
+
+	capacity = "4";
+	member = "LineInfantryM14*6";
 }
 NewFormatSpot spot0010
 {
@@ -43,6 +46,8 @@ NewFormatSpot spot0010
 	x = "2650";
 	y = "680";
 	map = "wefwefwefwefw";
+
+	capacity = "8";
 }
 
 
@@ -56,7 +61,7 @@ NewFormatSpot spot0002
 	map = "ca";
 
 	#滅亡等で中立になった時のユニット
-	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
+	wanderingMonster = "ghostFire*4,ghostFire*8,ghostFire*3,ghostFire*1";
 	#中立時初期ユニット
 	monster = "ghostFire*5,ghostFire*5,ghostFire*5";
 }
@@ -69,6 +74,7 @@ NewFormatSpot spot0003
 	y = "400";
 	map = "wefwefwefwefw";
 	member = "YaibaDagest";
+	capacity = "8";
 }
 NewFormatSpot spot0007
 {
