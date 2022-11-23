@@ -1130,17 +1130,11 @@ namespace WPF_Successor_001_to_Vahren
                         itemChild.Margin = posWindow;
 
                         // 最前面に移動する
-                        try
+                        var listWindow = this.canvasUI.Children.OfType<UIElement>().Where(x => x != itemChild);
+                        if ( (listWindow != null) && (listWindow.Any()) )
                         {
-                            int maxZ = this.canvasUI.Children.OfType<UIElement>()
-                               .Where(x => x != itemChild)
-                               .Select(x => Canvas.GetZIndex(x))
-                               .Max();
+                            int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                             Canvas.SetZIndex(itemChild, maxZ + 1);
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            // 比較する子ウインドウがなければそのまま
                         }
 
                         window_id = find_id;

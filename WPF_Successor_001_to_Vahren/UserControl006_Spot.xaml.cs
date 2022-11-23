@@ -39,17 +39,11 @@ namespace WPF_Successor_001_to_Vahren
             DisplaySpotStatus(mainWindow);
 
             // 最前面に配置する
-            try
+            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+            if ( (listWindow != null) && (listWindow.Any()) )
             {
-                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                   .Where(x => x != this)
-                   .Select(x => Canvas.GetZIndex(x))
-                   .Max();
+                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
-            }
-            catch (InvalidOperationException)
-            {
-                // 比較する子ウインドウがなければそのまま
             }
         }
 
@@ -199,6 +193,13 @@ namespace WPF_Successor_001_to_Vahren
                 i++;
             }
 
+            // 将来的には、戦力値もここで更新すればよさそう。
+            // ユニットを表示するついでに、戦力値を取得して合計しておけばいい。
+
+            // 部隊数も更新する
+            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
+            this.lblMemberCount.Content = i.ToString() + "/" + spot_capacity.ToString();
+
             // ユニット配置場所の大きさ
             if (isControl)
             {
@@ -208,7 +209,6 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     j_max++;
                 }
-                int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
                 if (i < spot_capacity)
                 {
                     i++;
@@ -268,6 +268,149 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
+        // ユニットをドロップする処理
+        private bool DropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id, string strTarget)
+        {
+            string[] strPart =  strTarget.Split('_');
+            //MessageBox.Show("Drop先: 領地 = " + strPart[0] + " , 対象 = " + strPart[1]);
+            UserControl006_Spot windowSpot = null;
+
+            if (strPart[0] == this.Name)
+            {
+                // 同じ領地ウインドウの上
+                windowSpot = this;
+            }
+            else
+            {
+                // 指定番号の領地ウインドウを探す
+                windowSpot = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
+                if (windowSpot == null)
+                {
+                    return false;
+                }
+            }
+            var dstPowerAndCity = (ClassPowerAndCity)windowSpot.Tag;
+            var srcPowerAndCity = (ClassPowerAndCity)this.Tag;
+            //MessageBox.Show("Drop先: 領地 = " + dstPowerAndCity.ClassSpot.Name + " , 対象 = " + strPart[1]);
+
+            // 部隊メンバー入れ替え
+            if ( (strPart[1] == "Unit") && (strPart.Length >= 4) )
+            {
+                // 入れ替え元の部隊とユニット
+                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
+
+                // 入れ替え先の部隊とユニット
+                int dst_troop_id = Int32.Parse(strPart[2]);
+                int dst_member_id = Int32.Parse(strPart[3]);
+                ClassHorizontalUnit dstTroop = dstPowerAndCity.ClassSpot.UnitGroup[dst_troop_id];
+                ClassUnit dstUnit = dstTroop.ListClassUnit[dst_member_id];
+
+                // 移動先を取り除いてから、移動元を挿入すれば、位置がずれない
+                dstTroop.ListClassUnit.RemoveAt(dst_member_id);
+                dstTroop.ListClassUnit.Insert(dst_member_id, srcUnit);
+                srcTroop.ListClassUnit.RemoveAt(member_id);
+                srcTroop.ListClassUnit.Insert(member_id, dstUnit);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != this)
+                {
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
+            // 部隊メンバー追加
+            if ( (strPart[1] == "Right") && (strPart.Length >= 3) )
+            {
+                // 移動元の部隊とユニット
+                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
+
+                // 移動先の部隊にユニットを追加する
+                int dst_troop_id = Int32.Parse(strPart[2]);
+                ClassHorizontalUnit dstTroop = dstPowerAndCity.ClassSpot.UnitGroup[dst_troop_id];
+                dstTroop.ListClassUnit.Add(srcUnit);
+
+                // 元の部隊からユニットを取り除く
+                srcTroop.ListClassUnit.RemoveAt(member_id);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != this)
+                {
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
+            // 新規部隊を作成して間に追加
+            if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
+            {
+                // 移動元の部隊とユニット
+                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
+
+                // 新規部隊を指定位置に挿入してユニットを追加する
+                var listUnit = new List<ClassUnit>();
+                listUnit.Add(srcUnit);
+                int dst_troop_id = Int32.Parse(strPart[2]);
+                dstPowerAndCity.ClassSpot.UnitGroup.Insert(dst_troop_id, new ClassHorizontalUnit()
+                    {
+                        Spot = dstPowerAndCity.ClassSpot,
+                        FlagDisplay = true,
+                        ListClassUnit = listUnit
+                    });
+
+                // 元の部隊からユニットを取り除く
+                srcTroop.ListClassUnit.RemoveAt(member_id);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != this)
+                {
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
+            // 新規部隊を作成して末尾に追加
+            if (strPart[1] == "Bottom")
+            {
+                // 移動元の部隊とユニット
+                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
+
+                // 新規部隊を末尾に追加してユニットを追加する
+                var listUnit = new List<ClassUnit>();
+                listUnit.Add(srcUnit);
+                dstPowerAndCity.ClassSpot.UnitGroup.Add(new ClassHorizontalUnit()
+                    {
+                        Spot = dstPowerAndCity.ClassSpot,
+                        FlagDisplay = true,
+                        ListClassUnit = listUnit
+                    });
+
+                // 元の部隊からユニットを取り除く
+                srcTroop.ListClassUnit.RemoveAt(member_id);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != this)
+                {
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
         // ユニットをドラッグ移動する際に、移動先を作る
         private void MakeDropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id)
         {
@@ -303,37 +446,41 @@ namespace WPF_Successor_001_to_Vahren
                 for (; j < member_count; j++)
                 {
                     Border border = new Border();
-                    border.Name = "DropTarget_" + this.Name + "_Unit" + i.ToString() + "_" + j.ToString();
-                    border.BorderThickness = new Thickness(2);
+                    border.Name = "DropTarget" + this.Name + "_Unit_" + i.ToString() + "_" + j.ToString();
                     // ドラッグ中のユニットの位置を暗くする
                     if ( (i == troop_id) && (j == member_id) )
                     {
-                        // 半透明のブラシを作成する (黒の33%)
+                        // 半透明のブラシを作成する (黒の50%)
                         SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
-                        mySolidColorBrush.Opacity = 0.33;
+                        mySolidColorBrush.Opacity = 0.5;
                         border.Background = mySolidColorBrush;
-                        border.BorderBrush = Brushes.Red;
+                        border.BorderThickness = new Thickness(0);
+                        border.Width = tile_width;
+                        border.Height = tile_height;
                     }
                     else
                     {
+                        border.Background = Brushes.Transparent;
+                        border.BorderThickness = new Thickness(2);
                         border.BorderBrush = Brushes.Aqua;
+                        border.Width = tile_width - 1;
+                        border.Height = tile_height - 1;
                     }
-                    border.Width = tile_width;
-                    border.Height = tile_height;
                     this.canvasSpotUnit.Children.Add(border);
                     Canvas.SetLeft(border, header_width + tile_width * j);
                     Canvas.SetTop(border, tile_height * i);
                 }
 
                 // 右の空きスペースなら「部隊メンバー追加」動作になる
-                if (j < member_capacity)
+                if ( (j < member_capacity) && ( (i != troop_id) || (member_id < member_count - 1) ) )
                 {
                     Border border = new Border();
-                    border.Name = "DropTarget_" + this.Name + "_Right" + i.ToString();
+                    border.Name = "DropTarget" + this.Name + "_Right_" + i.ToString();
+                    border.Background = Brushes.Transparent;
                     border.BorderThickness = new Thickness(2);
                     border.BorderBrush = Brushes.Aqua;
-                    border.Width = tile_width * (member_capacity - j);
-                    border.Height = tile_height;
+                    border.Width = tile_width * (member_capacity - j) -1;
+                    border.Height = tile_height - 1;
                     this.canvasSpotUnit.Children.Add(border);
                     Canvas.SetLeft(border, header_width + tile_width * j);
                     Canvas.SetTop(border, tile_height * i);
@@ -343,13 +490,13 @@ namespace WPF_Successor_001_to_Vahren
                 if ( (troop_count < spot_capacity) && (i != troop_id) )
                 {
                     Border border = new Border();
-                    border.Name = "DropTarget_" + this.Name + "_Top" + i.ToString();
+                    border.Name = "DropTarget" + this.Name + "_Top_" + i.ToString();
+                    border.Background = Brushes.Transparent;
                     border.BorderThickness = new Thickness(2);
                     border.BorderBrush = Brushes.Aqua;
-                    border.Width = tile_width;
+                    border.Width = header_width + tile_width - 1;
                     border.Height = tile_height / 4;
                     this.canvasSpotUnit.Children.Add(border);
-                    Canvas.SetLeft(border, header_width);
                     Canvas.SetTop(border, tile_height * i);
                 }
 
@@ -360,20 +507,20 @@ namespace WPF_Successor_001_to_Vahren
             if (i < spot_capacity)
             {
                 Border border = new Border();
-                border.Name = "DropTarget_" + this.Name + "_Bottom" + i.ToString();
+                border.Name = "DropTarget" + this.Name + "_Bottom";
+                border.Background = Brushes.Transparent;
                 border.BorderThickness = new Thickness(2);
                 border.BorderBrush = Brushes.Aqua;
-                border.Width = tile_width * member_capacity;
+                border.Width = header_width + tile_width * member_capacity - 1;
                 border.Height = tile_height * (spot_capacity - i);
                 this.canvasSpotUnit.Children.Add(border);
-                Canvas.SetLeft(border, header_width);
                 Canvas.SetTop(border, tile_height * i);
             }
 
         }
 
         // ユニットをドラッグ移動した後に、移動先を取り除く
-        private void RemoveDropTarget_Unit(MainWindow mainWindow)
+        private void RemoveDropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id)
         {
             // とりあえず、同じ領地上だけ考える
             // 将来的には、他の領地も対象にする
@@ -385,24 +532,89 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     var border = (Border)Child;
                     string str = border.Name;
-                    if (str.StartsWith("DropTarget_"))
+                    if (str.StartsWith("DropTarget"))
                     {
+                        // 枠が太くなっていれば、選択中の印
+                        if (border.BorderThickness.Left > 2)
+                        {
+                            if (DropTarget_Unit(mainWindow, troop_id, member_id, str.Replace("DropTarget", String.Empty)))
+                            {
+                                // 領地を更新した場合は枠も消えるので、ループから抜ける
+                                break;
+                            }
+                        }
+                        // 枠を取り除く
                         this.canvasSpotUnit.Children.Remove(border);
                     }
                 }
             }
 
-            /*
-            foreach (var border in this.canvasSpotUnit.Children.OfType<Border>())
+        }
+
+        private DependencyObject _hitResults = null;
+        private int _hitCount = 0;
+        private HitTestResultBehavior OnHitTestResultCallback(HitTestResult result)
+        {
+            _hitCount++;
+
+            // Borderを見つけたら終了する
+            if (result.VisualHit.GetType() == typeof(Border))
             {
-                string str = border.Name;
-                if (str.StartsWith("DropTarget_"))
+                _hitResults = result.VisualHit;
+                return HitTestResultBehavior.Stop;
+            }
+
+            // 上位３個まで調べる
+            // Fade用Canvas、ドラッグ画像のImage、ドロップ先のBorder
+            if (_hitCount > 3)
+            {
+                return HitTestResultBehavior.Stop;
+            }
+
+            return HitTestResultBehavior.Continue;
+        }
+
+        // ユニットをドラッグ移動中に、移動先をホバー表示する
+        private void HoverDropTarget_Unit(MainWindow mainWindow, Point posMouse)
+        {
+            // とりあえず、同じ領地上だけ考える
+            // 将来的には、他の領地も対象にする
+
+            // マウスポインタ―の座標をデバッグ表示
+            //this.lblGain.Content = posMouse.X;
+            //this.lblCastle.Content = posMouse.Y;
+
+            // マウスポインタ―の下にあるなら、最初の枠だけ太くする
+            Border borderHit = null;
+            _hitResults = null;
+            _hitCount = 0;
+            VisualTreeHelper.HitTest(mainWindow
+                    , null
+                    , new HitTestResultCallback(OnHitTestResultCallback)
+                    , new PointHitTestParameters(posMouse));
+
+            if (_hitResults != null){
+                borderHit = (Border)_hitResults;
+                if (borderHit.Name.StartsWith("DropTarget"))
                 {
-                    this.canvasSpotUnit.Children.Remove(border);
+                    if (borderHit.BorderThickness.Left == 2)
+                    {
+                        borderHit.BorderThickness = new Thickness(5);
+                    }
                 }
             }
-            */
-            
+
+            // それ以外の枠が太ければ普通に戻す
+            foreach (var border in this.canvasSpotUnit.Children.OfType<Border>())
+            {
+                if (border.Name.StartsWith("DropTarget"))
+                {
+                    if ( (border != borderHit) && (border.BorderThickness.Left > 2) )
+                    {
+                        border.BorderThickness = new Thickness(2);
+                    }
+                }
+            }
         }
 
         private static BitmapSource FrameworkElementToBitmapSource(FrameworkElement element)
@@ -420,6 +632,7 @@ namespace WPF_Successor_001_to_Vahren
             return rtb;
         }
 
+
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -433,6 +646,7 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.canvasUI.Children.Remove(this);
         }
 
+
         #region ウインドウ移動
         private bool _isDrag = false; // 外部に公開する必要なし
         private Point _startPoint;
@@ -443,17 +657,11 @@ namespace WPF_Successor_001_to_Vahren
             if (mainWindow != null)
             {
                 // 最前面に移動させる
-                try
+                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+                if ( (listWindow != null) && (listWindow.Any()) )
                 {
-                    int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                       .Where(x => x != this)
-                       .Select(x => Canvas.GetZIndex(x))
-                       .Max();
+                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
-                }
-                catch (InvalidOperationException)
-                {
-                    // 比較する子ウインドウがなければそのまま
                 }
             }
 
@@ -509,17 +717,11 @@ namespace WPF_Successor_001_to_Vahren
             if (mainWindow != null)
             {
                 // 最前面に移動させる
-                try
+                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+                if ( (listWindow != null) && (listWindow.Any()) )
                 {
-                    int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                       .Where(x => x != this)
-                       .Select(x => Canvas.GetZIndex(x))
-                       .Max();
+                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
-                }
-                catch (InvalidOperationException)
-                {
-                    // 比較する子ウインドウがなければそのまま
                 }
             }
         }
@@ -536,17 +738,11 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 最前面に移動させる
-            try
+            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+            if ( (listWindow != null) && (listWindow.Any()) )
             {
-                int maxZ = mainWindow.canvasUI.Children.OfType<UIElement>()
-                   .Where(x => x != this)
-                   .Select(x => Canvas.GetZIndex(x))
-                   .Max();
+                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
-            }
-            catch (InvalidOperationException)
-            {
-                // 比較する子ウインドウがなければそのまま
             }
 
             // ドラッグを開始する
@@ -556,22 +752,18 @@ namespace WPF_Successor_001_to_Vahren
                 // ドロップ先を作る
                 string unit_name = ((Button)sender).Name;
                 string unit_id = unit_name.Replace("btnUnit", String.Empty);
-                string[] array =  unit_id.Split('_');
-                int troop_id = Int32.Parse(array[0]);
-                int member_id = Int32.Parse(array[1]);
+                string[] strPart =  unit_id.Split('_');
+                int troop_id = Int32.Parse(strPart[0]);
+                int member_id = Int32.Parse(strPart[1]);
                 MakeDropTarget_Unit(mainWindow, troop_id, member_id);
-
 
                 // 画像をキャプチャして、ドラッグさせる Imageコントロールを作成する
                 BitmapSource bitimg1 = FrameworkElementToBitmapSource((FrameworkElement)el);
                 Image imgDrag = new Image();
-                imgDrag.Name = "DragImage";
                 imgDrag.Source = bitimg1;
                 imgDrag.Width = bitimg1.PixelWidth;
                 imgDrag.Height = bitimg1.PixelHeight;
                 imgDrag.Stretch = Stretch.None;
-                mainWindow.canvasUI.Children.Add(imgDrag);
-
 
 /*
                 // ボタンのユニット画像を使う場合はこちら
@@ -582,13 +774,13 @@ namespace WPF_Successor_001_to_Vahren
                     bitimg1 = (BitmapImage)ri.Source;
                 }
                 Image imgDrag = new Image();
-                imgDrag.Name = "DragImage";
                 imgDrag.Source = bitimg1;
                 imgDrag.Width = 48;
                 imgDrag.Height = 48;
-                mainWindow.canvasUI.Children.Add(imgDrag);
 */
 
+                imgDrag.Name = "DragImage" + troop_id.ToString() + "_" + member_id.ToString();
+                mainWindow.canvasUI.Children.Add(imgDrag);
 
                 // ドラッグ画像をウインドウよりも前面に移動させる
                 Canvas.SetZIndex(imgDrag, Canvas.GetZIndex(this) + 1);
@@ -609,29 +801,29 @@ namespace WPF_Successor_001_to_Vahren
         }
         private void unit_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-
             // ドラック中なら終了する
             if (_isDragUnit == true)
             {
-                var mainWindow = (MainWindow)Application.Current.MainWindow;
-                if (mainWindow != null)
-                {
-                    // ドロップ先を取り除く
-                    RemoveDropTarget_Unit(mainWindow);
-
-                    // ドラッグ画像を取り除く
-                    var ri = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DragImage");
-                    if (ri != null)
-                    {
-                        mainWindow.canvasUI.Children.Remove(ri);
-                    }
-                }
-
                 UIElement el = (UIElement)sender;
                 el.ReleaseMouseCapture();
                 el.MouseRightButtonUp -= unit_MouseRightButtonUp;
                 el.MouseMove -= unit_MouseMove;
                 _isDragUnit = false;
+
+                var mainWindow = (MainWindow)Application.Current.MainWindow;
+                if (mainWindow != null)
+                {
+                    // ドロップ先を取り除くと同時に、ドロップ判定を行う
+                    string unit_name = ((Image)sender).Name;
+                    string unit_id = unit_name.Replace("DragImage", String.Empty);
+                    string[] strPart =  unit_id.Split('_');
+                    int troop_id = Int32.Parse(strPart[0]);
+                    int member_id = Int32.Parse(strPart[1]);
+                    RemoveDropTarget_Unit(mainWindow, troop_id, member_id);
+
+                    // ドラッグ画像を取り除く
+                    mainWindow.canvasUI.Children.Remove(el);
+                 }
             }
         }
         private void unit_MouseMove(object sender, MouseEventArgs e)
@@ -639,6 +831,13 @@ namespace WPF_Successor_001_to_Vahren
             // ドラック中
             if (_isDragUnit == true)
             {
+                var mainWindow = (MainWindow)Application.Current.MainWindow;
+                if (mainWindow != null)
+                {
+                    // ドロップ先をホバー表示する
+                    HoverDropTarget_Unit(mainWindow, e.GetPosition(mainWindow));
+                }
+
                 UIElement el = (UIElement)sender;
                 Point pt = e.GetPosition(el);
 
@@ -648,7 +847,6 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
         #endregion
-
 
     }
 }
