@@ -600,12 +600,6 @@ namespace WPF_Successor_001_to_Vahren
             // シナリオ開始時にデータを初期化する
             InitializeGameData();
 
-            this.ClassGameStatus.Camera = new Point()
-            {
-                X = ((-this.CanvasMainWidth) + (this.CanvasMainWidth / 2)),
-                Y = ((-this.CanvasMainHeight) + (this.CanvasMainHeight / 2)),
-            };
-
             this.FadeOut = true;
 
             this.NowSituation = Situation.SelectGroup;
@@ -1066,6 +1060,13 @@ namespace WPF_Successor_001_to_Vahren
             }
             MessageBox.Show("出撃します");
 
+            // 現在のマップ表示位置を記録しておく
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy != null)
+            {
+                this.ClassGameStatus.Camera = new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top);
+            }
+
             Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
             Frame frame = new Frame();
             frame.Source = uri;
@@ -1098,58 +1099,66 @@ namespace WPF_Successor_001_to_Vahren
             Application.Current.Properties["window"] = this;
             Application.Current.Properties["ClassPowerAndCity"] = classPowerAndCity;
 
-
-            // 領地ウインドウ
-            var windowSpot = new UserControl006_Spot();
-            windowSpot.Tag = classPowerAndCity;
             // ウインドウの左上が領地の場所になるように配置する
+            Thickness posWindow = new Thickness(0);
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
             if (gridMapStrategy != null)
             {
-                windowSpot.Margin = new Thickness()
+                posWindow = new Thickness()
                 {
                     Left = gridMapStrategy.Margin.Left + classPowerAndCity.ClassSpot.X - 40,
                     Top = gridMapStrategy.Margin.Top + classPowerAndCity.ClassSpot.Y - 40
                 };
             }
-            // 登録されてるウインドウを調べる
-            int window_id = 1;
-            int window_count = this.ClassGameStatus.ListWindowSpot.Count;
-            if (window_count > 0)
-            {
-                // 使用中のウインドウ番号の最大値 + 1 にする
-                window_id = this.ClassGameStatus.ListWindowSpot[window_count - 1] + 1;
 
-                // 同じ領地ウインドウが存在するか調べる
-                foreach (int item_id in this.ClassGameStatus.ListWindowSpot)
+            // 既に表示されてる領地ウインドウをチェックする
+            int window_id = 0, find_id, max_id = 0;
+            foreach (var itemChild in this.canvasUI.Children.OfType<UserControl006_Spot>())
+            {
+                string str = itemChild.Name;
+                if (str.StartsWith("WindowSpot"))
                 {
-                    var ri = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "WindowSpot" + item_id.ToString());
-                    if (ri == null)
+                    find_id = Int32.Parse(str.Replace("WindowSpot", String.Empty));
+                    if (max_id < find_id)
                     {
-                        // 番号が登録されてるのに、ウインドウが存在しない場合は、
-                        // 登録抹消するのを忘れたものとして、番号を再利用する。
-                        window_id = item_id;
+                        max_id = find_id;
                     }
-                    else
+                    var ri = (ClassPowerAndCity)itemChild.Tag;
+                    if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
                     {
-                        var ri2 = (ClassPowerAndCity)ri.Tag;
-                        if (ri2.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                        // 領地ウインドウを既に開いてる場合は、新規に作らない
+                        itemChild.Margin = posWindow;
+
+                        // 最前面に移動する
+                        try
                         {
-                            // 領地ウインドウを既に開いてる場合は、古い方を閉じる
-                            this.canvasUI.Children.Remove(ri);
-                            ri = null;
-                            // 同じ番号を使ってウインドウを登録する
-                            window_id = item_id;
-                            break;
+                            int maxZ = this.canvasUI.Children.OfType<UIElement>()
+                               .Where(x => x != itemChild)
+                               .Select(x => Canvas.GetZIndex(x))
+                               .Max();
+                            Canvas.SetZIndex(itemChild, maxZ + 1);
                         }
+                        catch (InvalidOperationException)
+                        {
+                            // 比較する子ウインドウがなければそのまま
+                        }
+
+                        window_id = find_id;
+                        break;
                     }
                 }
             }
-            this.ClassGameStatus.ListWindowSpot.Add(window_id);
-            windowSpot.Name = "WindowSpot" + window_id.ToString();
-            windowSpot.SetData();
-            this.canvasUI.Children.Add(windowSpot);
-
+            if (window_id == 0)
+            {
+                // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                window_id = max_id + 1;
+                var windowSpot = new UserControl006_Spot();
+                windowSpot.Tag = classPowerAndCity;
+                windowSpot.Name = "WindowSpot" + window_id.ToString();
+                windowSpot.Margin = posWindow;
+                windowSpot.SetData();
+                this.canvasUI.Children.Add(windowSpot);
+            }
         }
 
         /// <summary>
@@ -2015,9 +2024,8 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasUIRightBottom.Children.Remove(ri2);
             }
 
-            // 開いてる子ウインドウを全て閉じて、登録を抹消する
+            // 開いてる子ウインドウを全て閉じる
             this.canvasUI.Children.Clear();
-            this.ClassGameStatus.ListWindowSpot.Clear();
 
             //マップそのもの
             Canvas canvas = new Canvas();
@@ -3375,17 +3383,17 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
 
-                Point mapPoint = this.ClassGameStatus.Camera;
-
                 Grid grid = new Grid();
                 grid.Name = StringName.gridMapStrategy;
                 grid.Height = this.CanvasMainHeight * 2;
                 grid.Width = this.CanvasMainWidth * 2;
+                // 最初はマップの中央を画面の中央にする
                 grid.Margin = new Thickness()
                 {
                     Left = -(this.CanvasMainWidth / 2),
                     Top = -(this.CanvasMainHeight / 2)
                 };
+                this.ClassGameStatus.Camera = new Point(grid.Margin.Left, grid.Margin.Top);
 
                 // mapImage読み込み
                 {
@@ -3604,16 +3612,15 @@ namespace WPF_Successor_001_to_Vahren
                 canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
                 canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
 
-                Point mapPoint = this.ClassGameStatus.Camera;
-
                 Grid grid = new Grid();
                 grid.Name = StringName.gridMapStrategy;
                 grid.Height = this.CanvasMainHeight * 2;
                 grid.Width = this.CanvasMainWidth * 2;
+                // 戦闘前のマップ位置にする
                 grid.Margin = new Thickness()
                 {
-                    Left = -(this.CanvasMainWidth / 2),
-                    Top = -(this.CanvasMainHeight / 2)
+                    Left = this.ClassGameStatus.Camera.X,
+                    Top = this.ClassGameStatus.Camera.Y
                 };
 
                 // mapImage読み込み

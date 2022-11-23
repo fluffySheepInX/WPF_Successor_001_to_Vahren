@@ -126,9 +126,8 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // 開いてる子ウインドウを全て閉じて、登録を抹消する
+            // 開いてる子ウインドウを全て閉じる
             mainWindow.canvasUI.Children.Clear();
-            mainWindow.ClassGameStatus.ListWindowSpot.Clear();
 
             //ターン終了時処理
             this.Visibility = Visibility.Hidden;
