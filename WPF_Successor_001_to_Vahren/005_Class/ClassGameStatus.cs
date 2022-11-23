@@ -202,14 +202,5 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region WindowSpot
-        private List<int> _listWindowSpot = new List<int>();
-        public List<int> ListWindowSpot
-        {
-            get { return _listWindowSpot; }
-            set { _listWindowSpot = value; }
-        }
-        #endregion
-
     }
 }

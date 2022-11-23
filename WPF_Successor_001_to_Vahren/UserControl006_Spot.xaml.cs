@@ -268,7 +268,7 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
-        // ユニットをドラッグ移動する際の、移動先を作る
+        // ユニットをドラッグ移動する際に、移動先を作る
         private void MakeDropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id)
         {
             // とりあえず、同じ領地上だけ考える
@@ -291,7 +291,16 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 他のユニットの位置なら「部隊メンバー入れ替え」動作になる
                 member_count = itemTroop.ListClassUnit.Count;
-                for (j = 1; j < member_count; j++)
+                if (i == troop_id)
+                {
+                    // 選択ユニットと同じ部隊だけ、リーダーとの入れ替えが可能
+                    j = 0;
+                }
+                else
+                {
+                    j = 1;
+                }
+                for (; j < member_count; j++)
                 {
                     Border border = new Border();
                     border.Name = "DropTarget_" + this.Name + "_Unit" + i.ToString() + "_" + j.ToString();
@@ -330,8 +339,8 @@ namespace WPF_Successor_001_to_Vahren
                     Canvas.SetTop(border, tile_height * i);
                 }
 
-                // 先頭ユニットの上なら「新規部隊を作成して間に追加」動作になる
-                if (troop_count < spot_capacity)
+                // 先頭ユニットの上端なら「新規部隊を作成して間に追加」動作になる
+                if ( (troop_count < spot_capacity) && (i != troop_id) )
                 {
                     Border border = new Border();
                     border.Name = "DropTarget_" + this.Name + "_Top" + i.ToString();
@@ -363,7 +372,7 @@ namespace WPF_Successor_001_to_Vahren
 
         }
 
-        // ユニットをドラッグ移動する際に、移動先を作る
+        // ユニットをドラッグ移動した後に、移動先を取り除く
         private void RemoveDropTarget_Unit(MainWindow mainWindow)
         {
             // とりあえず、同じ領地上だけ考える
@@ -418,11 +427,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-
-            // 使用していたウインドウ番号の登録を抹消する
-            string window_name = this.Name.Replace("WindowSpot", String.Empty);
-            int window_id = Int32.Parse(window_name);
-            mainWindow.ClassGameStatus.ListWindowSpot.Remove(window_id);
 
             // キャンバスから自身を取り除く
             // ガベージ・コレクタが掃除してくれるか不明

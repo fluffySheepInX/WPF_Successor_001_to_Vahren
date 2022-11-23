@@ -192,9 +192,8 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasUIRightBottom.Children.Remove(ri2);
             }
 
-            // 開いてる子ウインドウを全て閉じて、登録を抹消する
+            // 開いてる子ウインドウを全て閉じる
             this.canvasUI.Children.Clear();
-            this.ClassGameStatus.ListWindowSpot.Clear();
 
             //マップそのもの
             Canvas canvas = new Canvas();
