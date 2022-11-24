@@ -36,8 +36,8 @@ NewFormatSpot spot0009
 	y = "680";
 	map = "wefwefwefwefw";
 
-	capacity = "4";
-	member = "LineInfantryM14*6";
+	capacity = "6";
+	member = "LineInfantryM14*6,DragoonFrancesca*8,HowitzerC11*7";
 }
 NewFormatSpot spot0010
 {

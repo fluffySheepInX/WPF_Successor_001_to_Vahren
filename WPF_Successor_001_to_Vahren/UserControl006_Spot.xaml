@@ -34,7 +34,7 @@
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
 
-        <ScrollViewer Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
+        <ScrollViewer Name="scrollSpotUnit" Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
                 MouseLeftButtonUp="Raise_ZOrder"
@@ -44,28 +44,26 @@
 
 <!--
             <Canvas Name="canvasSpotUnit" Width="400" Height="500" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Gray">
-                <StackPanel Orientation="Horizontal" Height="68">
+                <StackPanel Orientation="Horizontal" Height="66">
                     <StackPanel>
-                        <Button Height="30" Margin="2" FontSize="15" Content="出撃" />
-                        <ComboBox Width="44" Height="30" Margin="2" FontSize="15">
+                        <Button Height="29" Margin="2" FontSize="15" Content="出撃" />
+                        <ComboBox Width="44" Height="29" Margin="2" FontSize="15">
                             <ComboBoxItem Content="F" Background="Red" Foreground="White" />
                             <ComboBoxItem Content="M" Background="Green" Foreground="White" />
                             <ComboBoxItem Content="B" Background="Blue" Foreground="White" />
                         </ComboBox>
                     </StackPanel>
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0">
-                        <StackPanel>
-                            <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
-                            <Label Padding="-5" Height="20" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199" />
-                        </StackPanel>
-                    </Button>
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
-                    <Button Width="48" Height="68" Background="Transparent" BorderThickness="0" />
+                    <StackPanel>
+                        <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
+                        <Label Padding="0" Height="18" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199E" />
+                    </StackPanel>
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
+                    <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
                 </StackPanel>
 -->
 
