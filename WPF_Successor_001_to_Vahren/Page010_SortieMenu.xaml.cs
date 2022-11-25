@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -389,7 +390,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     throw new Exception();
                 }
-                var flag = (Image)LogicalTreeHelper.FindLogicalNode(ri, "flag_img"+ convSpots.ClassSpot.NameTag);
+                var flag = (Image)LogicalTreeHelper.FindLogicalNode(ri, "flag_img" + convSpots.ClassSpot.NameTag);
                 if (flag == null)
                 {
                     throw new Exception();
@@ -406,7 +407,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 //unitの所属情報を書き換え
-                foreach (var item in mainWindow.ClassGameStatus.AllListSpot.Where(x=>x.NameTag == selectedItem.NameTag))
+                foreach (var item in mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == selectedItem.NameTag))
                 {
                     foreach (var itemUnitGroup in item.UnitGroup)
                     {
@@ -432,7 +433,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //message
-                MessageBox.Show(convSpots.ClassSpot.Name+ "を占領しました！");
+                MessageBox.Show(convSpots.ClassSpot.Name + "を占領しました！");
 
                 // 勢力メニューを更新する
                 var uc5 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUIRightBottom, StringName.canvasStrategyMenu);
@@ -452,6 +453,9 @@ namespace WPF_Successor_001_to_Vahren
             if (extractMap != null)
             {
                 mainWindow.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
+
+                ClassStaticBattle.AddBuilding(mainWindow.ClassGameStatus);
+
             }
 
             //防衛ユニット設定
@@ -469,5 +473,6 @@ namespace WPF_Successor_001_to_Vahren
 
             mainWindow.FadeIn = true;
         }
+
     }
 }

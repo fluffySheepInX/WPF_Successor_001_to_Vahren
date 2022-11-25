@@ -16,6 +16,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _flagDisplay = value; }
         }
         #endregion
+        #region FlagBuilding
+        private bool _flagBuilding = false;
+        public bool FlagBuilding
+        {
+            get { return _flagBuilding; }
+            set { _flagBuilding = value; }
+        }
+        #endregion
 
         #region ListClassUnit
         private List<ClassUnit> _listClassUnit = new List<ClassUnit>();

@@ -1131,7 +1131,7 @@ namespace WPF_Successor_001_to_Vahren
 
                         // 最前面に移動する
                         var listWindow = this.canvasUI.Children.OfType<UIElement>().Where(x => x != itemChild);
-                        if ( (listWindow != null) && (listWindow.Any()) )
+                        if ((listWindow != null) && (listWindow.Any()))
                         {
                             int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                             Canvas.SetZIndex(itemChild, maxZ + 1);
@@ -4276,7 +4276,7 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        private ClassObjectMapTip GetClassObjNewFormat(string value)
+        public static ClassObjectMapTip GetClassObjNewFormat(string value)
         {
             ClassObjectMapTip classObjectMapTip = new ClassObjectMapTip();
 
@@ -4305,7 +4305,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 classObjectMapTip.NameTag = first.Value.Replace(Environment.NewLine, "");
             }
-
             //type
             {
                 var type =
@@ -4322,7 +4321,6 @@ namespace WPF_Successor_001_to_Vahren
                     classObjectMapTip.Type = (MapTipObjectType)Enum.Parse(typeof(MapTipObjectType), re, true);
                 }
             }
-
             //no_wall2
             {
                 var no_wall2 =
@@ -4337,6 +4335,54 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     var re = first.Value.Replace(Environment.NewLine, "");
                     classObjectMapTip.NoWall2 = int.Parse(re);
+                }
+            }
+            //Castle
+            {
+                var Castle =
+                    new Regex(GetPat("Castle"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Castle);
+                if (first == null)
+                {
+                    classObjectMapTip.Castle = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classObjectMapTip.Castle = int.Parse(re);
+                }
+            }
+            //CastleDefense
+            {
+                var CastleDefense =
+                    new Regex(GetPat("CastleDefense"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(CastleDefense);
+                if (first == null)
+                {
+                    classObjectMapTip.CastleDefense = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classObjectMapTip.CastleDefense = int.Parse(re);
+                }
+            }
+            //CastleMagdef
+            {
+                var CastleMagdef =
+                    new Regex(GetPat("CastleMagdef"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(CastleMagdef);
+                if (first == null)
+                {
+                    classObjectMapTip.CastleMagdef = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classObjectMapTip.CastleMagdef = int.Parse(re);
                 }
             }
 

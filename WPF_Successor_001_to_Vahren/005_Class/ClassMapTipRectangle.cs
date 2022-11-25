@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Point = System.Windows.Point;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -25,6 +26,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
 			get { return logicalXY; }
 			set { logicalXY = value; }
+		}
+		#endregion
+
+		#region TipXY
+		private Point tipXY;
+		public Point TipXY
+        {
+			get { return tipXY; }
+			set { tipXY = value; }
 		}
 		#endregion
 	}

@@ -279,6 +279,72 @@ namespace WPF_Successor_001_to_Vahren
                             }
                             // Skill 終わり
 
+                            //object
+                            {
+                                string targetString = "NewFormatObject";
+                                // 大文字かっこも入るが、上でチェックしている
+                                // \sは空行や改行など
+                                var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                                var scenarioMatches = new Regex(@"Object[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+
+                                var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                                listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                                if (listMatches != null)
+                                {
+                                    if (listMatches.Count < 1)
+                                    {
+                                        // データがないので次
+                                    }
+                                    else
+                                    {
+                                        foreach (var getData in listMatches)
+                                        {
+                                            //enumを使うべき？
+                                            int kind = 0;
+                                            {
+                                                //このコードだとNewFormatObjectTest等が通るのでよくない
+                                                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                                if (String.Compare(join, targetString, true) == 0)
+                                                {
+                                                    kind = 0;
+                                                }
+                                                else
+                                                {
+                                                    kind = 1;
+                                                }
+                                            }
+
+                                            if (kind == 0)
+                                            {
+                                                classGameStatus.ListObject.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassObjNewFormat(getData.Value));
+                                            }
+                                            else
+                                            {
+                                                //ClassGameStatus.ListObject.Add(GetClassObj(getData.Value));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            //object 終わり
+                        }
+
+                        // unitのスキル名からスキルクラスを探し、unitに格納
+                        foreach (var itemUnit in classGameStatus.ListUnit)
+                        {
+                            foreach (var itemSkillName in itemUnit.SkillName)
+                            {
+                                var x = classGameStatus.ListSkill
+                                        .Where(x => x.NameTag == itemSkillName)
+                                        .FirstOrDefault();
+                                if (x == null)
+                                {
+                                    continue;
+                                }
+
+                                itemUnit.Skill.Add(x);
+                            }
                         }
 
                         CreateMap(classTestBattle, _classConfigGameTitle, classGameStatus);

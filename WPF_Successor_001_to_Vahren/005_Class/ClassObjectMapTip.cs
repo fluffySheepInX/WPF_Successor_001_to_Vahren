@@ -35,5 +35,29 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _noWall2 = value; }
         }
         #endregion
+        #region Castle
+        private int _castle = 0;
+        public int Castle
+        {
+            get { return _castle; }
+            set { _castle = value; }
+        }
+        #endregion
+        #region CastleDefense
+        private int _castleDefense = 0;
+        public int CastleDefense
+        {
+            get { return _castleDefense; }
+            set { _castleDefense = value; }
+        }
+        #endregion
+        #region CastleMagdef
+        private int _castleMagdef = 0;
+        public int CastleMagdef
+        {
+            get { return _castleMagdef; }
+            set { _castleMagdef = value; }
+        }
+        #endregion
     }
 }
