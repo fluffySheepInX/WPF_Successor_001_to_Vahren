@@ -34,7 +34,7 @@
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
 
-        <ScrollViewer Name="scrollSpotUnit" Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
+        <ScrollViewer Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
                 MouseLeftButtonUp="Raise_ZOrder"
@@ -55,7 +55,7 @@
                     </StackPanel>
                     <StackPanel>
                         <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
-                        <Label Padding="0" Height="18" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199E" />
+                        <Label Padding="-5" Height="18" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199E" />
                     </StackPanel>
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
