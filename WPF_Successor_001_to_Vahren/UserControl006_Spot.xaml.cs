@@ -274,12 +274,35 @@ namespace WPF_Successor_001_to_Vahren
         private bool DropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id, string strTarget)
         {
             string[] strPart =  strTarget.Split('_');
+            ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
+            ClassSpot dstSpot = null;
             UserControl006_Spot windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
                 // 同じ領地ウインドウの上
                 windowSpot = this;
+                dstSpot = srcSpot;
+            }
+            else if (strPart[0] == "Spot")
+            {
+                // 領地リストのインデックスから ClassSpot を取得する
+                int spot_id = Int32.Parse(strPart[1]);
+                dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
+
+                // 領地ウインドウが開いてるかどうか調べる
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+                {
+                    string strTitle = itemWindow.Name;
+                    if (strTitle.StartsWith("WindowSpot"))
+                    {
+                        if (dstSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
+                        {
+                            windowSpot = itemWindow;
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
@@ -289,22 +312,20 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     return false;
                 }
+                dstSpot = ((ClassPowerAndCity)windowSpot.Tag).ClassSpot;
             }
-            var dstPowerAndCity = (ClassPowerAndCity)windowSpot.Tag;
-            var srcPowerAndCity = (ClassPowerAndCity)this.Tag;
-            //MessageBox.Show("Drop先: 領地 = " + dstPowerAndCity.ClassSpot.Name + " , 対象 = " + strPart[1]);
 
             // 部隊メンバー入れ替え
             if ( (strPart[1] == "Unit") && (strPart.Length >= 4) )
             {
                 // 入れ替え元の部隊とユニット
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
                 ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
 
                 // 入れ替え先の部隊とユニット
                 int dst_troop_id = Int32.Parse(strPart[2]);
                 int dst_member_id = Int32.Parse(strPart[3]);
-                ClassHorizontalUnit dstTroop = dstPowerAndCity.ClassSpot.UnitGroup[dst_troop_id];
+                ClassHorizontalUnit dstTroop = dstSpot.UnitGroup[dst_troop_id];
                 ClassUnit dstUnit = dstTroop.ListClassUnit[dst_member_id];
 
                 // 移動先を取り除いてから、移動元を挿入すれば、位置がずれない
@@ -327,12 +348,12 @@ namespace WPF_Successor_001_to_Vahren
             if ( (strPart[1] == "Right") && (strPart.Length >= 3) )
             {
                 // 移動元の部隊とユニット
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
                 ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
 
                 // 移動先の部隊にユニットを追加する
                 int dst_troop_id = Int32.Parse(strPart[2]);
-                ClassHorizontalUnit dstTroop = dstPowerAndCity.ClassSpot.UnitGroup[dst_troop_id];
+                ClassHorizontalUnit dstTroop = dstSpot.UnitGroup[dst_troop_id];
                 dstTroop.ListClassUnit.Add(srcUnit);
 
                 // 元の部隊からユニットを取り除く
@@ -352,16 +373,16 @@ namespace WPF_Successor_001_to_Vahren
             if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
             {
                 // 移動元の部隊とユニット
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
                 ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
 
                 // 新規部隊を指定位置に挿入してユニットを追加する
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(srcUnit);
                 int dst_troop_id = Int32.Parse(strPart[2]);
-                dstPowerAndCity.ClassSpot.UnitGroup.Insert(dst_troop_id, new ClassHorizontalUnit()
+                dstSpot.UnitGroup.Insert(dst_troop_id, new ClassHorizontalUnit()
                     {
-                        Spot = dstPowerAndCity.ClassSpot,
+                        Spot = dstSpot,
                         FlagDisplay = true,
                         ListClassUnit = listUnit
                     });
@@ -383,15 +404,15 @@ namespace WPF_Successor_001_to_Vahren
             if (strPart[1] == "Bottom")
             {
                 // 移動元の部隊とユニット
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
                 ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
 
                 // 新規部隊を末尾に追加してユニットを追加する
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(srcUnit);
-                dstPowerAndCity.ClassSpot.UnitGroup.Add(new ClassHorizontalUnit()
+                dstSpot.UnitGroup.Add(new ClassHorizontalUnit()
                     {
-                        Spot = dstPowerAndCity.ClassSpot,
+                        Spot = dstSpot,
                         FlagDisplay = true,
                         ListClassUnit = listUnit
                     });
@@ -409,6 +430,36 @@ namespace WPF_Successor_001_to_Vahren
                 return true;
             }
 
+            // 別領地に新規部隊を作成して末尾に追加
+            if ( (strPart[0] == "Spot") && (strPart.Length >= 2) )
+            {
+                // 移動元の部隊とユニット
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
+                ClassUnit srcUnit = srcTroop.ListClassUnit[member_id];
+
+                // 新規部隊を末尾に追加してユニットを追加する
+                var listUnit = new List<ClassUnit>();
+                listUnit.Add(srcUnit);
+                dstSpot.UnitGroup.Add(new ClassHorizontalUnit()
+                    {
+                        Spot = dstSpot,
+                        FlagDisplay = true,
+                        ListClassUnit = listUnit
+                    });
+
+                // 元の部隊からユニットを取り除く
+                srcTroop.ListClassUnit.RemoveAt(member_id);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != null)
+                {
+                    // ウインドウが存在する場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
             return false;
         }
 
@@ -416,12 +467,35 @@ namespace WPF_Successor_001_to_Vahren
         private bool DropTarget_Troop(MainWindow mainWindow, int troop_id, string strTarget)
         {
             string[] strPart =  strTarget.Split('_');
+            ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
+            ClassSpot dstSpot = null;
             UserControl006_Spot windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
                 // 同じ領地ウインドウの上
                 windowSpot = this;
+                dstSpot = srcSpot;
+            }
+            else if (strPart[0] == "Spot")
+            {
+                // 領地リストのインデックスから ClassSpot を取得する
+                int spot_id = Int32.Parse(strPart[1]);
+                dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
+
+                // 領地ウインドウが開いてるかどうか調べる
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+                {
+                    string strTitle = itemWindow.Name;
+                    if (strTitle.StartsWith("WindowSpot"))
+                    {
+                        if (dstSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
+                        {
+                            windowSpot = itemWindow;
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
@@ -431,20 +505,18 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     return false;
                 }
+                dstSpot = ((ClassPowerAndCity)windowSpot.Tag).ClassSpot;
             }
-            var dstPowerAndCity = (ClassPowerAndCity)windowSpot.Tag;
-            var srcPowerAndCity = (ClassPowerAndCity)this.Tag;
-            //MessageBox.Show("Drop先: 領地 = " + dstPowerAndCity.ClassSpot.Name + " , 対象 = " + strPart[1]);
 
             // 部隊メンバー追加
             if ( (strPart[1] == "Right") && (strPart.Length >= 3) )
             {
                 // 移動元の部隊
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
 
                 // 移動先の部隊に全てのユニットを追加する
                 int dst_troop_id = Int32.Parse(strPart[2]);
-                ClassHorizontalUnit dstTroop = dstPowerAndCity.ClassSpot.UnitGroup[dst_troop_id];
+                ClassHorizontalUnit dstTroop = dstSpot.UnitGroup[dst_troop_id];
                 foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
                 {
                     dstTroop.ListClassUnit.Add(srcUnit);
@@ -454,7 +526,7 @@ namespace WPF_Successor_001_to_Vahren
                 srcTroop.ListClassUnit.Clear();
 
                 // 移動元領地から部隊を取り除く
-                srcPowerAndCity.ClassSpot.UnitGroup.RemoveAt(troop_id);
+                srcSpot.UnitGroup.RemoveAt(troop_id);
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
@@ -470,7 +542,7 @@ namespace WPF_Successor_001_to_Vahren
             if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
             {
                 // 移動元の部隊
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
 
                 // 移動先の指定位置
                 int dst_troop_id = Int32.Parse(strPart[2]);
@@ -479,19 +551,19 @@ namespace WPF_Successor_001_to_Vahren
                 if (dst_troop_id > troop_id)
                 {
                     // 移動先領地の指定位置に部隊を挿入する
-                    dstPowerAndCity.ClassSpot.UnitGroup.Insert(dst_troop_id, srcTroop);
+                    dstSpot.UnitGroup.Insert(dst_troop_id, srcTroop);
 
                     // 移動元領地から部隊を取り除く
-                    srcPowerAndCity.ClassSpot.UnitGroup.RemoveAt(troop_id);
+                    srcSpot.UnitGroup.RemoveAt(troop_id);
                 }
                 // 前に挿入する場合、先に挿入すると順番が変わるので、先に取り除く
                 else
                 {
                     // 移動元領地から部隊を取り除く
-                    srcPowerAndCity.ClassSpot.UnitGroup.RemoveAt(troop_id);
+                    srcSpot.UnitGroup.RemoveAt(troop_id);
 
                     // 移動先領地の指定位置に部隊を挿入する
-                    dstPowerAndCity.ClassSpot.UnitGroup.Insert(dst_troop_id, srcTroop);
+                    dstSpot.UnitGroup.Insert(dst_troop_id, srcTroop);
                 }
 
                 // 表示を更新する
@@ -508,19 +580,41 @@ namespace WPF_Successor_001_to_Vahren
             if (strPart[1] == "Bottom")
             {
                 // 移動元の部隊
-                ClassHorizontalUnit srcTroop = srcPowerAndCity.ClassSpot.UnitGroup[troop_id];
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
 
                 // 移動先領地の末尾に部隊を追加する
-                dstPowerAndCity.ClassSpot.UnitGroup.Add(srcTroop);
+                dstSpot.UnitGroup.Add(srcTroop);
 
                 // 移動元領地から部隊を取り除く
-                srcPowerAndCity.ClassSpot.UnitGroup.RemoveAt(troop_id);
+                srcSpot.UnitGroup.RemoveAt(troop_id);
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
                     // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
+                }
+                return true;
+            }
+
+            // 部隊を別領地の末尾に移動
+            if ( (strPart[0] == "Spot") && (strPart.Length >= 2) )
+            {
+                // 移動元の部隊
+                ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
+
+                // 移動先領地の末尾に部隊を追加する
+                dstSpot.UnitGroup.Add(srcTroop);
+
+                // 移動元領地から部隊を取り除く
+                srcSpot.UnitGroup.RemoveAt(troop_id);
+
+                // 表示を更新する
+                this.UpdateSpotUnit(mainWindow);
+                if (windowSpot != null)
+                {
+                    // ウインドウが存在する場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
@@ -704,6 +798,49 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
             }
+
+            // 戦略マップ上の領地アイコンも
+            if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
+            {
+                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+                if (gridMapStrategy != null)
+                {
+                    var listSpot = mainWindow.ClassGameStatus.AllListSpot;
+                    int spot_count = listSpot.Count;
+                    for (int spot_id = 0; spot_id < spot_count; spot_id++)
+                    {
+                        // 同じ勢力の領地だけ
+                        ClassSpot itemSpot = listSpot[spot_id];
+                        if (itemSpot.PowerNameTag == classPowerAndCity.ClassPower.NameTag)
+                        {
+                            // 領地の部隊数に空きがあるなら
+                            spot_capacity = itemSpot.Capacity;
+                            troop_count = itemSpot.UnitGroup.Count;
+                            if ( (troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag) )
+                            {
+                                Border border = new Border();
+                                // 領地リストのインデックスで識別する
+                                border.Name = "DropTargetSpot_" + spot_id.ToString();
+                                border.Background = Brushes.Transparent;
+                                border.BorderThickness = new Thickness(2);
+                                border.BorderBrush = Brushes.Aqua;
+                                // 親コントロールが Grid なので、標準だと中央配置になる。左上を原点に変えておく。
+                                border.HorizontalAlignment = HorizontalAlignment.Left;
+                                border.VerticalAlignment = VerticalAlignment.Top;
+                                // 領地アイコンの大きさが不明なので、大きめの枠にする
+                                border.Width = 64;
+                                border.Height = 64;
+                                border.Margin = new Thickness()
+                                {
+                                    Left = itemSpot.X - 32,
+                                    Top = itemSpot.Y - 32
+                                };
+                                gridMapStrategy.Children.Add(border);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // 部隊をドラッグ移動する際に、移動先を作る
@@ -854,6 +991,49 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
             }
+
+            // 戦略マップ上の領地アイコンも
+            if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
+            {
+                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+                if (gridMapStrategy != null)
+                {
+                    var listSpot = mainWindow.ClassGameStatus.AllListSpot;
+                    int spot_count = listSpot.Count;
+                    for (int spot_id = 0; spot_id < spot_count; spot_id++)
+                    {
+                        // 同じ勢力の領地だけ
+                        ClassSpot itemSpot = listSpot[spot_id];
+                        if (itemSpot.PowerNameTag == classPowerAndCity.ClassPower.NameTag)
+                        {
+                            // 領地の部隊数に空きがあるなら
+                            spot_capacity = itemSpot.Capacity;
+                            troop_count = itemSpot.UnitGroup.Count;
+                            if ( (troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag) )
+                            {
+                                Border border = new Border();
+                                // 領地リストのインデックスで識別する
+                                border.Name = "DropTargetSpot_" + spot_id.ToString();
+                                border.Background = Brushes.Transparent;
+                                border.BorderThickness = new Thickness(2);
+                                border.BorderBrush = Brushes.Aqua;
+                                // 親コントロールが Grid なので、標準だと中央配置になる。左上を原点に変えておく。
+                                border.HorizontalAlignment = HorizontalAlignment.Left;
+                                border.VerticalAlignment = VerticalAlignment.Top;
+                                // 領地アイコンの大きさが不明なので、大きめの枠にする
+                                border.Width = 64;
+                                border.Height = 64;
+                                border.Margin = new Thickness()
+                                {
+                                    Left = itemSpot.X - 32,
+                                    Top = itemSpot.Y - 32
+                                };
+                                gridMapStrategy.Children.Add(border);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // ユニットをドラッグ移動した後に、移動先を取り除く
@@ -946,6 +1126,42 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
             }
+
+            // 戦略マップ上の枠も
+            if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
+            {
+                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+                if (gridMapStrategy != null)
+                {
+                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1) {
+                        UIElement Child = gridMapStrategy.Children[i];
+                        if (Child is Border)
+                        {
+                            var border = (Border)Child;
+                            string str = border.Name;
+                            if (str.StartsWith("DropTarget"))
+                            {
+                                // 枠が太くなっていれば、選択中の印
+                                if (border.BorderThickness.Left > 2)
+                                {
+                                    if (member_id >= 1)
+                                    {
+                                        // 部下なら必ず member_id が 1以上になる
+                                        DropTarget_Unit(mainWindow, troop_id, member_id, str.Replace("DropTarget", String.Empty));
+                                    }
+                                    else
+                                    {
+                                        // 隊長なら member_id は常に 0 なので、省略する
+                                        DropTarget_Troop(mainWindow, troop_id, str.Replace("DropTarget", String.Empty));
+                                    }
+                                }
+                                // 枠を取り除く
+                                gridMapStrategy.Children.Remove(border);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // ドラッグ中にドロップ先を判定するための HitTest 用
@@ -1026,6 +1242,25 @@ namespace WPF_Successor_001_to_Vahren
                                 {
                                     border.BorderThickness = new Thickness(2);
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 戦略マップ上の枠も
+            if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
+            {
+                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+                if (gridMapStrategy != null)
+                {
+                    foreach (var border in gridMapStrategy.Children.OfType<Border>())
+                    {
+                        if ( (border != borderHit) && (border.Name.StartsWith("DropTarget")) )
+                        {
+                            if (border.BorderThickness.Left > 2)
+                            {
+                                border.BorderThickness = new Thickness(2);
                             }
                         }
                     }
