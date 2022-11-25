@@ -3,7 +3,7 @@
 	#戦闘マップ
 	map = "ca";
 	#出撃
-	memberKougeki = "ghostFire,ghostFire,ghostFire,ghostFire,ghostFire";
+	memberKougeki = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
 	#防衛
 	memberBouei = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 	#プレイヤー

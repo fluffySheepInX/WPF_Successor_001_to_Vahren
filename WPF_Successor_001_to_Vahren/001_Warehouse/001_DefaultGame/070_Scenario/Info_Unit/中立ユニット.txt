@@ -35,7 +35,7 @@
 	movetype = "草原";
 }
 
-NewFormatUnit ghostFireNoGun
+NewFormatUnit ghostFireTest
 {
 	name = "鬼火";
 	race = "human";
@@ -43,6 +43,7 @@ NewFormatUnit ghostFireNoGun
 	friend = "LineInfantryM14";
 	merce = "LineInfantryM14";
 	staff = "LineInfantryM14";
+	skill = "gun01Test";
 
 	level = "1";
 	level_max = "100";

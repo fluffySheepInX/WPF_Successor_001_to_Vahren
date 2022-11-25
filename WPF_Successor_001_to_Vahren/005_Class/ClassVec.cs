@@ -12,9 +12,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public double X { get; set; }
         public double Y { get; set; }
 
-        private int _speed;
+        private double _speed;
 
-        public int Speed
+        public double Speed
         {
             get { return _speed; }
             set { _speed = value; }

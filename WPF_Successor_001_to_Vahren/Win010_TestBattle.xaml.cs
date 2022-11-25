@@ -1733,10 +1733,13 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
-                    if (classUnit.NowPosi.X < classUnit.OrderPosi.X + 5
-                        && classUnit.NowPosi.X > classUnit.OrderPosi.X - 5
-                        && classUnit.NowPosi.Y < classUnit.OrderPosi.Y + 5
-                        && classUnit.NowPosi.Y > classUnit.OrderPosi.Y - 5)
+
+                    ClassVec classVec = new ClassVec();
+                    classVec.Target = new Point(classUnit.OrderPosi.X, classUnit.OrderPosi.Y);
+                    classVec.Vec = new Point(classUnit.VecMove.X, classUnit.VecMove.Y);
+                    classVec.Speed = classUnit.Speed;
+
+                    if (classVec.Hit(new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y)))
                     {
                         classUnit.OrderPosi = new Point()
                         {
@@ -1758,8 +1761,9 @@ namespace WPF_Successor_001_to_Vahren
                             classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
                         }
 
-                        double nowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed);
-                        double nowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed);
+                        //移動後の位置計算
+                        double afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed);
+                        double afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed);
 
                         await Task.Run(() =>
                         {
@@ -1768,15 +1772,16 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     bool ch = true;
-                                    var targetTip = GetRecObj(getMap, nowPosiX, nowPosiY);
-                                    ch = CheckRecObj(ch, targetTip);
+                                    var targetTip = GetRecObj(getMap, afterNowPosiX, afterNowPosiY);
+                                    ch = ClassStaticBattle.CheckRecObj(ch, targetTip, ClassGameStatus);
 
                                     if (ch == true)
                                     {
+                                        //移動後に建築物無し
                                         classUnit.NowPosi = new Point()
                                         {
-                                            X = nowPosiX,
-                                            Y = nowPosiY
+                                            X = afterNowPosiX,
+                                            Y = afterNowPosiY
                                         };
 
                                         var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
@@ -1791,23 +1796,24 @@ namespace WPF_Successor_001_to_Vahren
                                     }
                                     else
                                     {
-                                        nowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
-                                        nowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
+                                        ////移動後に建築物有り
+                                        //移動後の位置を再計算（一度バックする）
+                                        afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
+                                        afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
                                         //行列変換
-                                        var resultConv = ConvertVec90(nowPosiX, nowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
-                                        nowPosiX = resultConv.Item1;
-                                        nowPosiY = resultConv.Item2;
+                                        var resultConv = ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
 
                                         bool ch2 = true;
-                                        var targetTip2 = GetRecObj(getMap, nowPosiX, nowPosiY);
-                                        ch2 = CheckRecObj(ch2, targetTip2);
+                                        var targetTip2 = GetRecObj(getMap, resultConv.Item1, resultConv.Item2);
+                                        ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, ClassGameStatus);
 
                                         if (ch2 == true)
                                         {
+                                            //移動後に建築物無し
                                             classUnit.NowPosi = new Point()
                                             {
-                                                X = nowPosiX,
-                                                Y = nowPosiY
+                                                X = resultConv.Item1,
+                                                Y = resultConv.Item2
                                             };
 
                                             var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
@@ -1829,11 +1835,18 @@ namespace WPF_Successor_001_to_Vahren
                                         }
                                         else
                                         {
-                                            classUnit.OrderPosi = new Point()
+                                            ////バックして90度変換した後に建築物有り
+                                            //止まる
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
+                                            if (re1 != null)
                                             {
-                                                X = classUnit.NowPosi.X,
-                                                Y = classUnit.NowPosi.Y
-                                            };
+                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                                if (re2 != null)
+                                                {
+                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                                }
+                                            }
+                                            classUnit.OrderPosi = classUnit.NowPosi;
                                             classUnit.FlagMoving = false;
                                             return;
                                         }
@@ -1861,23 +1874,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 throw;
             }
-        }
-
-        private bool CheckRecObj(bool ch, IEnumerable<Rectangle> targetTip)
-        {
-            foreach (Rectangle item in targetTip)
-            {
-                var ob = this.ClassGameStatus.ListObject.Where(x => x.NameTag == ((ClassMapTipRectangle)item.Tag).TipName).FirstOrDefault();
-                if (ob != null)
-                {
-                    if (ob.Type == MapTipObjectType.WALL2 || ob.Type == MapTipObjectType.GATE)
-                    {
-                        ch = false;
-                    }
-                }
-            }
-
-            return ch;
         }
 
         private static IEnumerable<Rectangle> GetRecObj(List<Rectangle> getMap, double nowPosiX, double nowPosiY)

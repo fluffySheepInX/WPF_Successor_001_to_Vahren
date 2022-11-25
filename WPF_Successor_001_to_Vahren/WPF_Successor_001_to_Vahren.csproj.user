@@ -4,7 +4,7 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>WPF_Successor_001_to_Vahren</ActiveDebugProfile>
+    <ActiveDebugProfile>debug battle</ActiveDebugProfile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="UserControl006_Spot.xaml.cs">

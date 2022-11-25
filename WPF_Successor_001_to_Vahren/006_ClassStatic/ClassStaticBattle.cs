@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
@@ -56,5 +58,31 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             classHorizontalUnit.ListClassUnit = uni;
             classGameStatus.ClassBattleUnits.DefUnitGroup.Add(classHorizontalUnit);
         }
+
+        public static bool CheckRecObj(bool ch, IEnumerable<Rectangle> targetTip, ClassGameStatus classGameStatus)
+        {
+            foreach (Rectangle item in targetTip)
+            {
+                var ob = classGameStatus.ListObject.Where(x => x.NameTag == ((ClassMapTipRectangle)item.Tag).TipName).FirstOrDefault();
+                if (ob != null)
+                {
+                    //デバッグの為、一つにまとめない
+                    switch (ob.Type)
+                    {
+                        case MapTipObjectType.WALL2:
+                            ch = false;
+                            break;
+                        case MapTipObjectType.GATE:
+                            ch = false;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return ch;
+        }
+
     }
 }
