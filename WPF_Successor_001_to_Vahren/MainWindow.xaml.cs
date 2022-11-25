@@ -1112,37 +1112,37 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 既に表示されてる領地ウインドウをチェックする
-            int window_id = 0, find_id, max_id = 0;
-            foreach (var itemChild in this.canvasUI.Children.OfType<UserControl006_Spot>())
+            int window_id, max_id = 0;
+            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl006_Spot>())
             {
-                string str = itemChild.Name;
-                if (str.StartsWith("WindowSpot"))
+                string strTitle = itemWindow.Name;
+                if (strTitle.StartsWith("WindowSpot"))
                 {
-                    find_id = Int32.Parse(str.Replace("WindowSpot", String.Empty));
-                    if (max_id < find_id)
+                    window_id = Int32.Parse(strTitle.Replace("WindowSpot", String.Empty));
+                    if (max_id < window_id)
                     {
-                        max_id = find_id;
+                        max_id = window_id;
                     }
-                    var ri = (ClassPowerAndCity)itemChild.Tag;
+                    var ri = (ClassPowerAndCity)itemWindow.Tag;
                     if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
                     {
                         // 領地ウインドウを既に開いてる場合は、新規に作らない
-                        itemChild.Margin = posWindow;
+                        max_id = -1;
+                        itemWindow.Margin = posWindow;
 
                         // 最前面に移動する
-                        var listWindow = this.canvasUI.Children.OfType<UIElement>().Where(x => x != itemChild);
+                        var listWindow = this.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
                         if ((listWindow != null) && (listWindow.Any()))
                         {
                             int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                            Canvas.SetZIndex(itemChild, maxZ + 1);
+                            Canvas.SetZIndex(itemWindow, maxZ + 1);
                         }
 
-                        window_id = find_id;
                         break;
                     }
                 }
             }
-            if (window_id == 0)
+            if (max_id >= 0)
             {
                 // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
                 window_id = max_id + 1;
