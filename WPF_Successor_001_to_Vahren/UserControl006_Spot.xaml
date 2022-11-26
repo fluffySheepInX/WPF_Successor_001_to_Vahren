@@ -18,9 +18,16 @@
         <Button x:Name="btnClose" Width="35" Height="35" Margin="435,10,0,0" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
 
         <StackPanel Orientation="Horizontal" Margin="10,60,0,0">
-            <Button x:Name="btnSelectAll" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="全部" />
-            <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用" />
-            <Button x:Name="btnPolitics" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政" />
+            <Button x:Name="btnSelectAll" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="全部"
+                    PreviewMouseDown="whole_MouseDown"
+                    MouseRightButtonUp="Disable_MouseEvent"
+                    />
+            <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+                    MouseRightButtonUp="Disable_MouseEvent"
+                    />
+            <Button x:Name="btnPolitics" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政"
+                    MouseRightButtonUp="Disable_MouseEvent"
+                    />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10,100,0,0">
