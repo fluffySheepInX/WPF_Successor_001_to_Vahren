@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl008_Unit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             Height="640" Width="480">
+    <Canvas
+            MouseLeftButtonDown="win_MouseLeftButtonDown"
+            MouseRightButtonUp="btnClose_Click"
+            >
+        <Border Height="640" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+        <Button x:Name="btnClose" Width="35" Height="35" Margin="435,10,0,0" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+        <StackPanel Margin="100,10,0,0">
+            <Label FontSize="23" Foreground="White" Content="ユニットの名前" Name="lblNameUnit" />
+            <Label FontSize="20" Foreground="White" Content="クラス" Name="lblClass" />
+            <Label FontSize="15" Foreground="White" Content="経験値" Name="lblExp" />
+
+        </StackPanel>
+        
+        
+    </Canvas>
+</UserControl>

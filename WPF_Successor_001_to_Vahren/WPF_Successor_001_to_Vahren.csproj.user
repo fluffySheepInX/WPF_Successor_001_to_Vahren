@@ -4,10 +4,13 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>debug battle</ActiveDebugProfile>
+    <ActiveDebugProfile>WPF_Successor_001_to_Vahren</ActiveDebugProfile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="UserControl006_Spot.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControl008_Unit.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Win010_TestBattle.xaml.cs">
@@ -16,6 +19,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="UserControl006_Spot.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl008_Unit.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">

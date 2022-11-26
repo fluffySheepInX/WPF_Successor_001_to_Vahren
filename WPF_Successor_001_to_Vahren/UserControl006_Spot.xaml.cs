@@ -40,6 +40,7 @@ namespace WPF_Successor_001_to_Vahren
             	return;
             }
 
+            // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
 
             // 最前面に配置する
@@ -138,11 +139,14 @@ namespace WPF_Successor_001_to_Vahren
                     // ユニットのパネル
                     StackPanel panelUnit = new StackPanel();
                     panelUnit.Name = "panelUnit" + i.ToString() + "_" + j.ToString();
+                    panelUnit.Tag = itemUnit;
                     panelUnit.Height = tile_height;
                     panelUnit.Width = tile_width;
                     // 色を変えるためのイベントを追加する
                     panelUnit.MouseEnter += panel_MouseEnter;
                     panelUnit.MouseLeave += panel_MouseLeave;
+                    // ユニット情報を表示するためのイベント
+                    panelUnit.MouseLeftButtonDown += unit_MouseLeftButtonDown;
                     if (isControl)
                     {
                         // 操作可能な時だけドラッグ移動の準備をしておく
@@ -249,7 +253,6 @@ namespace WPF_Successor_001_to_Vahren
             }
             //領地名
             {
-                //this.lblNameSpot.Content = this.Name; // ウインドウ番号を表示する実験用
                 this.lblNameSpot.Content = classPowerAndCity.ClassSpot.Name;
             }
             //経済値
@@ -259,6 +262,10 @@ namespace WPF_Successor_001_to_Vahren
             //城壁値
             {
                 this.lblCastle.Content = classPowerAndCity.ClassSpot.Castle;
+            }
+            //戦力値
+            {
+                this.lblForce.Content = this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
             }
             //部隊駐留数
             {
@@ -2120,5 +2127,93 @@ namespace WPF_Successor_001_to_Vahren
 
         #endregion
 
+        // ユニット情報ウインドウを開く
+        private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // どのユニットをクリックしたのか
+            string unit_name = ((StackPanel)sender).Name;
+
+            var classUnit = (ClassUnit)(((StackPanel)sender).Tag);
+
+            // ウインドウ番号によって表示位置を変える
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+
+            // 既に表示されてるユニット・ウインドウをチェックする
+            int window_id, max_id = 0;
+            var id_list = new List<int>();
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl008_Unit>())
+            {
+                string strTitle = itemWindow.Name;
+                if (strTitle.StartsWith("WindowUnit"))
+                {
+                    window_id = Int32.Parse(strTitle.Replace("WindowUnit", String.Empty));
+                    id_list.Add(window_id);
+                    if (max_id < window_id)
+                    {
+                        max_id = window_id;
+                    }
+                    var ri = (ClassUnit)itemWindow.Tag;
+                    if (ri.ID == classUnit.ID)
+                    {
+                        // ユニット・ウインドウを既に開いてる場合は、新規に作らない
+                        max_id = -1;
+                        itemWindow.Margin = new Thickness()
+                        {
+                            Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
+                            Top = offsetTop + ((window_id - 1) % 10) * 50
+                        };
+
+                        // ユニット・ウインドウをこのウインドウよりも前面に移動させる
+                        Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+
+                        break;
+                    }
+                }
+            }
+            if (max_id >= 0)
+            {
+                if (max_id > id_list.Count)
+                {
+                    // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                    for (window_id = 1; window_id < max_id; window_id++)
+                    {
+                        if (id_list.Contains(window_id) == false)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                    window_id = max_id + 1;
+                }
+                var windowUnit = new UserControl008_Unit();
+                windowUnit.Tag = classUnit;
+                windowUnit.Name = "WindowUnit" + window_id.ToString();
+                windowUnit.Margin = new Thickness()
+                {
+                    Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
+                    Top = offsetTop + ((window_id - 1) % 10) * 50
+                };
+                windowUnit.SetData();
+                mainWindow.canvasUI.Children.Add(windowUnit);
+            }
+            id_list.Clear();
+        }
     }
 }
