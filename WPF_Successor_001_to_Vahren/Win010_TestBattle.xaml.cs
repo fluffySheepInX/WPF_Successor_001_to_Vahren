@@ -166,36 +166,9 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         public void SetBattleMap()
         {
-            //var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            //if (ri == null)
-            //{
-            //    throw new Exception();
-            //}
-            //var ri3 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.canvasWindowStrategy);
-            //if (ri3 == null)
-            //{
-            //    throw new Exception();
-            //}
-            //var ri4 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowConscription);
-            //if (ri4 == null)
-            //{
-            //    throw new Exception();
-            //}
-            //var ri5 = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowSortieMenu);
-            //if (ri5 == null)
-            //{
-            //    throw new Exception();
-            //}
-
-            //this.canvasMain.Children.Remove(ri);
-            var ri2 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightBottom, StringName.canvasStrategyMenu);
-            if (ri2 != null)
-            {
-                this.canvasUIRightBottom.Children.Remove(ri2);
-            }
-
             // 開いてる子ウインドウを全て閉じる
             this.canvasUI.Children.Clear();
+            this.canvasUIRightBottom.Children.Clear();
 
             //マップそのもの
             Canvas canvas = new Canvas();
@@ -312,37 +285,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     //建築物描写
-                    foreach (var item in listTakaiObj.OrderBy(x => x.Item2).ThenByDescending(y => y.Item3))
-                    {
-                        ImageBrush image = new ImageBrush();
-                        image.Stretch = Stretch.Fill;
-                        image.ImageSource = item.Item1;
-
-                        System.Windows.Shapes.Rectangle rectangle = new Rectangle();
-                        rectangle.Name = "Bui" + item.Item2 + "a" + item.Item3;
-                        ClassMapTipRectangle classMapTipRectangle = new ClassMapTipRectangle();
-                        classMapTipRectangle.TipName = System.IO.Path.GetFileNameWithoutExtension(item.Item1.UriSource.AbsolutePath);
-                        classMapTipRectangle.LogicalXY = new Thickness()
-                        {
-                            Left = (item.Item2 * (yokoMapTip / 2)) + (item.Item3 * (yokoMapTip / 2)),
-                            Top = ((canvas.Height / 2) + (item.Item2 * (takasaMapTip / 2)) + (item.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
-                        };
-                        classMapTipRectangle.TipXY = new Point(item.Item2, item.Item3);
-
-                        rectangle.Tag = classMapTipRectangle;
-                        rectangle.Fill = image;
-                        rectangle.Stretch = Stretch.Fill;
-                        rectangle.StrokeThickness = 0;
-                        rectangle.Width = yokoMapTip;
-                        rectangle.Height = item.Item1.PixelHeight;
-                        rectangle.Margin = new Thickness()
-                        {
-                            Left = (item.Item2 * (yokoMapTip / 2)) + (item.Item3 * (yokoMapTip / 2)),
-                            Top = ((canvas.Height / 2) + (item.Item2 * (takasaMapTip / 2)) + (item.Item3 * (-(takasaMapTip / 2)))) - (item.Item1.PixelHeight - takasaMapTip / 2)
-                        };
-                        canvas.Children.Add(rectangle);
-                        getMap.Add(rectangle);
-                    }
+                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, getMap);
 
                     //建築物論理描写
                     //こちらを後でやる。クリックで爆破が出来るように
@@ -373,7 +316,6 @@ namespace WPF_Successor_001_to_Vahren
                         };
                         classUnitBuilding.NowPosi = new Point(path.Margin.Left, path.Margin.Top);
                         canvas.Children.Add(path);
-
                     }
                 }
 
@@ -458,7 +400,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     foreach (var itemListClassUnit in item.ListClassUnit.Select((value, index) => (value, index)))
                     {
-                        string path = GetPathTipImage(itemListClassUnit);
+                        string path = ClassStaticBattle.GetPathTipImage(itemListClassUnit, this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
 
                         var bi = new BitmapImage(new Uri(path));
                         ImageBrush image = new ImageBrush();
@@ -984,16 +926,6 @@ namespace WPF_Successor_001_to_Vahren
             };
             AfterFadeIn = true;
             this.timerAfterFadeIn.Start();
-        }
-
-        private string GetPathTipImage((ClassUnit value, int index) itemListClassUnit)
-        {
-            List<string> strings = new List<string>();
-            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-            strings.Add("040_ChipImage");
-            strings.Add(itemListClassUnit.value.Image);
-            string path = System.IO.Path.Combine(strings.ToArray());
-            return path;
         }
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
@@ -1772,7 +1704,7 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     bool ch = true;
-                                    var targetTip = GetRecObj(getMap, afterNowPosiX, afterNowPosiY);
+                                    var targetTip = ClassStaticBattle.GetRecObj(getMap, afterNowPosiX, afterNowPosiY);
                                     ch = ClassStaticBattle.CheckRecObj(ch, targetTip, ClassGameStatus);
 
                                     if (ch == true)
@@ -1800,11 +1732,13 @@ namespace WPF_Successor_001_to_Vahren
                                         //移動後の位置を再計算（一度バックする）
                                         afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
                                         afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
+                                        //afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(32));
+                                        //afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(16));
                                         //行列変換
-                                        var resultConv = ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
+                                        var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
 
                                         bool ch2 = true;
-                                        var targetTip2 = GetRecObj(getMap, resultConv.Item1, resultConv.Item2);
+                                        var targetTip2 = ClassStaticBattle.GetRecObj(getMap, resultConv.Item1, resultConv.Item2);
                                         ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, ClassGameStatus);
 
                                         if (ch2 == true)
@@ -1874,25 +1808,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 throw;
             }
-        }
-
-        private static IEnumerable<Rectangle> GetRecObj(List<Rectangle> getMap, double nowPosiX, double nowPosiY)
-        {
-            return getMap
-                                .Where(x => ((ClassMapTipRectangle)x.Tag).LogicalXY.Left <= nowPosiX
-                                        && (((ClassMapTipRectangle)x.Tag).LogicalXY.Left + 64) >= nowPosiX)
-                                .Where(y => ((ClassMapTipRectangle)y.Tag).LogicalXY.Top <= nowPosiY
-                                        && (((ClassMapTipRectangle)y.Tag).LogicalXY.Top + 32) >= nowPosiY);
-        }
-
-        public (double, double) ConvertVec90(double x, double y, double vecX, double vecY)
-        {
-            //(cos90*(x-vecX))+(-sin90*(y-vecY)) = x
-            //(sin90*(x-vecX))+(cos90*(y-vecY)) = y
-            double resultX = (0 * (x - vecX)) + (-1 * (y - vecY));
-            double resultY = (1 * (x - vecX)) + (0 * (y - vecY));
-
-            return (resultX + x, resultY + y);
         }
 
         private async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill)

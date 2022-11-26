@@ -1,7 +1,7 @@
 ﻿TestBattle ca
 {
 	#戦闘マップ
-	map = "ca";
+	map = "ca3";
 	#出撃
 	memberKougeki = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
 	#防衛
