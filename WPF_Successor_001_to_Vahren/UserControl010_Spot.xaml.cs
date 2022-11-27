@@ -18,11 +18,11 @@ using WPF_Successor_001_to_Vahren._005_Class;
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// UserControl006_Spot.xaml の相互作用ロジック
+    /// UserControl010_Spot.xaml の相互作用ロジック
     /// </summary>
-    public partial class UserControl006_Spot : UserControl
+    public partial class UserControl010_Spot : UserControl
     {
-        public UserControl006_Spot()
+        public UserControl010_Spot()
         {
             InitializeComponent();
         }
@@ -32,6 +32,7 @@ namespace WPF_Successor_001_to_Vahren
         private const int tile_width = 48, tile_height = 66, header_width = 48;
 
         // 最初に呼び出した時
+        private bool _isControl = false; // 操作可能かどうかの設定
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -40,6 +41,18 @@ namespace WPF_Successor_001_to_Vahren
             	return;
             }
 
+            // プレイヤーが操作可能かどうか
+            if (((ClassPowerAndCity)this.Tag).ClassPower.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+            {
+                // 同じ勢力なら、操作できる
+                _isControl = true;
+            }
+            else
+            {
+                _isControl = false;
+            }
+
+            // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
 
             // 最前面に配置する
@@ -56,14 +69,6 @@ namespace WPF_Successor_001_to_Vahren
         {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
 
-            // プレイヤーが操作可能かどうか
-            bool isControl = false;
-            if (classPowerAndCity.ClassPower.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
-            {
-                // 同じ勢力なら、操作できる
-                isControl = true;
-            }
-
             // 陣形リスト
             ObservableCollection<ClassFormation> formation = new ObservableCollection<ClassFormation>();
             formation.Add(new ClassFormation() { Id = 0, Formation = _010_Enum.Formation.F });
@@ -79,11 +84,8 @@ namespace WPF_Successor_001_to_Vahren
             // 最初に全て消去する
             this.canvasSpotUnit.Children.Clear();
 
-            var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                .First()
-                .UnitGroup;
             // 全ての部隊を表示する（駐留数の制限を超えていても許容する）
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int i = 0, j, j_max = 1;
             foreach (var itemTroop in listTroop)
             {
@@ -93,7 +95,7 @@ namespace WPF_Successor_001_to_Vahren
                     // 部隊の陣形はリーダー（先頭のユニット）を参照する
                     if (j == 0)
                     {
-                        if (isControl)
+                        if (_isControl)
                         {
                             // 出撃ボタン
                             Button btnSelect = new Button();
@@ -138,12 +140,15 @@ namespace WPF_Successor_001_to_Vahren
                     // ユニットのパネル
                     StackPanel panelUnit = new StackPanel();
                     panelUnit.Name = "panelUnit" + i.ToString() + "_" + j.ToString();
+                    panelUnit.Tag = itemUnit;
                     panelUnit.Height = tile_height;
                     panelUnit.Width = tile_width;
                     // 色を変えるためのイベントを追加する
                     panelUnit.MouseEnter += panel_MouseEnter;
                     panelUnit.MouseLeave += panel_MouseLeave;
-                    if (isControl)
+                    // ユニット情報を表示するためのイベント
+                    panelUnit.MouseLeftButtonDown += unit_MouseLeftButtonDown;
+                    if (_isControl)
                     {
                         // 操作可能な時だけドラッグ移動の準備をしておく
                         if (j > 0)
@@ -203,7 +208,7 @@ namespace WPF_Successor_001_to_Vahren
             this.lblMemberCount.Content = i.ToString() + "/" + spot_capacity.ToString();
 
             // ユニット配置場所の大きさ
-            if (isControl)
+            if (_isControl)
             {
                 // 操作可能な時だけドロップ先の枠の分も確保する
                 int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
@@ -226,7 +231,7 @@ namespace WPF_Successor_001_to_Vahren
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
 
             // プレイヤーが操作可能かどうか
-            if (classPowerAndCity.ClassPower.NameTag != mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+            if (_isControl == false)
             {
                 // 異なる勢力なら、操作ボタンを無効にする
                 btnSelectAll.IsEnabled = false;
@@ -249,7 +254,6 @@ namespace WPF_Successor_001_to_Vahren
             }
             //領地名
             {
-                //this.lblNameSpot.Content = this.Name; // ウインドウ番号を表示する実験用
                 this.lblNameSpot.Content = classPowerAndCity.ClassSpot.Name;
             }
             //経済値
@@ -259,6 +263,10 @@ namespace WPF_Successor_001_to_Vahren
             //城壁値
             {
                 this.lblCastle.Content = classPowerAndCity.ClassSpot.Castle;
+            }
+            //戦力値
+            {
+                this.lblForce.Content = this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
             }
             //部隊駐留数
             {
@@ -285,7 +293,7 @@ namespace WPF_Successor_001_to_Vahren
             string[] strPart =  strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
             ClassSpot dstSpot = null;
-            UserControl006_Spot windowSpot = null;
+            UserControl010_Spot windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -300,7 +308,7 @@ namespace WPF_Successor_001_to_Vahren
                 dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
-                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
                     if (strTitle.StartsWith("WindowSpot"))
@@ -316,7 +324,7 @@ namespace WPF_Successor_001_to_Vahren
             else
             {
                 // 指定番号の領地ウインドウを探す
-                windowSpot = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
+                windowSpot = (UserControl010_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
                 if (windowSpot == null)
                 {
                     return false;
@@ -478,7 +486,7 @@ namespace WPF_Successor_001_to_Vahren
             string[] strPart =  strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
             ClassSpot dstSpot = null;
-            UserControl006_Spot windowSpot = null;
+            UserControl010_Spot windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -493,7 +501,7 @@ namespace WPF_Successor_001_to_Vahren
                 dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
-                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
                     if (strTitle.StartsWith("WindowSpot"))
@@ -509,7 +517,7 @@ namespace WPF_Successor_001_to_Vahren
             else
             {
                 // 指定番号の領地ウインドウを探す
-                windowSpot = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
+                windowSpot = (UserControl010_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
                 if (windowSpot == null)
                 {
                     return false;
@@ -638,7 +646,7 @@ namespace WPF_Successor_001_to_Vahren
             string[] strPart =  strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
             ClassSpot dstSpot = null;
-            UserControl006_Spot windowSpot = null;
+            UserControl010_Spot windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -652,7 +660,7 @@ namespace WPF_Successor_001_to_Vahren
                 dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
-                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
                     if (strTitle.StartsWith("WindowSpot"))
@@ -668,7 +676,7 @@ namespace WPF_Successor_001_to_Vahren
             else
             {
                 // 指定番号の領地ウインドウを探す
-                windowSpot = (UserControl006_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
+                windowSpot = (UserControl010_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
                 if (windowSpot == null)
                 {
                     return false;
@@ -750,10 +758,7 @@ namespace WPF_Successor_001_to_Vahren
             int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
 
-            var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                .First()
-                .UnitGroup;
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int i = 0, j, troop_count, member_count;
             troop_count = listTroop.Count;
             foreach (var itemTroop in listTroop)
@@ -849,7 +854,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 他の領地ウインドウを探す
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
@@ -859,10 +864,7 @@ namespace WPF_Successor_001_to_Vahren
                     if (targetPowerAndCity.ClassPower.NameTag == classPowerAndCity.ClassPower.NameTag)
                     {
                         // 領地の部隊情報を調べる
-                        listTroop = mainWindow.ClassGameStatus.AllListSpot
-                            .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
-                            .First()
-                            .UnitGroup;
+                        listTroop = targetPowerAndCity.ClassSpot.UnitGroup;
                         spot_capacity = targetPowerAndCity.ClassSpot.Capacity;
                         i = 0;
                         troop_count = listTroop.Count;
@@ -970,10 +972,7 @@ namespace WPF_Successor_001_to_Vahren
             int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
 
-            var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                .First()
-                .UnitGroup;
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int i = 0, troop_count, member_count, src_member_count;
             troop_count = listTroop.Count;
             src_member_count = listTroop[troop_id].ListClassUnit.Count; // ドラッグ移動中の部隊に所属するユニット数
@@ -1043,7 +1042,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 他の領地ウインドウを探す
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
@@ -1053,10 +1052,7 @@ namespace WPF_Successor_001_to_Vahren
                     if (targetPowerAndCity.ClassPower.NameTag == classPowerAndCity.ClassPower.NameTag)
                     {
                         // 領地の部隊情報を調べる
-                        listTroop = mainWindow.ClassGameStatus.AllListSpot
-                            .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
-                            .First()
-                            .UnitGroup;
+                        listTroop = targetPowerAndCity.ClassSpot.UnitGroup;
                         spot_capacity = targetPowerAndCity.ClassSpot.Capacity;
                         i = 0;
                         troop_count = listTroop.Count;
@@ -1162,10 +1158,7 @@ namespace WPF_Successor_001_to_Vahren
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
             int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
 
-            var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                .First()
-                .UnitGroup;
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int i, troop_count, spot_capacity;
             troop_count = listTroop.Count;
 
@@ -1191,7 +1184,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 他の領地ウインドウを探す
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
@@ -1201,10 +1194,7 @@ namespace WPF_Successor_001_to_Vahren
                     if (targetPowerAndCity.ClassPower.NameTag == classPowerAndCity.ClassPower.NameTag)
                     {
                         // 領地の部隊情報を調べる
-                        listTroop = mainWindow.ClassGameStatus.AllListSpot
-                            .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
-                            .First()
-                            .UnitGroup;
+                        listTroop = targetPowerAndCity.ClassSpot.UnitGroup;
                         spot_capacity = targetPowerAndCity.ClassSpot.Capacity;
                         i = 0;
                         troop_count = listTroop.Count;
@@ -1335,7 +1325,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 他の領地の枠も
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
@@ -1503,7 +1493,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 他の領地の枠も
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
@@ -1556,10 +1546,19 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // 雇用ウインドウを開いてた場合は閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
+            {
+                if (itemWindow.Name == this.Name + "Mercenary")
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+
             // キャンバスから自身を取り除く
             mainWindow.canvasUI.Children.Remove(this);
         }
-
 
         #region ウインドウ移動
         private bool _isDrag = false; // 外部に公開する必要なし
@@ -1806,10 +1805,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // ドラッグ移動中の部隊に所属するユニット数
                 var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-                var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                    .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                    .First()
-                    .UnitGroup;
+                var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
                 int member_count = listTroop[troop_id].ListClassUnit.Count;
 
                 // 隊長のユニット画像
@@ -1978,10 +1974,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // ドラッグ移動中の部隊に所属するユニット数
                 var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-                var listTroop = mainWindow.ClassGameStatus.AllListSpot
-                    .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                    .First()
-                    .UnitGroup;
+                var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
                 int troop_count = listTroop.Count;
 
                 // 一番上の隊長のユニット画像
@@ -2119,6 +2112,162 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         #endregion
+
+        // ユニット情報ウインドウを開く
+        private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // どのユニットをクリックしたのか
+            ClassCityAndUnit classCityAndUnit = new ClassCityAndUnit();
+            classCityAndUnit.ClassPowerAndCity = (ClassPowerAndCity)this.Tag;
+            classCityAndUnit.ClassUnit = (ClassUnit)((StackPanel)sender).Tag;
+
+            // ウインドウ番号によって表示位置を変える
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+
+            // 既に表示されてるユニット・ウインドウをチェックする
+            int window_id, max_id = 0;
+            var id_list = new List<int>();
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl015_Unit>())
+            {
+                string strTitle = itemWindow.Name;
+                if (strTitle.StartsWith("WindowUnit"))
+                {
+                    window_id = Int32.Parse(strTitle.Replace("WindowUnit", String.Empty));
+                    id_list.Add(window_id);
+                    if (max_id < window_id)
+                    {
+                        max_id = window_id;
+                    }
+                    ClassUnit testUnit = ((ClassCityAndUnit)itemWindow.Tag).ClassUnit;
+                    if (testUnit == classCityAndUnit.ClassUnit)
+                    {
+                        // ユニット・ウインドウを既に開いてる場合は、新規に作らない
+                        max_id = -1;
+                        itemWindow.Margin = new Thickness()
+                        {
+                            Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
+                            Top = offsetTop + ((window_id - 1) % 10) * 50
+                        };
+
+                        // ユニット・ウインドウをこのウインドウよりも前面に移動させる
+                        Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+
+                        break;
+                    }
+                }
+            }
+            if (max_id >= 0)
+            {
+                if (max_id > id_list.Count)
+                {
+                    // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                    for (window_id = 1; window_id < max_id; window_id++)
+                    {
+                        if (id_list.Contains(window_id) == false)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                    window_id = max_id + 1;
+                }
+                var windowUnit = new UserControl015_Unit();
+                windowUnit.Tag = classCityAndUnit;
+                windowUnit.Name = "WindowUnit" + window_id.ToString();
+                windowUnit.Margin = new Thickness()
+                {
+                    Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
+                    Top = offsetTop + ((window_id - 1) % 10) * 50
+                };
+                windowUnit.SetData();
+                mainWindow.canvasUI.Children.Add(windowUnit);
+            }
+            id_list.Clear();
+        }
+
+        // 領地の雇用ウインドウを開く
+        private void btnMercenary_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 領地から雇用なら、ClassUnit 部分を null にする
+            ClassCityAndUnit classCityAndUnit = new ClassCityAndUnit();
+            classCityAndUnit.ClassPowerAndCity = (ClassPowerAndCity)this.Tag;
+            classCityAndUnit.ClassUnit = null;
+
+            // 領地ウインドウの右横に雇用ウインドウを表示する
+            double offsetLeft = this.Margin.Left + this.Width;
+
+            // 既に雇用ウインドウが表示されてる場合は再利用する
+            bool isFound = false;
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
+            {
+                string strTitle = itemWindow.Name;
+                if ( (strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")) )
+                {
+                    // 新規に作らない
+                    itemWindow.Tag = classCityAndUnit;
+                    itemWindow.Name = this.Name + "Mercenary";
+                    if (this.Margin.Left + this.Width / 2  > mainWindow.CanvasMainWidth / 2)
+                    {
+                        // 画面の右側なら、左横に表示する
+                        offsetLeft = this.Margin.Left - itemWindow.Width;
+                    }
+                    itemWindow.Margin = new Thickness()
+                    {
+                        Left = offsetLeft,
+                        Top = this.Margin.Top
+                    };
+                    itemWindow.SetData();
+
+                    // 雇用ウインドウをこのウインドウよりも前面に移動させる
+                    Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+
+                    isFound = true;
+                    break;
+                }
+            }
+            if (isFound == false)
+            {
+                // 新規に作成する
+                var windowMercenary = new UserControl020_Mercenary();
+                windowMercenary.Tag = classCityAndUnit;
+                windowMercenary.Name = this.Name + "Mercenary";
+                if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
+                {
+                    // 画面の右側なら、左横に表示する
+                    offsetLeft = this.Margin.Left - windowMercenary.Width;
+                }
+                windowMercenary.Margin = new Thickness()
+                {
+                    Left = offsetLeft,
+                    Top = this.Margin.Top
+                };
+                windowMercenary.SetData();
+                mainWindow.canvasUI.Children.Add(windowMercenary);
+            }
+        }
 
     }
 }

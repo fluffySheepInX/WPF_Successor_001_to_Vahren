@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl006_Spot"
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl010_Spot"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="480"
+             Height="700" Width="480"
              >
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
@@ -14,7 +14,7 @@
         <Border Height="700" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
         <Border Height="44" Width="420" BorderBrush="White" BorderThickness="2" Margin="8,8,0,0" />
         <Image Stretch="Fill" Margin="14,14,0,0" Height="32" Width="32" Name="imgFlag" />
-        <Label Width="375" Margin="50,10,0,0" FontSize="23" Foreground="White" Content="東京タワーランド２階" Name="lblNameSpot" />
+        <Label Width="375" Margin="50,10,0,0" FontSize="23" Foreground="White" Content="領地の名前" Name="lblNameSpot" />
         <Button x:Name="btnClose" Width="35" Height="35" Margin="435,10,0,0" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
 
         <StackPanel Orientation="Horizontal" Margin="10,60,0,0">
@@ -23,9 +23,12 @@
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
             <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+                    Click="btnMercenary_Click"
+                    PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
             <Button x:Name="btnPolitics" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政"
+                    PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
         </StackPanel>
@@ -36,7 +39,7 @@
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="城壁" />
             <Label FontSize="20" Foreground="White" Content="50" Name="lblCastle" />
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="戦力" />
-            <Label FontSize="20" Foreground="White" Content="98765" Name="lblForce" />
+            <Label FontSize="20" Foreground="White" Content="123456" Name="lblForce" />
             <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="部隊" />
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
@@ -44,7 +47,7 @@
         <ScrollViewer Width="460" Height="540" Canvas.Left="10" Canvas.Top="150" Background="Black"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
-                MouseLeftButtonUp="Raise_ZOrder"
+                PreviewMouseLeftButtonDown="Raise_ZOrder"
                 MouseRightButtonUp="Disable_MouseEvent"
                 >
             <Canvas Name="canvasSpotUnit" HorizontalAlignment="Left" VerticalAlignment="Top">
