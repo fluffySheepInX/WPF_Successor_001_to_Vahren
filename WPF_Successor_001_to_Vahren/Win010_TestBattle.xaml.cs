@@ -222,7 +222,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     //建築物描写
-                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, getMap);
+                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, listBuildingAlive);
 
                     //建築物論理描写
                     //こちらを後でやる。クリックで爆破が出来るように
@@ -865,8 +865,6 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Start();
         }
 
-        public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-
         private void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // クライアント領域を知る方法
@@ -940,7 +938,7 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        #region Battle
+        #region BattleEvent
         private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ドラッグを開始する
@@ -984,8 +982,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-        #endregion
-
         private void windowMapBattle_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
@@ -1045,84 +1041,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-
-        #region フェード関係
-        private bool _fadeOut = false;
-        private bool _fadeOutExecution = false;
-        private bool _fadeIn = false;
-        private bool _fadeInExecution = false;
-        private bool _afterFadeIn = false;
-
-        #region FadeOut
-        public bool FadeOut
-        {
-            get
-            {
-                return _fadeOut;
-            }
-            set
-            {
-                _fadeOut = value;
-            }
-        }
-        #endregion
-
-        #region FadeOutExecution
-        public bool FadeOutExecution
-        {
-            get
-            {
-                return _fadeOutExecution;
-            }
-            set
-            {
-                _fadeOutExecution = value;
-            }
-        }
-        #endregion
-
-        #region FadeIn
-        public bool FadeIn
-        {
-            get
-            {
-                return _fadeIn;
-            }
-            set
-            {
-                _fadeIn = value;
-            }
-        }
-        #endregion
-
-        #region FadeInExecution
-        public bool FadeInExecution
-        {
-            get
-            {
-                return _fadeInExecution;
-            }
-            set
-            {
-                _fadeInExecution = value;
-            }
-        }
-        #endregion
-
-        #region AfterFadeIn
-        public bool AfterFadeIn
-        {
-            get
-            {
-                return _afterFadeIn;
-            }
-            set
-            {
-                _afterFadeIn = value;
-            }
-        }
-        #endregion
-
         #endregion
 
         #region Battle
@@ -1560,7 +1478,7 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        List<Rectangle> getMap = new List<Rectangle>();
+        List<Rectangle> listBuildingAlive = new List<Rectangle>();
 
         private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token)
         {
@@ -1616,7 +1534,7 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     bool ch = true;
-                                    var targetTip = ClassStaticBattle.GetRecObj(getMap, afterNowPosiX, afterNowPosiY);
+                                    var targetTip = ClassStaticBattle.GetRecObj(listBuildingAlive, afterNowPosiX, afterNowPosiY);
                                     ch = ClassStaticBattle.CheckRecObj(ch, targetTip, ClassGameStatus);
 
                                     if (ch == true)
@@ -1650,7 +1568,7 @@ namespace WPF_Successor_001_to_Vahren
                                         var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
 
                                         bool ch2 = true;
-                                        var targetTip2 = ClassStaticBattle.GetRecObj(getMap, resultConv.Item1, resultConv.Item2);
+                                        var targetTip2 = ClassStaticBattle.GetRecObj(listBuildingAlive, resultConv.Item1, resultConv.Item2);
                                         ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, ClassGameStatus);
 
                                         if (ch2 == true)
@@ -1797,7 +1715,7 @@ namespace WPF_Successor_001_to_Vahren
                                                     if (re2 != null)
                                                     {
                                                         re1.Children.Remove(re2);
-                                                        getMap.Remove(re2);
+                                                        listBuildingAlive.Remove(re2);
                                                     }
                                                 }
                                             }
