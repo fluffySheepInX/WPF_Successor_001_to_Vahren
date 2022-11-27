@@ -28,6 +28,8 @@ namespace WPF_Successor_001_to_Vahren
         {
             if (e.Args.Length == 0)
             {
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
                 return;
             }
 

@@ -22,72 +22,9 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Win010_TestBattle.xaml の相互作用ロジック
     /// </summary>
-    public partial class Win010_TestBattle : Window
+    public partial class Win010_TestBattle : CommonWindow
     {
-        #region NowNumberGameTitle
-        private int _nowNumberGameTitle = 0;
-        public int NowNumberGameTitle
-        {
-            get
-            {
-                return _nowNumberGameTitle;
-            }
-            set { _nowNumberGameTitle = value; }
-        }
-        #endregion
-
-        private int _sizeClientWinWidth = 0;
-        private int _sizeClientWinHeight = 0;
-        #region CanvasMainWidth
-        public int CanvasMainWidth
-        {
-            get
-            {
-                return 1800;
-            }
-            set
-            {
-
-            }
-        }
-        #endregion
-        #region CanvasMainHeight
-        public int CanvasMainHeight
-        {
-            get
-            {
-                return 1000;
-            }
-            set
-            {
-
-            }
-        }
-        #endregion
-
         public ClassTestBattle classTestBattle = new ClassTestBattle();
-
-        #region ClassGameStatus
-        private ClassGameStatus _classGameStatus = new ClassGameStatus();
-
-        public ClassGameStatus ClassGameStatus
-        {
-            get { return _classGameStatus; }
-            set { _classGameStatus = value; }
-        }
-        #endregion
-        #region ClassConfigGameTitle
-        private ClassConfigGameTitle _classConfigGameTitle = new ClassConfigGameTitle();
-        public ClassConfigGameTitle ClassConfigGameTitle
-        {
-            get
-            {
-                return _classConfigGameTitle;
-            }
-            set { _classConfigGameTitle = value; }
-        }
-        #endregion
-
 
         public Win010_TestBattle(ClassTestBattle classTestBattle, ClassConfigGameTitle _classConfigGameTitle, ClassGameStatus classGameStatus)
         {
@@ -929,31 +866,6 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            // ESCキーを押すと終了する。
-            if (e.Key == Key.Escape)
-            {
-                this.Close();
-            }
-            // F11キーを押すとフルスクリーン状態を切り替える。
-            else if (e.Key == Key.F11)
-            {
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    // 最大化中なら、通常サイズにする。
-                    this.WindowStyle = WindowStyle.SingleBorderWindow; // タイトルバーと境界線を表示します。
-                    this.WindowState = WindowState.Normal;
-                }
-                else
-                {
-                    // 通常サイズか最小化中なら、最大化する。
-                    this.WindowStyle = WindowStyle.None; // タイトルバーと境界線を非表示にします。
-                    this.WindowState = WindowState.Maximized;
-                }
-            }
-        }
 
         private void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
         {
