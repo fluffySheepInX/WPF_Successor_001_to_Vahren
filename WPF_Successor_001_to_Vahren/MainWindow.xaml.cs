@@ -39,7 +39,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : CommonWindow
     {
         #region Prop
 
@@ -71,34 +71,6 @@ namespace WPF_Successor_001_to_Vahren
                     // TODO
                     return "ローガントゥーガ";
                 }
-            }
-            set
-            {
-
-            }
-        }
-        #endregion
-
-        #region CanvasMainWidth
-        public int CanvasMainWidth
-        {
-            get
-            {
-                return 1800;
-            }
-            set
-            {
-
-            }
-        }
-        #endregion
-
-        #region CanvasMainHeight
-        public int CanvasMainHeight
-        {
-            get
-            {
-                return 1000;
             }
             set
             {
@@ -214,27 +186,6 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        #region ClassConfigGameTitle
-        public ClassConfigGameTitle ClassConfigGameTitle
-        {
-            get
-            {
-                return _classConfigGameTitle;
-            }
-            set { _classConfigGameTitle = value; }
-        }
-        #endregion
-
-        #region NowNumberGameTitle
-        public int NowNumberGameTitle
-        {
-            get
-            {
-                return _nowNumberGameTitle;
-            }
-            set { _nowNumberGameTitle = value; }
-        }
-        #endregion
 
         #region DifficultyLevel
         public int DifficultyLevel
@@ -266,32 +217,17 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        #region ClassGameStatus
-        private ClassGameStatus _classGameStatus = new ClassGameStatus();
-
-        public ClassGameStatus ClassGameStatus
-        {
-            get { return _classGameStatus; }
-            set { _classGameStatus = value; }
-        }
-
-        #endregion
-
         #endregion
 
         #region PrivateField
         private int _numberScenarioSelection;
         private List<ClassScenarioInfo> _listClassScenarioInfo = new List<ClassScenarioInfo>();
         private int _difficultyLevel = 0;
-        private int _nowNumberGameTitle = 0;
         private bool _fadeOut = false;
         private bool _fadeOutExecution = false;
         private bool _fadeIn = false;
         private bool _fadeInExecution = false;
         private bool _afterFadeIn = false;
-
-        private int _sizeClientWinWidth = 0;
-        private int _sizeClientWinHeight = 0;
 
         private _010_Enum.Situation _nowSituation = _010_Enum.Situation.Title;
 
@@ -411,31 +347,6 @@ namespace WPF_Successor_001_to_Vahren
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.NowSituation = _010_Enum.Situation.GameStop;
-        }
-
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            // ESCキーを押すと終了する。
-            if (e.Key == Key.Escape)
-            {
-                this.Close();
-            }
-            // F11キーを押すとフルスクリーン状態を切り替える。
-            else if (e.Key == Key.F11)
-            {
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    // 最大化中なら、通常サイズにする。
-                    this.WindowStyle = WindowStyle.SingleBorderWindow; // タイトルバーと境界線を表示します。
-                    this.WindowState = WindowState.Normal;
-                }
-                else
-                {
-                    // 通常サイズか最小化中なら、最大化する。
-                    this.WindowStyle = WindowStyle.None; // タイトルバーと境界線を非表示にします。
-                    this.WindowState = WindowState.Maximized;
-                }
-            }
         }
 
         private void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
