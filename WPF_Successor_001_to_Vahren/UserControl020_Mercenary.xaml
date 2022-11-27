@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl020_Mercenary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             Height="480" Width="320">
+    <Canvas
+            MouseLeftButtonDown="win_MouseLeftButtonDown"
+            MouseRightButtonUp="btnClose_Click"
+            >
+        <Border Height="480" Width="320" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+
+        <Label Width="300" Margin="10,10,0,0" HorizontalContentAlignment="Center" FontSize="23" Foreground="White" Content="タイトル" Name="lblTitle" />
+
+        <Button x:Name="btnClose" Width="35" Height="35" Margin="275,10,0,0" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+
+
+
+    </Canvas>
+</UserControl>

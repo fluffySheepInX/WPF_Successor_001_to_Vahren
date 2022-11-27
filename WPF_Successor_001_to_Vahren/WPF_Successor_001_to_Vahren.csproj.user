@@ -13,6 +13,9 @@
     <Compile Update="UserControl015_Unit.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl020_Mercenary.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Win010_TestBattle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -22,6 +25,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl015_Unit.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl020_Mercenary.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">

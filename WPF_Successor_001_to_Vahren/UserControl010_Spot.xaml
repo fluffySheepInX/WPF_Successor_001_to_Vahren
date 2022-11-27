@@ -23,9 +23,12 @@
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
             <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+                    Click="btnMercenary_Click"
+                    PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
             <Button x:Name="btnPolitics" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政"
+                    PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
         </StackPanel>
