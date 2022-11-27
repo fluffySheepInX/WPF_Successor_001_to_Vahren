@@ -1114,7 +1114,7 @@ namespace WPF_Successor_001_to_Vahren
             // 既に表示されてる領地ウインドウをチェックする
             int window_id, max_id = 0;
             var id_list = new List<int>();
-            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl006_Spot>())
+            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
                 if (strTitle.StartsWith("WindowSpot"))
@@ -1162,7 +1162,7 @@ namespace WPF_Successor_001_to_Vahren
                     // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
                     window_id = max_id + 1;
                 }
-                var windowSpot = new UserControl006_Spot();
+                var windowSpot = new UserControl010_Spot();
                 windowSpot.Tag = classPowerAndCity;
                 windowSpot.Name = "WindowSpot" + window_id.ToString();
                 windowSpot.Margin = posWindow;
