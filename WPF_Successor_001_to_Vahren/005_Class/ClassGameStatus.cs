@@ -144,11 +144,11 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ClassBattleUnits
-        private ClassBattle _classBattleUnits = new ClassBattle();
-        public ClassBattle ClassBattleUnits
+        private ClassBattle _classBattle = new ClassBattle();
+        public ClassBattle ClassBattle
         {
-            get { return _classBattleUnits; }
-            set { _classBattleUnits = value; }
+            get { return _classBattle; }
+            set { _classBattle = value; }
         }
         #endregion
         #region TaskBattleSkill

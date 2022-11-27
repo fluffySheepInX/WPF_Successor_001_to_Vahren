@@ -193,7 +193,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
+            mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
 
             var ri = (Frame)LogicalTreeHelper.FindLogicalNode(mainWindow, StringName.windowSortieMenu);
             if (ri == null)
@@ -234,7 +234,7 @@ namespace WPF_Successor_001_to_Vahren
             comboCity_SelectionChanged(null, null);
 
             //出撃クラスにunit追加
-            mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Add(convTag);
+            mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Add(convTag);
 
             //右に描写
             DisplaySortieUnit(mainWindow);
@@ -245,7 +245,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
-            foreach (var item in mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+            foreach (var item in mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
             {
                 StackPanel stackPanelUnit = new StackPanel();
                 stackPanelUnit.Orientation = Orientation.Horizontal;
@@ -326,7 +326,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var item in selectedItem.UnitGroup.Where(x => x.FlagDisplay == true))
             {
                 //出撃クラスにunit追加
-                mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Add(item);
+                mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Add(item);
 
                 item.FlagDisplay = false;
             }
@@ -420,9 +420,9 @@ namespace WPF_Successor_001_to_Vahren
                     item.UnitGroup.Clear();
                 }
 
-                mainWindow.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
-                mainWindow.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
-                mainWindow.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
 
                 //出撃ウィンドウを消す
                 {
@@ -452,7 +452,7 @@ namespace WPF_Successor_001_to_Vahren
                                 .FirstOrDefault();
             if (extractMap != null)
             {
-                mainWindow.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
+                mainWindow.ClassGameStatus.ClassBattle.ClassMapBattle = extractMap;
 
                 ClassStaticBattle.AddBuilding(mainWindow.ClassGameStatus);
 
@@ -461,7 +461,7 @@ namespace WPF_Successor_001_to_Vahren
             //防衛ユニット設定
             foreach (var item in convSpots.ClassSpot.UnitGroup)
             {
-                mainWindow.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Add(item);
+                mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Add(item);
             }
 
             //出兵元情報を格納

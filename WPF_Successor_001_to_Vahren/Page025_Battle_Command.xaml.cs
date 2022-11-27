@@ -43,7 +43,7 @@ namespace WPF_Successor_001_to_Vahren
 
             List<string> list = new List<string>();
             foreach (var item in mainWindow.ClassGameStatus
-            .ClassBattleUnits.SortieUnitGroup)
+            .ClassBattle.SortieUnitGroup)
             {
                 foreach (var itemGroupBy in item.ListClassUnit.GroupBy(x => x.SkillName))
                 {

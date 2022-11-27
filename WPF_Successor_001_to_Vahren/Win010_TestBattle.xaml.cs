@@ -48,7 +48,7 @@ namespace WPF_Successor_001_to_Vahren
                     .FirstOrDefault();
             if (extractMap != null)
             {
-                this.ClassGameStatus.ClassBattleUnits.ClassMapBattle = extractMap;
+                this.ClassGameStatus.ClassBattle.ClassMapBattle = extractMap;
                 ClassStaticBattle.AddBuilding(this.ClassGameStatus);
             }
 
@@ -70,7 +70,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     ClassHorizontalUnit aaa = new ClassHorizontalUnit();
                     aaa.ListClassUnit = classUnit;
-                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Add(aaa);
+                    this.ClassGameStatus.ClassBattle.SortieUnitGroup.Add(aaa);
                 }
             }
             foreach (var item in this.classTestBattle.ListMemberBouei)
@@ -91,7 +91,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     ClassHorizontalUnit aaa = new ClassHorizontalUnit();
                     aaa.ListClassUnit = classUnit;
-                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Add(aaa);
+                    this.ClassGameStatus.ClassBattle.DefUnitGroup.Add(aaa);
                 }
             }
 
@@ -116,32 +116,34 @@ namespace WPF_Successor_001_to_Vahren
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
             canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
             {
-
-                if (this.ClassGameStatus.ClassBattleUnits.ClassMapBattle == null)
+                if (ClassGameStatus.ClassBattle.ClassMapBattle == null)
                 {
+                    //キャンバス設定
                     {
-                        canvas.Width = 160
-                                        + 80;
-                        canvas.Height = 160;
+                        int BaseNum = 600;
+                        canvas.Width = BaseNum
+                                        + (BaseNum / 2);
+                        canvas.Height = BaseNum;
                         canvas.Margin = new Thickness()
                         {
-                            Left = 160 / 2,
+                            Left = BaseNum / 2,
                             Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
                         };
                     }
                 }
                 else
                 {
+                    //キャンバス設定
                     {
-                        canvas.Width = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * yokoMapTip;
-                        canvas.Height = this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Count * takasaMapTip;
+                        canvas.Width = this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData[0].Count * yokoMapTip;
+                        canvas.Height = this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData.Count * takasaMapTip;
                         canvas.Margin = new Thickness()
                         {
                             Left = ((
                                     (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2)
                                     ))
                                         +
-                                    (this._sizeClientWinWidth / 2) - ((this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData[0].Count * 32) / 2),
+                                    (this._sizeClientWinWidth / 2) - ((this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData[0].Count * 32) / 2),
                             Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
                         };
                         //RotateTransform rotateTransform2 = new RotateTransform(0);
@@ -150,17 +152,8 @@ namespace WPF_Successor_001_to_Vahren
                         //canvas.RenderTransform = rotateTransform2;
                     }
 
-                    // get target path.
-                    List<string> strings = new List<string>();
-                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("015_BattleMapCellImage");
-                    string cellImagePath = System.IO.Path.Combine(strings.ToArray());
-                    // get file.
-                    var files = System.IO.Directory.EnumerateFiles(
-                        cellImagePath,
-                        "*.png",
-                        System.IO.SearchOption.AllDirectories
-                        );
+                    // get files.
+                    IEnumerable<string> files = ClassStaticBattle.GetFiles015_BattleMapCellImage(ClassConfigGameTitle.DirectoryGameTitle[NowNumberGameTitle].FullName);
                     Dictionary<string, string> map = new Dictionary<string, string>();
                     foreach (var item in files)
                     {
@@ -169,7 +162,7 @@ namespace WPF_Successor_001_to_Vahren
 
                     //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
                     List<(BitmapImage, int, int)> listTakaiObj = new List<(BitmapImage, int, int)>();
-                    foreach (var itemCol in this.ClassGameStatus.ClassBattleUnits.ClassMapBattle.MapData
+                    foreach (var itemCol in ClassGameStatus.ClassBattle.ClassMapBattle.MapData
                                             .Select((value, index) => (value, index)))
                     {
                         foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
@@ -222,11 +215,11 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     //建築物描写
-                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, listBuildingAlive);
+                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, ClassGameStatus.ClassBattle.ListBuildingAlive);
 
                     //建築物論理描写
                     //こちらを後でやる。クリックで爆破が出来るように
-                    var bui = ClassGameStatus.ClassBattleUnits.DefUnitGroup
+                    var bui = ClassGameStatus.ClassBattle.DefUnitGroup
                                 .Where(x => x.FlagBuilding == true)
                                 .First();
                     foreach (var item in bui.ListClassUnit)
@@ -256,27 +249,19 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
 
-                Canvas backCanvas = new Canvas();
-                backCanvas.Name = StringName.gridMapBattle;
-                backCanvas.Background = Brushes.AliceBlue;
-                backCanvas.Width = this._sizeClientWinWidth;
-                backCanvas.Height = this._sizeClientWinHeight;
-
-                backCanvas.Margin = new Thickness()
-                {
-                    Left = (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2),
-                    Top = (this.CanvasMainHeight / 2) - (this._sizeClientWinHeight / 2)
-                };
-                backCanvas.Children.Add(canvas);
-
-                Canvas.SetZIndex(backCanvas, 98);
-                this.canvasMain.Children.Add(backCanvas);
+                this.canvasMain.Children.Add(
+                    GetCanvasBattleBack(canvas,
+                                        this._sizeClientWinWidth,
+                                        this._sizeClientWinHeight,
+                                        this.CanvasMainWidth,
+                                        this.CanvasMainHeight)
+                    );
             }
 
             ////出撃ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(0, canvas.Height / 2);
                 Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
@@ -302,7 +287,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Count % 2 == 0)
+                if (this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -325,7 +310,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 //出撃前衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.SortieUnitGroup
+                            .ClassBattle.SortieUnitGroup
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
                 {
                     //比率
@@ -396,7 +381,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 //出撃中衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.SortieUnitGroup
+                            .ClassBattle.SortieUnitGroup
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
                 {
                     //比率
@@ -472,7 +457,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 //出撃後衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.SortieUnitGroup
+                            .ClassBattle.SortieUnitGroup
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
                 {
                     //比率
@@ -551,7 +536,7 @@ namespace WPF_Successor_001_to_Vahren
             ////防衛ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.DefUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
@@ -577,7 +562,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Count % 2 == 0)
+                if (this.ClassGameStatus.ClassBattle.DefUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -600,7 +585,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 //防衛前衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.DefUnitGroup
+                            .ClassBattle.DefUnitGroup
                             .Where(y => y.FlagBuilding == false)
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.F))
                 {
@@ -678,7 +663,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 //防衛中衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.DefUnitGroup
+                            .ClassBattle.DefUnitGroup
                             .Where(y => y.FlagBuilding == false)
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.M))
                 {
@@ -755,7 +740,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 //防衛後衛
                 foreach (var item in this.ClassGameStatus
-                            .ClassBattleUnits.DefUnitGroup
+                            .ClassBattle.DefUnitGroup
                             .Where(y => y.FlagBuilding == false)
                             .Where(x => x.ListClassUnit[0].Formation.Formation == Formation.B))
                 {
@@ -854,16 +839,17 @@ namespace WPF_Successor_001_to_Vahren
             Application.Current.Properties["window"] = this;
 
 
-            this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            this.timerAfterFadeIn.Tick += (x, s) =>
+            timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
+            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            timerAfterFadeIn.Tick += (x, s) =>
             {
                 TimerAction60FPSAfterFadeInBattleStart();
-                MainWindow.KeepInterval(this.timerAfterFadeIn);
+                MainWindow.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;
-            this.timerAfterFadeIn.Start();
+            timerAfterFadeIn.Start();
         }
+
 
         private void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -991,7 +977,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //SortieUnitGroupではなくプレイヤー側でないとダメ
-            foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+            foreach (var item in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
             {
                 var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
                 if (re != null)
@@ -1023,7 +1009,7 @@ namespace WPF_Successor_001_to_Vahren
             var can = (Canvas)sender;
             var bor = (Border)can.Parent;
             long name = long.Parse((string)(can).Tag);
-            foreach (var item in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+            foreach (var item in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
             {
                 var re = item.ListClassUnit.Where(x => x.ID == name).FirstOrDefault();
                 if (re != null)
@@ -1141,7 +1127,7 @@ namespace WPF_Successor_001_to_Vahren
             //攻撃側勝利
             {
                 bool flgaDefHp = false;
-                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
                 {
                     if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
@@ -1230,9 +1216,9 @@ namespace WPF_Successor_001_to_Vahren
                     }
 
                     //片付け
-                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
 
                     return;
                 }
@@ -1240,7 +1226,7 @@ namespace WPF_Successor_001_to_Vahren
             //防衛側勝利
             {
                 bool flgaAttackHp = false;
-                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup)
+                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
                 {
                     if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
@@ -1271,9 +1257,9 @@ namespace WPF_Successor_001_to_Vahren
                     //画面戻る
 
                     //片付け
-                    this.ClassGameStatus.ClassBattleUnits.SortieUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattleUnits.DefUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattleUnits.NeutralUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
+                    this.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
 
                     return;
                 }
@@ -1293,7 +1279,7 @@ namespace WPF_Successor_001_to_Vahren
                 bool flagAttack = false;
                 //出撃ユニット
                 foreach (var item in this.ClassGameStatus
-                .ClassBattleUnits.SortieUnitGroup)
+                .ClassBattle.SortieUnitGroup)
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
                     {
@@ -1302,7 +1288,7 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             //スキル射程範囲確認
                             var xA = itemGroupBy.NowPosi;
-                            foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                            foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
                             {
                                 foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                 {
@@ -1402,7 +1388,7 @@ namespace WPF_Successor_001_to_Vahren
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 foreach (var item in this.ClassGameStatus
-                .ClassBattleUnits.SortieUnitGroup)
+                .ClassBattle.SortieUnitGroup)
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {
@@ -1447,7 +1433,7 @@ namespace WPF_Successor_001_to_Vahren
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 foreach (var item in this.ClassGameStatus
-                .ClassBattleUnits.DefUnitGroup)
+                .ClassBattle.DefUnitGroup)
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {
@@ -1478,7 +1464,6 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        List<Rectangle> listBuildingAlive = new List<Rectangle>();
 
         private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token)
         {
@@ -1534,7 +1519,7 @@ namespace WPF_Successor_001_to_Vahren
                                 try
                                 {
                                     bool ch = true;
-                                    var targetTip = ClassStaticBattle.GetRecObj(listBuildingAlive, afterNowPosiX, afterNowPosiY);
+                                    var targetTip = ClassStaticBattle.GetRecObj(ClassGameStatus.ClassBattle.ListBuildingAlive, afterNowPosiX, afterNowPosiY);
                                     ch = ClassStaticBattle.CheckRecObj(ch, targetTip, ClassGameStatus);
 
                                     if (ch == true)
@@ -1568,7 +1553,7 @@ namespace WPF_Successor_001_to_Vahren
                                         var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
 
                                         bool ch2 = true;
-                                        var targetTip2 = ClassStaticBattle.GetRecObj(listBuildingAlive, resultConv.Item1, resultConv.Item2);
+                                        var targetTip2 = ClassStaticBattle.GetRecObj(ClassGameStatus.ClassBattle.ListBuildingAlive, resultConv.Item1, resultConv.Item2);
                                         ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, ClassGameStatus);
 
                                         if (ch2 == true)
@@ -1676,7 +1661,7 @@ namespace WPF_Successor_001_to_Vahren
                     //どちらがプレイヤー側かで分ける
                     if (true)
                     {
-                        foreach (var item in this.ClassGameStatus.ClassBattleUnits.DefUnitGroup)
+                        foreach (var item in this.ClassGameStatus.ClassBattle.DefUnitGroup)
                         {
                             var re = item.ListClassUnit.Where(x => x.NowPosi.X <= classUnit.NowPosiSkill.X + 5
                                                         && x.NowPosi.X >= classUnit.NowPosiSkill.X - 5
@@ -1715,7 +1700,7 @@ namespace WPF_Successor_001_to_Vahren
                                                     if (re2 != null)
                                                     {
                                                         re1.Children.Remove(re2);
-                                                        listBuildingAlive.Remove(re2);
+                                                        ClassGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
                                                     }
                                                 }
                                             }

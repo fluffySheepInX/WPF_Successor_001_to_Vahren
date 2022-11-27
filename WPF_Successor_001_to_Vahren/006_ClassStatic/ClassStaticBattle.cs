@@ -18,12 +18,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         public static void AddBuilding(ClassGameStatus? classGameStatus)
         {
             if (classGameStatus == null) return;
-            if (classGameStatus.ClassBattleUnits.ClassMapBattle == null) return;
+            if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
 
             //建築物設定
 
             List<(string, int, int)> bui = new List<(string, int, int)>();
-            foreach (var battle in classGameStatus.ClassBattleUnits.ClassMapBattle.MapData.Select((value, index) => (value, index)))
+            foreach (var battle in classGameStatus.ClassBattle.ClassMapBattle.MapData.Select((value, index) => (value, index)))
             {
                 foreach (var item in battle.value.Select((value, index) => (value, index)))
                 {
@@ -60,7 +60,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 });
             }
             classHorizontalUnit.ListClassUnit = uni;
-            classGameStatus.ClassBattleUnits.DefUnitGroup.Add(classHorizontalUnit);
+            classGameStatus.ClassBattle.DefUnitGroup.Add(classHorizontalUnit);
         }
 
         public static bool CheckRecObj(bool ch, IEnumerable<Rectangle> targetTip, ClassGameStatus classGameStatus)
@@ -130,6 +130,27 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             strings.Add(itemListClassUnit.value.Image);
             string path = System.IO.Path.Combine(strings.ToArray());
             return path;
+        }
+        #endregion
+        #region GetFiles015_BattleMapCellImage
+        /// <summary>
+        /// GetFiles015_BattleMapCellImage
+        /// </summary>
+        /// <param name="directoryGameTitleFullName"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetFiles015_BattleMapCellImage(string directoryGameTitleFullName)
+        {
+            List<string> strings = new List<string>();
+            strings.Add(directoryGameTitleFullName);
+            strings.Add("015_BattleMapCellImage");
+            string cellImagePath = System.IO.Path.Combine(strings.ToArray());
+            // get file.
+            var files = System.IO.Directory.EnumerateFiles(
+                cellImagePath,
+                "*.png",
+                System.IO.SearchOption.AllDirectories
+                );
+            return files;
         }
         #endregion
         public static void DisplayBuilding(Canvas canvas, int takasaMapTip, int yokoMapTip, List<(BitmapImage, int, int)> listTakaiObj, List<Rectangle> getMap)

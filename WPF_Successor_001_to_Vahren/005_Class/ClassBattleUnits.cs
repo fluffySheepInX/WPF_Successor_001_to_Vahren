@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -50,5 +51,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region ListBuildingAlive
+        private List<Rectangle> _listBuildingAlive = new List<Rectangle>();
+        public List<Rectangle> ListBuildingAlive
+        {
+            get { return _listBuildingAlive; }
+            set { _listBuildingAlive = value; }
+        }
+        #endregion
     }
 }

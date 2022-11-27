@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
 
@@ -178,6 +180,29 @@ namespace WPF_Successor_001_to_Vahren
                     this.WindowState = WindowState.Maximized;
                 }
             }
+        }
+
+        public static Canvas GetCanvasBattleBack(Canvas canvas,
+                                                int _sizeClientWinWidth,
+                                                int _sizeClientWinHeight,
+                                                int CanvasMainWidth,
+                                                int CanvasMainHeight
+                                                )
+        {
+            Canvas backCanvas = new Canvas();
+            backCanvas.Name = StringName.gridMapBattle;
+            backCanvas.Background = Brushes.AliceBlue;
+            backCanvas.Width = _sizeClientWinWidth;
+            backCanvas.Height = _sizeClientWinHeight;
+            backCanvas.Margin = new Thickness()
+            {
+                Left = (CanvasMainWidth / 2) - (_sizeClientWinWidth / 2),
+                Top = (CanvasMainHeight / 2) - (_sizeClientWinHeight / 2)
+            };
+            backCanvas.Children.Add(canvas);
+
+            Canvas.SetZIndex(backCanvas, 98);
+            return backCanvas;
         }
 
     }
