@@ -5,18 +5,82 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="480" Width="320">
+             Height="485" Width="360">
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseRightButtonUp="btnClose_Click"
             >
-        <Border Height="480" Width="320" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+        <Border Name="borderWindow" Height="485" Width="360" Background="#454545" BorderBrush="Black" BorderThickness="5" />
 
-        <Label Width="300" Margin="10,10,0,0" HorizontalContentAlignment="Center" FontSize="23" Foreground="White" Content="タイトル" Name="lblTitle" />
+        <Label Width="310" Canvas.Left="5" Canvas.Top="10" HorizontalContentAlignment="Center" FontSize="23" Foreground="White" Content="タイトル" Name="lblTitle" />
 
-        <Button x:Name="btnClose" Width="35" Height="35" Margin="275,10,0,0" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="315" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
 
+        <ScrollViewer Name="scrollList" Width="340" Height="420" Canvas.Left="10" Canvas.Top="55" Background="Black"
+                VerticalScrollBarVisibility="Auto"
+                PreviewMouseLeftButtonDown="Raise_ZOrder"
+                MouseRightButtonUp="Disable_MouseEvent"
+                >
+            <StackPanel Name="panelList">
 
+<!--
+                <Grid Height="56" Margin="5,2,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.RowSpan="2" Height="48" Width="48">
+                        <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene001.png" />
+                    </Button>
+                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="戦列歩兵M14式" />
+                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金100" />
+                </Grid>
+
+                <Grid Height="56" Margin="5,2,0,2"/>
+                <Grid Height="56" Margin="5,2,0,2"/>
+
+                <Grid Height="56" Margin="5,2,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.RowSpan="2" Height="48" Width="48">
+                        <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene002.png" />
+                    </Button>
+                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="榴弾砲C11式" />
+                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金10000" />
+                </Grid>
+
+                <Grid Height="56" Margin="5,2,0,2"/>
+                <Grid Height="56" Margin="5,2,0,2"/>
+
+                <Grid Height="56" Margin="5,2,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.RowSpan="2" Height="48" Width="48">
+                        <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
+                    </Button>
+                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="フランチェスカ竜騎兵" />
+                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金1000" />
+                </Grid>
+-->
+
+            </StackPanel>
+        </ScrollViewer>
 
     </Canvas>
 </UserControl>

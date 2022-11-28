@@ -1045,7 +1045,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(new(classPowerAndCity.ClassPower.MasterTag, 0))).FirstOrDefault();
+            var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(new(classPowerAndCity.ClassPower.MasterTag, 1))).FirstOrDefault();
             if (result != null)
             {
                 this.ClassGameStatus.SelectionCityPoint = new Point

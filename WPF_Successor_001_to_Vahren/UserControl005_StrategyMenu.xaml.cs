@@ -71,10 +71,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
                 int gain_sum = 0;
-                var list_spot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
-                foreach (var item_spot in list_spot)
+                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
+                foreach (var itemSpot in listSpot)
                 {
-                    gain_sum += item_spot.Gain;
+                    gain_sum += itemSpot.Gain;
                 }
                 this.lblNameTotalGain.Content = gain_sum;
             }
@@ -90,12 +90,12 @@ namespace WPF_Successor_001_to_Vahren
             {
                 string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
                 int unit_count = 0;
-                var list_spot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
-                foreach (var item_spot in list_spot)
+                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
+                foreach (var itemSpot in listSpot)
                 {
-                    foreach (var item_group in item_spot.UnitGroup)
+                    foreach (var itemTroop in itemSpot.UnitGroup)
                     {
-                        unit_count += item_group.ListClassUnit.Count;
+                        unit_count += itemTroop.ListClassUnit.Count;
                     }
                 }
                 this.lblNameNumberUnit.Content = unit_count;
