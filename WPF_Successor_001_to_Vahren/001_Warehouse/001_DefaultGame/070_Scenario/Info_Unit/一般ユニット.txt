@@ -47,7 +47,7 @@ NewFormatUnit HowitzerC11
 
 	level = "1";
 	level_max = "100";
-	price   = "100";
+	price   = "300";
 	cost    = "10";
 	medical = "0";
 	hasExp  = "0";
@@ -85,7 +85,7 @@ NewFormatUnit DragoonFrancesca
 
 	level = "1";
 	level_max = "100";
-	price   = "100";
+	price   = "200";
 	cost    = "10";
 	medical = "0";
 	hasExp  = "0";
