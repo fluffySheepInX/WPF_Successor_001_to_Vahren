@@ -349,6 +349,9 @@ namespace WPF_Successor_001_to_Vahren
                             }
                         }
 
+                        classGameStatus.ClassBattle.BattleWhichIsThePlayer =
+                            classTestBattle.Player;
+
                         CreateMap(classTestBattle, _classConfigGameTitle, classGameStatus);
                     }
 
@@ -401,11 +404,11 @@ namespace WPF_Successor_001_to_Vahren
                 var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(player);
                 if (first == null)
                 {
-                    classTestBattle.Player = String.Empty;
+                    classTestBattle.Player = _010_Enum.BattleWhichIsThePlayer.Sortie;
                 }
                 else
                 {
-                    classTestBattle.Player = first.Value;
+                    classTestBattle.Player = (_010_Enum.BattleWhichIsThePlayer)Enum.Parse(typeof(_010_Enum.BattleWhichIsThePlayer), first.Value, true);
                 }
             }
             //memberKougeki

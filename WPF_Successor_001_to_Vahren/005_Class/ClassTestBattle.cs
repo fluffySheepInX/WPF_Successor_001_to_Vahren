@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassTestBattle
     {
-        private string player = "kougeki";
-        public string Player
+        private BattleWhichIsThePlayer player = BattleWhichIsThePlayer.Sortie;
+        public BattleWhichIsThePlayer Player
         {
             get { return player; }
             set { player = value; }

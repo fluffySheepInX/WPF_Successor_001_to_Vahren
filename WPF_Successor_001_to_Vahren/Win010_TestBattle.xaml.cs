@@ -109,8 +109,8 @@ namespace WPF_Successor_001_to_Vahren
 
             //マップそのもの
             Canvas canvas = new Canvas();
-            int takasaMapTip = 32;
-            int yokoMapTip = 64;
+            int takasaMapTip = ClassStaticBattle.TakasaMapTip;
+            int yokoMapTip = ClassStaticBattle.yokoMapTip;
             canvas.Name = StringName.windowMapBattle;
             canvas.Background = Brushes.Black;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
@@ -261,7 +261,7 @@ namespace WPF_Successor_001_to_Vahren
             ////出撃ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(0, canvas.Height / 2);
                 Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
@@ -287,7 +287,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count % 2 == 0)
+                if (ClassGameStatus.ClassBattle.SortieUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -336,7 +336,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -412,7 +415,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -488,7 +494,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -536,7 +545,7 @@ namespace WPF_Successor_001_to_Vahren
             ////防衛ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.DefUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.DefUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
@@ -562,7 +571,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattle.DefUnitGroup.Count % 2 == 0)
+                if (ClassGameStatus.ClassBattle.DefUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -617,8 +626,10 @@ namespace WPF_Successor_001_to_Vahren
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
                         //プレイヤー側のみイベントをくっつけるようにする
-                        //今は後回し
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -695,7 +706,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -772,7 +786,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -977,7 +994,22 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //SortieUnitGroupではなくプレイヤー側でないとダメ
-            foreach (var item in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (var item in lisClassHorizontalUnit)
             {
                 var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
                 if (re != null)
@@ -1009,7 +1041,22 @@ namespace WPF_Successor_001_to_Vahren
             var can = (Canvas)sender;
             var bor = (Border)can.Parent;
             long name = long.Parse((string)(can).Tag);
-            foreach (var item in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+            
+            foreach (var item in lisClassHorizontalUnit)
             {
                 var re = item.ListClassUnit.Where(x => x.ID == name).FirstOrDefault();
                 if (re != null)

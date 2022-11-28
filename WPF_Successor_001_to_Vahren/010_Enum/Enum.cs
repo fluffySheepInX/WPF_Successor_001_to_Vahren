@@ -64,4 +64,13 @@
         WALL2
         , GATE
     }
+
+    public enum BattleWhichIsThePlayer
+    {
+        Sortie
+            ,
+        Def
+            ,
+        None
+    }
 }

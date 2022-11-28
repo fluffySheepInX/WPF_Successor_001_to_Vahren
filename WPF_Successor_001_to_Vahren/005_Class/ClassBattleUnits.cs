@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -57,6 +58,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _listBuildingAlive; }
             set { _listBuildingAlive = value; }
+        }
+        #endregion
+
+        #region BattleWhichIsThePlayer
+        private BattleWhichIsThePlayer _battleWhichIsThePlayer;
+        public BattleWhichIsThePlayer BattleWhichIsThePlayer
+        {
+            get { return _battleWhichIsThePlayer; }
+            set { _battleWhichIsThePlayer = value; }
         }
         #endregion
     }

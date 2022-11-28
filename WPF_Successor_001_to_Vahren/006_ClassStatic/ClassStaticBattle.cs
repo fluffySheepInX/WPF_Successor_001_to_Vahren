@@ -15,6 +15,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
     public static class ClassStaticBattle
     {
+        public static int TakasaMapTip { get; set; } = 32;
+        public static int yokoMapTip { get; set; } = 64;
+
         public static void AddBuilding(ClassGameStatus? classGameStatus)
         {
             if (classGameStatus == null) return;
