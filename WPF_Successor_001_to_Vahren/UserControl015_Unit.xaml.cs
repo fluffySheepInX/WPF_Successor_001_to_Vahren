@@ -99,6 +99,10 @@ namespace WPF_Successor_001_to_Vahren
                 btnItem.IsEnabled = false;
             }
 
+            // まだ処理を作ってないのでボタンを無効にする
+            btnDismiss.IsEnabled = false;
+            btnItem.IsEnabled = false;
+
             // ユニット画像は戦場での大きさで表示したい、けど、サイズのデータがClassUnitにない
             if (targetUnit.Image != string.Empty)
             {
@@ -166,8 +170,8 @@ namespace WPF_Successor_001_to_Vahren
             }
             // 経験値
             {
-                //this.lblExp.Content = "ID = " + targetUnit.ID; // ユニット番号を表示する実験用
-                this.lblExp.Content = "Member ID = " + member_id; // メンバー番号を表示する実験用
+                this.lblExp.Content = "ID = " + targetUnit.ID; // ユニット番号を表示する実験用
+                //this.lblExp.Content = "Member ID = " + member_id; // メンバー番号を表示する実験用
             }
         }
 
@@ -284,6 +288,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
+
 
         // ユニットの雇用ウインドウを開く
         private void btnMercenary_Click(object sender, RoutedEventArgs e)

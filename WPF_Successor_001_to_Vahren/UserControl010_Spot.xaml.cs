@@ -239,6 +239,9 @@ namespace WPF_Successor_001_to_Vahren
                 btnPolitics.IsEnabled = false;
             }
 
+            // まだ処理を作ってないのでボタンを無効にする
+            btnPolitics.IsEnabled = false;
+
             //旗は存在する時だけ
             if (classPowerAndCity.ClassPower.FlagPath != string.Empty)
             {
