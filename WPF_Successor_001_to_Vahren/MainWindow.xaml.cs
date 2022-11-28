@@ -1045,6 +1045,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            //データの構造的に、人数も指定しないと駄目だったのかも。
             var result = this.ClassGameStatus.AllListSpot.Where(x => x.ListMember.Contains(new(classPowerAndCity.ClassPower.MasterTag, 1))).FirstOrDefault();
             if (result != null)
             {
@@ -1389,7 +1390,7 @@ namespace WPF_Successor_001_to_Vahren
                 //メンバー配置
                 foreach (var itemMember in itemSpot.ListMember)
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(itemMember.Item1)).FirstOrDefault();
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemMember.Item1).FirstOrDefault();
                     if (info == null)
                     {
                         continue;
@@ -1409,7 +1410,7 @@ namespace WPF_Successor_001_to_Vahren
                 //中立配置
                 foreach (var ListWanderingMonster in itemSpot.ListWanderingMonster)
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(ListWanderingMonster.Item1)).FirstOrDefault();
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == ListWanderingMonster.Item1).FirstOrDefault();
                     if (info == null)
                     {
                         continue;

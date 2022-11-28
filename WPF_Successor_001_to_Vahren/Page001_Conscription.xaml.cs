@@ -60,7 +60,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     var ext = mainWindow.ClassGameStatus
                         .ListUnit
-                        .Where(x => x.NameTag.Contains(item))
+                        .Where(x => x.NameTag ==item)
                         .FirstOrDefault();
 
                     if (ext == null)
@@ -396,7 +396,7 @@ namespace WPF_Successor_001_to_Vahren
 
             ClassUnit? extName = mainWindow.ClassGameStatus
                                     .ListUnit
-                                    .Where(x => x.NameTag.Contains(convTag.ClassUnit.NameTag))
+                                    .Where(x => x.NameTag ==convTag.ClassUnit.NameTag)
                                     .FirstOrDefault();
 
             if (extName == null)
@@ -526,7 +526,7 @@ namespace WPF_Successor_001_to_Vahren
 
             ClassUnit? extName = mainWindow.ClassGameStatus
                         .ListUnit
-                        .Where(x => x.NameTag.Contains(convTag.ClassUnit.NameTag))
+                        .Where(x => x.NameTag == convTag.ClassUnit.NameTag)
                         .FirstOrDefault();
 
             if (extName == null)

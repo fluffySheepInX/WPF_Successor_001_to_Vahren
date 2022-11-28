@@ -56,7 +56,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 for (int i = 0; i < item.Item2; i++)
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(item.Item1)).FirstOrDefault();
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == item.Item1).FirstOrDefault();
                     if (info == null)
                     {
                         continue;
@@ -77,7 +77,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 for (int i = 0; i < item.Item2; i++)
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag.Contains(item.Item1)).FirstOrDefault();
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == item.Item1).FirstOrDefault();
                     if (info == null)
                     {
                         continue;
