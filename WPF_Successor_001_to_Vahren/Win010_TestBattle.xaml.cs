@@ -1466,7 +1466,7 @@ namespace WPF_Successor_001_to_Vahren
                             }
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy, token)), tokenSource);
+                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, ClassGameStatus, this)), tokenSource);
                             t.Add(itemGroupBy.ID, aaa);
                         }
                     }
@@ -1511,172 +1511,11 @@ namespace WPF_Successor_001_to_Vahren
                             }
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => TaskBattleMoveExecuteAsync(itemGroupBy, token)), tokenSource);
+                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, ClassGameStatus, this)), tokenSource);
                             t.Add(itemGroupBy.ID, aaa);
                         }
                     }
                 }
-            }
-        }
-
-
-        private async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token)
-        {
-            try
-            {
-                ////移動し過ぎを防止
-                //int counter = 1000;
-
-                while (true)
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
-
-                    ClassVec classVec = new ClassVec();
-                    classVec.Target = new Point(classUnit.OrderPosi.X, classUnit.OrderPosi.Y);
-                    classVec.Vec = new Point(classUnit.VecMove.X, classUnit.VecMove.Y);
-                    classVec.Speed = classUnit.Speed;
-
-                    if (classVec.Hit(new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y)))
-                    {
-                        classUnit.OrderPosi = new Point()
-                        {
-                            X = classUnit.NowPosi.X,
-                            Y = classUnit.NowPosi.Y
-                        };
-                        classUnit.FlagMoving = false;
-                        return;
-                    }
-                    else
-                    {
-                        if (classUnit.FlagMoving == false)
-                        {
-                            return;
-                        }
-
-                        if (classUnit.VecMove.X == 0 && classUnit.VecMove.Y == 0)
-                        {
-                            classUnit.VecMove = new Point() { X = 0.5, Y = 0.5 };
-                        }
-
-                        //移動後の位置計算
-                        double afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed);
-                        double afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed);
-
-                        await Task.Run(() =>
-                        {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
-                            {
-                                try
-                                {
-                                    bool ch = true;
-                                    var targetTip = ClassStaticBattle.GetRecObj(ClassGameStatus.ClassBattle.ListBuildingAlive, afterNowPosiX, afterNowPosiY);
-                                    ch = ClassStaticBattle.CheckRecObj(ch, targetTip, ClassGameStatus);
-
-                                    if (ch == true)
-                                    {
-                                        //移動後に建築物無し
-                                        classUnit.NowPosi = new Point()
-                                        {
-                                            X = afterNowPosiX,
-                                            Y = afterNowPosiY
-                                        };
-
-                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                        if (re1 != null)
-                                        {
-                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                            if (re2 != null)
-                                            {
-                                                re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ////移動後に建築物有り
-                                        //移動後の位置を再計算（一度バックする）
-                                        afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
-                                        afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
-                                        //afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(32));
-                                        //afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(16));
-                                        //行列変換
-                                        var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
-
-                                        bool ch2 = true;
-                                        var targetTip2 = ClassStaticBattle.GetRecObj(ClassGameStatus.ClassBattle.ListBuildingAlive, resultConv.Item1, resultConv.Item2);
-                                        ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, ClassGameStatus);
-
-                                        if (ch2 == true)
-                                        {
-                                            //移動後に建築物無し
-                                            classUnit.NowPosi = new Point()
-                                            {
-                                                X = resultConv.Item1,
-                                                Y = resultConv.Item2
-                                            };
-
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                            if (re1 != null)
-                                            {
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                                if (re2 != null)
-                                                {
-                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
-                                                }
-                                            }
-
-                                            //再計算する
-                                            var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                from: new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y),
-                                                to: classUnit.OrderPosi
-                                                );
-                                            classUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                                        }
-                                        else
-                                        {
-                                            ////バックして90度変換した後に建築物有り
-                                            //止まる
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                            if (re1 != null)
-                                            {
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                                if (re2 != null)
-                                                {
-                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
-                                                }
-                                            }
-                                            classUnit.OrderPosi = classUnit.NowPosi;
-                                            classUnit.FlagMoving = false;
-                                            return;
-                                        }
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    //移動中にゲームを落とすとエラーになるので暫定的に
-                                    throw;
-                                }
-                            }));
-                        });
-                    }
-
-                    //counter--;
-
-                    //if (counter <= 0)
-                    //{
-                    //    throw new Exception("ErrorNumber:000001");
-                    //}
-
-                }
-            }
-            catch (Exception)
-            {
-                throw;
             }
         }
 
