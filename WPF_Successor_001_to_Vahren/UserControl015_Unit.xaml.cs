@@ -139,11 +139,8 @@ namespace WPF_Successor_001_to_Vahren
                         this.imgFace.Width = 200;
                     }
                 }
-                this.imgFace.Margin = new Thickness()
-                {
-                    Left = this.Width - this.imgFace.Width - 10,
-                    Top = this.Height - this.imgFace.Height - 10
-                };
+                Canvas.SetLeft(this.imgFace, this.Width - this.imgFace.Width - 10);
+                Canvas.SetTop(this.imgFace, this.Height - this.imgFace.Height - 10);
                 this.imgFace.Source = bitimg1;
             }
             // 旗は存在する時だけ
