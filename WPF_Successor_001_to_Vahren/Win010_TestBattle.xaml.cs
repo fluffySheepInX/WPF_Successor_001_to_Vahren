@@ -945,7 +945,7 @@ namespace WPF_Successor_001_to_Vahren
         private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ドラッグを開始する
-            UIElement el = sender as UIElement;
+            UIElement? el = sender as UIElement;
             if (el != null)
             {
                 this.ClassGameStatus.IsDrag = true;
@@ -960,7 +960,11 @@ namespace WPF_Successor_001_to_Vahren
             // ドラック中なら終了する
             if (this.ClassGameStatus.IsDrag == true)
             {
-                UIElement el = sender as UIElement;
+                UIElement? el = sender as UIElement;
+                if (el == null)
+                {
+                    return;
+                }
                 el.ReleaseMouseCapture();
                 el.MouseLeftButtonUp -= CanvasMapBattle_MouseLeftButtonUp;
                 el.MouseMove -= CanvasMapBattle_MouseMove;
@@ -975,7 +979,11 @@ namespace WPF_Successor_001_to_Vahren
                 var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
                 if (ri != null)
                 {
-                    UIElement el = sender as UIElement;
+                    UIElement? el = sender as UIElement;
+                    if (el == null)
+                    {
+                        return;
+                    }
                     Point pt = e.GetPosition(el);
 
                     var thickness = new Thickness();
@@ -1055,7 +1063,7 @@ namespace WPF_Successor_001_to_Vahren
                 default:
                     break;
             }
-            
+
             foreach (var item in lisClassHorizontalUnit)
             {
                 var re = item.ListClassUnit.Where(x => x.ID == name).FirstOrDefault();
