@@ -28,7 +28,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // 項目サイズをここで調節できます
-        private const int item_height = 56, btn_width = 48, btn_height = 48;
+        private const int item_height = 56, space_height = 4, btn_width = 52, btn_height = 52;
 
         // 最初に呼び出した時
         public void SetData()
@@ -70,7 +70,7 @@ namespace WPF_Successor_001_to_Vahren
             else if (targetUnit == null)
             {
                 // targetUnit が null なら領地の雇用とみなす
-                this.lblTitle.Content = targetSpot.Name + "の雇用";
+                this.lblTitle.Content = targetSpot.Name + "で雇用";
             }
             else
             {
@@ -85,8 +85,23 @@ namespace WPF_Successor_001_to_Vahren
             // 勢力の標準雇用クラス
             foreach (var itemNameTag in targetPower.ListCommonConscription)
             {
+                // 既に登録済みのクラスは省く
+                bool isFound = false;
+                foreach (var oldItem in this.panelList.Children.OfType<Grid>())
+                {
+                    if (oldItem.Name == itemNameTag)
+                    {
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (isFound == true)
+                {
+                    continue;
+                }
+
                 // 元にするクラスのデータを取得する
-                var itemBaseUnit = mainWindow.ClassGameStatus
+                ClassUnit itemBaseUnit = mainWindow.ClassGameStatus
                     .ListUnit
                     .Where(x => x.NameTag == itemNameTag)
                     .FirstOrDefault();
@@ -110,7 +125,8 @@ namespace WPF_Successor_001_to_Vahren
                 gridItem.RowDefinitions.Add(rowDef1);
                 gridItem.RowDefinitions.Add(rowDef2);
                 gridItem.Height = item_height;
-                gridItem.Margin = new Thickness(5,2,0,2);
+                gridItem.Margin = new Thickness(5, space_height, 0, space_height);
+                gridItem.Name = itemNameTag;
 
                 // ユニット画像
                 List<string> strings = new List<string>();
@@ -135,14 +151,13 @@ namespace WPF_Successor_001_to_Vahren
                 btnUnit.Height = btn_height;
                 btnUnit.Content = imgUnit;
                 btnUnit.Click += btnUnit_Click;
-                btnUnit.PreviewMouseRightButtonDown += btnUnit_PreviewMouseRightButtonDown;
+                btnUnit.MouseRightButtonDown += btnUnit_MouseRightButtonDown;
                 Grid.SetRowSpan(btnUnit, 2);
                 gridItem.Children.Add(btnUnit);
 
                 // 名前
                 Label lblName = new Label();
                 lblName.Name = "lblName" + item_count.ToString();
-                lblName.Tag = itemBaseUnit;
                 lblName.FontSize = 20;
                 lblName.Padding = new Thickness(-5);
                 lblName.Foreground = Brushes.White;
@@ -154,7 +169,6 @@ namespace WPF_Successor_001_to_Vahren
                 // 金額
                 Label lblPrice = new Label();
                 lblPrice.Name = "lblPrice" + item_count.ToString();
-                lblPrice.Tag = itemBaseUnit;
                 lblPrice.FontSize = 20;
                 lblPrice.Padding = new Thickness(-5);
                 lblPrice.Foreground = Brushes.White;
@@ -168,7 +182,9 @@ namespace WPF_Successor_001_to_Vahren
                 item_count++;
             }
 
+/*
             // この領地で雇用できるユニット（中立時に登場するモンスターも含む）
+            // spot構造体の monster や wanderingMonster は違う？
             if (targetSpot.ListWanderingMonster.Count > 0)
             {
                 // データ構造「クラス名*数値」の定義がヴァーレントゥーガと違う。
@@ -179,6 +195,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // まだデータとして設定されてない
             }
+*/
 
             // スクロール領域の高さとウインドウの高さの差分
             double diff_height = this.borderWindow.Height - this.scrollList.Height;
@@ -189,7 +206,7 @@ namespace WPF_Successor_001_to_Vahren
             // リストの項目数が 7個未満なら、ウインドウの高さを低くする
             if (item_count < 7)
             {
-                double new_height = (item_height + 4) * item_count;
+                double new_height = (item_height + space_height * 2) * item_count;
                 this.scrollList.Height = new_height;
                 this.borderWindow.Height = new_height + diff_height;
             }
@@ -428,15 +445,13 @@ namespace WPF_Successor_001_to_Vahren
         }
 
 
-        // 右ボタンを押してから離すまで、同じ要素上じゃないと反応しないようにする
-        private bool _isDown = false; // 外部に公開する必要なし
-        private void btnUnit_PreviewMouseRightButtonDown(object sender, MouseEventArgs e)
+        // 右ボタンを押して、同じ要素上で離した時だけ反応させる
+        private void btnUnit_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             // マウスのキャプチャを開始する
             UIElement el = (UIElement)sender;
             if (el != null)
             {
-                _isDown = true;
                 el.CaptureMouse();
                 el.MouseRightButtonUp += btnUnit_MouseRightButtonUp;
             }
@@ -444,23 +459,13 @@ namespace WPF_Successor_001_to_Vahren
         // ボタンを右クリックすると部隊の空の分まで雇う
         private void btnUnit_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
-            // キャプチャ中なら
-            if (_isDown == true)
+            // 右ボタンを押した時にイベント・ハンドラーが追加されるので、必ず押してるはず
+            UIElement el = (UIElement)sender;
+            el.ReleaseMouseCapture();
+            el.MouseRightButtonUp -= btnUnit_MouseRightButtonUp;
+            if (el.IsMouseOver == false)
             {
-                UIElement el = (UIElement)sender;
-                el.ReleaseMouseCapture();
-                el.MouseRightButtonUp -= btnUnit_MouseRightButtonUp;
-                _isDown = false;
-
                 // 右ボタンが他所で離された時は反応しない
-                if (el.IsMouseOver == false)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                // 他でマウスの右ボタンを押して、ここで上げても反応しない
                 return;
             }
 

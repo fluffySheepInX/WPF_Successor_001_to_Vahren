@@ -99,6 +99,7 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             // 出撃ボタン
                             Button btnSelect = new Button();
+                            btnSelect.IsEnabled = false; // まだ処理を作ってないのでボタンを無効にする
                             btnSelect.Name = "btnSelect" + i.ToString();
                             btnSelect.Height = tile_height / 2 - 4;
                             btnSelect.Width = header_width - 4;
@@ -119,6 +120,7 @@ namespace WPF_Successor_001_to_Vahren
                             cmbFormation.ItemsSource = formation;
                             cmbFormation.FontSize = 15;
                             cmbFormation.SelectedIndex = itemUnit.Formation.Id;
+                            //cmbFormation.SelectionChanged += cmbFormation_SelectionChanged;
                             this.canvasSpotUnit.Children.Add(cmbFormation);
                             Canvas.SetTop(cmbFormation, tile_height * i + tile_height / 2);
                         }
@@ -2115,6 +2117,26 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         #endregion
+
+/*
+        // 陣形が変更された時
+        private void cmbFormation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // どの部隊（先頭ユニット）の陣形か
+            ComboBox cmbFormation = (ComboBox)sender;
+            string unit_name = cmbFormation.Name;
+            string unit_id = unit_name.Replace("cmbFormation", String.Empty);
+            int troop_id = Int32.Parse(unit_id);
+
+            var classPowerAndCity = (ClassPowerAndCity)this.Tag;
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
+            ClassHorizontalUnit itemTroop = listTroop[troop_id];
+            ClassUnit itemUnit = itemTroop.ListClassUnit[0];
+
+            //itemUnit.Formation.Id = cmbFormation.SelectedIndex;
+        
+        }
+*/
 
         // ユニット情報ウインドウを開く
         private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
