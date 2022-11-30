@@ -5,47 +5,101 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="640" Width="480">
+             Height="640" Width="570">
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseRightButtonUp="btnClose_Click"
             >
-        <Border Height="640" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+        <Border Height="640" Width="570" Background="#454545" BorderBrush="Black" BorderThickness="5" />
 
-        <Image Canvas.Left="10" Canvas.Top="10" Height="32" Width="32" Name="imgUnit" />
+        <Image Canvas.Left="15" Canvas.Top="15" Height="32" Width="32" Name="imgUnit" />
 
-        <Image Stretch="Fill" Canvas.Left="400" Canvas.Top="10" Height="32" Width="32" Name="imgFlag" />
-        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="435" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+        <Image Stretch="Fill" Canvas.Left="483" Canvas.Top="33" Height="32" Width="32" Name="imgFlag" />
+        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="525" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
 
-        <Image Canvas.Left="370" Canvas.Top="530" Height="96" Width="96" Name="imgFace" />
+        <Image Canvas.Left="460" Canvas.Top="530" Height="96" Width="96" Name="imgFace" />
 
-        <StackPanel Canvas.Left="100" Canvas.Top="10">
-            <Label FontSize="23" Foreground="White" Content="ユニットの名前" Name="lblNameUnit" />
-            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" Content="クラス FontSize=20" Name="lblClass" />
-            <Label Height="25" Padding="-5" FontSize="18" Foreground="White" Content="経験値 FontSize=18" Name="lblExp" />
-
-        </StackPanel>
-
-        <StackPanel Canvas.Left="20" Canvas.Top="150">
-            <StackPanel Orientation="Horizontal" Height="30">
-                <Label Width="80" Padding="-5" FontSize="20" Foreground="White" HorizontalContentAlignment="Right" Content="移動型" />
-                <Label Width="120" Padding="-5" FontSize="20" Foreground="White" HorizontalContentAlignment="Right" Content="FontSize=20" Name="lblMoveType" />
+        <StackPanel Canvas.Left="90" Canvas.Top="5" Width="390">
+            <StackPanel Orientation="Horizontal" Height="45" HorizontalAlignment="Center">
+                <Label Padding="-5" FontSize="23" Foreground="White" VerticalContentAlignment="Center" Content="ユニットの名前" Name="lblNameUnit" />
+                <Label Padding="-5" FontSize="20" Foreground="#C8FFC8" VerticalContentAlignment="Center" Content="（種族名）" Name="lblRace" />
             </StackPanel>
-            
+            <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
+                <Label Padding="-5" FontSize="20" Foreground="White" Content="レベルとクラス名" Name="lblLevelClass" />
+                <Label Padding="-5" FontSize="20" Content="（性別）" Name="lblSex" />
+            </StackPanel>
+            <Label Height="30" Padding="-5" FontSize="18" Foreground="#00FFFF" HorizontalAlignment="Center" Content="経験値 FontSize=18" Name="lblExp" />
+            <Label Height="25" Padding="-5" FontSize="18" Foreground="#FFFF00" HorizontalAlignment="Center" Content="戦功値 999999" Name="lblMerits" />
         </StackPanel>
 
-        <StackPanel Canvas.Left="280" Canvas.Top="320">
-            <Label Height="20" Padding="-5" FontSize="16" Foreground="White" Content="耐性は FontSize=16" />
-            <Label Height="20" Padding="-5" FontSize="16" Foreground="White" Content="なんたらに強い" />
-
+        <StackPanel Canvas.Left="15" Canvas.Top="85">
+            <Label Height="30" Padding="-5" FontSize="18" Foreground="#FFC800" Content="身分" Name="lblRank" />
+            <Label Height="25" Padding="-5" FontSize="18" Foreground="#FFFF00" Content="信用度・忠誠" Name="lblLoyal" />
+        </StackPanel>
+        <StackPanel Canvas.Left="355" Canvas.Top="85" Width="200">
+            <Label Height="30" Padding="-5" FontSize="18" Foreground="#FFFF00" HorizontalAlignment="Right" Content="所持金 10485769" Name="lblMoney" />
+            <Label Height="25" Padding="-5" FontSize="18" Foreground="#00FFFF" HorizontalAlignment="Right" Content="維持費 999999" Name="lblCost" />
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="590">
-            <Button x:Name="btnDismiss" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="解雇"
+        <Border Canvas.Left="10" Canvas.Top="150" Height="435" Width="265" BorderBrush="White" BorderThickness="2" />
+        <StackPanel Canvas.Left="15" Canvas.Top="160" Width="85">
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="移動型" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="HP" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="MP" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="攻撃" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="防御" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="魔力" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="魔抵抗" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="素早さ" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="技術" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="HP回復" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="MP回復" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="移動力" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="召喚" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="財政力" />
+        </StackPanel>
+        <StackPanel Canvas.Left="95" Canvas.Top="160" Width="165">
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="FontSize=20" Name="lblMoveType" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="9999999/9999999" Name="lblHP" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="99999/99999" Name="lblMP" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblAttack" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblDefense" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblMagic" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblMagDef" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblSpeed" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblDext" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblHPRec" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="99/99" Name="lblMPRec" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="999/999" Name="lblMove" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Right" Content="99/99" Name="lblSummon" />
+            <Label Height="30" Padding="-5" FontSize="20" Foreground="#FFC800" HorizontalAlignment="Right" Content="9999" Name="lblFinance" />
+        </StackPanel>
+
+        <WrapPanel Canvas.Left="285" Canvas.Top="150" Width="272" Orientation="Horizontal" ItemHeight="34" ItemWidth="34" Name="panelSkill">
+            <Button Content="1" FontSize="20" BorderThickness="0"/>
+            <Button Content="2" FontSize="20" BorderThickness="0"/>
+            <Button Content="3" FontSize="20" BorderThickness="0"/>
+            <Button Content="4" FontSize="20" BorderThickness="0"/>
+            <Button Content="5" FontSize="20" BorderThickness="0"/>
+            <Button Content="6" FontSize="20" BorderThickness="0"/>
+            <Button Content="7" FontSize="20" BorderThickness="0"/>
+            <Button Content="8" FontSize="20" BorderThickness="0"/>
+            <Button Content="9" FontSize="20" BorderThickness="0"/>
+            <Button Content="10" FontSize="20" BorderThickness="0"/>
+        </WrapPanel>
+
+        <StackPanel Canvas.Left="285" Canvas.Top="320">
+            <Label Height="20" Padding="-5" FontSize="16" Content="耐性は FontSize=16" />
+            <Label Height="20" Padding="-5" FontSize="16" Content="なんたらに強い" />
+            <Label Height="20" Padding="-5" FontSize="16" Content="かんたらに弱い" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Canvas.Left="15" Canvas.Top="595">
+            <Button x:Name="btnDismiss" Width="80" Height="35" Margin="0,0,5,0" FontSize="20" Content="解雇"
                     PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
-            <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+            <Button x:Name="btnMercenary" Width="80" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
                     Click="btnMercenary_Click"
                     PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"

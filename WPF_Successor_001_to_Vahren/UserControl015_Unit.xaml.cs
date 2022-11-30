@@ -70,21 +70,22 @@ namespace WPF_Successor_001_to_Vahren
             ClassUnit targetUnit = classCityAndUnit.ClassUnit;
 
             // 部隊内でのインデックスを調べる
-            int j, member_id = -1;
+            // 放浪人材は陪臣の人数を表示する
+            int member_id = 0, member_count = 0;
             var listTroop = classCityAndUnit.ClassPowerAndCity.ClassSpot.UnitGroup;
             foreach (var itemTroop in listTroop)
             {
-                j = 0;
+                member_id = 0;
                 foreach (var itemUnit in itemTroop.ListClassUnit)
                 {
                     if (itemUnit == targetUnit)
                     {
-                        member_id = j;
+                        member_count = itemTroop.ListClassUnit.Count;
                         break;
                     }
-                    j++;
+                    member_id++;
                 }
-                if (member_id >= 0)
+                if (member_count > 0)
                 {
                     break;
                 }
@@ -161,14 +162,79 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.lblNameUnit.Content = targetUnit.Name;
             }
-            // クラス
-            {
-                this.lblClass.Content = this.Name; // ウインドウ番号を表示する実験用
+            // 種族
+            if (targetUnit.Race != string.Empty){
+                this.lblRace.Content = "（" + targetUnit.Race + "）";
             }
+            // レベルとクラス
+            {
+                //this.lblClass.Content = this.Name; // ウインドウ番号を表示する実験用
+                this.lblLevelClass.Content = "Lv" + targetUnit.Level.ToString() + " " + targetUnit.Class;
+            }
+
             // 経験値
             {
-                this.lblExp.Content = "ID = " + targetUnit.ID; // ユニット番号を表示する実験用
-                //this.lblExp.Content = "Member ID = " + member_id; // メンバー番号を表示する実験用
+                int required_exp = targetUnit.Exp;   // レベルアップに必要な経験値
+                int level_up = targetUnit.Level - 1; // レベルアップ回数
+                while (level_up > 0)
+                {
+                    required_exp = targetUnit.Exp + required_exp * targetUnit.Exp_mul / 100;
+                    level_up--;
+                }
+                this.lblExp.Content = "EXP 0/" + required_exp.ToString();
+            }
+            // 戦功値
+            {
+                this.lblMerits.Content = "Member = " + member_id + "/" + member_count; // メンバー番号を表示する実験用
+            }
+
+            // 所持金
+            {
+                this.lblMoney.Content = "ID = " + targetUnit.ID; // ユニット番号を表示する実験用
+            }
+            // 維持費
+            {
+                this.lblCost.Content = "維持費 " + targetUnit.Cost.ToString();
+            }
+
+            // 人材の時だけ項目を表示する
+            if (targetUnit.Talent == "on")
+            {
+                // マスターなら忠誠ではなく信用度を表示する
+                if (targetUnit.NameTag == targetPower.MasterTag)
+                {
+                    this.lblRank.Content = "マスター";
+                    this.lblLoyal.Content = "信用度 ?";
+                }
+                else
+                {
+                    this.lblRank.Content = "一般";
+                    this.lblLoyal.Content = "忠誠 " + targetUnit.Loyal.ToString();
+                }
+            }
+            else
+            {
+                // 一般兵は表示しない
+                this.lblRank.Content = string.Empty;
+                this.lblLoyal.Content = string.Empty;
+            }
+
+            // 能力値
+            {
+                this.lblMoveType.Content = targetUnit.MoveType;
+                this.lblHP.Content = targetUnit.Hp.ToString() + "/" + targetUnit.Hp.ToString();
+                this.lblMP.Content = targetUnit.Mp.ToString() + "/" + targetUnit.Mp.ToString();
+                this.lblAttack.Content = targetUnit.Attack.ToString() + "/" + targetUnit.Attack.ToString();
+                this.lblDefense.Content = targetUnit.Defense.ToString() + "/" + targetUnit.Defense.ToString();
+                this.lblMagic.Content = targetUnit.Magic.ToString() + "/" + targetUnit.Magic.ToString();
+                this.lblMagDef.Content = targetUnit.MagDef.ToString() + "/" + targetUnit.MagDef.ToString();
+                this.lblSpeed.Content = targetUnit.Speed.ToString() + "/" + targetUnit.Speed.ToString();
+                this.lblDext.Content = targetUnit.Dext.ToString() + "/" + targetUnit.Dext.ToString();
+                this.lblHPRec.Content = targetUnit.Hprec.ToString() + "/" + targetUnit.Hprec.ToString();
+                this.lblMPRec.Content = targetUnit.Mprec.ToString() + "/" + targetUnit.Mprec.ToString();
+                this.lblMove.Content = targetUnit.Move.ToString() + "/" + targetUnit.Move.ToString();
+                this.lblSummon.Content = targetUnit.Summon_max.ToString() + "/" + targetUnit.Summon_max.ToString();
+                this.lblFinance.Content = targetUnit.Finance.ToString();
             }
         }
 

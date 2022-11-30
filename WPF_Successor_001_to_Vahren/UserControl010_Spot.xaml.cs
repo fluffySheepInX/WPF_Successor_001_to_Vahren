@@ -69,12 +69,6 @@ namespace WPF_Successor_001_to_Vahren
         {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
 
-            // 陣形リスト
-            ObservableCollection<ClassFormation> formation = new ObservableCollection<ClassFormation>();
-            formation.Add(new ClassFormation() { Id = 0, Formation = _010_Enum.Formation.F });
-            formation.Add(new ClassFormation() { Id = 1, Formation = _010_Enum.Formation.M });
-            formation.Add(new ClassFormation() { Id = 2, Formation = _010_Enum.Formation.B });
-
             // 画像のディレクトリ
             List<string> strings = new List<string>();
             strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
@@ -115,12 +109,13 @@ namespace WPF_Successor_001_to_Vahren
                             cmbFormation.Height = tile_height / 2 - 4;
                             cmbFormation.Width = header_width - 4;
                             cmbFormation.Margin = new Thickness(2);
-                            cmbFormation.SelectedValuePath = "Id";
-                            cmbFormation.DisplayMemberPath = "Formation";
-                            cmbFormation.ItemsSource = formation;
+                            // _010_Enum.Formation の順番に表示するので、Enum数値と Index は同じになる
+                            cmbFormation.Items.Add(_010_Enum.Formation.F.ToString());
+                            cmbFormation.Items.Add(_010_Enum.Formation.M.ToString());
+                            cmbFormation.Items.Add(_010_Enum.Formation.B.ToString());
                             cmbFormation.FontSize = 15;
-                            cmbFormation.SelectedIndex = itemUnit.Formation.Id;
-                            //cmbFormation.SelectionChanged += cmbFormation_SelectionChanged;
+                            cmbFormation.SelectedIndex = (int)itemUnit.Formation.Formation;
+                            cmbFormation.SelectionChanged += cmbFormation_SelectionChanged;
                             this.canvasSpotUnit.Children.Add(cmbFormation);
                             Canvas.SetTop(cmbFormation, tile_height * i + tile_height / 2);
                         }
@@ -2118,7 +2113,6 @@ namespace WPF_Successor_001_to_Vahren
 
         #endregion
 
-/*
         // 陣形が変更された時
         private void cmbFormation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -2132,11 +2126,8 @@ namespace WPF_Successor_001_to_Vahren
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             ClassHorizontalUnit itemTroop = listTroop[troop_id];
             ClassUnit itemUnit = itemTroop.ListClassUnit[0];
-
-            //itemUnit.Formation.Id = cmbFormation.SelectedIndex;
-        
+            itemUnit.Formation.Formation = (_010_Enum.Formation)cmbFormation.SelectedIndex;
         }
-*/
 
         // ユニット情報ウインドウを開く
         private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
