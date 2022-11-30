@@ -46,7 +46,7 @@
             <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
         </StackPanel>
 
-        <ScrollViewer Width="460" Height="535" Canvas.Left="10" Canvas.Top="145" Background="Black"
+        <ScrollViewer Width="460" Height="535" Canvas.Left="10" Canvas.Top="145" Background="#262626"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
                 PreviewMouseLeftButtonDown="Raise_ZOrder"
