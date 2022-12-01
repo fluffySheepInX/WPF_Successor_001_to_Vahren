@@ -12,9 +12,9 @@
             >
         <Border Name="borderWindow" Height="515" Width="360" Background="#454545" BorderBrush="Black" BorderThickness="5" />
 
-        <Label Width="310" Canvas.Left="5" Canvas.Top="10" HorizontalContentAlignment="Center" FontSize="23" Foreground="White" Content="タイトル" Name="lblTitle" />
+        <TextBlock Width="310" Canvas.Left="5" Canvas.Top="15" TextAlignment="Center" FontSize="23" Foreground="White" Text="タイトル" Name="txtTitle" />
 
-        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="315" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="315" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
         <ScrollViewer Name="scrollList" Width="340" Height="448" Canvas.Left="10" Canvas.Top="57" Background="#262626"
                 VerticalScrollBarVisibility="Auto"
@@ -36,8 +36,8 @@
                     <Button Grid.RowSpan="2" Height="52" Width="52">
                         <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene001.png" />
                     </Button>
-                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="戦列歩兵M14式" />
-                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金100" />
+                    <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="戦列歩兵M14式" />
+                    <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金100" />
                 </Grid>
 
                 <Grid Height="56" Margin="5,4,0,4">
@@ -52,8 +52,8 @@
                     <Button Grid.RowSpan="2" Height="52" Width="52">
                         <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene002.png" />
                     </Button>
-                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="榴弾砲C11式" />
-                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金10000" />
+                    <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="榴弾砲C11式" />
+                    <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金10000" />
                 </Grid>
 
                 <Grid Height="56" Margin="5,4,0,4">
@@ -68,8 +68,8 @@
                     <Button Grid.RowSpan="2" Height="52" Width="52">
                         <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
                     </Button>
-                    <Label Grid.Column="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="フランチェスカ竜騎兵" />
-                    <Label Grid.Column="1" Grid.Row="1" Padding="-5" FontSize="20" Foreground="White" HorizontalAlignment="Center" Content="金1000" />
+                    <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="フランチェスカ竜騎兵" />
+                    <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金1000" />
                 </Grid>
 -->
 

@@ -36,7 +36,7 @@ namespace WPF_Successor_001_to_Vahren
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
-            	return;
+                return;
             }
 
             // ユニットの情報を表示する
@@ -62,7 +62,7 @@ namespace WPF_Successor_001_to_Vahren
             // タイトル
             if (targetSpot == null)
             {
-                this.lblTitle.Content = this.Name; // ウインドウ番号を表示する実験用
+                this.txtTitle.Text = this.Name; // ウインドウ番号を表示する実験用
 
                 // targetSpot は必ず指定しないといけない
                 return;
@@ -70,12 +70,12 @@ namespace WPF_Successor_001_to_Vahren
             else if (targetUnit == null)
             {
                 // targetUnit が null なら領地の雇用とみなす
-                this.lblTitle.Content = targetSpot.Name + "で雇用";
+                this.txtTitle.Text = targetSpot.Name + "で雇用";
             }
             else
             {
                 // targetSpot に居る targetUnit による雇用とみなす
-                this.lblTitle.Content = targetUnit.Name + "の雇用";
+                this.txtTitle.Text = targetUnit.Name + "の雇用";
             }
 
             // 雇用可能なユニットのリストを初期化する
@@ -149,6 +149,7 @@ namespace WPF_Successor_001_to_Vahren
                 //btnUnit.Background = Brushes.Transparent;
                 btnUnit.Width = btn_width;
                 btnUnit.Height = btn_height;
+                btnUnit.Focusable = false;
                 btnUnit.Content = imgUnit;
                 btnUnit.Click += btnUnit_Click;
                 btnUnit.MouseRightButtonDown += btnUnit_MouseRightButtonDown;
@@ -156,27 +157,25 @@ namespace WPF_Successor_001_to_Vahren
                 gridItem.Children.Add(btnUnit);
 
                 // 名前
-                Label lblName = new Label();
-                lblName.Name = "lblName" + item_count.ToString();
-                lblName.FontSize = 20;
-                lblName.Padding = new Thickness(-5);
-                lblName.Foreground = Brushes.White;
-                lblName.HorizontalAlignment = HorizontalAlignment.Center;
-                lblName.Content = itemBaseUnit.Name;
-                Grid.SetColumn(lblName, 1);
-                gridItem.Children.Add(lblName);
+                TextBlock txtName = new TextBlock();
+                txtName.Name = "txtName" + item_count.ToString();
+                txtName.FontSize = 20;
+                txtName.Foreground = Brushes.White;
+                txtName.HorizontalAlignment = HorizontalAlignment.Center;
+                txtName.Text = itemBaseUnit.Name;
+                Grid.SetColumn(txtName, 1);
+                gridItem.Children.Add(txtName);
 
                 // 金額
-                Label lblPrice = new Label();
-                lblPrice.Name = "lblPrice" + item_count.ToString();
-                lblPrice.FontSize = 20;
-                lblPrice.Padding = new Thickness(-5);
-                lblPrice.Foreground = Brushes.White;
-                lblPrice.HorizontalAlignment = HorizontalAlignment.Center;
-                lblPrice.Content = "金" + itemBaseUnit.Price;
-                Grid.SetColumn(lblPrice, 1);
-                Grid.SetRow(lblPrice, 1);
-                gridItem.Children.Add(lblPrice);
+                TextBlock txtPrice = new TextBlock();
+                txtPrice.Name = "txtPrice" + item_count.ToString();
+                txtPrice.FontSize = 20;
+                txtPrice.Foreground = Brushes.White;
+                txtPrice.HorizontalAlignment = HorizontalAlignment.Center;
+                txtPrice.Text = "金" + itemBaseUnit.Price.ToString();
+                Grid.SetColumn(txtPrice, 1);
+                Grid.SetRow(txtPrice, 1);
+                gridItem.Children.Add(txtPrice);
 
                 this.panelList.Children.Add(gridItem);
                 item_count++;
@@ -341,7 +340,7 @@ namespace WPF_Successor_001_to_Vahren
             // 雇用するユニットの元データ
             var btnUnit = (Button)sender;
             ClassUnit baseUnit = (ClassUnit)btnUnit.Tag;
-            //this.lblTitle.Content = baseUnit.Name + "を一人雇う"; // 実験用
+            //this.txtTitle.Text = baseUnit.Name + "を一人雇う"; // 実験用
 
             // 金が足りなかったらダメ
             if (targetPower.Money < baseUnit.Price)
@@ -551,7 +550,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 add_count--;
             }
-            //this.lblTitle.Content = baseUnit.Name + "を" + add_count + "人雇う"; // 実験用
+            //this.txtTitle.Text = baseUnit.Name + "を" + add_count + "人雇う"; // 実験用
 
             // 資金を減らす
             targetPower.Money -= baseUnit.Price * add_count;

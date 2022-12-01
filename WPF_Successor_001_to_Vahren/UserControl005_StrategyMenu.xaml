@@ -9,45 +9,45 @@
       >
     <Border Background="#454545" BorderBrush="Black" BorderThickness="5">
         <Canvas>
-            <Image Stretch="Fill" Margin="0,6,0,0" Height="32" Width="32" Name="imgFlag"></Image>
-            <Label Width="250" Height="40" FontSize="23" Margin="34,0,0,0" Foreground="White" Content="test" Name="lblNamePower"></Label>
+            <Image Canvas.Left="5" Canvas.Top="5" Height="32" Width="32" Name="imgFlag"/>
+            <TextBlock Height="35" Canvas.Left="45" Canvas.Top="5" FontSize="23" Foreground="White" Text="test" Name="txtNamePower"/>
             <ScrollViewer Width="189" Height="290" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top">
                 <StackPanel>
                     <Canvas Height="30">
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="軍資金"></Label>
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="9999999" Name="lblNameMoney"></Label>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="軍資金"/>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="75,0,0,0" Foreground="White" TextAlignment="Right" Text="9999999" Name="txtMoney"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="総収入"></Label>
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="75,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="9999999" Name="lblNameTotalGain"></Label>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="総収入"/>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="75,0,0,0" Foreground="White" TextAlignment="Right" Text="9999999" Name="txtTotalGain"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="収入補正"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="+5%" Name="lblNameGainCorrection"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="収入補正"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="+5%" Name="txtGainCorrection"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="領地数"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameNumberSpot"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="領地数"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberSpot"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="ユニット数"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameNumberUnit"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="ユニット数"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberUnit"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="維持費"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameMaintenanceCosts"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="維持費"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtTotalCost"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="財政値"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameNumberFinance"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="財政値"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtTotalFinance"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="訓練値"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameNumberTraining"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="訓練値"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberTraining"/>
                     </Canvas>
                     <Canvas Height="30">
-                        <Label Width="90" Height="30" Padding="-5" FontSize="20" Margin="5,0,0,0" Foreground="White" Content="影響力"></Label>
-                        <Label Width="70" Height="30" Padding="-5" FontSize="20" Margin="95,0,0,0" Foreground="White" HorizontalContentAlignment="Right" Content="999" Name="lblNameInfluence"></Label>
+                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="影響力"/>
+                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtInfluence"/>
                     </Canvas>
                 </StackPanel>
             </ScrollViewer>
@@ -63,20 +63,20 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Margin="0,0,2,2">
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Focusable="False" Margin="0,0,2,2">
                     <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="28"/>
                     </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Height="100" Width="100" Background="#454545" BorderBrush="White" BorderThickness="2">
-                            <Image Height="96" Width="96" Stretch="Fill" Name="imgFace"/>
+                        <Border Grid.Row="0" BorderBrush="#29acca" BorderThickness="3">
+                            <Image Height="96" Width="96" Name="imgFace"/>
                         </Border>
                         <Label Grid.Row="1" Padding="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#575757" Background="#F1F2F7" BorderBrush="#767676" BorderThickness="1" Content="ターン終了" />
                     </Grid>
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="0" Margin="0,0,2,2" Background="Transparent" ToolTip="人材雇用">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f91d;" /><!--手をつなぐ人-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="0" Focusable="False" Margin="0,0,2,2" ToolTip="人材雇用">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f91d;" /><!--手をつなぐ人-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -98,8 +98,8 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="1" Margin="0,0,2,2" Background="Transparent" ToolTip="カード確認">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f0cf;" /><!--ジョーカー-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="1" Focusable="False" Margin="0,0,2,2" ToolTip="カード確認">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f0cf;" /><!--ジョーカー-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -148,8 +148,8 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="外交">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f5e8;" /><!--左向きの吹き出し-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="外交">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f5e8;" /><!--左向きの吹き出し-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -179,8 +179,8 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="ターン委任">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f502;" /><!--1回リピート-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="ターン委任">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f502;" /><!--1回リピート-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -236,8 +236,8 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="静観" >
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x267E;" /><!--無限-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="静観" >
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x267E;" /><!--無限-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -246,8 +246,8 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="機能">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x2699;" /><!--ギア-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="機能">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x2699;" /><!--ギア-->
 <!--
                     <Canvas>
                         <Ellipse Height="55" Stroke="Black" Fill="Black" Width="55" Canvas.Left="-27.5" Canvas.Top="-27.5">
@@ -286,11 +286,11 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="2" Margin="0,0,2,2" Background="Transparent" ToolTip="市場">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f3f0;" /><!--西洋の城-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="市場">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f3f0;" /><!--西洋の城-->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="3" Margin="0,0,2,2" Background="Transparent" ToolTip="探索">
-                    <Label Foreground="White" Padding="-10" FontSize="36" Content="&#x1f575;" /><!--探偵-->
+                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="探索">
+                    <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f575;" /><!--探偵-->
                 </Button>
             </Grid>
         </Canvas>

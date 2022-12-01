@@ -10,6 +10,9 @@
     <Compile Update="UserControl010_Spot.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl011_SpotHint.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl015_Unit.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -22,6 +25,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="UserControl010_Spot.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl011_SpotHint.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl015_Unit.xaml">

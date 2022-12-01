@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="690" Width="480"
-             >
+             Height="690" Width="480">
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseRightButtonUp="btnClose_Click"
@@ -14,36 +13,36 @@
         <Border Height="690" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
 
         <Border Height="44" Width="420" BorderBrush="White" BorderThickness="2" Canvas.Left="8" Canvas.Top="8" />
-        <Image Stretch="Fill" Canvas.Left="14" Canvas.Top="14" Height="32" Width="32" Name="imgFlag" />
-        <Label Width="375" Canvas.Left="50" Canvas.Top="10" FontSize="23" Foreground="White" Content="領地の名前" Name="lblNameSpot" />
+        <Image Canvas.Left="14" Canvas.Top="14" Height="32" Width="32" Name="imgFlag" />
+        <TextBlock Canvas.Left="55" Canvas.Top="15" FontSize="23" Foreground="White" Text="領地の名前" Name="txtNameSpot" />
 
-        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="435" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Click="btnClose_Click">×</Button>
+        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="435" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
         <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="60">
-            <Button x:Name="btnSelectAll" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="全部"
+            <Button x:Name="btnSelectAll" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="全部"
                     PreviewMouseDown="whole_MouseDown"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
-            <Button x:Name="btnMercenary" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+            <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
                     Click="btnMercenary_Click"
                     PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
-            <Button x:Name="btnPolitics" Width="70" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政"
+            <Button x:Name="btnPolitics" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="内政"
                     PreviewMouseDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
                     />
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="100">
-            <Label FontSize="20" Foreground="White" Content="経済" />
-            <Label FontSize="20" Foreground="White" Content="1000" Name="lblGain" />
-            <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="城壁" />
-            <Label FontSize="20" Foreground="White" Content="50" Name="lblCastle" />
-            <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="戦力" />
-            <Label FontSize="20" Foreground="White" Content="123456" Name="lblForce" />
-            <Label FontSize="20" Margin="10,0,0,0" Foreground="White" Content="部隊" />
-            <Label FontSize="20" Foreground="White" Content="16/16" Name="lblMemberCount" />
+        <StackPanel Orientation="Horizontal" Canvas.Left="15" Canvas.Top="105">
+            <TextBlock FontSize="20" Foreground="White" Text="経済" />
+            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="1000" Name="txtGain" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="城壁" />
+            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="50" Name="txtCastle" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="戦力" />
+            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="123456" Name="txtForce" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="部隊" />
+            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="16/16" Name="txtTroopCount" />
         </StackPanel>
 
         <ScrollViewer Width="460" Height="535" Canvas.Left="10" Canvas.Top="145" Background="#262626"
@@ -67,7 +66,7 @@
                     </StackPanel>
                     <StackPanel>
                         <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
-                        <Label Padding="-5" Height="18" FontSize="15" Foreground="White" HorizontalAlignment="Center" Content="lv199E" />
+                        <TextBlock Height="18" FontSize="15" Foreground="White" TextAlignment="Center" Text="lv199E" />
                     </StackPanel>
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />

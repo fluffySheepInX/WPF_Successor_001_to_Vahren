@@ -38,7 +38,15 @@ namespace WPF_Successor_001_to_Vahren
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
-            	return;
+                return;
+            }
+
+            // 最前面に配置する
+            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+            if ( (listWindow != null) && (listWindow.Any()) )
+            {
+                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                Canvas.SetZIndex(this, maxZ + 1);
             }
 
             // プレイヤーが操作可能かどうか
@@ -54,14 +62,6 @@ namespace WPF_Successor_001_to_Vahren
 
             // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
-
-            // 最前面に配置する
-            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
-            {
-                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                Canvas.SetZIndex(this, maxZ + 1);
-            }
         }
 
         // 領地のユニットを変更した際に、ユニット表示だけを更新する
@@ -98,6 +98,7 @@ namespace WPF_Successor_001_to_Vahren
                             btnSelect.Height = tile_height / 2 - 4;
                             btnSelect.Width = header_width - 4;
                             btnSelect.Margin = new Thickness(2);
+                            btnSelect.Focusable = false;
                             btnSelect.FontSize = 15;
                             btnSelect.Content = "出撃";
                             this.canvasSpotUnit.Children.Add(btnSelect);
@@ -109,6 +110,7 @@ namespace WPF_Successor_001_to_Vahren
                             cmbFormation.Height = tile_height / 2 - 4;
                             cmbFormation.Width = header_width - 4;
                             cmbFormation.Margin = new Thickness(2);
+                            cmbFormation.Focusable = false;
                             // _010_Enum.Formation の順番に表示するので、Enum数値と Index は同じになる
                             cmbFormation.Items.Add(_010_Enum.Formation.F.ToString());
                             cmbFormation.Items.Add(_010_Enum.Formation.M.ToString());
@@ -122,15 +124,17 @@ namespace WPF_Successor_001_to_Vahren
                         else
                         {
                             // 操作できない場合は、陣形だけ表示する
-                            Label label = new Label();
-                            label.Background = SystemColors.WindowBrush;
-                            label.Width = 30;
-                            label.Height = 30;
-                            label.Margin = new Thickness(10, 20, 0, 0);
-                            label.FontSize = 15;
-                            label.Content = itemUnit.Formation.Formation;
-                            this.canvasSpotUnit.Children.Add(label);
-                            Canvas.SetTop(label, tile_height * i);
+                            Label lblFormation = new Label();
+                            lblFormation.Background = SystemColors.WindowBrush;
+                            lblFormation.Width = 30;
+                            lblFormation.Height = 30;
+                            lblFormation.Margin = new Thickness(10, 20, 0, 0);
+                            lblFormation.FontSize = 15;
+                            lblFormation.HorizontalContentAlignment = HorizontalAlignment.Center;
+                            lblFormation.VerticalContentAlignment = VerticalAlignment.Center;
+                            lblFormation.Content = itemUnit.Formation.Formation.ToString();
+                            this.canvasSpotUnit.Children.Add(lblFormation);
+                            Canvas.SetTop(lblFormation, tile_height * i);
                         }
                     }
 
@@ -173,15 +177,14 @@ namespace WPF_Successor_001_to_Vahren
                     panelUnit.Children.Add(imgUnit);
 
                     // ユニットのレベル
-                    Label lblLevel = new Label();
-                    lblLevel.Name = "lblLevel" + i.ToString() + "_" + j.ToString();
-                    lblLevel.Height = tile_height - tile_width;
-                    lblLevel.FontSize = 15;
-                    lblLevel.Padding = new Thickness(-5);
-                    lblLevel.Foreground = Brushes.White;
-                    lblLevel.HorizontalAlignment = HorizontalAlignment.Center;
-                    lblLevel.Content = "lv" + itemUnit.Level;
-                    panelUnit.Children.Add(lblLevel);
+                    TextBlock txtLevel = new TextBlock();
+                    txtLevel.Name = "txtLevel" + i.ToString() + "_" + j.ToString();
+                    txtLevel.Height = tile_height - tile_width;
+                    txtLevel.FontSize = 15;
+                    txtLevel.Foreground = Brushes.White;
+                    txtLevel.TextAlignment = TextAlignment.Center;
+                    txtLevel.Text = "lv" + itemUnit.Level;
+                    panelUnit.Children.Add(txtLevel);
 
                     this.canvasSpotUnit.Children.Add(panelUnit);
                     Canvas.SetLeft(panelUnit, header_width + tile_width * j);
@@ -202,7 +205,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 部隊数も更新する
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
-            this.lblMemberCount.Content = i.ToString() + "/" + spot_capacity.ToString();
+            this.txtTroopCount.Text = i.ToString() + "/" + spot_capacity.ToString();
 
             // ユニット配置場所の大きさ
             if (_isControl)
@@ -254,19 +257,19 @@ namespace WPF_Successor_001_to_Vahren
             }
             //領地名
             {
-                this.lblNameSpot.Content = classPowerAndCity.ClassSpot.Name;
+                this.txtNameSpot.Text = classPowerAndCity.ClassSpot.Name;
             }
             //経済値
             {
-                this.lblGain.Content = classPowerAndCity.ClassSpot.Gain;
+                this.txtGain.Text = classPowerAndCity.ClassSpot.Gain.ToString();
             }
             //城壁値
             {
-                this.lblCastle.Content = classPowerAndCity.ClassSpot.Castle;
+                this.txtCastle.Text = classPowerAndCity.ClassSpot.Castle.ToString();
             }
             //戦力値
             {
-                this.lblForce.Content = this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
+                this.txtForce.Text = this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
             }
             //部隊駐留数
             {
@@ -277,7 +280,7 @@ namespace WPF_Successor_001_to_Vahren
                     .UnitGroup
                     .Where(x => x.Spot.NameTag == classPowerAndCity.ClassSpot.NameTag)
                     .Count();
-                this.lblMemberCount.Content = count.ToString() + "/" + spot_capacity.ToString();
+                this.txtTroopCount.Text = count.ToString() + "/" + spot_capacity.ToString();
             }
             //ユニット
             {
