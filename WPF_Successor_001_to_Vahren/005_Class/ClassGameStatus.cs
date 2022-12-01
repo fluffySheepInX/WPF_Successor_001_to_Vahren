@@ -159,6 +159,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { taskBattleSkill = value; }
         }
         #endregion
+        #region TaskBattleSkillDef
+        private (Task, CancellationTokenSource) taskBattleSkillDef;
+        public (Task, CancellationTokenSource) TaskBattleSkillDef
+        {
+            get { return taskBattleSkillDef; }
+            set { taskBattleSkillDef = value; }
+        }
+        #endregion
         #region TaskBattleMoveAsync
         private (Task, CancellationTokenSource) taskBattleMoveAsync;
         public (Task, CancellationTokenSource) TaskBattleMoveAsync

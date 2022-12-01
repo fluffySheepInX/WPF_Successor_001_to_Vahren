@@ -347,5 +347,20 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        #region HeuristicMethod
+        /// <summary>
+        /// エースターアルゴリズムで使用
+        /// </summary>
+        /// <param name="nowX"></param>
+        /// <param name="nowY"></param>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <returns></returns>
+        public static int HeuristicMethod(int nowX, int nowY, int targetX, int targetY)
+        {
+            int result = Math.Abs(nowX - targetX) + Math.Abs(nowY - targetY);
+            return result;
+        }
+        #endregion
     }
 }

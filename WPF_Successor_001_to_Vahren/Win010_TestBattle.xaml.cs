@@ -1150,7 +1150,6 @@ namespace WPF_Successor_001_to_Vahren
             };
             this.timerAfterFadeIn.Start();
 
-            //工事中
             ////スキルスレッド開始
             //出撃ユニット
             {
@@ -1158,6 +1157,13 @@ namespace WPF_Successor_001_to_Vahren
                 var token = tokenSource.Token;
                 (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
                 this.ClassGameStatus.TaskBattleSkill = a;
+            }
+            //防衛ユニット
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
+                this.ClassGameStatus.TaskBattleSkillDef = a;
             }
             ////移動スレッド開始
             //出撃ユニット
@@ -1323,6 +1329,24 @@ namespace WPF_Successor_001_to_Vahren
 
         private void TaskBattleSkill(CancellationToken token)
         {
+            List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
+            List<ClassHorizontalUnit> bbb = new List<ClassHorizontalUnit>();
+            switch (this.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    aaa = this.ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    bbb = this.ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    aaa = this.ClassGameStatus.ClassBattle.DefUnitGroup;
+                    bbb = this.ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
             while (true)
             {
                 if (token.IsCancellationRequested)
@@ -1332,9 +1356,8 @@ namespace WPF_Successor_001_to_Vahren
 
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
                 bool flagAttack = false;
-                //出撃ユニット
-                foreach (var item in this.ClassGameStatus
-                .ClassBattle.SortieUnitGroup)
+
+                foreach (var item in aaa)
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
                     {
@@ -1343,7 +1366,7 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             //スキル射程範囲確認
                             var xA = itemGroupBy.NowPosi;
-                            foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
+                            foreach (var itemDefUnitGroup in bbb)
                             {
                                 foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                 {
