@@ -10,7 +10,7 @@
         ContentRendered="MainWindow_ContentRendered"
         KeyDown="MainWindow_KeyDown" 
         Closing="MainWindow_Closing"
-        Height="900"
+        Height="1024"
         Width="1600"
         MinHeight="600"
         MinWidth="800"
@@ -18,18 +18,18 @@
         Left="0"
         >
     <Canvas x:Name="canvasTop" Opacity="1" Background="Transparent" SizeChanged="canvasTop_SizeChanged">
-        <Canvas x:Name="canvasUIRightTop"
-                Panel.ZIndex="99"
+        <Canvas x:Name="canvasUIRightBottom"
+                Panel.ZIndex="97"
                 Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}">
         </Canvas>
-        <Canvas x:Name="canvasUIRightBottom"
-                Panel.ZIndex="99"
+        <Canvas x:Name="canvasUIRightTop"
+                Panel.ZIndex="98"
                 Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}">
         </Canvas>
         <Canvas x:Name="canvasUI"
-                Panel.ZIndex="100"
+                Panel.ZIndex="99"
                 Width="{Binding canvasMainWidth}"
                 Height="{Binding canvasMainHeight}">
         </Canvas>

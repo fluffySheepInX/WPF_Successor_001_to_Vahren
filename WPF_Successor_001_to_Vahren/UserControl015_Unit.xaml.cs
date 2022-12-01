@@ -33,7 +33,7 @@ namespace WPF_Successor_001_to_Vahren
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
-            	return;
+                return;
             }
 
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
@@ -160,16 +160,16 @@ namespace WPF_Successor_001_to_Vahren
 
             // ユニット名
             {
-                this.lblNameUnit.Content = targetUnit.Name;
+                this.txtNameUnit.Text = targetUnit.Name;
             }
             // 種族
             if (targetUnit.Race != string.Empty){
-                this.lblRace.Content = "（" + targetUnit.Race + "）";
+                this.txtRace.Text = "（" + targetUnit.Race + "）";
             }
             // レベルとクラス
             {
-                //this.lblClass.Content = this.Name; // ウインドウ番号を表示する実験用
-                this.lblLevelClass.Content = "Lv" + targetUnit.Level.ToString() + " " + targetUnit.Class;
+                //this.txtClass.Text = this.Name; // ウインドウ番号を表示する実験用
+                this.txtLevelClass.Text = "Lv" + targetUnit.Level.ToString() + " " + targetUnit.Class;
             }
 
             // 経験値
@@ -181,20 +181,39 @@ namespace WPF_Successor_001_to_Vahren
                     required_exp = targetUnit.Exp + required_exp * targetUnit.Exp_mul / 100;
                     level_up--;
                 }
-                this.lblExp.Content = "EXP 0/" + required_exp.ToString();
+                this.txtExp.Text = "EXP 0/" + required_exp.ToString();
             }
             // 戦功値
+            if ( (targetPower.NameTag == string.Empty) || (targetUnit.NameTag == targetPower.MasterTag) )
             {
-                this.lblMerits.Content = "Member = " + member_id + "/" + member_count; // メンバー番号を表示する実験用
+                // 中立ユニットやマスターは戦功値を表示しない
+                this.txtMerits.Text = string.Empty;
+            }
+            else
+            {
+                this.txtMerits.Text = "Member = " + member_id.ToString() + "/" + member_count; // メンバー番号を表示する実験用
             }
 
             // 所持金
             {
-                this.lblMoney.Content = "ID = " + targetUnit.ID; // ユニット番号を表示する実験用
+                this.txtMoney.Text = "ID = " + targetUnit.ID.ToString(); // ユニット番号を表示する実験用
             }
             // 維持費
+            if (targetUnit.NameTag == targetPower.MasterTag)
             {
-                this.lblCost.Content = "維持費 " + targetUnit.Cost.ToString();
+                // マスターは維持費がかからない
+                this.txtCost.Text = string.Empty;
+            }
+            else
+            {
+                int actual_cost = targetUnit.Cost;
+                if (actual_cost < 0)
+                {
+                    // 維持費がマイナスの場合はゼロと表示する
+                    actual_cost = 0;
+                }
+                // 身分によって維持費が変動することに注意
+                this.txtCost.Text = "維持費 " + actual_cost.ToString();
             }
 
             // 人材の時だけ項目を表示する
@@ -203,38 +222,47 @@ namespace WPF_Successor_001_to_Vahren
                 // マスターなら忠誠ではなく信用度を表示する
                 if (targetUnit.NameTag == targetPower.MasterTag)
                 {
-                    this.lblRank.Content = "マスター";
-                    this.lblLoyal.Content = "信用度 ?";
+                    this.txtRank.Text = "マスター";
+                    this.txtLoyal.Text = "信用度 ?";
                 }
                 else
                 {
-                    this.lblRank.Content = "一般";
-                    this.lblLoyal.Content = "忠誠 " + targetUnit.Loyal.ToString();
+                    this.txtRank.Text = "一般";
+                    this.txtLoyal.Text = "忠誠 " + targetUnit.Loyal.ToString();
                 }
             }
             else
             {
                 // 一般兵は表示しない
-                this.lblRank.Content = string.Empty;
-                this.lblLoyal.Content = string.Empty;
+                this.txtRank.Text = string.Empty;
+                this.txtLoyal.Text = string.Empty;
             }
 
             // 能力値
             {
-                this.lblMoveType.Content = targetUnit.MoveType;
-                this.lblHP.Content = targetUnit.Hp.ToString() + "/" + targetUnit.Hp.ToString();
-                this.lblMP.Content = targetUnit.Mp.ToString() + "/" + targetUnit.Mp.ToString();
-                this.lblAttack.Content = targetUnit.Attack.ToString() + "/" + targetUnit.Attack.ToString();
-                this.lblDefense.Content = targetUnit.Defense.ToString() + "/" + targetUnit.Defense.ToString();
-                this.lblMagic.Content = targetUnit.Magic.ToString() + "/" + targetUnit.Magic.ToString();
-                this.lblMagDef.Content = targetUnit.MagDef.ToString() + "/" + targetUnit.MagDef.ToString();
-                this.lblSpeed.Content = targetUnit.Speed.ToString() + "/" + targetUnit.Speed.ToString();
-                this.lblDext.Content = targetUnit.Dext.ToString() + "/" + targetUnit.Dext.ToString();
-                this.lblHPRec.Content = targetUnit.Hprec.ToString() + "/" + targetUnit.Hprec.ToString();
-                this.lblMPRec.Content = targetUnit.Mprec.ToString() + "/" + targetUnit.Mprec.ToString();
-                this.lblMove.Content = targetUnit.Move.ToString() + "/" + targetUnit.Move.ToString();
-                this.lblSummon.Content = targetUnit.Summon_max.ToString() + "/" + targetUnit.Summon_max.ToString();
-                this.lblFinance.Content = targetUnit.Finance.ToString();
+                this.txtMoveType.Text = targetUnit.MoveType;
+
+                // スキルで増減した補正値と、本来の値の２種類を表示する
+                this.txtHP.Text = targetUnit.Hp.ToString() + "/" + targetUnit.Hp.ToString();
+                this.txtMP.Text = targetUnit.Mp.ToString() + "/" + targetUnit.Mp.ToString();
+                this.txtAttack.Text = targetUnit.Attack.ToString() + "/" + targetUnit.Attack.ToString();
+                this.txtDefense.Text = targetUnit.Defense.ToString() + "/" + targetUnit.Defense.ToString();
+                this.txtMagic.Text = targetUnit.Magic.ToString() + "/" + targetUnit.Magic.ToString();
+                this.txtMagDef.Text = targetUnit.MagDef.ToString() + "/" + targetUnit.MagDef.ToString();
+                this.txtSpeed.Text = targetUnit.Speed.ToString() + "/" + targetUnit.Speed.ToString();
+                this.txtDext.Text = targetUnit.Dext.ToString() + "/" + targetUnit.Dext.ToString();
+                this.txtHPRec.Text = targetUnit.Hprec.ToString() + "/" + targetUnit.Hprec.ToString();
+                this.txtMPRec.Text = targetUnit.Mprec.ToString() + "/" + targetUnit.Mprec.ToString();
+                this.txtMove.Text = targetUnit.Move.ToString() + "/" + targetUnit.Move.ToString();
+                this.txtSummon.Text = targetUnit.Summon_max.ToString() + "/" + targetUnit.Summon_max.ToString();
+
+                // 維持費がマイナスなら財政値になる
+                int actual_finance = targetUnit.Finance;
+                if (targetUnit.Cost < 0)
+                {
+                    actual_finance -= targetUnit.Cost;
+                }
+                this.txtFinance.Text = actual_finance.ToString();
             }
         }
 

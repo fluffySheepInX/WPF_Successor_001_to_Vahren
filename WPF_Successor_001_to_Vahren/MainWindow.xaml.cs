@@ -17,6 +17,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -444,7 +445,7 @@ namespace WPF_Successor_001_to_Vahren
         private void GridMapStrategy_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ドラッグを開始する
-            UIElement? el = sender as UIElement;
+            UIElement el = sender as UIElement;
             if (el != null)
             {
                 this.ClassGameStatus.IsDrag = true;
@@ -459,11 +460,7 @@ namespace WPF_Successor_001_to_Vahren
             // ドラック中なら終了する
             if (this.ClassGameStatus.IsDrag == true)
             {
-                UIElement? el = sender as UIElement;
-                if (el == null)
-                {
-                    return;
-                }
+                UIElement el = sender as UIElement;
                 el.ReleaseMouseCapture();
                 el.MouseLeftButtonUp -= GridMapStrategy_MouseLeftButtonUp;
                 el.MouseMove -= GridMapStrategy_MouseMove;
@@ -478,11 +475,7 @@ namespace WPF_Successor_001_to_Vahren
                 var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
                 if (ri != null)
                 {
-                    UIElement? el = sender as UIElement;
-                    if (el == null)
-                    {
-                        return;
-                    }
+                    UIElement el = sender as UIElement;
                     Point pt = e.GetPosition(el);
 
                     var thickness = new Thickness();
@@ -515,7 +508,7 @@ namespace WPF_Successor_001_to_Vahren
         private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ドラッグを開始する
-            UIElement? el = sender as UIElement;
+            UIElement el = sender as UIElement;
             if (el != null)
             {
                 this.ClassGameStatus.IsDrag = true;
@@ -827,6 +820,147 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        // 戦略マップの領地にマウスを乗せた時
+        private void ButtonSelectionCity_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassPowerAndCity)
+            {
+                return;
+            }
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += ButtonSelectionCity_MouseLeave;
+
+            // 同じ勢力の全ての領地を強調する
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy != null)
+            {
+                ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+                if (classPowerAndCity.ClassPower.ListMember.Count > 0)
+                {
+                    // プレイヤー勢力なら色を変える
+                    SolidColorBrush myBrush = null;
+                    string powerNameTag = classPowerAndCity.ClassPower.NameTag;
+                    if (this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
+                    {
+                        // 16進数で色を指定する場合はこちら
+                        //myBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FFFF"));
+                        myBrush = Brushes.Cyan;
+                    }
+                    else
+                    {
+                        myBrush = Brushes.Lime;
+                    }
+
+                    // 円の周りをぼかす
+                    BlurEffect blurBig = new BlurEffect();
+                    blurBig.Radius = 16;
+                    blurBig.KernelType = KernelType.Gaussian;
+                    BlurEffect blurSmall = new BlurEffect();
+                    blurSmall.Radius = 2;
+                    blurSmall.KernelType = KernelType.Gaussian;
+
+                    var listSpot = this.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+                    foreach (var itemSpot in listSpot)
+                    {
+                        // 太い円の上に細い円を描く
+                        Ellipse elliBig = new Ellipse();
+                        elliBig.Name = "HintSpot" + itemSpot.NameTag + "Big";
+                        elliBig.Stroke = myBrush;
+                        elliBig.StrokeThickness = 10;
+                        elliBig.Width = 88;
+                        elliBig.Height = 88;
+                        elliBig.Effect = blurBig;
+                        elliBig.HorizontalAlignment = HorizontalAlignment.Left;
+                        elliBig.VerticalAlignment = VerticalAlignment.Top;
+                        elliBig.Margin = new Thickness()
+                        {
+                            Left = itemSpot.X - 44,
+                            Top = itemSpot.Y - 44
+                        };
+                        gridMapStrategy.Children.Add(elliBig);
+
+                        Ellipse elli = new Ellipse();
+                        elli.Name = "HintSpot" + itemSpot.NameTag;
+                        elli.Stroke = myBrush;
+                        elli.StrokeThickness = 2;
+                        elli.Width = 80;
+                        elli.Height = 80;
+                        elli.Effect = blurSmall;
+                        elli.HorizontalAlignment = HorizontalAlignment.Left;
+                        elli.VerticalAlignment = VerticalAlignment.Top;
+                        elli.Margin = new Thickness()
+                        {
+                            Left = itemSpot.X - 40,
+                            Top = itemSpot.Y - 40
+                        };
+                        gridMapStrategy.Children.Add(elli);
+                    }
+                }
+            }
+
+            // 領地のヒントを作成する
+            var hintSpot = new UserControl011_SpotHint();
+            hintSpot.Name = "HintSpot";
+            hintSpot.Tag = cast.Tag;
+
+            // 左上隅に配置する
+            double offsetLeft = 0, offsetTop = 0;
+            if (this.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = this.canvasUI.Margin.Left * -1;
+            }
+            if (this.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = this.canvasUI.Margin.Top * -1;
+            }
+            hintSpot.Margin = new Thickness()
+            {
+                Left = offsetLeft,
+                Top = offsetTop
+            };
+            this.canvasUI.Children.Add(hintSpot);
+            hintSpot.SetData();
+        }
+        private void ButtonSelectionCity_MouseLeave(object sender, MouseEventArgs e)
+        {
+            // イベントを取り除く
+            var cast = (Button)sender;
+            cast.MouseLeave -= ButtonSelectionCity_MouseLeave;
+
+            // 勢力領の強調を解除する
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy != null)
+            {
+                ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+                if (classPowerAndCity.ClassPower.ListMember.Count > 0)
+                {
+                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1) {
+                        UIElement Child = gridMapStrategy.Children[i];
+                        if (Child is Ellipse)
+                        {
+                            var itemElli = (Ellipse)Child;
+                            if (itemElli.Name.StartsWith("HintSpot"))
+                            {
+                                // 円を取り除く
+                                gridMapStrategy.Children.Remove(itemElli);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 領地のヒントは一個だけなので、見つけたら取り除いて終わる
+            foreach (var itemHint in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
+            {
+                if (itemHint.Name == "HintSpot")
+                {
+                    this.canvasUI.Children.Remove(itemHint);
+                    break;
+                }
+            }
+        }
+
         private void ButtonSelectionCity_click(object sender, EventArgs e)
         {
             if (this.NowSituation == Situation.PlayerTurn)
@@ -946,8 +1080,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 posWindow = new Thickness()
                 {
-                    Left = gridMapStrategy.Margin.Left + classPowerAndCity.ClassSpot.X - 40,
-                    Top = gridMapStrategy.Margin.Top + classPowerAndCity.ClassSpot.Y - 40
+                    Left = gridMapStrategy.Margin.Left + classPowerAndCity.ClassSpot.X - 32,
+                    Top = gridMapStrategy.Margin.Top + classPowerAndCity.ClassSpot.Y - 32
                 };
             }
 
@@ -1006,8 +1140,8 @@ namespace WPF_Successor_001_to_Vahren
                 windowSpot.Tag = classPowerAndCity;
                 windowSpot.Name = "WindowSpot" + window_id.ToString();
                 windowSpot.Margin = posWindow;
-                windowSpot.SetData();
                 this.canvasUI.Children.Add(windowSpot);
+                windowSpot.SetData();
             }
             id_list.Clear();
         }
@@ -3297,26 +3431,24 @@ namespace WPF_Successor_001_to_Vahren
                         //int spot_size = 32 + (item.index % 3) * 8;
                         int spot_size = 32;
 
-                        TextBlock tbDate1 = new TextBlock();
-                        tbDate1.HorizontalAlignment = HorizontalAlignment.Center;
-                        tbDate1.VerticalAlignment = VerticalAlignment.Bottom;
-                        tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
-                        tbDate1.Text = item.value.Name;
+                        TextBlock txtNameSpot = new TextBlock();
+                        txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
+                        txtNameSpot.VerticalAlignment = VerticalAlignment.Bottom;
+                        txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
+                        txtNameSpot.Text = item.value.Name;
+                        txtNameSpot.Foreground = Brushes.White;
+                        // 文字に影を付ける (右下45度方向に1.5ピクセル)
+                        txtNameSpot.Effect =
+                            new DropShadowEffect
+                            {
+                                Direction = 315,
+                                ShadowDepth = 1.5,
+                                Opacity = 1,
+                                BlurRadius = 0
+                            };
                         // 領地アイコンと領地名の間隔は GridCityWidthAndHeight.Y によって決まる。
-                        tbDate1.Height = (gridButton.Height - spot_size) / 2;
-                        tbDate1.Margin = new Thickness { Left = 2 };
-                        gridButton.Children.Add(tbDate1);
-
-                        // 文字を重ねて影を付ける。横は中央なので 2差、縦は下辺なので 1差
-                        TextBlock tbDate2 = new TextBlock();
-                        tbDate2.HorizontalAlignment = tbDate1.HorizontalAlignment;
-                        tbDate2.VerticalAlignment = tbDate1.VerticalAlignment;
-                        tbDate2.FontSize = tbDate1.FontSize;
-                        tbDate2.Text = tbDate1.Text;
-                        tbDate2.Height = tbDate1.Height;
-                        tbDate2.Foreground = Brushes.White;
-                        tbDate2.Margin = new Thickness { Bottom = 1 };
-                        gridButton.Children.Add(tbDate2);
+                        txtNameSpot.Height = (gridButton.Height - spot_size) / 2;
+                        gridButton.Children.Add(txtNameSpot);
 
                         Button button = new Button();
                         button.Name = StringName.buttonClassPowerAndCity + item.index;
@@ -3325,6 +3457,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Content = img;
                         button.Height = spot_size;
                         button.Width = spot_size;
+                        button.Focusable = false;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
                         string flag_path = string.Empty;
@@ -3374,9 +3507,9 @@ namespace WPF_Successor_001_to_Vahren
                         button.Background = Brushes.Transparent;
                         button.Foreground = Brushes.Transparent;
                         button.BorderBrush = Brushes.Transparent;
-                        //button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
+                        button.MouseEnter += ButtonSelectionCity_MouseEnter;
                         gridButton.Children.Add(button);
 
                         // 旗を表示する
@@ -3392,6 +3525,8 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Children.Add(flag_img);
 
                         grid.Children.Add(gridButton);
+                        // 後から連結線を変更しても、領地が前面に来るようにする
+                        Panel.SetZIndex(gridButton, 1);
                     }
 
                 }
@@ -3522,24 +3657,22 @@ namespace WPF_Successor_001_to_Vahren
                         int fontSizePlus = 5;
                         int spot_size = 32;
 
-                        TextBlock tbDate1 = new TextBlock();
-                        tbDate1.HorizontalAlignment = HorizontalAlignment.Center;
-                        tbDate1.VerticalAlignment = VerticalAlignment.Bottom;
-                        tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
-                        tbDate1.Text = item.value.Name;
-                        tbDate1.Height = (gridButton.Height - spot_size) / 2;
-                        tbDate1.Margin = new Thickness { Left = 2 };
-                        gridButton.Children.Add(tbDate1);
-
-                        TextBlock tbDate2 = new TextBlock();
-                        tbDate2.HorizontalAlignment = tbDate1.HorizontalAlignment;
-                        tbDate2.VerticalAlignment = tbDate1.VerticalAlignment;
-                        tbDate2.FontSize = tbDate1.FontSize;
-                        tbDate2.Text = tbDate1.Text;
-                        tbDate2.Height = tbDate1.Height;
-                        tbDate2.Foreground = Brushes.White;
-                        tbDate2.Margin = new Thickness { Bottom = 1 };
-                        gridButton.Children.Add(tbDate2);
+                        TextBlock txtNameSpot = new TextBlock();
+                        txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
+                        txtNameSpot.VerticalAlignment = VerticalAlignment.Bottom;
+                        txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
+                        txtNameSpot.Text = item.value.Name;
+                        txtNameSpot.Foreground = Brushes.White;
+                        txtNameSpot.Effect =
+                            new DropShadowEffect
+                            {
+                                Direction = 315,
+                                ShadowDepth = 1.5,
+                                Opacity = 1,
+                                BlurRadius = 0
+                            };
+                        txtNameSpot.Height = (gridButton.Height - spot_size) / 2;
+                        gridButton.Children.Add(txtNameSpot);
 
                         Button button = new Button();
                         button.Name = StringName.buttonClassPowerAndCity + item.index;
@@ -3548,6 +3681,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Content = img;
                         button.Height = spot_size;
                         button.Width = spot_size;
+                        button.Focusable = false;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
                         string flag_path = string.Empty;
@@ -3597,9 +3731,9 @@ namespace WPF_Successor_001_to_Vahren
                         button.Foreground = Brushes.Transparent;
                         button.Background = Brushes.Transparent;
                         button.BorderBrush = Brushes.Transparent;
-                        //button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
+                        button.MouseEnter += ButtonSelectionCity_MouseEnter;
                         gridButton.Children.Add(button);
 
                         // 旗を表示する
@@ -3615,6 +3749,8 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Children.Add(flag_img);
 
                         grid.Children.Add(gridButton);
+                        // 後から連結線を変更しても、領地が前面に来るようにする
+                        Panel.SetZIndex(gridButton, 1);
                     }
 
                 }
@@ -7251,50 +7387,21 @@ namespace WPF_Successor_001_to_Vahren
 
         private void SetWindowStrategyMenu()
         {
-            //Uri uri = new Uri("/Page005_StrategyMenu.xaml", UriKind.Relative);
-            //frame.Source = uri;
-
-            Application.Current.Properties["window"] = this;
-
             if (this.ClassGameStatus.WindowStrategyMenu == null)
             {
                 this.ClassGameStatus.WindowStrategyMenu = new UserControl005_StrategyMenu();
             }
 
-            double widthCanvas = this.ClassGameStatus.WindowStrategyMenu.Width;
-            double HeightCanvas = this.ClassGameStatus.WindowStrategyMenu.Height;
-            {
-                this.ClassGameStatus.WindowStrategyMenu.SetData();
-                this.ClassGameStatus.WindowStrategyMenu.Margin = new Thickness()
-                {
-                    Left = this.canvasUIRightBottom.Width - widthCanvas,
-                    Top = this.canvasUIRightBottom.Height - HeightCanvas
-                };
-                this.ClassGameStatus.WindowStrategyMenu.Name = StringName.canvasStrategyMenu;
-                this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.WindowStrategyMenu);
-            }
+            // 右下の隅に配置する
+            this.ClassGameStatus.WindowStrategyMenu.SetData();
+            this.ClassGameStatus.WindowStrategyMenu.Name = StringName.canvasStrategyMenu;
+            this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.WindowStrategyMenu);
+            Canvas.SetLeft(this.ClassGameStatus.WindowStrategyMenu, this.canvasUIRightBottom.Width - this.ClassGameStatus.WindowStrategyMenu.Width);
+            Canvas.SetTop(this.ClassGameStatus.WindowStrategyMenu, this.canvasUIRightBottom.Height - this.ClassGameStatus.WindowStrategyMenu.Height);
 
-            {
-                //if (this.ClassGameStatus.WindowStrategyMenu == null)
-                //{
-                //    this.ClassGameStatus.UserControlStrategyMenuLeft = new UserControlStrategyMenuLeft();
-                //}
-                //double widthCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Width;
-                //double HeightCanvasuserC = this.ClassGameStatus.UserControlStrategyMenuLeft.Height;
-                //this.ClassGameStatus.UserControlStrategyMenuLeft.Margin = new Thickness()
-                //{
-                //    Left = this.canvasUIRightBottom.Width - widthCanvas - widthCanvasuserC,
-                //    Top = this.canvasUIRightBottom.Height - HeightCanvasuserC
-                //};
-                //this.ClassGameStatus.UserControlStrategyMenuLeft.Name = StringName.canvasWindowStrategyLeft;
-                //this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.UserControlStrategyMenuLeft);
-            }
+            // ターン数も表示する
+            this.ClassGameStatus.WindowStrategyMenu.DisplayTurn(this);
 
-            //TODO https://yudachi-shinko.blogspot.com/2019/09/wpfframepage.html
-            //while (frame.CanGoBack)
-            //{
-            //    frame.RemoveBackEntry();
-            //}
         }
 
         private SolidColorBrush ReturnBaseColor()

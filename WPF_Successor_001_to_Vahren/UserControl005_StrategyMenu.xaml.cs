@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 
 namespace WPF_Successor_001_to_Vahren
@@ -44,7 +46,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             //勢力名
             {
-                this.lblNamePower.Content = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Name;
+                this.txtNamePower.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Name;
             }
             //顔グラ
             {
@@ -65,56 +67,111 @@ namespace WPF_Successor_001_to_Vahren
 
             //軍資金
             {
-                this.lblNameMoney.Content = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money;
-            }
-            //総収入
-            {
-                string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
-                int gain_sum = 0;
-                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
-                foreach (var itemSpot in listSpot)
-                {
-                    gain_sum += itemSpot.Gain;
-                }
-                this.lblNameTotalGain.Content = gain_sum;
+                this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
             }
             //収入補正
             {
-                this.lblNameGainCorrection.Content = "";
+                this.txtGainCorrection.Text = "";
             }
             //領地数
             {
-                this.lblNameNumberSpot.Content = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count;
+                this.txtNumberSpot.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count.ToString();
+            }
+
+            // 各領地のデータを集計する
+            int total_gain = 0;
+            int unit_count = 0;
+            int total_cost = 0, total_finance = 0;
+            string powerNameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
+            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            foreach (var itemSpot in listSpot)
+            {
+                total_gain += itemSpot.Gain;
+                foreach (var itemTroop in itemSpot.UnitGroup)
+                {
+                    unit_count += itemTroop.ListClassUnit.Count;
+                    foreach (var itemUnit in itemTroop.ListClassUnit)
+                    {
+                        if (itemUnit.Cost > 0)
+                        {
+                            total_cost += itemUnit.Cost;
+                        }
+                        else if (itemUnit.Cost < 0)
+                        {
+                            // 維持費がマイナスなら財政値になる
+                            total_finance -= itemUnit.Cost;
+                        }
+                        if (itemUnit.Finance > 0)
+                        {
+                            total_finance += itemUnit.Finance;
+                        }
+                    }
+                }
+            }
+
+            //総収入
+            {
+                this.txtTotalGain.Text = total_gain.ToString();
             }
             //ユニット数
             {
-                string select_NameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
-                int unit_count = 0;
-                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == select_NameTag);
-                foreach (var itemSpot in listSpot)
-                {
-                    foreach (var itemTroop in itemSpot.UnitGroup)
-                    {
-                        unit_count += itemTroop.ListClassUnit.Count;
-                    }
-                }
-                this.lblNameNumberUnit.Content = unit_count;
+                this.txtNumberUnit.Text = unit_count.ToString();
             }
             //維持費
             {
-                this.lblNameMaintenanceCosts.Content = "";
+                this.txtTotalCost.Text = total_cost.ToString();
             }
             //財政値
             {
-                this.lblNameNumberFinance.Content = "";
+                this.txtTotalFinance.Text = total_finance.ToString();
             }
             //訓練値
             {
-                this.lblNameNumberTraining.Content = "";
+                this.txtNumberTraining.Text = "";
             }
             //影響力
             {
-                this.lblNameInfluence.Content = "";
+                this.txtInfluence.Text = "";
+            }
+        }
+
+        // ターン数を表示する
+        public void DisplayTurn(MainWindow mainWindow)
+        {
+            // 既に表示されてるか調べる
+            bool isFound = false;
+            foreach (var itemText in mainWindow.canvasUIRightTop.Children.OfType<TextBlock>())
+            {
+                if (itemText.Name == "Turn")
+                {
+                    // 既に表示されてる場合は、値を更新する
+                    itemText.Text = "turn " + mainWindow.ClassGameStatus.NowTurn.ToString();
+                    isFound = true;
+                    break;
+                }
+            }
+
+            // まだ表示されてなければ、新たに表示する
+            if (isFound == false)
+            {
+                TextBlock textTurn = new TextBlock();
+                textTurn.Name = "Turn";
+                textTurn.FontSize = 30;
+                textTurn.Foreground = Brushes.White;
+                textTurn.Width = 150;
+                textTurn.TextAlignment = TextAlignment.Center;
+                textTurn.Text = "turn " + mainWindow.ClassGameStatus.NowTurn.ToString();
+                // 影を付ける (右下45度方向に3ピクセル)
+                textTurn.Effect =
+                    new DropShadowEffect
+                    {
+                        Direction = 315,
+                        ShadowDepth = 3,
+                        Opacity = 1,
+                        BlurRadius = 0
+                    };
+                mainWindow.canvasUIRightTop.Children.Add(textTurn);
+                Canvas.SetLeft(textTurn, mainWindow.canvasUIRightTop.Width - 150);
             }
         }
 
@@ -133,6 +190,10 @@ namespace WPF_Successor_001_to_Vahren
             this.Visibility = Visibility.Hidden;
 
             //ターン加算
+            // 本来は、全ての勢力行動が終わってからターン数を増やさないといけない。
+            // 現在は AI勢力の思考部分ができてないので、プレイヤー操作が終わった時点で加算する。
+            mainWindow.ClassGameStatus.NowTurn += 1;
+            DisplayTurn(mainWindow);
 
             // AI呼び出し
 
