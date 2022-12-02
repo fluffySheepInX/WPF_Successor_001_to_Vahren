@@ -1166,19 +1166,58 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.TaskBattleSkillDef = a;
             }
             ////移動スレッド開始
-            //出撃ユニット
+            switch (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
-                var tokenSource = new CancellationTokenSource();
-                var token = tokenSource.Token;
-                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
-                this.ClassGameStatus.TaskBattleMoveAsync = a;
-            }
-            //防衛ユニット
-            {
-                var tokenSource = new CancellationTokenSource();
-                var token = tokenSource.Token;
-                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveDefAsync(token)), tokenSource);
-                this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                case BattleWhichIsThePlayer.Sortie:
+                    //出撃ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                    }
+                    //防衛(AI)ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                    }
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    //出撃(AI)ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                    }
+                    //防衛ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                    }
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    //出撃(AI)ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                    }
+                    //防衛(AI)ユニット
+                    {
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                    }
+                    break;
+                default:
+                    break;
             }
 
         }
@@ -1467,51 +1506,6 @@ namespace WPF_Successor_001_to_Vahren
 
                 foreach (var item in this.ClassGameStatus
                 .ClassBattle.SortieUnitGroup)
-                {
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
-                    {
-                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
-                        {
-                            //移動スレッド開始
-                            var calc0 = ClassCalcVec.ReturnVecDistance(
-                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
-                                to: itemGroupBy.OrderPosi
-                                );
-                            itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                            itemGroupBy.FlagMoving = true;
-                            if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
-                            {
-                                if (value.Item1 != null)
-                                {
-                                    value.Item2.Cancel();
-                                    t.Remove(itemGroupBy.ID);
-                                }
-                            }
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) aaa = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, ClassGameStatus, this)), tokenSource);
-                            t.Add(itemGroupBy.ID, aaa);
-                        }
-                    }
-                }
-            }
-        }
-        private void TaskBattleMoveDefAsync(CancellationToken cancelToken)
-        {
-            Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
-
-            while (true)
-            {
-                if (cancelToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
-
-                foreach (var item in this.ClassGameStatus
-                .ClassBattle.DefUnitGroup)
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {

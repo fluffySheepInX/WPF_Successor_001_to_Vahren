@@ -347,6 +347,67 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window)
+        {
+            Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
+            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
+            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            while (true)
+            {
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+
+                foreach (var item in listTarget)
+                {
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
+                    {
+                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
+                        {
+                            //移動スレッド開始
+                            var calc0 = ClassCalcVec.ReturnVecDistance(
+                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
+                                to: itemGroupBy.OrderPosi
+                                );
+                            itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                            itemGroupBy.FlagMoving = true;
+                            if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
+                            {
+                                if (value.Item1 != null)
+                                {
+                                    value.Item2.Cancel();
+                                    t.Remove(itemGroupBy.ID);
+                                }
+                            }
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) aaa =
+                                new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, classGameStatus, window)), tokenSource);
+                            t.Add(itemGroupBy.ID, aaa);
+                        }
+                    }
+                }
+            }
+        }
+
+
         #region HeuristicMethod
         /// <summary>
         /// エースターアルゴリズムで使用
