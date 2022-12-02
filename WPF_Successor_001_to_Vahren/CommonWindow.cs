@@ -157,7 +157,7 @@ namespace WPF_Successor_001_to_Vahren
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
 
 
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        public void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // ESCキーを押すと終了する。
             if (e.Key == Key.Escape)
@@ -179,6 +179,86 @@ namespace WPF_Successor_001_to_Vahren
                     this.WindowStyle = WindowStyle.None; // タイトルバーと境界線を非表示にします。
                     this.WindowState = WindowState.Maximized;
                 }
+            }
+        }
+        public void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var beseCanvas = ((Canvas)((Window)((Canvas)sender).Parent).Content);
+            var re = (Canvas)LogicalTreeHelper.FindLogicalNode(beseCanvas, "canvasMain");
+            if (re == null) return;
+            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(beseCanvas, "canvasUIRightTop");
+            if (re2 == null) return;
+            var re3 = (Canvas)LogicalTreeHelper.FindLogicalNode(beseCanvas, "canvasUIRightBottom");
+            if (re3 == null) return;
+
+            // クライアント領域を知る方法
+            var si = e.NewSize;
+            this._sizeClientWinWidth = (int)si.Width;
+            this._sizeClientWinHeight = (int)si.Height;
+
+            // canvasMain を常にウインドウの中央に置く。
+            re.Margin = new Thickness()
+            {
+                Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
+                Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
+            };
+            // canvasUI も canvasMain と同じく中央に置く。
+            re.Margin = re.Margin;
+
+            // canvasUIRightTop をウインドウの右上隅に置く。
+            {
+                double newTop, newLeft;
+                if (this._sizeClientWinHeight > this.CanvasMainHeight)
+                {
+                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
+                }
+                else
+                {
+                    // ウインドウの高さが低い場合は上端に合わせる。
+                    newTop = 0;
+                }
+                if (this._sizeClientWinWidth > this.CanvasMainWidth)
+                {
+                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
+                }
+                else
+                {
+                    // ウインドウの横幅が狭い場合は右端に合わせる。
+                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
+                }
+                re2.Margin = new Thickness()
+                {
+                    Top = newTop,
+                    Left = newLeft
+                };
+            }
+            // canvasUIRightBottom をウインドウの右下隅に置く。
+            {
+                double newTop, newLeft;
+                if (this._sizeClientWinHeight > this.CanvasMainHeight)
+                {
+                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
+                }
+                else
+                {
+                    // ウインドウの高さが低い場合は下端に合わせる。
+                    newTop = this._sizeClientWinHeight - this.CanvasMainHeight;
+                }
+
+                if (this._sizeClientWinWidth > this.CanvasMainWidth)
+                {
+                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
+                }
+                else
+                {
+                    // ウインドウの横幅が狭い場合は右端に合わせる。
+                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
+                }
+                re3.Margin = new Thickness()
+                {
+                    Top = newTop,
+                    Left = newLeft
+                };
             }
         }
 

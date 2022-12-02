@@ -407,6 +407,144 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill, ClassGameStatus classGameStatus, Canvas canvasMain)
+        {
+            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
+            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            while (true)
+            {
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+
+                ClassVec classVec = new ClassVec();
+                classVec.Target = new Point(classUnit.OrderPosiSkill.X, classUnit.OrderPosiSkill.Y);
+                classVec.Vec = new Point(classUnit.VecMoveSkill.X, classUnit.VecMoveSkill.Y);
+                classVec.Speed = classSkill.Speed;
+
+                if (classVec.Hit(new Point(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y)))
+                {
+                    classUnit.FlagMovingSkill = false;
+                    await Task.Run(() =>
+                    {
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                            if (re1 == null) return;
+                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                            if (re2 == null) return;
+
+                            re1.Children.Remove(re2);
+
+                        }));
+                    });
+
+                    //体力計算処理
+                    foreach (var item in listTarget)
+                    {
+                        var re = item.ListClassUnit.Where(x => x.NowPosi.X <= classUnit.NowPosiSkill.X + 5
+                                                    && x.NowPosi.X >= classUnit.NowPosiSkill.X - 5
+                                                    && x.NowPosi.Y <= classUnit.NowPosiSkill.Y + 5
+                                                    && x.NowPosi.Y >= classUnit.NowPosiSkill.Y - 5);
+
+                        foreach (var itemRe in re)
+                        {
+                            itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
+                            if (itemRe.Hp <= 0)
+                            {
+                                item.ListClassUnit.Remove(itemRe);
+                                await Task.Run(() =>
+                                {
+                                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    {
+                                        //通常ユニット破壊
+                                        {
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                            if (re1 != null)
+                                            {
+                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                                if (re2 != null)
+                                                {
+                                                    re1.Children.Remove(re2);
+                                                }
+                                            }
+                                        }
+                                        //建築物破壊
+                                        if (itemRe is ClassUnitBuilding building)
+                                        {
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                            if (re1 != null)
+                                            {
+                                                var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
+                                                if (re2 != null)
+                                                {
+                                                    re1.Children.Remove(re2);
+                                                    classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
+                                                }
+                                            }
+                                        }
+                                    }));
+                                });
+                            }
+                        }
+                    }
+                    //体力計算処理終了
+
+                    classUnit.OrderPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X,
+                        Y = classUnit.NowPosiSkill.Y
+                    };
+
+                    return;
+                }
+                else
+                {
+                    if (classUnit.VecMoveSkill.X == 0 && classUnit.VecMoveSkill.Y == 0)
+                    {
+                        classUnit.VecMoveSkill = new Point() { X = 0.5, Y = 0.5 };
+                    }
+                    classUnit.NowPosiSkill = new Point()
+                    {
+                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * classSkill.Speed),
+                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * classSkill.Speed)
+                    };
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                            {
+                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                if (re1 == null) return;
+                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                                if (re2 == null) return;
+
+                                re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
+
+                            }));
+                        }
+                        catch (Exception)
+                        {
+                            //攻撃中にゲームを落とすとエラーになるので暫定的に
+                            //throw;
+                        }
+                    });
+                }
+            }
+        }
+
 
         #region HeuristicMethod
         /// <summary>

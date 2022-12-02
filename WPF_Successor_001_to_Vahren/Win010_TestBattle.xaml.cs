@@ -867,80 +867,6 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Start();
         }
 
-
-        private void canvasTop_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            // クライアント領域を知る方法
-            var si = e.NewSize;
-            this._sizeClientWinWidth = (int)si.Width;
-            this._sizeClientWinHeight = (int)si.Height;
-
-            // canvasMain を常にウインドウの中央に置く。
-            this.canvasMain.Margin = new Thickness()
-            {
-                Top = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2),
-                Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
-            };
-            // canvasUI も canvasMain と同じく中央に置く。
-            this.canvasUI.Margin = this.canvasMain.Margin;
-
-            // canvasUIRightTop をウインドウの右上隅に置く。
-            {
-                double newTop, newLeft;
-                if (this._sizeClientWinHeight > this.CanvasMainHeight)
-                {
-                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
-                }
-                else
-                {
-                    // ウインドウの高さが低い場合は上端に合わせる。
-                    newTop = 0;
-                }
-                if (this._sizeClientWinWidth > this.CanvasMainWidth)
-                {
-                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
-                }
-                else
-                {
-                    // ウインドウの横幅が狭い場合は右端に合わせる。
-                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
-                }
-                this.canvasUIRightTop.Margin = new Thickness()
-                {
-                    Top = newTop,
-                    Left = newLeft
-                };
-            }
-            // canvasUIRightBottom をウインドウの右下隅に置く。
-            {
-                double newTop, newLeft;
-                if (this._sizeClientWinHeight > this.CanvasMainHeight)
-                {
-                    newTop = (this._sizeClientWinHeight / 2) - (this.CanvasMainHeight / 2);
-                }
-                else
-                {
-                    // ウインドウの高さが低い場合は下端に合わせる。
-                    newTop = this._sizeClientWinHeight - this.CanvasMainHeight;
-                }
-
-                if (this._sizeClientWinWidth > this.CanvasMainWidth)
-                {
-                    newLeft = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2);
-                }
-                else
-                {
-                    // ウインドウの横幅が狭い場合は右端に合わせる。
-                    newLeft = this._sizeClientWinWidth - this.CanvasMainWidth;
-                }
-                this.canvasUIRightBottom.Margin = new Thickness()
-                {
-                    Top = newTop,
-                    Left = newLeft
-                };
-            }
-        }
-
         #region BattleEvent
         private void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
@@ -1085,7 +1011,6 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         #region Battle
-
         /// <summary>
         /// マップ生成後に実行
         /// </summary>
@@ -1221,7 +1146,6 @@ namespace WPF_Successor_001_to_Vahren
             }
 
         }
-
         private void TimerAction60FPSBattle()
         {
             //攻撃側勝利
@@ -1365,7 +1289,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-
         private void TaskBattleSkill(CancellationToken token)
         {
             List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
@@ -1467,7 +1390,7 @@ namespace WPF_Successor_001_to_Vahren
                                     }
 
                                     //スキル発動スレッド開始
-                                    var t = Task.Run(() => TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill));
+                                    var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, this.ClassGameStatus, this.canvasMain));
                                     flagAttack = true;
                                     break;
                                 }
@@ -1535,168 +1458,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
-
-        private async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill)
-        {
-            //移動し過ぎを防止
-            //長い攻撃だとカウンターが降り切れてしまう。どうしたものか。
-            int counter = 1000;
-
-            while (true)
-            {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
-
-                if (classUnit.NowPosiSkill.X < classUnit.OrderPosiSkill.X + 5
-                    && classUnit.NowPosiSkill.X > classUnit.OrderPosiSkill.X - 5
-                    && classUnit.NowPosiSkill.Y < classUnit.OrderPosiSkill.Y + 5
-                    && classUnit.NowPosiSkill.Y > classUnit.OrderPosiSkill.Y - 5)
-                {
-                    classUnit.FlagMovingSkill = false;
-                    await Task.Run(() =>
-                    {
-                        Application.Current.Dispatcher.Invoke((Action)(() =>
-                        {
-                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                            if (re1 != null)
-                            {
-                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                                if (re2 != null)
-                                {
-                                    re1.Children.Remove(re2);
-                                }
-                            }
-                        }));
-                    });
-
-                    //体力計算処理
-                    //どちらがプレイヤー側かで分ける
-                    if (true)
-                    {
-                        foreach (var item in this.ClassGameStatus.ClassBattle.DefUnitGroup)
-                        {
-                            var re = item.ListClassUnit.Where(x => x.NowPosi.X <= classUnit.NowPosiSkill.X + 5
-                                                        && x.NowPosi.X >= classUnit.NowPosiSkill.X - 5
-                                                        && x.NowPosi.Y <= classUnit.NowPosiSkill.Y + 5
-                                                        && x.NowPosi.Y >= classUnit.NowPosiSkill.Y - 5);
-
-                            foreach (var itemRe in re)
-                            {
-                                itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
-                                if (itemRe.Hp <= 0)
-                                {
-                                    item.ListClassUnit.Remove(itemRe);
-                                    await Task.Run(() =>
-                                    {
-                                        Application.Current.Dispatcher.Invoke((Action)(() =>
-                                        {
-                                            //通常ユニット破壊
-                                            {
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                                if (re1 != null)
-                                                {
-                                                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                                    if (re2 != null)
-                                                    {
-                                                        re1.Children.Remove(re2);
-                                                    }
-                                                }
-                                            }
-                                            //建築物破壊
-                                            if (itemRe is ClassUnitBuilding building)
-                                            {
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                                if (re1 != null)
-                                                {
-                                                    var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                                    if (re2 != null)
-                                                    {
-                                                        re1.Children.Remove(re2);
-                                                        ClassGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
-                                                    }
-                                                }
-                                            }
-                                        }));
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    classUnit.OrderPosiSkill = new Point()
-                    {
-                        X = classUnit.NowPosiSkill.X,
-                        Y = classUnit.NowPosiSkill.Y
-                    };
-
-                    return;
-                }
-                else
-                {
-                    if (classUnit.VecMoveSkill.X == 0 && classUnit.VecMoveSkill.Y == 0)
-                    {
-                        classUnit.VecMoveSkill = new Point() { X = 0.5, Y = 0.5 };
-                    }
-                    classUnit.NowPosiSkill = new Point()
-                    {
-                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * classSkill.Speed),
-                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * classSkill.Speed)
-                    };
-                    await Task.Run(() =>
-                    {
-                        try
-                        {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
-                            {
-                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                if (re1 != null)
-                                {
-                                    var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                                    if (re2 != null)
-                                    {
-                                        re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
-                                    }
-                                }
-                            }));
-                        }
-                        catch (Exception)
-                        {
-                            //攻撃中にゲームを落とすとエラーになるので暫定的に
-                            //throw;
-                        }
-                    });
-                }
-
-                counter--;
-
-                if (counter <= 0)
-                {
-                    classUnit.OrderPosiSkill = new Point()
-                    {
-                        X = classUnit.NowPosiSkill.X,
-                        Y = classUnit.NowPosiSkill.Y
-                    };
-                    classUnit.FlagMovingSkill = false;
-                    await Task.Run(() =>
-                    {
-                        Application.Current.Dispatcher.Invoke((Action)(() =>
-                        {
-                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                            if (re2 != null)
-                            {
-                                re1.Children.Remove(re2);
-                            }
-                        }));
-                    });
-
-                    // エラーログ出力としたい
-                    //throw new Exception("ErrorNumber:000001");
-                    return;
-                }
-
-            }
-        }
-
         #endregion
 
     }
