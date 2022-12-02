@@ -125,6 +125,16 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        // フレーバーテキスト
+        #region Text
+        private string text = string.Empty;
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+        #endregion
+
         //選択したスポットがどこの勢力に属するかはClassPowerAndCityで見る
 
         #region PowerNameTag
@@ -146,7 +156,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ListWanderingMonster
-        private List<(string,int)> _listWanderingMonster = new List<(string, int)>();
+        private List<(string, int)> _listWanderingMonster = new List<(string, int)>();
         public List<(string, int)> ListWanderingMonster
         {
             get { return _listWanderingMonster; }

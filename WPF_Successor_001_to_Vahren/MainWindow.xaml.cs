@@ -5038,6 +5038,21 @@ namespace WPF_Successor_001_to_Vahren
                     classSpot.ListMonster = values;
                 }
             }
+            //text
+            {
+                var text =
+                    new Regex(GetPat("text"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(text);
+                if (first == null)
+                {
+                    classSpot.Text = string.Empty;
+                }
+                else
+                {
+                    classSpot.Text = first.Value;
+                }
+            }
 
             return classSpot;
         }
