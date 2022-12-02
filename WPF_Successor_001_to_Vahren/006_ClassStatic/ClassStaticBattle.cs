@@ -354,10 +354,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
                 case BattleWhichIsThePlayer.Sortie:
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.Def:
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.None:
                     break;

@@ -1189,14 +1189,14 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛ユニット
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveDefAsync = a;
                     }
                     break;
@@ -1205,7 +1205,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleMoveAsync(token)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛(AI)ユニット
