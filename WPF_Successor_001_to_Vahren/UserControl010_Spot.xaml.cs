@@ -29,7 +29,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // ユニットのタイルサイズをここで調節できます
-        private const int tile_width = 48, tile_height = 66, header_width = 48;
+        private const int tile_width = 48, tile_height = 66, header_width = 54;
 
         // 最初に呼び出した時
         private bool _isControl = false; // 操作可能かどうかの設定
@@ -99,7 +99,7 @@ namespace WPF_Successor_001_to_Vahren
                             btnSelect.Width = header_width - 4;
                             btnSelect.Margin = new Thickness(2);
                             btnSelect.Focusable = false;
-                            btnSelect.FontSize = 15;
+                            btnSelect.FontSize = 17;
                             btnSelect.Content = "出撃";
                             this.canvasSpotUnit.Children.Add(btnSelect);
                             Canvas.SetTop(btnSelect, tile_height * i);
@@ -111,11 +111,45 @@ namespace WPF_Successor_001_to_Vahren
                             cmbFormation.Width = header_width - 4;
                             cmbFormation.Margin = new Thickness(2);
                             cmbFormation.Focusable = false;
+
                             // _010_Enum.Formation の順番に表示するので、Enum数値と Index は同じになる
-                            cmbFormation.Items.Add(_010_Enum.Formation.F.ToString());
-                            cmbFormation.Items.Add(_010_Enum.Formation.M.ToString());
-                            cmbFormation.Items.Add(_010_Enum.Formation.B.ToString());
-                            cmbFormation.FontSize = 15;
+                            // 項目ごとに背景色を変える
+                            Label lblItem0 = new Label();
+                            lblItem0.Content = _010_Enum.Formation.F.ToString();
+                            lblItem0.FontSize = 17;
+                            lblItem0.HorizontalContentAlignment = HorizontalAlignment.Center;
+                            lblItem0.Padding = new Thickness(-5);
+                            lblItem0.Width = header_width - 32;
+                            lblItem0.Background = Brushes.Maroon; // RGB=128,0,0
+                            lblItem0.Foreground = Brushes.White;
+                            ComboBoxItem cbItem0 = new ComboBoxItem();
+                            cbItem0.Content = lblItem0;
+                            cmbFormation.Items.Add(cbItem0);
+
+                            Label lblItem1 = new Label();
+                            lblItem1.Content = _010_Enum.Formation.M.ToString();
+                            lblItem1.FontSize = 17;
+                            lblItem1.HorizontalContentAlignment = HorizontalAlignment.Center;
+                            lblItem1.Padding = new Thickness(-5);
+                            lblItem1.Width = header_width - 32;
+                            lblItem1.Background = Brushes.DarkGreen; // RGB=0,100,0
+                            lblItem1.Foreground = Brushes.White;
+                            ComboBoxItem cbItem1 = new ComboBoxItem();
+                            cbItem1.Content = lblItem1;
+                            cmbFormation.Items.Add(cbItem1);
+
+                            Label lblItem2 = new Label();
+                            lblItem2.Content = _010_Enum.Formation.B.ToString();
+                            lblItem2.FontSize = 17;
+                            lblItem2.HorizontalContentAlignment = HorizontalAlignment.Center;
+                            lblItem2.Padding = new Thickness(-5);
+                            lblItem2.Width = header_width - 32;
+                            lblItem2.Background = new SolidColorBrush(Color.FromArgb(255, 0, 0, 160));
+                            lblItem2.Foreground = Brushes.White;
+                            ComboBoxItem cbItem2 = new ComboBoxItem();
+                            cbItem2.Content = lblItem2;
+                            cmbFormation.Items.Add(cbItem2);
+
                             cmbFormation.SelectedIndex = (int)itemUnit.Formation.Formation;
                             cmbFormation.SelectionChanged += cmbFormation_SelectionChanged;
                             this.canvasSpotUnit.Children.Add(cmbFormation);
@@ -125,11 +159,25 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             // 操作できない場合は、陣形だけ表示する
                             Label lblFormation = new Label();
-                            lblFormation.Background = SystemColors.WindowBrush;
-                            lblFormation.Width = 30;
-                            lblFormation.Height = 30;
-                            lblFormation.Margin = new Thickness(10, 20, 0, 0);
-                            lblFormation.FontSize = 15;
+                            lblFormation.Foreground = Brushes.White;
+                            // 項目ごとに背景色を変える
+                            if ((int)itemUnit.Formation.Formation == 0)
+                            {
+                                lblFormation.Background = Brushes.Maroon;
+                            }
+                            else if ((int)itemUnit.Formation.Formation == 1)
+                            {
+                                lblFormation.Background = Brushes.DarkGreen;
+                            }
+                            else
+                            {
+                                lblFormation.Background = new SolidColorBrush(Color.FromArgb(255, 0, 0, 160));
+                            }
+                            lblFormation.Width = tile_height / 2 - 4;
+                            lblFormation.Height = tile_height / 2 - 4;
+                            lblFormation.Margin = new Thickness((header_width - lblFormation.Width) / 2, (tile_height - lblFormation.Height) / 2, 0, 0);
+                            lblFormation.FontSize = 17;
+                            lblFormation.Padding = new Thickness(-5);
                             lblFormation.HorizontalContentAlignment = HorizontalAlignment.Center;
                             lblFormation.VerticalContentAlignment = VerticalAlignment.Center;
                             lblFormation.Content = itemUnit.Formation.Formation.ToString();
@@ -180,7 +228,7 @@ namespace WPF_Successor_001_to_Vahren
                     TextBlock txtLevel = new TextBlock();
                     txtLevel.Name = "txtLevel" + i.ToString() + "_" + j.ToString();
                     txtLevel.Height = tile_height - tile_width;
-                    txtLevel.FontSize = 15;
+                    txtLevel.FontSize = 16;
                     txtLevel.Foreground = Brushes.White;
                     txtLevel.TextAlignment = TextAlignment.Center;
                     txtLevel.Text = "lv" + itemUnit.Level;
@@ -205,7 +253,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 部隊数も更新する
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
-            this.txtTroopCount.Text = i.ToString() + "/" + spot_capacity.ToString();
+            this.txtTroopCount.Text = "部隊 " + i.ToString() + "/" + spot_capacity.ToString();
 
             // ユニット配置場所の大きさ
             if (_isControl)
@@ -242,7 +290,7 @@ namespace WPF_Successor_001_to_Vahren
             // まだ処理を作ってないのでボタンを無効にする
             btnPolitics.IsEnabled = false;
 
-            //旗は存在する時だけ
+            // 旗は存在する時だけ
             if (classPowerAndCity.ClassPower.FlagPath != string.Empty)
             {
                 List<string> strings = new List<string>();
@@ -255,34 +303,29 @@ namespace WPF_Successor_001_to_Vahren
                 var destimg = new CroppedBitmap(bitimg1, rect);
                 this.imgFlag.Source = destimg;
             }
-            //領地名
+            // 領地名
             {
                 this.txtNameSpot.Text = classPowerAndCity.ClassSpot.Name;
             }
-            //経済値
+            // 経済値
             {
-                this.txtGain.Text = classPowerAndCity.ClassSpot.Gain.ToString();
+                this.txtGain.Text = "経済 " + classPowerAndCity.ClassSpot.Gain.ToString();
             }
-            //城壁値
+            // 城壁値
             {
-                this.txtCastle.Text = classPowerAndCity.ClassSpot.Castle.ToString();
+                this.txtCastle.Text = "城壁 " + classPowerAndCity.ClassSpot.Castle.ToString();
             }
-            //戦力値
+            // 戦力値
             {
-                this.txtForce.Text = this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
+                this.txtForce.Text = "戦力 " + this.Name.Replace("dowSpot", String.Empty); // ウインドウ番号を表示する実験用
             }
-            //部隊駐留数
+            // 部隊駐留数
             {
                 int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
-                int count = mainWindow.ClassGameStatus.AllListSpot
-                    .Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                    .First()
-                    .UnitGroup
-                    .Where(x => x.Spot.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                    .Count();
-                this.txtTroopCount.Text = count.ToString() + "/" + spot_capacity.ToString();
+                int troop_count = classPowerAndCity.ClassSpot.UnitGroup.Count();
+                this.txtTroopCount.Text = "部隊 " + troop_count.ToString() + "/" + spot_capacity.ToString();
             }
-            //ユニット
+            // ユニット
             {
                 UpdateSpotUnit(mainWindow);
             }

@@ -5,11 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="360" Width="400">
+             Height="100" Width="400">
     <Canvas IsHitTestVisible="False">
-        <Border Height="360" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="5" Opacity="0.5" />
-        <TextBlock Canvas.Left="10" Canvas.Top="10" FontSize="23" Foreground="White" Text="領地の名前" Name="txtNameSpot" />
+        <Border Name="borderWindow" Height="100" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="5" Opacity="0.5"/>
 
+        <TextBlock Canvas.Left="10" Canvas.Top="10" FontSize="19" Foreground="Aqua" Text="勢力の名前" Name="txtNamePower"/>
+        <TextBlock Canvas.Left="10" Canvas.Top="35" FontSize="19" Foreground="White" Text="領地の名前" Name="txtNameSpot"/>
+        <TextBlock Canvas.Left="10" Canvas.Top="60" FontSize="19" Foreground="Yellow" Text="経済1500 城壁290 部隊10/16 戦力1237567" Name="txtStatus"/>
 
+        <StackPanel Canvas.Left="10" Canvas.Top="85" Name="panelSpotUnit"/>
     </Canvas>
 </UserControl>

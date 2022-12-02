@@ -130,14 +130,14 @@ namespace WPF_Successor_001_to_Vahren
                 if (bitimg1.PixelWidth > 96)
                 {
                     this.imgFace.Height = bitimg1.PixelHeight;
-                    if (this.imgFace.Height > 200)
+                    if (this.imgFace.Height > 256)
                     {
-                        this.imgFace.Height = 200;
+                        this.imgFace.Height = 256;
                     }
                     this.imgFace.Width = bitimg1.PixelWidth;
-                    if (this.imgFace.Width > 200)
+                    if (this.imgFace.Width > 256)
                     {
-                        this.imgFace.Width = 200;
+                        this.imgFace.Width = 256;
                     }
                 }
                 Canvas.SetLeft(this.imgFace, this.Width - this.imgFace.Width - 10);
@@ -264,6 +264,14 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 this.txtFinance.Text = actual_finance.ToString();
             }
+
+            // スキル
+            this.panelSkill.Children.Clear(); // 最初に全て消去する
+
+            // 耐性
+            this.panelResist.Children.Clear(); // 最初に全て消去する
+
+
         }
 
 
