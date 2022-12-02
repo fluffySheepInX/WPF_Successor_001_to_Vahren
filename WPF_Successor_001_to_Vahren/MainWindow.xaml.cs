@@ -1528,45 +1528,29 @@ namespace WPF_Successor_001_to_Vahren
             this.ClassGameStatus.SelectionPowerAndCity = ((ClassPowerAndCity)((Button)sender).Tag);
             foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
             {
-                itemSpot.UnitGroup = new List<ClassHorizontalUnit>();
-                //メンバー配置
-                foreach (var itemMember in itemSpot.ListMember)
+                // 中立領地にモンスターをランダム配置する（初期メンバーが指定されてる場合は除外する）
+                if ( (itemSpot.PowerNameTag == string.Empty) && (itemSpot.UnitGroup.Count() == 0) )
                 {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemMember.Item1).FirstOrDefault();
-                    if (info == null)
+                    // ListWanderingMonster と ListMonster の仕様が不明なので、元のままにしておく。
+                    // ヴァーレンだと、指定された比率と制限に準じて、部隊数とメンバー数をランダムに決める。
+                    foreach (var ListWanderingMonster in itemSpot.ListWanderingMonster)
                     {
-                        continue;
-                    }
+                        var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == ListWanderingMonster.Item1).FirstOrDefault();
+                        if (info == null)
+                        {
+                            continue;
+                        }
+                        var classUnit = new List<ClassUnit>();
+                        for (int i = 0; i < ListWanderingMonster.Item2; i++)
+                        {
+                            var deep = info.DeepCopy();
+                            deep.ID = this.ClassGameStatus.IDCount;
+                            this.ClassGameStatus.SetIDCount();
+                            classUnit.Add(deep);
+                        }
 
-                    var classUnit = new List<ClassUnit>();
-                    for (int i = 0; i < itemMember.Item2; i++)
-                    {
-                        var deep = info.DeepCopy();
-                        deep.ID = this.ClassGameStatus.IDCount;
-                        this.ClassGameStatus.SetIDCount();
-                        classUnit.Add(deep);
+                        itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
                     }
-
-                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
-                }
-                //中立配置
-                foreach (var ListWanderingMonster in itemSpot.ListWanderingMonster)
-                {
-                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == ListWanderingMonster.Item1).FirstOrDefault();
-                    if (info == null)
-                    {
-                        continue;
-                    }
-                    var classUnit = new List<ClassUnit>();
-                    for (int i = 0; i < ListWanderingMonster.Item2; i++)
-                    {
-                        var deep = info.DeepCopy();
-                        deep.ID = this.ClassGameStatus.IDCount;
-                        this.ClassGameStatus.SetIDCount();
-                        classUnit.Add(deep);
-                    }
-
-                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
                 }
             }
 
@@ -3533,6 +3517,33 @@ namespace WPF_Successor_001_to_Vahren
 
                 canvas.Children.Add(grid);
                 this.canvasMain.Children.Add(canvas);
+            }
+
+            // 領地に初期メンバーを配置する（中立領地のランダムモンスターは勢力選択後）
+            foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
+            {
+                itemSpot.UnitGroup = new List<ClassHorizontalUnit>();
+
+                // 初期メンバー配置（中立領地でも指定されていれば配置する）
+                foreach (var itemMember in itemSpot.ListMember)
+                {
+                    var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemMember.Item1).FirstOrDefault();
+                    if (info == null)
+                    {
+                        continue;
+                    }
+
+                    var classUnit = new List<ClassUnit>();
+                    for (int i = 0; i < itemMember.Item2; i++)
+                    {
+                        var deep = info.DeepCopy();
+                        deep.ID = this.ClassGameStatus.IDCount;
+                        this.ClassGameStatus.SetIDCount();
+                        classUnit.Add(deep);
+                    }
+
+                    itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
+                }
             }
 
             // 勢力一覧ウィンドウを出す

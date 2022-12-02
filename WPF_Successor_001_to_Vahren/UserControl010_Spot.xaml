@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="690" Width="480">
+             Height="680" Width="480">
     <Canvas
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseRightButtonUp="btnClose_Click"
             >
-        <Border Height="690" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+        <Border Height="680" Width="480" Background="#454545" BorderBrush="Black" BorderThickness="5" />
 
         <Border Height="44" Width="420" BorderBrush="White" BorderThickness="2" Canvas.Left="8" Canvas.Top="8" />
         <Image Canvas.Left="14" Canvas.Top="14" Height="32" Width="32" Name="imgFlag" />
@@ -34,18 +34,14 @@
                     />
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Canvas.Left="15" Canvas.Top="105">
-            <TextBlock FontSize="20" Foreground="White" Text="経済" />
-            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="1000" Name="txtGain" />
-            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="城壁" />
-            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="50" Name="txtCastle" />
-            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="戦力" />
-            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="123456" Name="txtForce" />
-            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="White" Text="部隊" />
-            <TextBlock FontSize="20" Margin="5,0,0,0" Foreground="White" Text="16/16" Name="txtTroopCount" />
+        <StackPanel Orientation="Horizontal" Canvas.Left="15" Canvas.Top="100">
+            <TextBlock FontSize="20" Foreground="Aqua" Text="経済 1000" Name="txtGain" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="城壁 150" Name="txtCastle" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="戦力 1234567" Name="txtForce" />
+            <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="部隊 16/16" Name="txtTroopCount" />
         </StackPanel>
 
-        <ScrollViewer Width="460" Height="535" Canvas.Left="10" Canvas.Top="145" Background="#262626"
+        <ScrollViewer Width="460" Height="535" Canvas.Left="10" Canvas.Top="135" Background="#262626"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Visible"
                 PreviewMouseLeftButtonDown="Raise_ZOrder"
@@ -54,19 +50,18 @@
             <Canvas Name="canvasSpotUnit" HorizontalAlignment="Left" VerticalAlignment="Top">
 
 <!--
-            <Canvas Name="canvasSpotUnit" Width="400" Height="500" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Gray">
                 <StackPanel Orientation="Horizontal" Height="66">
                     <StackPanel>
-                        <Button Height="29" Margin="2" FontSize="15" Content="出撃" />
-                        <ComboBox Width="44" Height="29" Margin="2" FontSize="15">
-                            <ComboBoxItem Content="F" Background="Red" Foreground="White" />
-                            <ComboBoxItem Content="M" Background="Green" Foreground="White" />
-                            <ComboBoxItem Content="B" Background="Blue" Foreground="White" />
+                        <Button Height="29" Margin="2" FontSize="17" Content="出撃" />
+                        <ComboBox Width="44" Height="29" Margin="2" FontSize="17">
+                            <ComboBoxItem Content="F"/>
+                            <ComboBoxItem Content="M"/>
+                            <ComboBoxItem Content="B"/>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel>
                         <Image Height="48" Width="48" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
-                        <TextBlock Height="18" FontSize="15" Foreground="White" TextAlignment="Center" Text="lv199E" />
+                        <TextBlock Height="18" FontSize="16" Foreground="White" TextAlignment="Center" Text="lv199E" />
                     </StackPanel>
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
                     <Button Width="48" Height="66" Background="Transparent" BorderThickness="0" />
