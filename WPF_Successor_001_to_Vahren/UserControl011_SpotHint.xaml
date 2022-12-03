@@ -7,7 +7,9 @@
              mc:Ignorable="d" 
              Height="100" Width="400">
     <Canvas IsHitTestVisible="False">
-        <Border Name="borderWindow" Height="100" Width="400" Background="#454545" BorderBrush="Black" BorderThickness="5" Opacity="0.5"/>
+        <Border Background="#454545" BorderBrush="Black" BorderThickness="5" Opacity="0.5"
+                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}"
+                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}" />
 
         <TextBlock Canvas.Left="10" Canvas.Top="10" FontSize="19" Foreground="Aqua" Text="勢力の名前" Name="txtNamePower"/>
         <TextBlock Canvas.Left="10" Canvas.Top="35" FontSize="19" Foreground="White" Text="領地の名前" Name="txtNameSpot"/>
