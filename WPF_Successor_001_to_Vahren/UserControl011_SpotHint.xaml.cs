@@ -66,11 +66,9 @@ namespace WPF_Successor_001_to_Vahren
             this.txtNameSpot.Text = classPowerAndCity.ClassSpot.Name;
 
             // 部隊数を数えてユニットを表示する
-            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
-            int tile_height = 32, tile_width = 32;
+            int tile_height = 32, max_width = 0;
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int troop_count = listTroop.Count();
-            int member_max = 0;
             if (troop_count > 0)
             {
                 // 画像のディレクトリ
@@ -79,8 +77,8 @@ namespace WPF_Successor_001_to_Vahren
                 strings.Add("040_ChipImage");
                 string pathDirectory = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
 
-                // 部隊数によって画像サイズを変える
-                // ８部隊、８人、までなら32ドット。それを超えると画像が途切れる。
+                // 部隊数によって、一部隊ごとの高さを変える
+                // ８部隊までなら 32ドット。それを超えると画像が途切れる。最低でも半分の 16ドットは表示する。
                 tile_height = 256 / troop_count;
                 if (tile_height > 32)
                 {
@@ -90,45 +88,37 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     tile_height = 16;
                 }
-                int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
-                tile_width = 384 / member_capacity;
-                if (tile_width > 32)
-                {
-                    tile_width = 32;
-                }
-                else if (tile_width < 16)
-                {
-                    tile_width = 16;
-                }
 
                 // ユニットを並べる
-                int j;
                 foreach (var itemTroop in listTroop)
                 {
                     // 部隊のパネル
                     StackPanel panelTroop = new StackPanel();
                     panelTroop.Orientation = Orientation.Horizontal;
+                    // 画像のサイズに関係なく、パネルの高さで表示する範囲を決める。
                     panelTroop.Height = tile_height;
 
-                    j = 0;
+                    int panel_width = 0;
                     foreach (var itemUnit in itemTroop.ListClassUnit)
                     {
                         // ユニットの画像
                         BitmapImage bitimg1 = new BitmapImage(new Uri(pathDirectory + itemUnit.Image));
-                        Int32Rect rect = new Int32Rect(0, 0, tile_width, tile_height);
-                        var destimg = new CroppedBitmap(bitimg1, rect);
-
                         Image imgUnit = new Image();
-                        imgUnit.Source = destimg;
-                        imgUnit.Width = tile_width;
-                        imgUnit.Height = tile_height;
+                        imgUnit.Source = bitimg1;
+                        // アスペクト比を保つので幅だけ 32までに制限すればいい
+                        int image_width = bitimg1.PixelWidth;
+                        if (image_width > 32)
+                        {
+                            image_width = 32;
+                        }
+                        imgUnit.Width = image_width;
+                        imgUnit.Height = bitimg1.PixelHeight;
                         panelTroop.Children.Add(imgUnit);
-
-                        j++;
+                        panel_width += image_width;
                     }
-                    if (member_max < j)
+                    if (max_width < panel_width)
                     {
-                        member_max = j;
+                        max_width = panel_width;
                     }
 
                     this.panelSpotUnit.Children.Add(panelTroop);
@@ -136,6 +126,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 経済、城壁、部隊、戦力
+            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
             this.txtStatus.Text = "経済" + classPowerAndCity.ClassSpot.Gain.ToString()
                                 + " 城壁" + classPowerAndCity.ClassSpot.Castle.ToString()
                                 + " 部隊" + troop_count.ToString() + "/" + spot_capacity.ToString()
@@ -146,9 +137,9 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.borderWindow.Height = 85 + tile_height * troop_count + 10;
             }
-            if (10 + tile_width * member_max + 10 > 400)
+            if (10 + max_width + 10 > 400)
             {
-                this.borderWindow.Height = 10 + tile_width * member_max + 10;
+                this.borderWindow.Width = 10 + max_width + 10;
             }
 
         }

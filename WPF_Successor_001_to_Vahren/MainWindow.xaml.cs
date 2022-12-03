@@ -2687,8 +2687,6 @@ namespace WPF_Successor_001_to_Vahren
                         Left = this.CanvasMainWidth - button.Width - startSpaceLeft,
                     };
 
-                    Canvas.SetZIndex(button, 99);
-
                     this.canvasUIRightTop.Children.Add(button);
                 }
             }

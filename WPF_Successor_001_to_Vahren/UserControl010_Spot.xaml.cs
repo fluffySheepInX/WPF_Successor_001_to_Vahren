@@ -1004,6 +1004,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Top = itemSpot.Y - 32
                                 };
                                 gridMapStrategy.Children.Add(border);
+                                Panel.SetZIndex(border, 2);
                             }
                         }
                     }
@@ -1191,6 +1192,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Top = itemSpot.Y - 32
                                 };
                                 gridMapStrategy.Children.Add(border);
+                                Panel.SetZIndex(border, 2);
                             }
                         }
                     }
@@ -1317,6 +1319,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Top = itemSpot.Y - 32
                                 };
                                 gridMapStrategy.Children.Add(border);
+                                Panel.SetZIndex(border, 2);
                             }
                         }
                     }

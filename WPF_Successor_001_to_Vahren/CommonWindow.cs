@@ -192,6 +192,8 @@ namespace WPF_Successor_001_to_Vahren
             if (re2 == null) return;
             var re3 = (Canvas)LogicalTreeHelper.FindLogicalNode(beseCanvas, "canvasUIRightBottom");
             if (re3 == null) return;
+            var re4 = (Canvas)LogicalTreeHelper.FindLogicalNode(beseCanvas, "canvasUI");
+            if (re4 == null) return;
 
             // クライアント領域を知る方法
             var si = e.NewSize;
@@ -205,7 +207,7 @@ namespace WPF_Successor_001_to_Vahren
                 Left = (this._sizeClientWinWidth / 2) - (this.CanvasMainWidth / 2)
             };
             // canvasUI も canvasMain と同じく中央に置く。
-            re.Margin = re.Margin;
+            re4.Margin = re.Margin;
 
             // canvasUIRightTop をウインドウの右上隅に置く。
             {
