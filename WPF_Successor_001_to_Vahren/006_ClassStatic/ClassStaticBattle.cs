@@ -403,7 +403,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window)
+        /// <summary>
+        /// アスターアルゴリズムで移動
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <param name="classGameStatus"></param>
+        /// <param name="window"></param>
+        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window, Canvas canvasMain)
         {
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
@@ -420,6 +426,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 default:
                     break;
             }
+            List<Path> listPath = canvasMain.Children.OfType<Path>().ToList();
 
             while (true)
             {
@@ -433,31 +440,31 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 foreach (var item in listTarget)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
+                    foreach (var itemGroupBy in item.ListClassUnit)
                     {
-                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
+                        //アスターアルゴリズムで移動経路取得
+
+
+                        //移動スレッド開始
+                        var calc0 = ClassCalcVec.ReturnVecDistance(
+                            from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
+                            to: itemGroupBy.OrderPosi
+                            );
+                        itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                        itemGroupBy.FlagMoving = true;
+                        if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
                         {
-                            //移動スレッド開始
-                            var calc0 = ClassCalcVec.ReturnVecDistance(
-                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
-                                to: itemGroupBy.OrderPosi
-                                );
-                            itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                            itemGroupBy.FlagMoving = true;
-                            if (t.TryGetValue(itemGroupBy.ID, out (Task, CancellationTokenSource) value))
+                            if (value.Item1 != null)
                             {
-                                if (value.Item1 != null)
-                                {
-                                    value.Item2.Cancel();
-                                    t.Remove(itemGroupBy.ID);
-                                }
+                                value.Item2.Cancel();
+                                t.Remove(itemGroupBy.ID);
                             }
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) aaa =
-                                new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, classGameStatus, window)), tokenSource);
-                            t.Add(itemGroupBy.ID, aaa);
                         }
+                        var tokenSource = new CancellationTokenSource();
+                        var token = tokenSource.Token;
+                        (Task, CancellationTokenSource) aaa =
+                            new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemGroupBy, token, classGameStatus, window)), tokenSource);
+                        t.Add(itemGroupBy.ID, aaa);
                     }
                 }
             }

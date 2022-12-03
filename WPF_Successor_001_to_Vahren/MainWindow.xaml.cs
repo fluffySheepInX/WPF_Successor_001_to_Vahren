@@ -1941,7 +1941,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 this.canvasMain.Children.Add(
-                    GetCanvasBattleBack(canvas,
+                    SetAndGetCanvasBattleBack(canvas,
                                         this._sizeClientWinWidth,
                                         this._sizeClientWinHeight,
                                         this.CanvasMainWidth,
@@ -4258,7 +4258,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveDefAsync = a;
                     }
                     break;
@@ -4267,7 +4267,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛ユニット
@@ -4283,14 +4283,14 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛(AI)ユニット
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveDefAsync = a;
                     }
                     break;

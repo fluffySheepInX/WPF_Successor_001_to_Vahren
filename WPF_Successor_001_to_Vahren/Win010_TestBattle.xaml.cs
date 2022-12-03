@@ -192,13 +192,18 @@ namespace WPF_Successor_001_to_Vahren
                             image.ImageSource = bi;
                             System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
                             path.Fill = image;
+                            ClassBattleMapPath classBattleMapPath = new ClassBattleMapPath();
+                            classBattleMapPath.Col = itemCol.index;
+                            classBattleMapPath.Row = itemRow.index;
                             if (itemRow.value.BoueiButaiNoIti == true)
                             {
-                                path.Tag = "Bouei";
+                                classBattleMapPath.KougekiOrBouei = "Bouei";
+                                path.Tag = classBattleMapPath;
                             }
                             if (itemRow.value.KougekiButaiNoIti == true)
                             {
-                                path.Tag = "Kougeki";
+                                classBattleMapPath.KougekiOrBouei = "Kougeki";
+                                path.Tag = classBattleMapPath;
                             }
                             path.Stretch = Stretch.Fill;
                             path.StrokeThickness = 0;
@@ -251,7 +256,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 this.canvasMain.Children.Add(
-                    GetCanvasBattleBack(canvas,
+                    SetAndGetCanvasBattleBack(canvas,
                                         this._sizeClientWinWidth,
                                         this._sizeClientWinHeight,
                                         this.CanvasMainWidth,
@@ -550,25 +555,29 @@ namespace WPF_Successor_001_to_Vahren
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
-                for (int i = 0; i < canvas.Children.Count; i++)
+                var abc = canvas.Children.OfType<Path>();
+                foreach (var item in abc)
                 {
-                    if (canvas.Children[i] is System.Windows.Shapes.Path ppp)
+                    ClassBattleMapPath? taggg = (item.Tag) as ClassBattleMapPath;
+                    if (taggg == null) continue;
+                    if (taggg.KougekiOrBouei == "Bouei")
                     {
-                        string? taggg = Convert.ToString(ppp.Tag);
-                        if (taggg != null)
-                        {
-                            if (taggg == "Bouei")
-                            {
-                                //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
-                                //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
-                                //目標点P(Xp, Yp) とのズレを算出
+                        //とある線(Shape.Line型)を、掲題の通り移動させたい。
+                        //例えば、(X1 = 0, Y1 = 50, X2 = 50, Y2 = 100)の線Aと、点P(X = 30, Y = 30)があるとして、
+                        //点Pの座標に線Aの中心を置きたい。(傾きはそのまま)
 
-                                //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+                        //hidariTakasa
+                        //migiTakasa
+                        //を変えるのが目的
 
-                                //xxx = ppp.Margin.Left;
-                                //xxx = ppp.Margin.Top;
-                            }
-                        }
+                        //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
+                        //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
+                        //目標点P(Xp, Yp) とのズレを算出
+
+                        //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+
+                        //xxx = ppp.Margin.Left;
+                        //xxx = ppp.Margin.Top;
                     }
                 }
                 //ユニットの端の位置を算出
@@ -964,7 +973,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveDefAsync = a;
                     }
                     break;
@@ -973,7 +982,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛ユニット
@@ -989,14 +998,14 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveAsync = a;
                     }
                     //防衛(AI)ユニット
                     {
                         var tokenSource = new CancellationTokenSource();
                         var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this)), tokenSource);
+                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
                         this.ClassGameStatus.TaskBattleMoveDefAsync = a;
                     }
                     break;

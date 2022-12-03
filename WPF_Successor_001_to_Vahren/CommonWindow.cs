@@ -436,7 +436,7 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
 
-        public static Canvas GetCanvasBattleBack(Canvas canvas,
+        public static Canvas SetAndGetCanvasBattleBack(Canvas canvas,
                                                 int _sizeClientWinWidth,
                                                 int _sizeClientWinHeight,
                                                 int CanvasMainWidth,
