@@ -969,7 +969,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    classSpot.Text = first.Value.Replace("\t", "").Replace(" ", "").Replace("　", "").Replace("〇", "　");
+                    classSpot.Text = first.Value.Replace("\t", "")
+                                                .Replace(" ", "")
+                                                .Replace("　", "")
+                                                .Replace(System.Environment.NewLine, "")
+                                                .Replace("〇", "　")
+                                                .Replace("$", System.Environment.NewLine);
                 }
             }
 
@@ -1293,7 +1298,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return classScenario;
         }
 
-        public static ClassPower GetClassPowerNewFormat(string value,string fullName)
+        public static ClassPower GetClassPowerNewFormat(string value, string fullName)
         {
             ClassPower classPower = new ClassPower();
 
