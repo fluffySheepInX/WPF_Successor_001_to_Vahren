@@ -601,6 +601,132 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        public static void TaskBattleSkill(CancellationToken token, Canvas canvasMain, ClassGameStatus classGameStatus)
+        {
+            List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
+            List<ClassHorizontalUnit> bbb = new List<ClassHorizontalUnit>();
+            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    aaa = classGameStatus.ClassBattle.SortieUnitGroup;
+                    bbb = classGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    aaa = classGameStatus.ClassBattle.DefUnitGroup;
+                    bbb = classGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            while (true)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                bool flagAttack = false;
+
+                foreach (var item in aaa)
+                {
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
+                    {
+                        //スキル優先順位確認
+                        foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
+                        {
+                            //スキル射程範囲確認
+                            var xA = itemGroupBy.NowPosi;
+                            foreach (var itemDefUnitGroup in bbb)
+                            {
+                                foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
+                                {
+                                    //三平方の定理から射程内か確認
+                                    {
+                                        var xB = itemDefUnitList.NowPosi;
+                                        double teihen = xA.X - xB.X;
+                                        double takasa = xA.Y - xB.Y;
+                                        double syahen = (teihen * teihen) + (takasa * takasa);
+                                        double kyori = Math.Sqrt(syahen);
+
+                                        double xAHankei = (32 / 2) + itemSkill.Range;
+                                        double xBHankei = 32 / 2;
+
+                                        bool check = true;
+                                        if (kyori > (xAHankei + xBHankei))
+                                        {
+                                            check = false;
+                                        }
+                                        //チェック
+                                        if (check == false)
+                                        {
+                                            continue;
+                                        }
+                                    }
+
+                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosi.X, Y = itemGroupBy.NowPosi.Y };
+                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosi.X, Y = itemDefUnitList.NowPosi.Y };
+                                    var calc0 = ClassCalcVec.ReturnVecDistance(
+                                                    from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
+                                                    to: itemDefUnitList.NowPosi
+                                                    );
+                                    itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
+                                    itemGroupBy.FlagMovingSkill = true;
+
+                                    //Image出す
+                                    {
+                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        {
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID);
+                                            if (re2 != null)
+                                            {
+                                                re1.Children.Remove(re2);
+                                            }
+
+                                            Canvas canvas = new Canvas();
+                                            canvas.Background = Brushes.Red;
+                                            canvas.Height = itemSkill.H;
+                                            canvas.Width = itemSkill.W;
+                                            canvas.Margin = new Thickness()
+                                            {
+                                                Left = itemGroupBy.NowPosiSkill.X,
+                                                Top = itemGroupBy.NowPosiSkill.Y
+                                            };
+                                            canvas.Name = "skillEffect" + itemGroupBy.ID;
+                                            re1.Children.Add(canvas);
+                                        }));
+                                    }
+
+                                    //スキル発動スレッド開始
+                                    var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain));
+                                    flagAttack = true;
+                                    break;
+                                }
+
+                                if (flagAttack == true)
+                                {
+                                    break;
+                                }
+                            }
+                            if (flagAttack == true)
+                            {
+                                break;
+                            }
+                        }
+                        if (flagAttack == true)
+                        {
+                            flagAttack = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         #region HeuristicMethod
         /// <summary>

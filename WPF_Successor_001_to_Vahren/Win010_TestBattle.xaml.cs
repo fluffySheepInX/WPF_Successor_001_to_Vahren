@@ -939,14 +939,14 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var tokenSource = new CancellationTokenSource();
                 var token = tokenSource.Token;
-                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
+                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
                 this.ClassGameStatus.TaskBattleSkill = a;
             }
             //防衛ユニット
             {
                 var tokenSource = new CancellationTokenSource();
                 var token = tokenSource.Token;
-                (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
+                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
                 this.ClassGameStatus.TaskBattleSkillDef = a;
             }
             ////移動スレッド開始
@@ -1145,131 +1145,6 @@ namespace WPF_Successor_001_to_Vahren
                     this.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
 
                     return;
-                }
-            }
-        }
-        private void TaskBattleSkill(CancellationToken token)
-        {
-            List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
-            List<ClassHorizontalUnit> bbb = new List<ClassHorizontalUnit>();
-            switch (this.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    aaa = this.ClassGameStatus.ClassBattle.SortieUnitGroup;
-                    bbb = this.ClassGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    aaa = this.ClassGameStatus.ClassBattle.DefUnitGroup;
-                    bbb = this.ClassGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
-
-            while (true)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
-                bool flagAttack = false;
-
-                foreach (var item in aaa)
-                {
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
-                    {
-                        //スキル優先順位確認
-                        foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
-                        {
-                            //スキル射程範囲確認
-                            var xA = itemGroupBy.NowPosi;
-                            foreach (var itemDefUnitGroup in bbb)
-                            {
-                                foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
-                                {
-                                    //三平方の定理から射程内か確認
-                                    {
-                                        var xB = itemDefUnitList.NowPosi;
-                                        double teihen = xA.X - xB.X;
-                                        double takasa = xA.Y - xB.Y;
-                                        double syahen = (teihen * teihen) + (takasa * takasa);
-                                        double kyori = Math.Sqrt(syahen);
-
-                                        double xAHankei = (32 / 2) + itemSkill.Range;
-                                        double xBHankei = 32 / 2;
-
-                                        bool check = true;
-                                        if (kyori > (xAHankei + xBHankei))
-                                        {
-                                            check = false;
-                                        }
-                                        //チェック
-                                        if (check == false)
-                                        {
-                                            continue;
-                                        }
-                                    }
-
-                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosi.X, Y = itemGroupBy.NowPosi.Y };
-                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosi.X, Y = itemDefUnitList.NowPosi.Y };
-                                    var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                    from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
-                                                    to: itemDefUnitList.NowPosi
-                                                    );
-                                    itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
-                                    itemGroupBy.FlagMovingSkill = true;
-
-                                    //Image出す
-                                    {
-                                        Application.Current.Dispatcher.Invoke((Action)(() =>
-                                        {
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapBattle);
-                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID);
-                                            if (re2 != null)
-                                            {
-                                                re1.Children.Remove(re2);
-                                            }
-
-                                            Canvas canvas = new Canvas();
-                                            canvas.Background = Brushes.Red;
-                                            canvas.Height = itemSkill.H;
-                                            canvas.Width = itemSkill.W;
-                                            canvas.Margin = new Thickness()
-                                            {
-                                                Left = itemGroupBy.NowPosiSkill.X,
-                                                Top = itemGroupBy.NowPosiSkill.Y
-                                            };
-                                            canvas.Name = "skillEffect" + itemGroupBy.ID;
-                                            re1.Children.Add(canvas);
-                                        }));
-                                    }
-
-                                    //スキル発動スレッド開始
-                                    var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, this.ClassGameStatus, this.canvasMain));
-                                    flagAttack = true;
-                                    break;
-                                }
-
-                                if (flagAttack == true)
-                                {
-                                    break;
-                                }
-                            }
-                            if (flagAttack == true)
-                            {
-                                break;
-                            }
-                        }
-                        if (flagAttack == true)
-                        {
-                            flagAttack = false;
-                            break;
-                        }
-                    }
                 }
             }
         }
