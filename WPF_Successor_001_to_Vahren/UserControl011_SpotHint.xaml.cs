@@ -135,14 +135,29 @@ namespace WPF_Successor_001_to_Vahren
             // ウインドウの大きさを調節する
             if (troop_count > 0)
             {
-                this.borderWindow.Height = 85 + tile_height * troop_count + 10;
+                this.Height = 85 + tile_height * troop_count + 10;
             }
             if (10 + max_width + 10 > 400)
             {
-                this.borderWindow.Width = 10 + max_width + 10;
+                this.Width = 10 + max_width + 10;
             }
 
-        }
+            // 画面の左上隅に配置する
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+            this.Margin = new Thickness()
+            {
+                Left = offsetLeft,
+                Top = offsetTop
+            };
 
+        }
     }
 }

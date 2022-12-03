@@ -2304,7 +2304,7 @@ namespace WPF_Successor_001_to_Vahren
                         Left = offsetLeft,
                         Top = this.Margin.Top
                     };
-                    itemWindow.SetData();
+                    itemWindow.DisplayMercenary(mainWindow);
 
                     // 雇用ウインドウをこのウインドウよりも前面に移動させる
                     Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
@@ -2329,8 +2329,8 @@ namespace WPF_Successor_001_to_Vahren
                     Left = offsetLeft,
                     Top = this.Margin.Top
                 };
-                windowMercenary.SetData();
                 mainWindow.canvasUI.Children.Add(windowMercenary);
+                windowMercenary.SetData();
             }
         }
 

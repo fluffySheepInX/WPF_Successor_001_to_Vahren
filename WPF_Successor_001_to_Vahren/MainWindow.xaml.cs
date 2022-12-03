@@ -754,14 +754,15 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
+
             // マウスを離した時のイベントを追加する
             cast.MouseLeave += ButtonSelectionCity_MouseLeave;
 
             // 同じ勢力の全ての領地を強調する
+            ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
             if (gridMapStrategy != null)
             {
-                ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
                     // プレイヤー勢力なら色を変える
@@ -828,25 +829,19 @@ namespace WPF_Successor_001_to_Vahren
             // 領地のヒントを作成する
             var hintSpot = new UserControl011_SpotHint();
             hintSpot.Name = "HintSpot";
-            hintSpot.Tag = cast.Tag;
-
-            // 左上隅に配置する
-            double offsetLeft = 0, offsetTop = 0;
-            if (this.canvasUI.Margin.Left < 0)
-            {
-                offsetLeft = this.canvasUI.Margin.Left * -1;
-            }
-            if (this.canvasUI.Margin.Top < 0)
-            {
-                offsetTop = this.canvasUI.Margin.Top * -1;
-            }
-            hintSpot.Margin = new Thickness()
-            {
-                Left = offsetLeft,
-                Top = offsetTop
-            };
+            hintSpot.Tag = classPowerAndCity;
             this.canvasUI.Children.Add(hintSpot);
             hintSpot.SetData();
+
+            // 領地の説明文を表示する
+            if (classPowerAndCity.ClassSpot.Text != string.Empty)
+            {
+                var detailSpot = new UserControl025_DetailSpot();
+                detailSpot.Name = "DetailSpot";
+                detailSpot.Tag = classPowerAndCity.ClassSpot;
+                this.canvasUI.Children.Add(detailSpot);
+                detailSpot.SetData();
+            }
         }
         private void ButtonSelectionCity_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -855,10 +850,10 @@ namespace WPF_Successor_001_to_Vahren
             cast.MouseLeave -= ButtonSelectionCity_MouseLeave;
 
             // 勢力領の強調を解除する
+            ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
             if (gridMapStrategy != null)
             {
-                ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
                     for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1) {
@@ -883,6 +878,19 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     this.canvasUI.Children.Remove(itemHint);
                     break;
+                }
+            }
+
+            // 領地の説明文を取り除く
+            if (classPowerAndCity.ClassSpot.Text != string.Empty)
+            {
+                foreach (var itemDetail in this.canvasUI.Children.OfType<UserControl025_DetailSpot>())
+                {
+                    if (itemDetail.Name == "DetailSpot")
+                    {
+                        this.canvasUI.Children.Remove(itemDetail);
+                        break;
+                    }
                 }
             }
         }

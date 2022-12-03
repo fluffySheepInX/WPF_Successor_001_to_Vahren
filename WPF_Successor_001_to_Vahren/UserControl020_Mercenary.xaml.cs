@@ -197,25 +197,19 @@ namespace WPF_Successor_001_to_Vahren
 */
 
             // スクロール領域の高さとウインドウの高さの差分
-            double diff_height = this.borderWindow.Height - this.scrollList.Height;
+            double diff_height = Canvas.GetTop(this.scrollList) + 10;
             if (item_count < 1)
             {
                 item_count = 1;
             }
+            else if (item_count > 7)
+            {
+                item_count = 7;
+            }
             // リストの項目数が 7個未満なら、ウインドウの高さを低くする
-            if (item_count < 7)
-            {
-                double new_height = (item_height + space_height * 2) * item_count;
-                this.scrollList.Height = new_height;
-                this.borderWindow.Height = new_height + diff_height;
-            }
-            else
-            {
-                // 本来のサイズに戻す
-                this.scrollList.Height = this.Height - diff_height;
-                this.borderWindow.Height = this.Height;
-            }
-
+            double new_height = (item_height + space_height * 2) * item_count;
+            this.scrollList.Height = new_height;
+            this.Height = new_height + diff_height;
         }
 
 
