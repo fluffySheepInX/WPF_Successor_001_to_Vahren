@@ -44,7 +44,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 最前面に配置する
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
+            if ((listWindow != null) && (listWindow.Any()))
             {
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
@@ -57,6 +57,10 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
+            if (classCityAndUnit.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             ClassUnit targetUnit = classCityAndUnit.ClassUnit;
 
             // タイトル
@@ -101,7 +105,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // 元にするクラスのデータを取得する
-                ClassUnit itemBaseUnit = mainWindow.ClassGameStatus
+                ClassUnit? itemBaseUnit = mainWindow.ClassGameStatus
                     .ListUnit
                     .Where(x => x.NameTag == itemNameTag)
                     .FirstOrDefault();
@@ -181,20 +185,20 @@ namespace WPF_Successor_001_to_Vahren
                 item_count++;
             }
 
-/*
-            // この領地で雇用できるユニット（中立時に登場するモンスターも含む）
-            // spot構造体の monster や wanderingMonster は違う？
-            if (targetSpot.ListWanderingMonster.Count > 0)
-            {
-                // データ構造「クラス名*数値」の定義がヴァーレントゥーガと違う。
-            }
+            /*
+                        // この領地で雇用できるユニット（中立時に登場するモンスターも含む）
+                        // spot構造体の monster や wanderingMonster は違う？
+                        if (targetSpot.ListWanderingMonster.Count > 0)
+                        {
+                            // データ構造「クラス名*数値」の定義がヴァーレントゥーガと違う。
+                        }
 
-            // 指定されたユニットが雇用できるユニット
-            if (targetUnit != null)
-            {
-                // まだデータとして設定されてない
-            }
-*/
+                        // 指定されたユニットが雇用できるユニット
+                        if (targetUnit != null)
+                        {
+                            // まだデータとして設定されてない
+                        }
+            */
 
             // スクロール領域の高さとウインドウの高さの差分
             double diff_height = Canvas.GetTop(this.scrollList) + 10;
@@ -236,7 +240,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -290,7 +294,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -308,7 +312,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -329,6 +333,10 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
+            if (classCityAndUnit.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             ClassUnit targetUnit = classCityAndUnit.ClassUnit;
 
             // 雇用するユニットの元データ
@@ -343,7 +351,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // ユニットの追加先が存在するか調べる
-            ClassHorizontalUnit targetTroop = null;
+            ClassHorizontalUnit? targetTroop = null;
             int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
             if (targetUnit != null)
             {
@@ -387,7 +395,7 @@ namespace WPF_Successor_001_to_Vahren
                         break;
                     }
                 }
-                if ( (targetTroop == null) && (targetSpot.UnitGroup.Count >= spot_capacity) )
+                if ((targetTroop == null) && (targetSpot.UnitGroup.Count >= spot_capacity))
                 {
                     // 加入可能な部隊が無くて、新規部隊を作る空も無ければ、何もせずに終わる
                     return;
@@ -407,11 +415,11 @@ namespace WPF_Successor_001_to_Vahren
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(newUnit);
                 targetSpot.UnitGroup.Add(new ClassHorizontalUnit()
-                    {
-                        Spot = targetSpot,
-                        FlagDisplay = true,
-                        ListClassUnit = listUnit
-                    });
+                {
+                    Spot = targetSpot,
+                    FlagDisplay = true,
+                    ListClassUnit = listUnit
+                });
             }
             else
             {
@@ -471,6 +479,10 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
+            if (classCityAndUnit.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             ClassUnit targetUnit = classCityAndUnit.ClassUnit;
 
             // 雇用するユニットの元データ
@@ -484,7 +496,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // ユニットの追加先が存在するか調べる
-            ClassHorizontalUnit targetTroop = null;
+            ClassHorizontalUnit? targetTroop = null;
             int member_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
             int add_count = member_capacity;
             if (targetUnit != null)
@@ -532,7 +544,7 @@ namespace WPF_Successor_001_to_Vahren
                         break;
                     }
                 }
-                if ( (targetTroop == null) && (targetSpot.UnitGroup.Count >= spot_capacity) )
+                if ((targetTroop == null) && (targetSpot.UnitGroup.Count >= spot_capacity))
                 {
                     // 加入可能な部隊が無くて、新規部隊を作る空も無ければ、何もせずに終わる
                     return;
@@ -559,11 +571,11 @@ namespace WPF_Successor_001_to_Vahren
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(newUnit);
                 targetTroop = new ClassHorizontalUnit()
-                    {
-                        Spot = targetSpot,
-                        FlagDisplay = true,
-                        ListClassUnit = listUnit
-                    };
+                {
+                    Spot = targetSpot,
+                    FlagDisplay = true,
+                    ListClassUnit = listUnit
+                };
                 targetSpot.UnitGroup.Add(targetTroop);
             }
             else

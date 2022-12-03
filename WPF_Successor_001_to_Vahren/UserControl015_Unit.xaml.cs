@@ -67,6 +67,10 @@ namespace WPF_Successor_001_to_Vahren
         {
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
+            if (classCityAndUnit.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             ClassUnit targetUnit = classCityAndUnit.ClassUnit;
 
             // 部隊内でのインデックスを調べる

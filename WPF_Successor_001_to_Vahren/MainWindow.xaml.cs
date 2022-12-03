@@ -719,7 +719,7 @@ namespace WPF_Successor_001_to_Vahren
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
                     // プレイヤー勢力なら色を変える
-                    SolidColorBrush myBrush = null;
+                    SolidColorBrush? myBrush = null;
                     string powerNameTag = classPowerAndCity.ClassPower.NameTag;
                     if (this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
                     {

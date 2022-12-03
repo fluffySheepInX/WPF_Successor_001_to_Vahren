@@ -398,6 +398,10 @@ namespace WPF_Successor_001_to_Vahren
             selectUnitNumber = SearchgSelectUnit(mainWindow, selectUnitNumber);
             int count = 0;
 
+            if (convTag.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             ClassUnit? extName = mainWindow.ClassGameStatus
                                     .ListUnit
                                     .Where(x => x.NameTag ==convTag.ClassUnit.NameTag)
@@ -513,6 +517,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //金が足りなかったらダメ
+            if (convTag.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money - convTag.ClassUnit.Price < 0)
             {
                 return;
@@ -606,8 +614,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-            var coovTag = convButton.Tag as ClassCityAndUnit;
-            if (coovTag == null)
+            var convTag = convButton.Tag as ClassCityAndUnit;
+            if (convTag == null)
             {
                 return;
             }
@@ -626,17 +634,22 @@ namespace WPF_Successor_001_to_Vahren
 
             //名前
             {
-                this.lblNameTarget.Content = coovTag.ClassUnit.Name;
+                if (convTag.ClassUnit == null)
+                {
+                    throw new Exception();
+                }
+
+                this.lblNameTarget.Content = convTag.ClassUnit.Name;
             }
 
             //画像
             {
-                if ((coovTag.ClassUnit.Face == string.Empty || coovTag.ClassUnit.Face == null) == false)
+                if ((convTag.ClassUnit.Face == string.Empty || convTag.ClassUnit.Face == null) == false)
                 {
                     List<string> strings = new List<string>();
                     strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
                     strings.Add("010_FaceImage");
-                    strings.Add(coovTag.ClassUnit.Face);
+                    strings.Add(convTag.ClassUnit.Face);
                     string path = System.IO.Path.Combine(strings.ToArray());
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     this.imgFace.Source = bitimg1;
@@ -651,7 +664,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.spSkill.Children.Clear();
 
-                foreach (var item in coovTag.ClassUnit.Skill)
+                foreach (var item in convTag.ClassUnit.Skill)
                 {
                     var result = mainWindow.ClassGameStatus.ListSkill.Where(x => x.NameTag == item.NameTag).FirstOrDefault();
                     if (result == null)
@@ -696,23 +709,23 @@ namespace WPF_Successor_001_to_Vahren
 
             //status
             {
-                this.lblMoveType.Content = coovTag.ClassUnit.MoveType;
-                this.lblHP.Content = coovTag.ClassUnit.Hp;
-                this.lblMP.Content = coovTag.ClassUnit.Mp;
-                this.lblAttack.Content = coovTag.ClassUnit.Attack;
-                this.lblDef.Content = coovTag.ClassUnit.Defense;
-                this.lblMagic.Content = coovTag.ClassUnit.Magic;
-                this.lblMagicDef.Content = coovTag.ClassUnit.MagDef;
-                this.lblSpeed.Content = coovTag.ClassUnit.Speed;
+                this.lblMoveType.Content = convTag.ClassUnit.MoveType;
+                this.lblHP.Content = convTag.ClassUnit.Hp;
+                this.lblMP.Content = convTag.ClassUnit.Mp;
+                this.lblAttack.Content = convTag.ClassUnit.Attack;
+                this.lblDef.Content = convTag.ClassUnit.Defense;
+                this.lblMagic.Content = convTag.ClassUnit.Magic;
+                this.lblMagicDef.Content = convTag.ClassUnit.MagDef;
+                this.lblSpeed.Content = convTag.ClassUnit.Speed;
                 //Dext = 技術 ?
-                this.lblTech.Content = coovTag.ClassUnit.Dext;
+                this.lblTech.Content = convTag.ClassUnit.Dext;
                 //hprecではないか？
-                this.lblHealHP.Content = coovTag.ClassUnit.Heal_max;
+                this.lblHealHP.Content = convTag.ClassUnit.Heal_max;
                 //mprecではないか？
                 this.lblHealMP.Content = "";
-                this.lblMove.Content = coovTag.ClassUnit.Move;
-                this.lblSummon.Content = coovTag.ClassUnit.Summon_max;
-                this.lblFinance.Content = coovTag.ClassUnit.Finance;
+                this.lblMove.Content = convTag.ClassUnit.Move;
+                this.lblSummon.Content = convTag.ClassUnit.Summon_max;
+                this.lblFinance.Content = convTag.ClassUnit.Finance;
             }
         }
     }
