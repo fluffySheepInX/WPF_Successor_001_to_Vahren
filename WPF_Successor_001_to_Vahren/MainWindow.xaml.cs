@@ -371,22 +371,21 @@ namespace WPF_Successor_001_to_Vahren
         private void GridMapStrategy_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ドラッグを開始する
-            UIElement el = sender as UIElement;
-            if (el != null)
-            {
-                this.ClassGameStatus.IsDrag = true;
-                this.ClassGameStatus.StartPoint = e.GetPosition(el);
-                el.CaptureMouse();
-                el.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
-                el.MouseMove += GridMapStrategy_MouseMove;
-            }
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+            this.ClassGameStatus.IsDrag = true;
+            this.ClassGameStatus.StartPoint = e.GetPosition(el);
+            el.CaptureMouse();
+            el.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
+            el.MouseMove += GridMapStrategy_MouseMove;
         }
         private void GridMapStrategy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             // ドラック中なら終了する
             if (this.ClassGameStatus.IsDrag == true)
             {
-                UIElement el = sender as UIElement;
+                UIElement? el = sender as UIElement;
+                if (el == null) return;
                 el.ReleaseMouseCapture();
                 el.MouseLeftButtonUp -= GridMapStrategy_MouseLeftButtonUp;
                 el.MouseMove -= GridMapStrategy_MouseMove;
@@ -401,7 +400,8 @@ namespace WPF_Successor_001_to_Vahren
                 var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
                 if (ri != null)
                 {
-                    UIElement el = sender as UIElement;
+                    UIElement? el = sender as UIElement;
+                    if (el == null) return;
                     Point pt = e.GetPosition(el);
 
                     var thickness = new Thickness();

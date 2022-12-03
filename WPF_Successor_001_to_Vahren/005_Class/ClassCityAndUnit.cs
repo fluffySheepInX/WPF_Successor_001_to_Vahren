@@ -18,8 +18,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ClassUnit
-        private ClassUnit _classUnit = new ClassUnit();
-        public ClassUnit ClassUnit
+        private ClassUnit? _classUnit = new ClassUnit();
+        public ClassUnit? ClassUnit
         {
             get { return _classUnit; }
             set { _classUnit = value; }

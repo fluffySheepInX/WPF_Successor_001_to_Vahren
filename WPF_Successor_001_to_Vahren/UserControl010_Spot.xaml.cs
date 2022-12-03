@@ -43,7 +43,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 最前面に配置する
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
+            if ((listWindow != null) && (listWindow.Any()))
             {
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
@@ -336,10 +336,10 @@ namespace WPF_Successor_001_to_Vahren
         // ユニットをドロップする処理
         private bool DropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id, string strTarget)
         {
-            string[] strPart =  strTarget.Split('_');
+            string[] strPart = strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
-            ClassSpot dstSpot = null;
-            UserControl010_Spot windowSpot = null;
+            ClassSpot? dstSpot = null;
+            UserControl010_Spot? windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -379,7 +379,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 部隊メンバー入れ替え
-            if ( (strPart[1] == "Unit") && (strPart.Length >= 4) )
+            if ((strPart[1] == "Unit") && (strPart.Length >= 4))
             {
                 // 入れ替え元の部隊とユニット
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -401,14 +401,17 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
 
             // 部隊メンバー追加
-            if ( (strPart[1] == "Right") && (strPart.Length >= 3) )
+            if ((strPart[1] == "Right") && (strPart.Length >= 3))
             {
                 // 移動元の部隊とユニット
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -426,14 +429,17 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
 
             // 新規部隊を作成して間に追加
-            if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
+            if ((strPart[1] == "Top") && (strPart.Length >= 3))
             {
                 // 移動元の部隊とユニット
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -444,11 +450,11 @@ namespace WPF_Successor_001_to_Vahren
                 listUnit.Add(srcUnit);
                 int dst_troop_id = Int32.Parse(strPart[2]);
                 dstSpot.UnitGroup.Insert(dst_troop_id, new ClassHorizontalUnit()
-                    {
-                        Spot = dstSpot,
-                        FlagDisplay = true,
-                        ListClassUnit = listUnit
-                    });
+                {
+                    Spot = dstSpot,
+                    FlagDisplay = true,
+                    ListClassUnit = listUnit
+                });
 
                 // 元の部隊からユニットを取り除く
                 srcTroop.ListClassUnit.RemoveAt(member_id);
@@ -457,8 +463,11 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
@@ -474,11 +483,11 @@ namespace WPF_Successor_001_to_Vahren
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(srcUnit);
                 dstSpot.UnitGroup.Add(new ClassHorizontalUnit()
-                    {
-                        Spot = dstSpot,
-                        FlagDisplay = true,
-                        ListClassUnit = listUnit
-                    });
+                {
+                    Spot = dstSpot,
+                    FlagDisplay = true,
+                    ListClassUnit = listUnit
+                });
 
                 // 元の部隊からユニットを取り除く
                 srcTroop.ListClassUnit.RemoveAt(member_id);
@@ -487,14 +496,17 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
 
             // 別領地に新規部隊を作成して末尾に追加
-            if ( (strPart[0] == "Spot") && (strPart.Length >= 2) )
+            if ((strPart[0] == "Spot") && (strPart.Length >= 2))
             {
                 // 移動元の部隊とユニット
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -504,11 +516,11 @@ namespace WPF_Successor_001_to_Vahren
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(srcUnit);
                 dstSpot.UnitGroup.Add(new ClassHorizontalUnit()
-                    {
-                        Spot = dstSpot,
-                        FlagDisplay = true,
-                        ListClassUnit = listUnit
-                    });
+                {
+                    Spot = dstSpot,
+                    FlagDisplay = true,
+                    ListClassUnit = listUnit
+                });
 
                 // 元の部隊からユニットを取り除く
                 srcTroop.ListClassUnit.RemoveAt(member_id);
@@ -529,10 +541,10 @@ namespace WPF_Successor_001_to_Vahren
         // 部隊をドロップする処理
         private bool DropTarget_Troop(MainWindow mainWindow, int troop_id, string strTarget)
         {
-            string[] strPart =  strTarget.Split('_');
+            string[] strPart = strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
-            ClassSpot dstSpot = null;
-            UserControl010_Spot windowSpot = null;
+            ClassSpot? dstSpot = null;
+            UserControl010_Spot? windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -572,7 +584,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 部隊メンバー追加
-            if ( (strPart[1] == "Right") && (strPart.Length >= 3) )
+            if ((strPart[1] == "Right") && (strPart.Length >= 3))
             {
                 // 移動元の部隊
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -595,14 +607,17 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
 
             // 新規部隊を作成して間に追加
-            if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
+            if ((strPart[1] == "Top") && (strPart.Length >= 3))
             {
                 // 移動元の部隊
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -633,8 +648,11 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
@@ -655,14 +673,17 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if (windowSpot != this)
                 {
-                    // ウインドウが異なる場合は、移動先も更新する
-                    windowSpot.UpdateSpotUnit(mainWindow);
+                    if (windowSpot != null)
+                    {
+                        // ウインドウが異なる場合は、移動先も更新する
+                        windowSpot.UpdateSpotUnit(mainWindow);
+                    }
                 }
                 return true;
             }
 
             // 部隊を別領地の末尾に移動
-            if ( (strPart[0] == "Spot") && (strPart.Length >= 2) )
+            if ((strPart[0] == "Spot") && (strPart.Length >= 2))
             {
                 // 移動元の部隊
                 ClassHorizontalUnit srcTroop = srcSpot.UnitGroup[troop_id];
@@ -689,10 +710,10 @@ namespace WPF_Successor_001_to_Vahren
         // 複数の部隊をドロップする処理
         private bool DropTarget_Whole(MainWindow mainWindow, string strTarget)
         {
-            string[] strPart =  strTarget.Split('_');
+            string[] strPart = strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
-            ClassSpot dstSpot = null;
-            UserControl010_Spot windowSpot = null;
+            ClassSpot? dstSpot = null;
+            UserControl010_Spot? windowSpot = null;
 
             if (strPart[0] == this.Name)
             {
@@ -741,7 +762,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 新規部隊を作成して間に追加
-            if ( (strPart[1] == "Top") && (strPart.Length >= 3) )
+            if ((strPart[1] == "Top") && (strPart.Length >= 3))
             {
                 // 移動先の指定位置
                 int dst_troop_id = Int32.Parse(strPart[2]);
@@ -769,8 +790,8 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 部隊を別領地の末尾に移動（領地ウインドウと領地アイコンで同じ処理）
-            if ( (strPart[1] == "Bottom") ||
-                 ( (strPart[0] == "Spot") && (strPart.Length >= 2) ) )
+            if ((strPart[1] == "Bottom") ||
+                 ((strPart[0] == "Spot") && (strPart.Length >= 2)))
             {
                 for (int i = 0; i < move_count; i++)
                 {
@@ -823,7 +844,7 @@ namespace WPF_Successor_001_to_Vahren
                 for (; j < member_count; j++)
                 {
                     // ドラッグ中のユニットの位置を暗くする
-                    if ( (i == troop_id) && (j == member_id) )
+                    if ((i == troop_id) && (j == member_id))
                     {
                         Border border = new Border();
                         border.Name = "DropTarget";
@@ -854,7 +875,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // 右の空きスペースなら「部隊メンバー追加」動作になる
-                if ( (j < member_capacity) && ( (i != troop_id) || (member_id < member_count - 1) ) )
+                if ((j < member_capacity) && ((i != troop_id) || (member_id < member_count - 1)))
                 {
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Right_" + i.ToString();
@@ -869,7 +890,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // 先頭ユニットの上端なら「新規部隊を作成して間に追加」動作になる
-                if ( (troop_count < spot_capacity) && (i != troop_id) )
+                if ((troop_count < spot_capacity) && (i != troop_id))
                 {
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Top_" + i.ToString();
@@ -903,7 +924,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
+                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -984,7 +1005,7 @@ namespace WPF_Successor_001_to_Vahren
                             // 領地の部隊数に空きがあるなら
                             spot_capacity = itemSpot.Capacity;
                             troop_count = itemSpot.UnitGroup.Count;
-                            if ( (troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag) )
+                            if ((troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag))
                             {
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
@@ -1058,7 +1079,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // 先頭ユニットの上端なら「部隊間に部隊を移動」動作になる
-                if ( (troop_count < spot_capacity) && (i != troop_id) && (i != troop_id + 1) )
+                if ((troop_count < spot_capacity) && (i != troop_id) && (i != troop_id + 1))
                 {
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Top_" + i.ToString();
@@ -1075,7 +1096,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 下の空きスペースなら「部隊を末尾に移動」動作になる
-            if ( (i < spot_capacity) && (troop_id < i - 1) )
+            if ((i < spot_capacity) && (troop_id < i - 1))
             {
                 Border border = new Border();
                 border.Name = "DropTarget" + this.Name + "_Bottom";
@@ -1092,7 +1113,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
+                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -1172,7 +1193,7 @@ namespace WPF_Successor_001_to_Vahren
                             // 領地の部隊数に空きがあるなら
                             spot_capacity = itemSpot.Capacity;
                             troop_count = itemSpot.UnitGroup.Count;
-                            if ( (troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag) )
+                            if ((troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag))
                             {
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
@@ -1235,7 +1256,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
+                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -1299,7 +1320,7 @@ namespace WPF_Successor_001_to_Vahren
                             // 領地の部隊数に空きがあるなら
                             spot_capacity = itemSpot.Capacity;
                             troop_count = itemSpot.UnitGroup.Count;
-                            if ( (troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag) )
+                            if ((troop_count < spot_capacity) && (itemSpot.NameTag != classPowerAndCity.ClassSpot.NameTag))
                             {
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
@@ -1335,7 +1356,8 @@ namespace WPF_Successor_001_to_Vahren
         private void RemoveDropTarget(MainWindow mainWindow, int troop_id, int member_id)
         {
             // 領地ウインドウのユニット欄に追加した枠を消去する
-            for (int i = this.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1) {
+            for (int i = this.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1)
+            {
                 UIElement Child = this.canvasSpotUnit.Children[i];
                 if (Child is Border)
                 {
@@ -1377,14 +1399,15 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
+                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
                 {
                     var classPowerAndCity = (ClassPowerAndCity)this.Tag;
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
                     if (targetPowerAndCity.ClassPower.NameTag == classPowerAndCity.ClassPower.NameTag)
                     {
-                        for (int i = itemWindow.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1) {
+                        for (int i = itemWindow.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1)
+                        {
                             UIElement Child = itemWindow.canvasSpotUnit.Children[i];
                             if (Child is Border)
                             {
@@ -1442,7 +1465,8 @@ namespace WPF_Successor_001_to_Vahren
                 var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
                 if (gridMapStrategy != null)
                 {
-                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1) {
+                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
+                    {
                         UIElement Child = gridMapStrategy.Children[i];
                         if (Child is Border)
                         {
@@ -1483,7 +1507,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ドラッグ中にドロップ先を判定するための HitTest 用
-        private DependencyObject _hitResults = null;
+        private DependencyObject? _hitResults = null;
         private int _hitCount = 0;
         private HitTestResultBehavior OnHitTestResultCallback(HitTestResult result)
         {
@@ -1510,7 +1534,7 @@ namespace WPF_Successor_001_to_Vahren
         private void HoverDropTarget(MainWindow mainWindow, Point posMouse)
         {
             // マウスポインタ―の下にあるなら、最初の枠だけ太くする
-            Border borderHit = null;
+            Border? borderHit = null;
             _hitResults = null;
             _hitCount = 0;
             VisualTreeHelper.HitTest(mainWindow
@@ -1518,7 +1542,8 @@ namespace WPF_Successor_001_to_Vahren
                     , new HitTestResultCallback(OnHitTestResultCallback)
                     , new PointHitTestParameters(posMouse));
 
-            if (_hitResults != null){
+            if (_hitResults != null)
+            {
                 borderHit = (Border)_hitResults;
                 if (borderHit.Name.StartsWith("DropTarget"))
                 {
@@ -1532,7 +1557,7 @@ namespace WPF_Successor_001_to_Vahren
             // それ以外の枠が太ければ普通に戻す
             foreach (var border in this.canvasSpotUnit.Children.OfType<Border>())
             {
-                if ( (border != borderHit) && (border.Name.StartsWith("DropTarget")) )
+                if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                 {
                     if (border.BorderThickness.Left > 2)
                     {
@@ -1545,7 +1570,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name) )
+                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
                 {
                     var classPowerAndCity = (ClassPowerAndCity)this.Tag;
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
@@ -1554,7 +1579,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         foreach (var border in itemWindow.canvasSpotUnit.Children.OfType<Border>())
                         {
-                            if ( (border != borderHit) && (border.Name.StartsWith("DropTarget")) )
+                            if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                             {
                                 if (border.BorderThickness.Left > 2)
                                 {
@@ -1574,7 +1599,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     foreach (var border in gridMapStrategy.Children.OfType<Border>())
                     {
-                        if ( (border != borderHit) && (border.Name.StartsWith("DropTarget")) )
+                        if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                         {
                             if (border.BorderThickness.Left > 2)
                             {
@@ -1620,7 +1645,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -1674,7 +1699,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -1692,7 +1717,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 最前面に移動させる
                 var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
+                if ((listWindow != null) && (listWindow.Any()))
                 {
                     int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                     Canvas.SetZIndex(this, maxZ + 1);
@@ -1727,7 +1752,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
+            if ((listWindow != null) && (listWindow.Any()))
             {
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
@@ -1740,13 +1765,13 @@ namespace WPF_Successor_001_to_Vahren
                 // ドロップ先を作る
                 string unit_name = ((StackPanel)sender).Name;
                 string unit_id = unit_name.Replace("panelUnit", String.Empty);
-                string[] strPart =  unit_id.Split('_');
+                string[] strPart = unit_id.Split('_');
                 int troop_id = Int32.Parse(strPart[0]);
                 int member_id = Int32.Parse(strPart[1]);
                 MakeDropTarget_Unit(mainWindow, troop_id, member_id);
 
                 // ユニット画像をそのまま流用する
-                BitmapImage bitimg1 = null;
+                BitmapImage? bitimg1 = null;
                 var ri = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasSpotUnit, "imgUnit" + unit_id);
                 if (ri != null)
                 {
@@ -1793,14 +1818,14 @@ namespace WPF_Successor_001_to_Vahren
                     // ドロップ先を取り除くと同時に、ドロップ判定を行う
                     string unit_name = ((Image)sender).Name;
                     string unit_id = unit_name.Replace("DragImage", String.Empty);
-                    string[] strPart =  unit_id.Split('_');
+                    string[] strPart = unit_id.Split('_');
                     int troop_id = Int32.Parse(strPart[0]);
                     int member_id = Int32.Parse(strPart[1]);
                     RemoveDropTarget(mainWindow, troop_id, member_id);
 
                     // ドラッグ画像を取り除く
                     mainWindow.canvasUI.Children.Remove(el);
-                 }
+                }
             }
         }
         private void unit_MouseMove(object sender, MouseEventArgs e)
@@ -1835,7 +1860,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
+            if ((listWindow != null) && (listWindow.Any()))
             {
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
@@ -1848,7 +1873,7 @@ namespace WPF_Successor_001_to_Vahren
                 // ドロップ先を作る
                 string unit_name = ((StackPanel)sender).Name;
                 string unit_id = unit_name.Replace("panelUnit", String.Empty);
-                string[] strPart =  unit_id.Split('_');
+                string[] strPart = unit_id.Split('_');
                 int troop_id = Int32.Parse(strPart[0]);
                 MakeDropTarget_Troop(mainWindow, troop_id);
 
@@ -1858,7 +1883,7 @@ namespace WPF_Successor_001_to_Vahren
                 int member_count = listTroop[troop_id].ListClassUnit.Count;
 
                 // 隊長のユニット画像
-                BitmapImage bitimg1 = null;
+                BitmapImage? bitimg1 = null;
                 var ri = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasSpotUnit, "imgUnit" + unit_id);
                 if (ri != null)
                 {
@@ -1930,7 +1955,7 @@ namespace WPF_Successor_001_to_Vahren
                     // ドロップ先を取り除くと同時に、ドロップ判定を行う
                     string unit_name = ((Image)sender).Name;
                     string unit_id = unit_name.Replace("DragImage", String.Empty);
-                    string[] strPart =  unit_id.Split('_');
+                    string[] strPart = unit_id.Split('_');
                     int troop_id = Int32.Parse(strPart[0]);
                     int member_count = Int32.Parse(strPart[1]);
                     RemoveDropTarget(mainWindow, troop_id, 0);
@@ -1949,7 +1974,7 @@ namespace WPF_Successor_001_to_Vahren
                             break;
                         }
                     }
-                 }
+                }
             }
         }
         private void troop_MouseMove(object sender, MouseEventArgs e)
@@ -1974,8 +1999,12 @@ namespace WPF_Successor_001_to_Vahren
                 // 右横の子コントロールも同時に移動させる
                 string unit_name = ((Image)sender).Name;
                 string unit_id = unit_name.Replace("DragImage", String.Empty);
-                string[] strPart =  unit_id.Split('_');
+                string[] strPart = unit_id.Split('_');
                 int member_count = Int32.Parse(strPart[1]);
+                if (mainWindow == null)
+                {
+                    return;
+                }
                 for (int j = 1; j < member_count; j++)
                 {
                     var ri = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DragImageExtra" + j.ToString());
@@ -2004,7 +2033,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ( (listWindow != null) && (listWindow.Any()) )
+            if ((listWindow != null) && (listWindow.Any()))
             {
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
@@ -2027,7 +2056,7 @@ namespace WPF_Successor_001_to_Vahren
                 int troop_count = listTroop.Count;
 
                 // 一番上の隊長のユニット画像
-                BitmapImage bitimg1 = null;
+                BitmapImage? bitimg1 = null;
                 var ri = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasSpotUnit, "imgUnit0_0");
                 if (ri != null)
                 {
@@ -2144,6 +2173,10 @@ namespace WPF_Successor_001_to_Vahren
                 string unit_name = ((Image)sender).Name;
                 string unit_id = unit_name.Replace("DragImage", String.Empty);
                 int troop_count = Int32.Parse(unit_id);
+                if (mainWindow == null)
+                {
+                    return;
+                }
                 for (int i = 1; i < troop_count; i++)
                 {
                     var ri = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DragImageExtra" + i.ToString());
@@ -2217,7 +2250,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         max_id = window_id;
                     }
-                    ClassUnit testUnit = ((ClassCityAndUnit)itemWindow.Tag).ClassUnit;
+                    ClassUnit? testUnit = ((ClassCityAndUnit)itemWindow.Tag).ClassUnit;
                     if (testUnit == classCityAndUnit.ClassUnit)
                     {
                         // ユニット・ウインドウを既に開いてる場合は、新規に作らない
@@ -2289,12 +2322,12 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")) )
+                if ((strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")))
                 {
                     // 新規に作らない
                     itemWindow.Tag = classCityAndUnit;
                     itemWindow.Name = this.Name + "Mercenary";
-                    if (this.Margin.Left + this.Width / 2  > mainWindow.CanvasMainWidth / 2)
+                    if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
                     {
                         // 画面の右側なら、左横に表示する
                         offsetLeft = this.Margin.Left - itemWindow.Width;

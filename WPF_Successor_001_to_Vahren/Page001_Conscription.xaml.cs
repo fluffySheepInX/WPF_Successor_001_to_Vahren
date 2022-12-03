@@ -353,6 +353,10 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            if (convTag.ClassUnit == null)
+            {
+                throw new Exception();
+            }
             if (convTag.ClassUnit.IsSelect == true)
             {
                 convTag.ClassUnit.IsSelect = false;
