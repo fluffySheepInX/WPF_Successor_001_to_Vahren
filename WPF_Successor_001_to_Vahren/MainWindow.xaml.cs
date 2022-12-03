@@ -4974,7 +4974,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 else
                 {
-                    classSpot.Text = first.Value;
+                    classSpot.Text = first.Value.Replace("\t","").Replace(" ","").Replace("　","").Replace("〇","　");
                 }
             }
 
