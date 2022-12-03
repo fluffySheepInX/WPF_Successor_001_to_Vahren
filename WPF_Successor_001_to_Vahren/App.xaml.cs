@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -218,7 +219,7 @@ namespace WPF_Successor_001_to_Vahren
 
                                         if (kind == 0)
                                         {
-                                            classGameStatus.ListUnit.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassUnitNewFormat(getData.Value));
+                                            classGameStatus.ListUnit.Add(ClassStaticCommonMethod.GetClassUnitNewFormat(getData.Value));
                                         }
                                         else
                                         {
@@ -270,7 +271,7 @@ namespace WPF_Successor_001_to_Vahren
 
                                         if (kind == 0)
                                         {
-                                            classGameStatus.ListSkill.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassSkillNewFormat(getData.Value));
+                                            classGameStatus.ListSkill.Add(ClassStaticCommonMethod.GetClassSkillNewFormat(getData.Value));
                                         }
                                         else
                                         {
@@ -319,7 +320,7 @@ namespace WPF_Successor_001_to_Vahren
 
                                             if (kind == 0)
                                             {
-                                                classGameStatus.ListObject.Add(WPF_Successor_001_to_Vahren.MainWindow.GetClassObjNewFormat(getData.Value));
+                                                classGameStatus.ListObject.Add(ClassStaticCommonMethod.GetClassObjNewFormat(getData.Value));
                                             }
                                             else
                                             {
@@ -384,9 +385,9 @@ namespace WPF_Successor_001_to_Vahren
             //map
             {
                 var map =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPat("map"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPat("map"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(map);
+                var first = ClassStaticCommonMethod.CheckMatchElement(map);
                 if (first == null)
                 {
                     classTestBattle.Map = String.Empty;
@@ -399,9 +400,9 @@ namespace WPF_Successor_001_to_Vahren
             //player
             {
                 var player =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPat("player"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPat("player"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(player);
+                var first = ClassStaticCommonMethod.CheckMatchElement(player);
                 if (first == null)
                 {
                     classTestBattle.Player = _010_Enum.BattleWhichIsThePlayer.Sortie;
@@ -414,9 +415,9 @@ namespace WPF_Successor_001_to_Vahren
             //memberKougeki
             {
                 var member =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatComma("memberKougeki"), RegexOptions.IgnoreCase)
-                    .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(member);
+                    new Regex(ClassStaticCommonMethod.GetPatComma("memberKougeki"), RegexOptions.IgnoreCase)
+                    .Matches(value);    
+                var first = ClassStaticCommonMethod.CheckMatchElement(member);
                 if (first == null)
                 {
                     classTestBattle.ListMember = new List<(string, int)>();
@@ -442,9 +443,9 @@ namespace WPF_Successor_001_to_Vahren
             //memberBouei
             {
                 var member =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatComma("memberBouei"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPatComma("memberBouei"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(member);
+                var first = ClassStaticCommonMethod.CheckMatchElement(member);
                 if (first == null)
                 {
                     classTestBattle.ListMemberBouei = new List<(string, int)>();
@@ -496,9 +497,9 @@ namespace WPF_Successor_001_to_Vahren
             {
                 {
                     var ele =
-                        new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPat("ele" + eleNumber), RegexOptions.IgnoreCase)
+                        new Regex(ClassStaticCommonMethod.GetPat("ele" + eleNumber), RegexOptions.IgnoreCase)
                         .Matches(value);
-                    var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(ele);
+                    var first = ClassStaticCommonMethod.CheckMatchElement(ele);
                     if (first == null)
                     {
                         break;
@@ -514,9 +515,9 @@ namespace WPF_Successor_001_to_Vahren
             //name
             {
                 var name =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPat("name"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPat("name"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(name);
+                var first = ClassStaticCommonMethod.CheckMatchElement(name);
                 if (first == null)
                 {
                     classMapBattle.Name = String.Empty;
@@ -529,9 +530,9 @@ namespace WPF_Successor_001_to_Vahren
 
             //tag name
             {
-                var nameTag = new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatTag("map"), RegexOptions.IgnoreCase)
+                var nameTag = new Regex(ClassStaticCommonMethod.GetPatTag("map"), RegexOptions.IgnoreCase)
                                 .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(nameTag);
+                var first = ClassStaticCommonMethod.CheckMatchElement(nameTag);
                 if (first == null)
                 {
                     throw new Exception();
@@ -542,9 +543,9 @@ namespace WPF_Successor_001_to_Vahren
             //data
             {
                 var data =
-                    new Regex(WPF_Successor_001_to_Vahren.MainWindow.GetPatComma("data"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPatComma("data"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = WPF_Successor_001_to_Vahren.MainWindow.CheckMatchElement(data);
+                var first = ClassStaticCommonMethod.CheckMatchElement(data);
                 if (first == null)
                 {
                     classMapBattle.MapData = new List<List<MapDetail>>();
