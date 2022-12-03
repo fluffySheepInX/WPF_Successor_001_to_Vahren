@@ -19,6 +19,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public static readonly string gridMapBattle = "gridMapBattle";
         public static readonly string windowSelectionPower = "windowSelectionPower";
         public static readonly string windowSelectionPowerMini = "windowSelectionPowerMini";
+        public static readonly string canvasMain = "canvasMain";
         public static readonly string canvasStrategyMenu = "canvasStrategyMenu";
         public static readonly string canvasWindowStrategyLeft = "canvasWindowStrategyLeft";
         public static readonly string canvasWindowConscription = "canvasWindowConscription";

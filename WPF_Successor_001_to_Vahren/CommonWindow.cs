@@ -9,6 +9,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -156,7 +158,7 @@ namespace WPF_Successor_001_to_Vahren
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
 
-
+        #region Event
         public void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // ESCキーを押すと終了する。
@@ -261,6 +263,176 @@ namespace WPF_Successor_001_to_Vahren
                 };
             }
         }
+
+        #region BattleEvent
+        /// <summary>
+        /// ドラッグを開始する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            cw.ClassGameStatus.IsDrag = true;
+            cw.ClassGameStatus.StartPoint = e.GetPosition(el);
+            el.CaptureMouse();
+            el.MouseLeftButtonUp += CanvasMapBattle_MouseLeftButtonUp;
+            el.MouseMove += CanvasMapBattle_MouseMove;
+        }
+        /// <summary>
+        /// ドラック中なら終了する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            if (cw.ClassGameStatus.IsDrag == false) return;
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            el.ReleaseMouseCapture();
+            el.MouseLeftButtonUp -= CanvasMapBattle_MouseLeftButtonUp;
+            el.MouseMove -= CanvasMapBattle_MouseMove;
+            this.ClassGameStatus.IsDrag = false;
+        }
+        /// <summary>
+        /// ドラック中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseMove(object sender, MouseEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            if (cw.ClassGameStatus.IsDrag == false) return;
+
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            var ri2 = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<Canvas>().Where(x => x.Name == StringName.canvasMain).FirstOrDefault();
+            if (ri2 == null) return;
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
+
+            Point pt = e.GetPosition(el);
+            var thickness = new Thickness();
+            thickness.Left = ri.Margin.Left + (pt.X - cw.ClassGameStatus.StartPoint.X);
+            thickness.Top = ri.Margin.Top + (pt.Y - cw.ClassGameStatus.StartPoint.Y);
+            ri.Margin = thickness;
+        }
+        /// <summary>
+        /// 移動フラグを立てたり、枠の色を消したり
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void windowMapBattle_MouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            var ri2 = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<Canvas>().Where(x => x.Name == StringName.canvasMain).FirstOrDefault();
+            if (ri2 == null) return;
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
+
+            //SortieUnitGroupではなくプレイヤー側でないとダメ
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (cw.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (var item in lisClassHorizontalUnit)
+            {
+                var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
+                if (re == null) continue;
+
+                var nowOrderPosi = e.GetPosition(ri);
+                if (re.FlagMoving = true && re.OrderPosi != nowOrderPosi)
+                {
+                    re.FlagMoveDispose = true;
+                }
+                re.OrderPosi = nowOrderPosi;
+                re.FlagMove = false;
+                re.FlagMoving = false;
+
+                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
+                re2.BorderThickness = new Thickness()
+                {
+                    Left = 0,
+                    Top = 0,
+                    Right = 0,
+                    Bottom = 0
+                };
+                break;
+            }
+
+        }
+        /// <summary>
+        /// 移動フラグを立てたり、枠に色を付けたり
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void WindowMapBattleUnit_MouseLeftButtonDown(object sender, MouseEventArgs e)
+        {
+            var can = (Canvas)sender;
+            var bor = (Border)can.Parent;
+            long name = long.Parse((string)(can).Tag);
+
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (cw.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            foreach (var item in lisClassHorizontalUnit)
+            {
+                var re = item.ListClassUnit
+                            .Where(x => x.ID == name)
+                            .FirstOrDefault();
+                if (re == null) continue;
+
+                bor.BorderThickness = new Thickness()
+                {
+                    Left = 3,
+                    Top = 3,
+                    Right = 3,
+                    Bottom = 3
+                };
+                bor.BorderBrush = Brushes.DarkRed;
+                re.FlagMove = true;
+                break;
+            }
+        }
+        #endregion
+
+        #endregion
+
 
         public static Canvas GetCanvasBattleBack(Canvas canvas,
                                                 int _sizeClientWinWidth,
