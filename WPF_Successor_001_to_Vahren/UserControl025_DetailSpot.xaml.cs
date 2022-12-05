@@ -65,11 +65,16 @@ namespace WPF_Successor_001_to_Vahren
             // 説明文
             this.txtDetail.Text = targetSpot.Text;
 
-            // レイアウトが終わるのを待ってから、大きさと位置を調節する
+            // ウインドウ枠
+            SetWindowFrame(mainWindow);
+
+            // レイアウトが終わるのを待ってから位置を調節する
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                // ウインドウの高さを調節する
-                this.Height = Canvas.GetTop(this.txtDetail) + this.txtDetail.ActualHeight + 20;
+                // ウインドウの大きさを取得する
+                // 自動サイズを整数にするため、UseLayoutRounding="true" にすること！
+                double actual_width = this.ActualWidth;
+                double actual_height = this.ActualHeight;
 
                 // マウスの位置によってウインドウの位置を変える
                 Point pos = Mouse.GetPosition(mainWindow.canvasUI);
@@ -87,8 +92,8 @@ namespace WPF_Successor_001_to_Vahren
                     // 画面の右下隅に配置する
                     this.Margin = new Thickness()
                     {
-                        Left = mainWindow.canvasUI.Width - offsetLeft - this.Width,
-                        Top = mainWindow.canvasUI.Height - offsetTop - this.Height
+                        Left = mainWindow.canvasUI.Width - offsetLeft - actual_width,
+                        Top = mainWindow.canvasUI.Height - offsetTop - actual_height
                     };
                 }
                 else
@@ -97,7 +102,7 @@ namespace WPF_Successor_001_to_Vahren
                     this.Margin = new Thickness()
                     {
                         Left = offsetLeft,
-                        Top = mainWindow.canvasUI.Height - offsetTop - this.Height
+                        Top = mainWindow.canvasUI.Height - offsetTop - actual_height
                     };
                 }
 
@@ -105,5 +110,93 @@ namespace WPF_Successor_001_to_Vahren
             DispatcherPriority.Loaded);
 
         }
+
+        // ウインドウ枠を作る
+        private void SetWindowFrame(MainWindow mainWindow)
+        {
+            // ウインドウスキンを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("005_BackgroundImage");
+            strings.Add("wnd2.png");
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合は、デザイン時のまま（色や透明度は xaml で指定する）
+                return;
+            }
+            var skin_bitmap = new BitmapImage(new Uri(path));
+            Int32Rect rect;
+            ImageBrush myImageBrush;
+
+            // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth == 128) && (skin_bitmap.PixelWidth == 192)))
+            {
+                // その他の画像は、そのまま引き延ばして表示する
+                // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
+                myImageBrush = new ImageBrush(skin_bitmap);
+                myImageBrush.Stretch = Stretch.Fill;
+                this.rectWindowPlane.Fill = myImageBrush;
+                return;
+            }
+
+            // 不要な背景を表示しない
+            this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowBottom.Visibility = Visibility.Hidden;
+            this.rectWindowPlane.Visibility = Visibility.Hidden;
+
+            // 中央
+            rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
+            this.imgWindowCenter.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
+            this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
+            this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
+            this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
+            this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowTop.Fill = myImageBrush;
+
+            // 下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowBottom.Fill = myImageBrush;
+
+            // 左
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowLeft.Fill = myImageBrush;
+
+            // 右
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowRight.Fill = myImageBrush;
+        }
+
     }
 }

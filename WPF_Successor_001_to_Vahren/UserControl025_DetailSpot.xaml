@@ -5,18 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="180" Width="530">
-    <Canvas IsHitTestVisible="False">
-        <Border Background="#454545" BorderBrush="Black" BorderThickness="5"
-                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}"
-                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}" />
-
-        <Grid Canvas.Left="465" Canvas.Top="15" Height="50" Width="50">
-            <Image Height="32" Width="32" Name="imgSpot" />
+             d:DesignHeight="200" d:DesignWidth="532"
+             >
+    <Grid  IsHitTestVisible="False">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+            <Image Margin="4" Stretch="Fill" Name="imgWindowCenter" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
 
-        <TextBlock Canvas.Left="15" Canvas.Top="20" FontSize="23" Foreground="White" Name="txtNameSpot" Text="領地の名前"/>
-        <TextBlock Canvas.Left="15" Canvas.Top="65" FontSize="20" Foreground="White" Name="txtDetail" Width="500" TextWrapping="Wrap"
-                Text="spot構造体のtext要素です。自動的に改行されます。手動で改行したい場合は&#10;と入力してください。"/>
-    </Canvas>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Margin="5" FontSize="23" Foreground="White" Name="txtNameSpot" Text="領地の名前"/>
+            <Image HorizontalAlignment="Right" Margin="0,0,5,0" Height="32" Width="32" Name="imgSpot" />
+
+            <TextBlock Grid.Row="1" Margin="5" FontSize="20" Foreground="White" Name="txtDetail"
+                    Width="500" TextWrapping="Wrap" UseLayoutRounding="true" LineHeight="35"
+                    Text="spot構造体のtext要素です。長い文章は自動的に改行されます。"/>
+        </Grid>
+    </Grid>
 </UserControl>

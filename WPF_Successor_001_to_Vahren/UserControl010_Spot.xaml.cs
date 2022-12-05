@@ -399,13 +399,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -427,13 +424,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -461,13 +455,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -494,13 +485,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -605,13 +593,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -646,13 +631,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
@@ -671,13 +653,10 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 表示を更新する
                 this.UpdateSpotUnit(mainWindow);
-                if (windowSpot != this)
+                if ((windowSpot != null) && (windowSpot != this))
                 {
-                    if (windowSpot != null)
-                    {
-                        // ウインドウが異なる場合は、移動先も更新する
-                        windowSpot.UpdateSpotUnit(mainWindow);
-                    }
+                    // ウインドウが異なる場合は、移動先も更新する
+                    windowSpot.UpdateSpotUnit(mainWindow);
                 }
                 return true;
             }
