@@ -405,7 +405,7 @@ namespace WPF_Successor_001_to_Vahren
                     Point pt = e.GetPosition(el);
 
                     var thickness = new Thickness();
-                    thickness.Left = ri.Margin.Left + (pt.X - this.ClassGameStatus.StartPoint.X);
+                    thickness.Left = Math.Truncate(ri.Margin.Left + (pt.X - this.ClassGameStatus.StartPoint.X));
                     if (thickness.Left > this.CanvasMainWidth / 2)
                     {
                         thickness.Left = this.CanvasMainWidth / 2;
@@ -414,7 +414,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         thickness.Left = this.CanvasMainWidth / 2 - ri.Width;
                     }
-                    thickness.Top = ri.Margin.Top + (pt.Y - this.ClassGameStatus.StartPoint.Y);
+                    thickness.Top = Math.Truncate(ri.Margin.Top + (pt.Y - this.ClassGameStatus.StartPoint.Y));
                     if (thickness.Top > this.CanvasMainHeight / 2)
                     {
                         thickness.Top = this.CanvasMainHeight / 2;
@@ -1556,8 +1556,8 @@ namespace WPF_Successor_001_to_Vahren
 
             if (spot_count > 0)
             {
-                target_X /= spot_count;
-                target_Y /= spot_count;
+                target_X = Math.Truncate(target_X / spot_count);
+                target_Y = Math.Truncate(target_Y / spot_count);
 
                 // 目標にする座標をウインドウ中央にする
                 /*
@@ -1585,7 +1585,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     Thread.Sleep(5);
 
-                    if (classVec.Hit(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top)))
+                    if (classVec.Hit(new Point(classVec.X, classVec.Y)))
                     {
                         break;
                     }
@@ -1594,11 +1594,13 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         Application.Current.Dispatcher.Invoke((Action)(() =>
                         {
-                            var ge = classVec.Get(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top));
+                            var ge = classVec.Get(new Point(classVec.X, classVec.Y));
+                            classVec.X = ge.X;
+                            classVec.Y = ge.Y;
                             gridMapStrategy.Margin = new Thickness()
                             {
-                                Left = ge.X,
-                                Top = ge.Y
+                                Left = Math.Truncate(ge.X),
+                                Top = Math.Truncate(ge.Y)
                             };
                         }));
                     });
@@ -3509,7 +3511,7 @@ namespace WPF_Successor_001_to_Vahren
             flag_img.Margin = new Thickness
             {
                 Left = flag_img.Width / 2,
-                Top = (gridButton.Height - spot_size) / 2 - flag_img.Height
+                Top = Math.Truncate(gridButton.Height - spot_size) / 2 - flag_img.Height
             };
 
             return flag_img;
@@ -4108,7 +4110,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 Thread.Sleep(5);
 
-                if (classVec.Hit(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top)))
+                if (classVec.Hit(new Point(classVec.X, classVec.Y)))
                 {
                     break;
                 }
@@ -4117,11 +4119,13 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     Application.Current.Dispatcher.Invoke((Action)(() =>
                     {
-                        var ge = classVec.Get(new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top));
+                        var ge = classVec.Get(new Point(classVec.X, classVec.Y));
+                        classVec.X = ge.X;
+                        classVec.Y = ge.Y;
                         gridMapStrategy.Margin = new Thickness()
                         {
-                            Left = ge.X,
-                            Top = ge.Y
+                            Left = Math.Truncate(ge.X),
+                            Top = Math.Truncate(ge.Y)
                         };
                     }));
                 });

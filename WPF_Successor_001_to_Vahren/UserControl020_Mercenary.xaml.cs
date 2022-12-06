@@ -57,11 +57,8 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
-            if (classCityAndUnit.ClassUnit == null)
-            {
-                throw new Exception();
-            }
-            ClassUnit targetUnit = classCityAndUnit.ClassUnit;
+            // null かどうかで、呼び出し元（ユニットか領地）を識別する
+            ClassUnit? targetUnit = classCityAndUnit.ClassUnit;
 
             // タイトル
             if (targetSpot == null)

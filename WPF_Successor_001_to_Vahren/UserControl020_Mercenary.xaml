@@ -17,10 +17,11 @@
 
         <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="315" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-        <ScrollViewer Name="scrollList" Width="340" Height="448" Canvas.Left="10" Canvas.Top="57" Background="#262626"
+        <ScrollViewer Name="scrollList" Width="340" Height="448" Canvas.Left="10" Canvas.Top="57" Background="#282828"
                 VerticalScrollBarVisibility="Auto"
                 PreviewMouseLeftButtonDown="Raise_ZOrder"
-                MouseRightButtonUp="Disable_MouseEvent" >
+                MouseRightButtonUp="Disable_MouseEvent"
+                >
             <StackPanel Name="panelList">
 
 <!--

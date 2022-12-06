@@ -118,7 +118,7 @@ namespace WPF_Successor_001_to_Vahren
             List<string> strings = new List<string>();
             strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
             strings.Add("006_WindowImage");
-            strings.Add("wnd0.png");
+            strings.Add("wnd2.png");
             string path = System.IO.Path.Combine(strings.ToArray());
             if (System.IO.File.Exists(path) == false)
             {
@@ -130,7 +130,7 @@ namespace WPF_Successor_001_to_Vahren
             ImageBrush myImageBrush;
 
             // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
-            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth == 128) && (skin_bitmap.PixelWidth == 192)))
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
             {
                 // その他の画像は、そのまま引き延ばして表示する
                 // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
