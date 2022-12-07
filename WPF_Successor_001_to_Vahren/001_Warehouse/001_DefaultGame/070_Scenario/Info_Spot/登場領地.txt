@@ -48,6 +48,7 @@ NewFormatSpot spot0009
 
 	capacity = "6";
 	member = "LineInfantryM14*6,DragoonFrancesca*8,HowitzerC11*7";
+	text = "短い文章です。";
 }
 NewFormatSpot spot0010
 {
@@ -58,6 +59,7 @@ NewFormatSpot spot0010
 	map = "wefwefwefwefw";
 
 	capacity = "8";
+	text = "長い文章を用意して、自動的に改行されるか確かめます。これくらいでどうかな？";
 }
 
 
