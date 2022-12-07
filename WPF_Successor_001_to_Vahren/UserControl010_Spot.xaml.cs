@@ -1921,8 +1921,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
             }
         }
 
@@ -2070,8 +2070,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
 
                 // 右横の子コントロールも同時に移動させる
                 string unit_name = ((Image)sender).Name;
@@ -2151,7 +2151,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 画像をマウス・カーソルの下に置く
                 Point posMouse = e.GetPosition(mainWindow.canvasUI);
-                Point pos = new Point(posMouse.X - tile_width / 2, posMouse.Y - tile_width / 2);
+                Point pos = new Point(Math.Truncate(posMouse.X - tile_width / 2), Math.Truncate(posMouse.Y - tile_width / 2));
                 Canvas.SetLeft(imgDrag, pos.X);
                 Canvas.SetTop(imgDrag, pos.Y);
 
@@ -2243,8 +2243,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
 
                 // 下の子コントロールも同時に移動させる
                 string unit_name = ((Image)sender).Name;
@@ -2404,10 +2404,10 @@ namespace WPF_Successor_001_to_Vahren
                     // 新規に作らない
                     itemWindow.Tag = classCityAndUnit;
                     itemWindow.Name = this.Name + "Mercenary";
-                    if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
+                    if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
                     {
                         // 画面の右側なら、左横に表示する
-                        offsetLeft = this.Margin.Left - itemWindow.Width;
+                        offsetLeft = this.Margin.Left - itemWindow.MinWidth;
                     }
                     itemWindow.Margin = new Thickness()
                     {
@@ -2429,18 +2429,18 @@ namespace WPF_Successor_001_to_Vahren
                 var windowMercenary = new UserControl020_Mercenary();
                 windowMercenary.Tag = classCityAndUnit;
                 windowMercenary.Name = this.Name + "Mercenary";
-                if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
+                if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
                 {
                     // 画面の右側なら、左横に表示する
-                    offsetLeft = this.Margin.Left - windowMercenary.Width;
+                    offsetLeft = this.Margin.Left - windowMercenary.MinWidth;
                 }
                 windowMercenary.Margin = new Thickness()
                 {
                     Left = offsetLeft,
                     Top = this.Margin.Top
                 };
-                mainWindow.canvasUI.Children.Add(windowMercenary);
                 windowMercenary.SetData();
+                mainWindow.canvasUI.Children.Add(windowMercenary);
             }
         }
 

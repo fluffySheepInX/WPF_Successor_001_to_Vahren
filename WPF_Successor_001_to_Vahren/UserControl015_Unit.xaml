@@ -4,111 +4,135 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
-             mc:Ignorable="d" 
-             Height="630" Width="570">
-    <Canvas
-            MouseLeftButtonDown="win_MouseLeftButtonDown"
-            MouseRightButtonUp="btnClose_Click"
-            >
-        <Border Height="630" Width="570" Background="#454545" BorderBrush="Black" BorderThickness="5" />
+             mc:Ignorable="d" >
+    <Grid MouseLeftButtonDown="win_MouseLeftButtonDown" MouseRightButtonUp="btnClose_Click" >
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+            <Image Margin="4" Stretch="Fill" Name="imgWindowCenter" />
+            <Image Margin="21" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="96" Width="96" Name="imgFace" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
 
-        <Image Canvas.Left="15" Canvas.Top="15" Height="32" Width="32" Name="imgUnit" />
+        <Canvas Margin="16" Width="560" Height="620">
 
-        <Image Stretch="Fill" Canvas.Left="483" Canvas.Top="33" Height="32" Width="32" Name="imgFlag" />
-        <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="525" Canvas.Top="10" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
+            <Image Canvas.Left="10" Canvas.Top="10" Height="32" Width="32" Name="imgUnit" />
 
-        <Image Canvas.Left="460" Canvas.Top="530" Height="96" Width="96" Name="imgFace" />
+            <Image Stretch="Fill" Canvas.Left="483" Canvas.Top="33" Height="32" Width="32" Name="imgFlag" />
+            <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="525" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-        <StackPanel Canvas.Left="90" Canvas.Top="10" Width="390">
-            <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
-                <TextBlock FontSize="23" Foreground="White" Text="ユニットの名前" Name="txtNameUnit" />
-                <TextBlock Margin="0,2" FontSize="20" Foreground="#C8FFC8" Text="（種族名）" Name="txtRace" />
+            <StackPanel Canvas.Left="80" Canvas.Top="5" Width="400">
+                <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
+                    <TextBlock FontSize="23" Foreground="White" Text="ユニットの名前" Name="txtNameUnit" />
+                    <TextBlock Margin="0,2" FontSize="20" Foreground="#C8FFC8" Text="（種族名）" Name="txtRace" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
+                    <TextBlock FontSize="20" Foreground="White" Text="レベルとクラス名" Name="txtLevelClass" />
+                    <TextBlock FontSize="20" Text="（性別）" Name="txtSex" />
+                </StackPanel>
+                <TextBlock Height="30" FontSize="19" Foreground="#00FFFF" HorizontalAlignment="Center" Text="経験値 FontSize=19" Name="txtExp" />
+                <TextBlock Height="25" FontSize="19" Foreground="#FFFF00" HorizontalAlignment="Center" Text="戦功値 999999" Name="txtMerits" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
-                <TextBlock FontSize="20" Foreground="White" Text="レベルとクラス名" Name="txtLevelClass" />
-                <TextBlock FontSize="20" Text="（性別）" Name="txtSex" />
+
+            <StackPanel Canvas.Left="10" Canvas.Top="75">
+                <TextBlock Height="30" FontSize="19" Foreground="#FFC800" Text="身分" Name="txtRank" />
+                <TextBlock Height="25" FontSize="19" Foreground="#FFFF00" Text="信用度・忠誠" Name="txtLoyal" />
             </StackPanel>
-            <TextBlock Height="30" FontSize="19" Foreground="#00FFFF" HorizontalAlignment="Center" Text="経験値 FontSize=19" Name="txtExp" />
-            <TextBlock Height="25" FontSize="19" Foreground="#FFFF00" HorizontalAlignment="Center" Text="戦功値 999999" Name="txtMerits" />
-        </StackPanel>
+            <StackPanel Canvas.Left="350" Canvas.Top="75" Width="200">
+                <TextBlock Height="30" FontSize="19" Foreground="#FFFF00" HorizontalAlignment="Right" Text="所持金 10485769" Name="txtMoney" />
+                <TextBlock Height="25" FontSize="19" Foreground="#00FFFF" HorizontalAlignment="Right" Text="維持費 999999" Name="txtCost" />
+            </StackPanel>
 
-        <StackPanel Canvas.Left="15" Canvas.Top="80">
-            <TextBlock Height="30" FontSize="19" Foreground="#FFC800" Text="身分" Name="txtRank" />
-            <TextBlock Height="25" FontSize="19" Foreground="#FFFF00" Text="信用度・忠誠" Name="txtLoyal" />
-        </StackPanel>
-        <StackPanel Canvas.Left="355" Canvas.Top="80" Width="200">
-            <TextBlock Height="30" FontSize="19" Foreground="#FFFF00" HorizontalAlignment="Right" Text="所持金 10485769" Name="txtMoney" />
-            <TextBlock Height="25" FontSize="19" Foreground="#00FFFF" HorizontalAlignment="Right" Text="維持費 999999" Name="txtCost" />
-        </StackPanel>
+            <Border Canvas.Left="5" Canvas.Top="140" Height="430" Width="265" BorderBrush="White" BorderThickness="2" />
+            <StackPanel Canvas.Left="10" Canvas.Top="145" Width="85">
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="移動型" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="HP" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="MP" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="攻撃" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="防御" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="魔力" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="魔抵抗" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="素早さ" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="技術" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="HP回復" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="MP回復" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="移動力" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="召喚" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="財政力" />
+            </StackPanel>
+            <StackPanel Canvas.Left="95" Canvas.Top="145" Width="162">
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="FontSize=20" Name="txtMoveType" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="9999999/9999999" Name="txtHP" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99999/99999" Name="txtMP" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtAttack" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtDefense" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMagic" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMagDef" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtSpeed" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtDext" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtHPRec" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99/99" Name="txtMPRec" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMove" />
+                <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99/99" Name="txtSummon" />
+                <TextBlock Height="30" FontSize="20" Foreground="#FFC800" TextAlignment="Right" Text="9999" Name="txtFinance" />
+            </StackPanel>
 
-        <Border Canvas.Left="10" Canvas.Top="145" Height="430" Width="265" BorderBrush="White" BorderThickness="2" />
-        <StackPanel Canvas.Left="15" Canvas.Top="150" Width="85">
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="移動型" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="HP" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="MP" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="攻撃" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="防御" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="魔力" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="魔抵抗" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="素早さ" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="技術" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="HP回復" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="MP回復" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="移動力" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="召喚" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="財政力" />
-        </StackPanel>
-        <StackPanel Canvas.Left="100" Canvas.Top="150" Width="162">
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="FontSize=20" Name="txtMoveType" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="9999999/9999999" Name="txtHP" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99999/99999" Name="txtMP" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtAttack" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtDefense" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMagic" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMagDef" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtSpeed" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtDext" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtHPRec" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99/99" Name="txtMPRec" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="999/999" Name="txtMove" />
-            <TextBlock Height="30" FontSize="20" Foreground="White" TextAlignment="Right" Text="99/99" Name="txtSummon" />
-            <TextBlock Height="30" FontSize="20" Foreground="#FFC800" TextAlignment="Right" Text="9999" Name="txtFinance" />
-        </StackPanel>
+            <WrapPanel Canvas.Left="280" Canvas.Top="140" Width="272" Orientation="Horizontal" ItemHeight="34" ItemWidth="34" Name="panelSkill">
+                <Button Content="1" FontSize="20" BorderThickness="0"/>
+                <Button Content="2" FontSize="20" BorderThickness="0"/>
+                <Button Content="3" FontSize="20" BorderThickness="0"/>
+                <Button Content="4" FontSize="20" BorderThickness="0"/>
+                <Button Content="5" FontSize="20" BorderThickness="0"/>
+                <Button Content="6" FontSize="20" BorderThickness="0"/>
+                <Button Content="7" FontSize="20" BorderThickness="0"/>
+                <Button Content="8" FontSize="20" BorderThickness="0"/>
+                <Button Content="9" FontSize="20" BorderThickness="0"/>
+                <Button Content="10" FontSize="20" BorderThickness="0"/>
+            </WrapPanel>
 
-        <WrapPanel Canvas.Left="285" Canvas.Top="145" Width="272" Orientation="Horizontal" ItemHeight="34" ItemWidth="34" Name="panelSkill">
-            <Button Content="1" FontSize="20" BorderThickness="0"/>
-            <Button Content="2" FontSize="20" BorderThickness="0"/>
-            <Button Content="3" FontSize="20" BorderThickness="0"/>
-            <Button Content="4" FontSize="20" BorderThickness="0"/>
-            <Button Content="5" FontSize="20" BorderThickness="0"/>
-            <Button Content="6" FontSize="20" BorderThickness="0"/>
-            <Button Content="7" FontSize="20" BorderThickness="0"/>
-            <Button Content="8" FontSize="20" BorderThickness="0"/>
-            <Button Content="9" FontSize="20" BorderThickness="0"/>
-            <Button Content="10" FontSize="20" BorderThickness="0"/>
-        </WrapPanel>
+            <StackPanel Canvas.Left="280" Canvas.Top="280" Name="panelResist">
+                <TextBlock FontSize="17" Foreground="White" Text="耐性は FontSize=17" />
+                <TextBlock FontSize="17" Foreground="Yellow" Text="即死幻覚麻痺恐慌に強い国" />
+                <TextBlock FontSize="17" Foreground="#40FF40" Text="毒魔吸沈黙混乱に凄く弱い人" />
+            </StackPanel>
 
-        <StackPanel Canvas.Left="285" Canvas.Top="280" Name="panelResist">
-            <TextBlock FontSize="17" Foreground="White" Text="耐性は FontSize=17" />
-            <TextBlock FontSize="17" Foreground="Yellow" Text="即死幻覚麻痺恐慌に強い国" />
-            <TextBlock FontSize="17" Foreground="#40FF40" Text="毒魔吸沈黙混乱に凄く弱い人" />
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="580">
+                <Button x:Name="btnDismiss" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="解雇"
+                        PreviewMouseDown="Raise_ZOrder"
+                        MouseRightButtonUp="Disable_MouseEvent"
+                        />
+                <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
+                        Click="btnMercenary_Click"
+                        PreviewMouseDown="Raise_ZOrder"
+                        MouseRightButtonUp="Disable_MouseEvent"
+                        />
+                <Button x:Name="btnItem" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="アイテム"
+                        PreviewMouseDown="Raise_ZOrder"
+                        MouseRightButtonUp="Disable_MouseEvent"
+                        />
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="585">
-            <Button x:Name="btnDismiss" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="解雇"
-                    PreviewMouseDown="Raise_ZOrder"
-                    MouseRightButtonUp="Disable_MouseEvent"
-                    />
-            <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
-                    Click="btnMercenary_Click"
-                    PreviewMouseDown="Raise_ZOrder"
-                    MouseRightButtonUp="Disable_MouseEvent"
-                    />
-            <Button x:Name="btnItem" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="アイテム"
-                    PreviewMouseDown="Raise_ZOrder"
-                    MouseRightButtonUp="Disable_MouseEvent"
-                    />
-        </StackPanel>
+        </Canvas>
 
-    </Canvas>
+    </Grid>
 </UserControl>

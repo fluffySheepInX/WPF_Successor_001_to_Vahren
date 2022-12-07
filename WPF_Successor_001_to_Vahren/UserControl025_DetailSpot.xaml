@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="542">
+             d:DesignWidth="542" d:DesignHeight="200"
+             MinWidth="542" >
     <Grid IsHitTestVisible="False">
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -34,7 +35,7 @@
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
 
-        <Grid Margin="16">
+        <Grid Margin="16" Width="500">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="Auto"/>
@@ -43,7 +44,7 @@
             <Image HorizontalAlignment="Right" Margin="0,0,5,0" Height="32" Width="32" Name="imgSpot" />
 
             <TextBlock Grid.Row="1" Margin="5" FontSize="20" Foreground="White" Name="txtDetail"
-                    Width="500" TextWrapping="Wrap" UseLayoutRounding="true" LineHeight="35"
+                    TextWrapping="Wrap" UseLayoutRounding="true" LineHeight="35"
                     Text="spot構造体のtext要素です。長い文章は自動的に改行されます。"/>
         </Grid>
     </Grid>

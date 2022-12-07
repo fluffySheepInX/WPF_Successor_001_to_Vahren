@@ -792,8 +792,8 @@ namespace WPF_Successor_001_to_Vahren
                 var detailSpot = new UserControl025_DetailSpot();
                 detailSpot.Name = "DetailSpot";
                 detailSpot.Tag = classPowerAndCity.ClassSpot;
-                this.canvasUI.Children.Add(detailSpot);
                 detailSpot.SetData();
+                this.canvasUI.Children.Add(detailSpot);
             }
         }
         private void ButtonSelectionCity_MouseLeave(object sender, MouseEventArgs e)
@@ -1028,8 +1028,8 @@ namespace WPF_Successor_001_to_Vahren
                 windowSpot.Tag = classPowerAndCity;
                 windowSpot.Name = "WindowSpot" + window_id.ToString();
                 windowSpot.Margin = posWindow;
-                this.canvasUI.Children.Add(windowSpot);
                 windowSpot.SetData();
+                this.canvasUI.Children.Add(windowSpot);
             }
             id_list.Clear();
         }
@@ -3101,8 +3101,8 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
                         gridButton.Margin = new Thickness()
                         {
-                            Left = item.value.X - gridButton.Width / 2,
-                            Top = item.value.Y - gridButton.Height / 2
+                            Left = Math.Truncate(item.value.X - gridButton.Width / 2),
+                            Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
                         //grid.AllowDrop = false;
 
@@ -3357,8 +3357,8 @@ namespace WPF_Successor_001_to_Vahren
                         gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
                         gridButton.Margin = new Thickness()
                         {
-                            Left = item.value.X - gridButton.Width / 2,
-                            Top = item.value.Y - gridButton.Height / 2
+                            Left = Math.Truncate(item.value.X - gridButton.Width / 2),
+                            Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
                         //grid.AllowDrop = false;
 
@@ -3510,8 +3510,8 @@ namespace WPF_Successor_001_to_Vahren
             // 旗アイコンと領地アイコンのずれ具合を設定する
             flag_img.Margin = new Thickness
             {
-                Left = flag_img.Width / 2,
-                Top = Math.Truncate(gridButton.Height - spot_size) / 2 - flag_img.Height
+                Left = Math.Truncate(flag_img.Width / 2),
+                Top = Math.Truncate((gridButton.Height - spot_size) / 2 - flag_img.Height)
             };
 
             return flag_img;
