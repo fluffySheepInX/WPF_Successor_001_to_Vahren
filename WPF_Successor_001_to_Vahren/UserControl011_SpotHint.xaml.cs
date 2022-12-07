@@ -66,7 +66,7 @@ namespace WPF_Successor_001_to_Vahren
             this.txtNameSpot.Text = classPowerAndCity.ClassSpot.Name;
 
             // 部隊数を数えてユニットを表示する
-            int tile_height = 32, max_width = 0;
+            int tile_height = 32;
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int troop_count = listTroop.Count();
             if (troop_count > 0)
@@ -98,7 +98,6 @@ namespace WPF_Successor_001_to_Vahren
                     // 画像のサイズに関係なく、パネルの高さで表示する範囲を決める。
                     panelTroop.Height = tile_height;
 
-                    int panel_width = 0;
                     foreach (var itemUnit in itemTroop.ListClassUnit)
                     {
                         // ユニットの画像
@@ -114,11 +113,6 @@ namespace WPF_Successor_001_to_Vahren
                         imgUnit.Width = image_width;
                         imgUnit.Height = bitimg1.PixelHeight;
                         panelTroop.Children.Add(imgUnit);
-                        panel_width += image_width;
-                    }
-                    if (max_width < panel_width)
-                    {
-                        max_width = panel_width;
                     }
 
                     this.panelSpotUnit.Children.Add(panelTroop);
@@ -132,15 +126,8 @@ namespace WPF_Successor_001_to_Vahren
                                 + " 部隊" + troop_count.ToString() + "/" + spot_capacity.ToString()
                                 + " 戦力 ?";
 
-            // ウインドウの大きさを調節する
-            if (troop_count > 0)
-            {
-                this.Height = 85 + tile_height * troop_count + 10;
-            }
-            if (10 + max_width + 10 > 400)
-            {
-                this.Width = 10 + max_width + 10;
-            }
+            // ウインドウ枠
+            SetWindowFrame(mainWindow);
 
             // 画面の左上隅に配置する
             double offsetLeft = 0, offsetTop = 0;
@@ -157,7 +144,96 @@ namespace WPF_Successor_001_to_Vahren
                 Left = offsetLeft,
                 Top = offsetTop
             };
-
         }
+
+        // ウインドウ枠を作る
+        private void SetWindowFrame(MainWindow mainWindow)
+        {
+            // ウインドウスキンを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            strings.Add("wnd1.png");
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合は、デザイン時のまま（色や透明度は xaml で指定する）
+                return;
+            }
+            var skin_bitmap = new BitmapImage(new Uri(path));
+            Int32Rect rect;
+            ImageBrush myImageBrush;
+
+            // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
+            {
+                // その他の画像は、そのまま引き延ばして表示する
+                // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
+                myImageBrush = new ImageBrush(skin_bitmap);
+                myImageBrush.Stretch = Stretch.Fill;
+                this.rectWindowPlane.Fill = myImageBrush;
+                return;
+            }
+
+            // 不要な背景を表示しない
+            this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowBottom.Visibility = Visibility.Hidden;
+
+            // 中央
+            rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
+
+            // 左上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
+            this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
+            this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
+            this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
+            this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowTop.Fill = myImageBrush;
+
+            // 下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowBottom.Fill = myImageBrush;
+
+            // 左
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowLeft.Fill = myImageBrush;
+
+            // 右
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowRight.Fill = myImageBrush;
+        }
+
     }
 }

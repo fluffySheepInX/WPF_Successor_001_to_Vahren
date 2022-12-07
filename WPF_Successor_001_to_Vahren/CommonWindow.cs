@@ -323,8 +323,8 @@ namespace WPF_Successor_001_to_Vahren
 
             Point pt = e.GetPosition(el);
             var thickness = new Thickness();
-            thickness.Left = ri.Margin.Left + (pt.X - cw.ClassGameStatus.StartPoint.X);
-            thickness.Top = ri.Margin.Top + (pt.Y - cw.ClassGameStatus.StartPoint.Y);
+            thickness.Left = Math.Truncate(ri.Margin.Left + (pt.X - cw.ClassGameStatus.StartPoint.X));
+            thickness.Top = Math.Truncate(ri.Margin.Top + (pt.Y - cw.ClassGameStatus.StartPoint.Y));
             ri.Margin = thickness;
         }
         /// <summary>

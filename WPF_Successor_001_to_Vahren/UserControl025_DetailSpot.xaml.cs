@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren
@@ -68,12 +68,15 @@ namespace WPF_Successor_001_to_Vahren
             // ウインドウ枠
             SetWindowFrame(mainWindow);
 
+            // 位置を変更する前の状態が見えないようにする
+            this.Visibility = Visibility.Hidden;
+
             // レイアウトが終わるのを待ってから位置を調節する
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // ウインドウの大きさを取得する
                 // 自動サイズを整数にするため、UseLayoutRounding="true" にすること！
-                double actual_width = this.ActualWidth;
+                // （整数にするのが無理な場合は、ここで小数点以下を切り上げればいい）
                 double actual_height = this.ActualHeight;
 
                 // マウスの位置によってウインドウの位置を変える
@@ -92,7 +95,7 @@ namespace WPF_Successor_001_to_Vahren
                     // 画面の右下隅に配置する
                     this.Margin = new Thickness()
                     {
-                        Left = mainWindow.canvasUI.Width - offsetLeft - actual_width,
+                        Left = mainWindow.canvasUI.Width - offsetLeft - this.MinWidth,
                         Top = mainWindow.canvasUI.Height - offsetTop - actual_height
                     };
                 }
@@ -105,6 +108,20 @@ namespace WPF_Successor_001_to_Vahren
                         Top = mainWindow.canvasUI.Height - offsetTop - actual_height
                     };
                 }
+                // 位置が決まったら、見えるようにする
+                this.Visibility = Visibility.Visible;
+
+                /*
+                表示する際はアニメーションできても、閉じる際は一瞬で消える。
+                エフェクトに時間をかけるより、すぐに表示された方がいいかも？
+
+                // 配置が終わったら、じわじわ表示されるようにする
+                var myDoubleAnimation = new DoubleAnimation();
+                myDoubleAnimation.From = 0.2;
+                myDoubleAnimation.To = 1.0;
+                myDoubleAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.5));
+                this.BeginAnimation(Grid.OpacityProperty, myDoubleAnimation);
+                */
 
             }),
             DispatcherPriority.Loaded);
@@ -118,7 +135,7 @@ namespace WPF_Successor_001_to_Vahren
             List<string> strings = new List<string>();
             strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
             strings.Add("006_WindowImage");
-            strings.Add("wnd0.png");
+            strings.Add("wnd2.png");
             string path = System.IO.Path.Combine(strings.ToArray());
             if (System.IO.File.Exists(path) == false)
             {
@@ -130,7 +147,7 @@ namespace WPF_Successor_001_to_Vahren
             ImageBrush myImageBrush;
 
             // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
-            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth == 128) && (skin_bitmap.PixelWidth == 192)))
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
             {
                 // その他の画像は、そのまま引き延ばして表示する
                 // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
@@ -143,11 +160,13 @@ namespace WPF_Successor_001_to_Vahren
             // 不要な背景を表示しない
             this.rectShadowRight.Visibility = Visibility.Hidden;
             this.rectShadowBottom.Visibility = Visibility.Hidden;
-            this.rectWindowPlane.Visibility = Visibility.Hidden;
 
             // 中央
             rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
-            this.imgWindowCenter.Source = new CroppedBitmap(skin_bitmap, rect);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
 
             // 左上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);

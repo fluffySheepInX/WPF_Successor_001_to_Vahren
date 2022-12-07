@@ -39,9 +39,6 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // ユニットの情報を表示する
-            DisplayMercenary(mainWindow);
-
             // 最前面に配置する
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
             if ((listWindow != null) && (listWindow.Any()))
@@ -49,6 +46,101 @@ namespace WPF_Successor_001_to_Vahren
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
             }
+
+            // ユニットの情報を表示する
+            DisplayMercenary(mainWindow);
+
+            // ウインドウ枠
+            SetWindowFrame(mainWindow);
+        }
+
+        // ウインドウ枠を作る
+        private void SetWindowFrame(MainWindow mainWindow)
+        {
+            // ウインドウスキンを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            strings.Add("wnd0.png");
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合は、デザイン時のまま（色や透明度は xaml で指定する）
+                return;
+            }
+            var skin_bitmap = new BitmapImage(new Uri(path));
+            Int32Rect rect;
+            ImageBrush myImageBrush;
+
+            // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
+            {
+                // その他の画像は、そのまま引き延ばして表示する
+                // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
+                myImageBrush = new ImageBrush(skin_bitmap);
+                myImageBrush.Stretch = Stretch.Fill;
+                this.rectWindowPlane.Fill = myImageBrush;
+                return;
+            }
+
+            // 不要な背景を表示しない
+            this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowBottom.Visibility = Visibility.Hidden;
+
+            // 中央
+            rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
+
+            // 左上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
+            this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
+            this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
+            this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
+            this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowTop.Fill = myImageBrush;
+
+            // 下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowBottom.Fill = myImageBrush;
+
+            // 左
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowLeft.Fill = myImageBrush;
+
+            // 右
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowRight.Fill = myImageBrush;
         }
 
         // 既に表示されていて、表示を更新する際
@@ -57,11 +149,8 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
-            if (classCityAndUnit.ClassUnit == null)
-            {
-                throw new Exception();
-            }
-            ClassUnit targetUnit = classCityAndUnit.ClassUnit;
+            // null かどうかで、呼び出し元（ユニットか領地）を識別する
+            ClassUnit? targetUnit = classCityAndUnit.ClassUnit;
 
             // タイトル
             if (targetSpot == null)
@@ -200,8 +289,7 @@ namespace WPF_Successor_001_to_Vahren
                         }
             */
 
-            // スクロール領域の高さとウインドウの高さの差分
-            double diff_height = Canvas.GetTop(this.scrollList) + 10;
+            // リストの項目数が 7個未満なら、ウインドウの高さを低くする
             if (item_count < 1)
             {
                 item_count = 1;
@@ -210,10 +298,8 @@ namespace WPF_Successor_001_to_Vahren
             {
                 item_count = 7;
             }
-            // リストの項目数が 7個未満なら、ウインドウの高さを低くする
             double new_height = (item_height + space_height * 2) * item_count;
             this.scrollList.Height = new_height;
-            this.Height = new_height + diff_height;
         }
 
 
@@ -279,8 +365,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 var thickness = new Thickness();
-                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
-                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
+                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
+                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
                 this.Margin = thickness;
             }
         }
@@ -333,11 +419,7 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
-            if (classCityAndUnit.ClassUnit == null)
-            {
-                throw new Exception();
-            }
-            ClassUnit targetUnit = classCityAndUnit.ClassUnit;
+            ClassUnit? targetUnit = classCityAndUnit.ClassUnit;
 
             // 雇用するユニットの元データ
             var btnUnit = (Button)sender;
@@ -479,11 +561,7 @@ namespace WPF_Successor_001_to_Vahren
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
             ClassPower targetPower = classCityAndUnit.ClassPowerAndCity.ClassPower;
             ClassSpot targetSpot = classCityAndUnit.ClassPowerAndCity.ClassSpot;
-            if (classCityAndUnit.ClassUnit == null)
-            {
-                throw new Exception();
-            }
-            ClassUnit targetUnit = classCityAndUnit.ClassUnit;
+            ClassUnit? targetUnit = classCityAndUnit.ClassUnit;
 
             // 雇用するユニットの元データ
             var btnUnit = (Button)sender;

@@ -62,6 +62,106 @@ namespace WPF_Successor_001_to_Vahren
 
             // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
+
+            // ウインドウ枠
+            SetWindowFrame(mainWindow);
+        }
+
+        // ウインドウ枠を作る
+        private void SetWindowFrame(MainWindow mainWindow)
+        {
+            // ウインドウスキンを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            // 自勢力かどうかで枠を変える
+            if (_isControl)
+            {
+                strings.Add("wnd0.png");
+            }
+            else
+            {
+                strings.Add("wnd1.png");
+            }
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合は、デザイン時のまま（色や透明度は xaml で指定する）
+                return;
+            }
+            var skin_bitmap = new BitmapImage(new Uri(path));
+            Int32Rect rect;
+            ImageBrush myImageBrush;
+
+            // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
+            {
+                // その他の画像は、そのまま引き延ばして表示する
+                // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
+                myImageBrush = new ImageBrush(skin_bitmap);
+                myImageBrush.Stretch = Stretch.Fill;
+                this.rectWindowPlane.Fill = myImageBrush;
+                return;
+            }
+
+            // 不要な背景を表示しない
+            this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowBottom.Visibility = Visibility.Hidden;
+
+            // 中央
+            rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
+
+            // 左上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
+            this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
+            this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
+            this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
+            this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowTop.Fill = myImageBrush;
+
+            // 下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowBottom.Fill = myImageBrush;
+
+            // 左
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowLeft.Fill = myImageBrush;
+
+            // 右
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowRight.Fill = myImageBrush;
         }
 
         // 領地のユニットを変更した際に、ユニット表示だけを更新する
@@ -1663,8 +1763,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 var thickness = new Thickness();
-                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
-                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
+                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
+                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
                 this.Margin = thickness;
             }
         }
@@ -1823,8 +1923,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
             }
         }
 
@@ -1972,8 +2072,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
 
                 // 右横の子コントロールも同時に移動させる
                 string unit_name = ((Image)sender).Name;
@@ -2053,7 +2153,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 画像をマウス・カーソルの下に置く
                 Point posMouse = e.GetPosition(mainWindow.canvasUI);
-                Point pos = new Point(posMouse.X - tile_width / 2, posMouse.Y - tile_width / 2);
+                Point pos = new Point(Math.Truncate(posMouse.X - tile_width / 2), Math.Truncate(posMouse.Y - tile_width / 2));
                 Canvas.SetLeft(imgDrag, pos.X);
                 Canvas.SetTop(imgDrag, pos.Y);
 
@@ -2145,8 +2245,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 // ドラッグ量に応じて子コントロールを移動する
-                Canvas.SetLeft(el, Canvas.GetLeft(el) + (pt.X - _startPoint.X));
-                Canvas.SetTop(el, Canvas.GetTop(el) + (pt.Y - _startPoint.Y));
+                Canvas.SetLeft(el, Math.Truncate(Canvas.GetLeft(el) + (pt.X - _startPoint.X)));
+                Canvas.SetTop(el, Math.Truncate(Canvas.GetTop(el) + (pt.Y - _startPoint.Y)));
 
                 // 下の子コントロールも同時に移動させる
                 string unit_name = ((Image)sender).Name;
@@ -2294,7 +2394,7 @@ namespace WPF_Successor_001_to_Vahren
             classCityAndUnit.ClassUnit = null;
 
             // 領地ウインドウの右横に雇用ウインドウを表示する
-            double offsetLeft = this.Margin.Left + this.Width;
+            double offsetLeft = this.Margin.Left + this.ActualWidth;
 
             // 既に雇用ウインドウが表示されてる場合は再利用する
             bool isFound = false;
@@ -2306,10 +2406,10 @@ namespace WPF_Successor_001_to_Vahren
                     // 新規に作らない
                     itemWindow.Tag = classCityAndUnit;
                     itemWindow.Name = this.Name + "Mercenary";
-                    if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
+                    if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
                     {
                         // 画面の右側なら、左横に表示する
-                        offsetLeft = this.Margin.Left - itemWindow.Width;
+                        offsetLeft = this.Margin.Left - itemWindow.MinWidth;
                     }
                     itemWindow.Margin = new Thickness()
                     {
@@ -2331,18 +2431,18 @@ namespace WPF_Successor_001_to_Vahren
                 var windowMercenary = new UserControl020_Mercenary();
                 windowMercenary.Tag = classCityAndUnit;
                 windowMercenary.Name = this.Name + "Mercenary";
-                if (this.Margin.Left + this.Width / 2 > mainWindow.CanvasMainWidth / 2)
+                if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
                 {
                     // 画面の右側なら、左横に表示する
-                    offsetLeft = this.Margin.Left - windowMercenary.Width;
+                    offsetLeft = this.Margin.Left - windowMercenary.MinWidth;
                 }
                 windowMercenary.Margin = new Thickness()
                 {
                     Left = offsetLeft,
                     Top = this.Margin.Top
                 };
-                mainWindow.canvasUI.Children.Add(windowMercenary);
                 windowMercenary.SetData();
+                mainWindow.canvasUI.Children.Add(windowMercenary);
             }
         }
 
