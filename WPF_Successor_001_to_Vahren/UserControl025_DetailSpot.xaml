@@ -7,12 +7,11 @@
              mc:Ignorable="d" 
              d:DesignWidth="542" d:DesignHeight="200"
              MinWidth="542" >
-    <Grid IsHitTestVisible="False">
+    <Grid IsHitTestVisible="False" UseLayoutRounding="true">
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
-            <Image Margin="4" Stretch="Fill" Name="imgWindowCenter" />
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -44,7 +43,7 @@
             <Image HorizontalAlignment="Right" Margin="0,0,5,0" Height="32" Width="32" Name="imgSpot" />
 
             <TextBlock Grid.Row="1" Margin="5" FontSize="20" Foreground="White" Name="txtDetail"
-                    TextWrapping="Wrap" UseLayoutRounding="true" LineHeight="35"
+                    TextWrapping="Wrap" LineHeight="35"
                     Text="spot構造体のtext要素です。長い文章は自動的に改行されます。"/>
         </Grid>
     </Grid>

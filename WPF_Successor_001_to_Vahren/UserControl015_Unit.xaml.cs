@@ -96,11 +96,13 @@ namespace WPF_Successor_001_to_Vahren
             // 不要な背景を表示しない
             this.rectShadowRight.Visibility = Visibility.Hidden;
             this.rectShadowBottom.Visibility = Visibility.Hidden;
-            this.rectWindowPlane.Visibility = Visibility.Hidden;
 
             // 中央
             rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
-            this.imgWindowCenter.Source = new CroppedBitmap(skin_bitmap, rect);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
 
             // 左上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);

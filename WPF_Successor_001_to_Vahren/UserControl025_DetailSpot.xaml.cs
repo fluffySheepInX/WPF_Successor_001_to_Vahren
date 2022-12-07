@@ -9,7 +9,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -115,7 +114,7 @@ namespace WPF_Successor_001_to_Vahren
                 /*
                 表示する際はアニメーションできても、閉じる際は一瞬で消える。
                 エフェクトに時間をかけるより、すぐに表示された方がいいかも？
-                
+
                 // 配置が終わったら、じわじわ表示されるようにする
                 var myDoubleAnimation = new DoubleAnimation();
                 myDoubleAnimation.From = 0.2;
@@ -161,11 +160,13 @@ namespace WPF_Successor_001_to_Vahren
             // 不要な背景を表示しない
             this.rectShadowRight.Visibility = Visibility.Hidden;
             this.rectShadowBottom.Visibility = Visibility.Hidden;
-            this.rectWindowPlane.Visibility = Visibility.Hidden;
 
             // 中央
             rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
-            this.imgWindowCenter.Source = new CroppedBitmap(skin_bitmap, rect);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
 
             // 左上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);

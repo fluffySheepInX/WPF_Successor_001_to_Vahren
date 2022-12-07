@@ -783,8 +783,8 @@ namespace WPF_Successor_001_to_Vahren
             var hintSpot = new UserControl011_SpotHint();
             hintSpot.Name = "HintSpot";
             hintSpot.Tag = classPowerAndCity;
-            this.canvasUI.Children.Add(hintSpot);
             hintSpot.SetData();
+            this.canvasUI.Children.Add(hintSpot);
 
             // 領地の説明文を表示する
             if (classPowerAndCity.ClassSpot.Text != string.Empty)

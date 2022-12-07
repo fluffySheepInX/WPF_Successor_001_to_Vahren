@@ -5,16 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="100" Width="400">
-    <Canvas IsHitTestVisible="False">
-        <Border Background="#454545" BorderBrush="Black" BorderThickness="5" Opacity="0.5"
-                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}"
-                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Canvas}}" />
+             d:DesignWidth="400" d:DesignHeight="120">
+    <Grid IsHitTestVisible="False" UseLayoutRounding="true">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" Opacity="0.5" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
 
-        <TextBlock Canvas.Left="10" Canvas.Top="10" FontSize="19" Foreground="Aqua" Text="勢力の名前" Name="txtNamePower"/>
-        <TextBlock Canvas.Left="10" Canvas.Top="35" FontSize="19" Foreground="White" Text="領地の名前" Name="txtNameSpot"/>
-        <TextBlock Canvas.Left="10" Canvas.Top="60" FontSize="19" Foreground="Yellow" Text="経済1500 城壁290 部隊10/16 戦力1237567" Name="txtStatus"/>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Canvas.Left="10" Canvas.Top="85" Name="panelSpotUnit"/>
-    </Canvas>
+            <TextBlock Margin="5,0" FontSize="19" Foreground="Aqua" Text="勢力の名前" Name="txtNamePower"/>
+            <TextBlock Grid.Row="1" Margin="5,0" FontSize="19" Foreground="White" Text="領地の名前" Name="txtNameSpot"/>
+            <TextBlock Grid.Row="2" Margin="5,0" FontSize="19" Foreground="Yellow" Text="経済1500 城壁290 部隊10/16 戦力1237567" Name="txtStatus"/>
+
+            <StackPanel Grid.Row="3" Margin="5,0" Name="panelSpotUnit"/>
+        </Grid>
+
+    </Grid>
 </UserControl>
