@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -123,6 +124,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return boueiButaiNoIti; }
             set { boueiButaiNoIti = value; }
+        }
+        #endregion
+
+        #region MapPath
+        private Path? mapPath;
+        public Path? MapPath
+        {
+            get { return mapPath; }
+            set { mapPath = value; }
         }
         #endregion
     }

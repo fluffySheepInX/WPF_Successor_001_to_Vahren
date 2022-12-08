@@ -206,6 +206,7 @@ namespace WPF_Successor_001_to_Vahren
                                 classBattleMapPath.KougekiOrBouei = "Kougeki";
                                 path.Tag = classBattleMapPath;
                             }
+                            path.Name = "a"+itemCol.index + "a" + itemRow.index;
                             path.Stretch = Stretch.Fill;
                             path.StrokeThickness = 0;
                             path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
@@ -215,13 +216,14 @@ namespace WPF_Successor_001_to_Vahren
                             path.Margin = new Thickness()
                             {
                                 Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                Top = 
+                                Top =
                                     ((canvas.Height / 2) // マップ半分の高さ
-                                    + (itemCol.index * (takasaMapTip / 2)) 
+                                    + (itemCol.index * (takasaMapTip / 2))
                                     + (itemRow.index * (-(takasaMapTip / 2)))) // マイナスになる 
                                     - takasaMapTip / 2
                             };
                             canvas.Children.Add(path);
+                            itemRow.value.MapPath = path;
                         }
                     }
 

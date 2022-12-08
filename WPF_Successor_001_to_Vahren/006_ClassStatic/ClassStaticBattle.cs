@@ -441,6 +441,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     listPath = re1.Children.OfType<Path>().ToList();
                 }));
             });
+            if (classGameStatus.ClassBattle == null) return;
+            if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
 
             while (true)
             {
@@ -458,26 +460,46 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         ////アスターアルゴリズムで移動経路取得
                         //まず現在のマップチップを取得
+                        int row = -1;
+                        int col = -1;
                         await Task.Run(() =>
                         {
                             Application.Current.Dispatcher.Invoke((Action)(() =>
                             {
                                 var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < itemGroupBy.NowPosiCenter.X
                                                                 && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (itemGroupBy.NowPosiCenter.X - yokoMapTip))
-                                ;
-                                initMapTip = initMapTip
-                                .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
-                                        && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)));
+                                                            .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
+                                                                    && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)))
+                                                            .FirstOrDefault();
 
                                 if (initMapTip == null) throw new Exception();
 
-                                foreach (var item in initMapTip)
+                                foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                                        .Select((value, index) => (value, index)))
                                 {
-                                    item.Stroke = Brushes.Blue;
-                                    item.StrokeThickness = 10;
+                                    foreach (var itemC in itemR.value
+                                                        .Select((value, index) => (value, index)))
+                                    {
+                                        if (itemC.value.MapPath == null) continue;
+                                        if (itemC.value.MapPath.Name == initMapTip.Name)
+                                        {
+                                            row = itemR.index;
+                                            col = itemC.index;
+                                            break;
+                                        }
+                                    }
                                 }
+                                //initMapTip.Stroke = Brushes.Blue;
+                                //initMapTip.StrokeThickness = 10;
+                                //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.Stroke = Brushes.Yellow;
+                                //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.StrokeThickness = 10;
                             }));
                         });
+
+                        if (row == -1) continue;
+                        if (col == -1) continue;
+
+                        //移動経路取得
 
                         //移動スレッド開始
                         var calc0 = ClassCalcVec.ReturnVecDistance(
