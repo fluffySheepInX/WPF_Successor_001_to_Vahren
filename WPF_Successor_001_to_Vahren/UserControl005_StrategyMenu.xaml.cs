@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -19,6 +21,7 @@ namespace WPF_Successor_001_to_Vahren
             InitializeComponent();
         }
 
+        // 最初に呼び出した時
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -27,9 +30,102 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // ウインドウ枠
+            SetWindowFrame(mainWindow);
+
             DisplayPowerStatus(mainWindow);
         }
 
+        // ウインドウ枠を作る
+        private void SetWindowFrame(MainWindow mainWindow)
+        {
+            // ウインドウスキンを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            strings.Add("wnd0.png");
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合は、デザイン時のまま（色や透明度は xaml で指定する）
+                return;
+            }
+            var skin_bitmap = new BitmapImage(new Uri(path));
+            Int32Rect rect;
+            ImageBrush myImageBrush;
+
+            // RPGツクールXP (192x128) と VX (128x128) のスキンに対応する
+            if ((skin_bitmap.PixelHeight != 128) || ((skin_bitmap.PixelWidth != 128) && (skin_bitmap.PixelWidth != 192)))
+            {
+                // その他の画像は、そのまま引き延ばして表示する
+                // ブラシ設定によって、タイルしたり、アスペクト比を保ったりすることも可能
+                myImageBrush = new ImageBrush(skin_bitmap);
+                myImageBrush.Stretch = Stretch.Fill;
+                this.rectWindowPlane.Fill = myImageBrush;
+                return;
+            }
+
+            // 不要な背景を表示しない
+            this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowBottom.Visibility = Visibility.Hidden;
+
+            // 中央
+            rect = new Int32Rect(0, 0, skin_bitmap.PixelWidth - 64, skin_bitmap.PixelWidth - 64);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Stretch = Stretch.Fill;
+            this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane.Fill = myImageBrush;
+
+            // 左上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
+            this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
+            this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 左下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
+            this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 右上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
+            this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+
+            // 上
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowTop.Fill = myImageBrush;
+
+            // 下
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowBottom.Fill = myImageBrush;
+
+            // 左
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowLeft.Fill = myImageBrush;
+
+            // 右
+            rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
+            myImageBrush = new ImageBrush(new CroppedBitmap(skin_bitmap, rect));
+            myImageBrush.Viewport = new Rect(0, 0, rect.Width, rect.Height);
+            myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
+            myImageBrush.TileMode = TileMode.Tile;
+            this.rectWindowRight.Fill = myImageBrush;
+        }
+
+        // 表示を更新する時
         public void DisplayPowerStatus(MainWindow mainWindow)
         {
             //旗
@@ -68,10 +164,6 @@ namespace WPF_Successor_001_to_Vahren
             //軍資金
             {
                 this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
-            }
-            //収入補正
-            {
-                this.txtGainCorrection.Text = "";
             }
             //領地数
             {
@@ -125,15 +217,32 @@ namespace WPF_Successor_001_to_Vahren
             {
                 this.txtTotalFinance.Text = total_finance.ToString();
             }
-            //訓練値
+            //訓練限界
             {
-                this.txtNumberTraining.Text = "";
+                this.txtTrainingAverage.Text = "?";
+            }
+            //訓練上昇
+            {
+                this.txtTrainingUp.Text = "?";
+            }
+            //兵レベル
+            {
+                this.txtBaseLevel.Text = "+?";
+            }
+
+            // 人材プレイだと項目が変わる。
+            // 将来的には、内政用の項目を追加きるようにする。下は例
+            //収入補正
+            {
+                this.txtGainAdjust.Text = "?";
             }
             //影響力
             {
-                this.txtInfluence.Text = "";
+                this.txtInfluence.Text = "?";
             }
+
         }
+
 
         // ターン数を表示する
         public void DisplayTurn(MainWindow mainWindow)
@@ -202,5 +311,231 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.ExecuteEvent();
             this.Visibility = Visibility.Visible;
         }
+
+        // 戦略メニューにカーソルを乗せた時
+        private void win_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // カーソルを離した時のイベントを追加する
+                var cast = (UIElement)sender;
+                cast.MouseLeave += win_MouseLeave;
+
+                // 他のヘルプを全て隠す
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        itemHelp.Visibility = Visibility.Hidden;
+                    }
+                }
+
+                // ヘルプを作成する
+                var helpWindow = new UserControl030_Help();
+                helpWindow.Name = "Help_StrategyMenu";
+                helpWindow.SetData("※敵領地を右クリックすると出撃ウィンドウが出ます。\n（戦争する時は敵領地を右クリックしてください）");
+                mainWindow.canvasUI.Children.Add(helpWindow);
+            }
+        }
+        private void win_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // イベントを取り除く
+                var cast = (UIElement)sender;
+                cast.MouseLeave -= win_MouseLeave;
+
+                // 表示中のヘルプを取り除く
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if (itemHelp.Name == "Help_StrategyMenu")
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemHelp);
+                        break;
+                    }
+                }
+
+                // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+                int maxZ = -1, thisZ;
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        thisZ = Canvas.GetZIndex(itemHelp);
+                        if (maxZ < thisZ)
+                        {
+                            maxZ = thisZ;
+                        }
+                    }
+                }
+                if (maxZ >= 0)
+                {
+                    foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                        {
+                            if (Canvas.GetZIndex(itemHelp) == maxZ)
+                            {
+                                itemHelp.Visibility = Visibility.Visible;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 維持費にカーソルを乗せた時
+        private void TotalCost_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // カーソルを離した時のイベントを追加する
+                var cast = (UIElement)sender;
+                cast.MouseLeave += TotalCost_MouseLeave;
+
+                // 他のヘルプを全て隠す
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        itemHelp.Visibility = Visibility.Hidden;
+                    }
+                }
+
+                // ヘルプを作成する
+                var helpWindow = new UserControl030_Help();
+                helpWindow.Name = "Help_StrategyMenu_TotalCost";
+                helpWindow.SetData("全ユニットの維持費の合計値です。");
+                mainWindow.canvasUI.Children.Add(helpWindow);
+            }
+        }
+        private void TotalCost_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // イベントを取り除く
+                var cast = (UIElement)sender;
+                cast.MouseLeave -= TotalCost_MouseLeave;
+
+                // 表示中のヘルプを取り除く
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if (itemHelp.Name == "Help_StrategyMenu_TotalCost")
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemHelp);
+                        break;
+                    }
+                }
+
+                // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+                int maxZ = -1, thisZ;
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        thisZ = Canvas.GetZIndex(itemHelp);
+                        if (maxZ < thisZ)
+                        {
+                            maxZ = thisZ;
+                        }
+                    }
+                }
+                if (maxZ >= 0)
+                {
+                    foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                        {
+                            if (Canvas.GetZIndex(itemHelp) == maxZ)
+                            {
+                                itemHelp.Visibility = Visibility.Visible;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 財政値にカーソルを乗せた時
+        private void TotalFinance_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // カーソルを離した時のイベントを追加する
+                var cast = (UIElement)sender;
+                cast.MouseLeave += TotalFinance_MouseLeave;
+
+                // 他のヘルプを全て隠す
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        itemHelp.Visibility = Visibility.Hidden;
+                    }
+                }
+
+                // ヘルプを作成する
+                var helpWindow = new UserControl030_Help();
+                helpWindow.Name = "Help_StrategyMenu_TotalFinance";
+                helpWindow.SetData("全ユニットの財政力の合計値です。");
+                mainWindow.canvasUI.Children.Add(helpWindow);
+            }
+        }
+        private void TotalFinance_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // イベントを取り除く
+                var cast = (UIElement)sender;
+                cast.MouseLeave -= TotalFinance_MouseLeave;
+
+                // 表示中のヘルプを取り除く
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if (itemHelp.Name == "Help_StrategyMenu_TotalFinance")
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemHelp);
+                        break;
+                    }
+                }
+
+                // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+                int maxZ = -1, thisZ;
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        thisZ = Canvas.GetZIndex(itemHelp);
+                        if (maxZ < thisZ)
+                        {
+                            maxZ = thisZ;
+                        }
+                    }
+                }
+                if (maxZ >= 0)
+                {
+                    foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                        {
+                            if (Canvas.GetZIndex(itemHelp) == maxZ)
+                            {
+                                itemHelp.Visibility = Visibility.Visible;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

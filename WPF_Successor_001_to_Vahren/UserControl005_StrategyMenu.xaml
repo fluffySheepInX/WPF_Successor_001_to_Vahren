@@ -5,53 +5,98 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Height="350" Width="400"
-      >
-    <Border Background="#454545" BorderBrush="Black" BorderThickness="5">
-        <Canvas>
-            <Image Canvas.Left="5" Canvas.Top="5" Height="32" Width="32" Name="imgFlag"/>
-            <TextBlock Height="35" Canvas.Left="45" Canvas.Top="5" FontSize="23" Foreground="White" Text="test" Name="txtNamePower"/>
-            <ScrollViewer Width="189" Height="290" Canvas.Top="40" HorizontalAlignment="Center" VerticalAlignment="Top" Focusable="False">
-                <StackPanel>
-                    <Canvas Height="30">
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="軍資金"/>
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="75,0,0,0" Foreground="White" TextAlignment="Right" Text="9999999" Name="txtMoney"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="総収入"/>
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="75,0,0,0" Foreground="White" TextAlignment="Right" Text="9999999" Name="txtTotalGain"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="収入補正"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="+5%" Name="txtGainCorrection"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="領地数"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberSpot"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="ユニット数"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberUnit"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="維持費"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtTotalCost"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="財政値"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtTotalFinance"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="訓練値"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberTraining"/>
-                    </Canvas>
-                    <Canvas Height="30">
-                        <TextBlock Width="90" Height="30" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="影響力"/>
-                        <TextBlock Width="70" Height="30" FontSize="20" Margin="95,0,0,0" Foreground="White" TextAlignment="Right" Text="999" Name="txtInfluence"/>
-                    </Canvas>
+             Width="425" Height="372">
+    <Grid UseLayoutRounding="True" MouseEnter="win_MouseEnter">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Grid Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Image HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,3,0,0" Height="32" Width="32" Name="imgFlag"/>
+            <TextBlock Grid.ColumnSpan="2" Margin="45,0,0,0" FontSize="23" Foreground="White" Text="test" Name="txtNamePower"/>
+
+            <ScrollViewer Grid.Row="1" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto" CanContentScroll="True" Focusable="False">
+                <StackPanel Width="170" >
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="軍資金"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="9999999" Name="txtMoney"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="総収入"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="+999999" Name="txtTotalGain"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="領地数"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtNumberSpot"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="ユニット数"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtNumberUnit"/>
+                    </Grid>
+                    <Grid Height="30" MouseEnter="TotalCost_MouseEnter">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffff00" Text="維持費"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="999" Name="txtTotalCost"/>
+                    </Grid>
+                    <Grid Height="30" MouseEnter="TotalFinance_MouseEnter">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffff00" Text="財政値"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="999" Name="txtTotalFinance"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="訓練限界"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="999" Name="txtTrainingAverage"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="訓練上昇"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="999" Name="txtTrainingUp"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="兵レベル"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="+99" Name="txtBaseLevel"/>
+                    </Grid>
+
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="収入補正"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="+5%" Name="txtGainAdjust"/>
+                    </Grid>
+                    <Grid Height="30">
+                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="影響力"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtInfluence"/>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
-            <Grid  Width="198" Height="300" Canvas.Top="40" Canvas.Left="192">
+
+            <Grid Grid.Row="1" Grid.Column="1" Margin="2,-2,-2,-2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -63,19 +108,19 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Focusable="False" Margin="0,0,2,2">
+                <Button BorderThickness="3" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Focusable="False" Margin="2">
                     <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="28"/>
-                    </Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="28"/>
+                        </Grid.RowDefinitions>
                         <Border Grid.Row="0" BorderBrush="#29acca" BorderThickness="3">
                             <Image Height="96" Width="96" Name="imgFace"/>
                         </Border>
                         <Label Grid.Row="1" Padding="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="#575757" Background="#F1F2F7" BorderBrush="#767676" BorderThickness="1" Content="ターン終了" />
                     </Grid>
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="0" Focusable="False" Margin="0,0,2,2" ToolTip="人材雇用">
+                <Button BorderThickness="3" Grid.Column="0" Grid.Row="0" Focusable="False" Margin="2" ToolTip="人材雇用">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f91d;" /><!--手をつなぐ人-->
 <!--
                     <Canvas>
@@ -98,7 +143,7 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="1" Focusable="False" Margin="0,0,2,2" ToolTip="カード確認">
+                <Button BorderThickness="3" Grid.Column="0" Grid.Row="1" Focusable="False" Margin="2" ToolTip="カード確認">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f0cf;" /><!--ジョーカー-->
 <!--
                     <Canvas>
@@ -115,7 +160,7 @@
                                 </TransformGroup>
                             </Rectangle.RenderTransform>
                         </Rectangle>
-                        <Rectangle HorizontalAlignment="Left" Height="19" Margin="0,0,0,0" Stroke="#29acca" VerticalAlignment="Top" Width="4" Canvas.Left="-10.25" Canvas.Top="2.25" RenderTransformOrigin="0.5,0.5">
+                        <Rectangle HorizontalAlignment="Left" Height="19" Stroke="#29acca" VerticalAlignment="Top" Width="4" Canvas.Left="-10.25" Canvas.Top="2.25" RenderTransformOrigin="0.5,0.5">
                             <Rectangle.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform/>
@@ -148,7 +193,7 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="外交">
+                <Button BorderThickness="3" Grid.Column="0" Grid.Row="2" Focusable="False" Margin="2" ToolTip="外交">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f5e8;" /><!--左向きの吹き出し-->
 <!--
                     <Canvas>
@@ -179,7 +224,7 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="0" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="ターン委任">
+                <Button BorderThickness="3" Grid.Column="0" Grid.Row="3" Focusable="False" Margin="2" ToolTip="ターン委任">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f502;" /><!--1回リピート-->
 <!--
                     <Canvas>
@@ -236,7 +281,7 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="静観" >
+                <Button BorderThickness="3" Grid.Column="1" Grid.Row="2" Focusable="False" Margin="2" ToolTip="静観" >
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x267E;" /><!--無限-->
 <!--
                     <Canvas>
@@ -246,7 +291,7 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="1" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="機能">
+                <Button BorderThickness="3" Grid.Column="1" Grid.Row="3" Focusable="False" Margin="2" ToolTip="機能">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x2699;" /><!--ギア-->
 <!--
                     <Canvas>
@@ -286,14 +331,14 @@
                     </Canvas>
 -->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="2" Focusable="False" Margin="0,0,2,2" ToolTip="市場">
+                <Button BorderThickness="3" Grid.Column="2" Grid.Row="2" Focusable="False" Margin="2" ToolTip="市場">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f3f0;" /><!--西洋の城-->
                 </Button>
-                <Button BorderBrush="Black" BorderThickness="4" Grid.Column="2" Grid.Row="3" Focusable="False" Margin="0,0,2,2" ToolTip="探索">
+                <Button BorderThickness="3" Grid.Column="2" Grid.Row="3" Focusable="False" Margin="2" ToolTip="探索">
                     <TextBlock Foreground="#29acca" FontSize="36" Text="&#x1f575;" /><!--探偵-->
                 </Button>
             </Grid>
-        </Canvas>
+        </Grid>
 
-    </Border>
+    </Grid>
 </UserControl>

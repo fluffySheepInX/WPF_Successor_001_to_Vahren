@@ -487,6 +487,52 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        // 勢力選択中のヘルプ
+        private void GridMapStrategy_MouseEnter(object sender, MouseEventArgs e)
+        {
+            switch (this.NowSituation)
+            {
+                // 勢力選択画面
+                case Situation.SelectGroup:
+                    // カーソルを離した時のイベントを追加する
+                    var cast = (UIElement)sender;
+                    cast.MouseLeave += GridMapStrategy_MouseLeave;
+
+                    // ヘルプを作成する
+                    var helpWindow = new UserControl030_Help();
+                    helpWindow.Name = "Help_SelectPower";
+                    helpWindow.SetData("旗のある領地を左クリックするとプレイ勢力を選択します。\n右クリックするとシナリオ選択画面に戻ります。");
+                    this.canvasUI.Children.Add(helpWindow);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void GridMapStrategy_MouseLeave(object sender, MouseEventArgs e)
+        {
+            switch (this.NowSituation)
+            {
+                // 勢力選択画面
+                case Situation.SelectGroup:
+                    // イベントを取り除く
+                    var cast = (UIElement)sender;
+                    cast.MouseLeave -= GridMapStrategy_MouseLeave;
+
+                    // 表示中のヘルプを取り除く
+                    foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if (itemHelp.Name == "Help_SelectPower")
+                        {
+                            this.canvasUI.Children.Remove(itemHelp);
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void WindowMainMenuLeftTop_MouseEnter(object sender, MouseEventArgs e)
         {
             {
@@ -700,16 +746,16 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 戦略マップの領地にマウスを乗せた時
-        private void ButtonSelectionCity_MouseEnter(object sender, MouseEventArgs e)
+        private void SelectionCity_MouseEnter(object sender, MouseEventArgs e)
         {
-            var cast = (Button)sender;
+            var cast = (FrameworkElement)sender;
             if (cast.Tag is not ClassPowerAndCity)
             {
                 return;
             }
 
             // マウスを離した時のイベントを追加する
-            cast.MouseLeave += ButtonSelectionCity_MouseLeave;
+            cast.MouseLeave += SelectionCity_MouseLeave;
 
             // 同じ勢力の全ての領地を強調する
             ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
@@ -779,6 +825,15 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            // 場所が重なるのでヘルプを全て隠す
+            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
             // 領地のヒントを作成する
             var hintSpot = new UserControl011_SpotHint();
             hintSpot.Name = "HintSpot";
@@ -796,11 +851,11 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasUI.Children.Add(detailSpot);
             }
         }
-        private void ButtonSelectionCity_MouseLeave(object sender, MouseEventArgs e)
+        private void SelectionCity_MouseLeave(object sender, MouseEventArgs e)
         {
             // イベントを取り除く
-            var cast = (Button)sender;
-            cast.MouseLeave -= ButtonSelectionCity_MouseLeave;
+            var cast = (FrameworkElement)sender;
+            cast.MouseLeave -= SelectionCity_MouseLeave;
 
             // 勢力領の強調を解除する
             ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
@@ -831,6 +886,43 @@ namespace WPF_Successor_001_to_Vahren
                 if (itemHint.Name == "HintSpot")
                 {
                     this.canvasUI.Children.Remove(itemHint);
+                    break;
+                }
+            }
+
+            // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if (itemHelp.Name == "Help_SelectPower")
+                {
+                    itemHelp.Visibility = Visibility.Visible;
                     break;
                 }
             }
@@ -3029,6 +3121,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = -(this.CanvasMainHeight / 2)
                 };
                 this.ClassGameStatus.Camera = new Point(grid.Margin.Left, grid.Margin.Top);
+                grid.MouseEnter += GridMapStrategy_MouseEnter;
 
                 // mapImage読み込み
                 {
@@ -3104,7 +3197,7 @@ namespace WPF_Successor_001_to_Vahren
                             Left = Math.Truncate(item.value.X - gridButton.Width / 2),
                             Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
-                        //grid.AllowDrop = false;
+                        gridButton.MouseEnter += SelectionCity_MouseEnter;
 
                         BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
                         Image img = new Image();
@@ -3194,7 +3287,6 @@ namespace WPF_Successor_001_to_Vahren
                         button.BorderBrush = Brushes.Transparent;
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
-                        button.MouseEnter += ButtonSelectionCity_MouseEnter;
                         gridButton.Children.Add(button);
 
                         // 旗を表示する
@@ -3360,7 +3452,7 @@ namespace WPF_Successor_001_to_Vahren
                             Left = Math.Truncate(item.value.X - gridButton.Width / 2),
                             Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
-                        //grid.AllowDrop = false;
+                        gridButton.MouseEnter += SelectionCity_MouseEnter;
 
                         BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
                         Image img = new Image();
@@ -3445,7 +3537,6 @@ namespace WPF_Successor_001_to_Vahren
                         button.BorderBrush = Brushes.Transparent;
                         button.Click += ButtonSelectionCity_click;
                         button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
-                        button.MouseEnter += ButtonSelectionCity_MouseEnter;
                         gridButton.Children.Add(button);
 
                         // 旗を表示する

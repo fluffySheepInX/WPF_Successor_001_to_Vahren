@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignWidth="382" d:DesignHeight="535"
              MinWidth="382" >
-    <Grid UseLayoutRounding="true"
+    <Grid UseLayoutRounding="True"
             MouseLeftButtonDown="win_MouseLeftButtonDown" MouseRightButtonUp="btnClose_Click">
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -43,7 +43,7 @@
             <TextBlock Margin="0,10,35,0" TextAlignment="Center" FontSize="23" Foreground="White" Text="タイトル" Name="txtTitle" />
             <Button x:Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Width="35" Height="35" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-            <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="448" Margin="5" Background="#282828" Focusable="False"
+            <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="490" Margin="5" Background="#282828" Focusable="False"
                     VerticalScrollBarVisibility="Auto"
                     PreviewMouseLeftButtonDown="Raise_ZOrder"
                     MouseRightButtonUp="Disable_MouseEvent"
@@ -51,48 +51,48 @@
                 <StackPanel Name="panelList">
 
 <!--
-                    <Grid Height="56" Margin="5,4,0,4">
+                    <Grid Height="60" Margin="5,5,0,5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="52" Width="52">
+                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene001.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="戦列歩兵M14式" />
                         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金100" />
                     </Grid>
 
-                    <Grid Height="56" Margin="5,4,0,4">
+                    <Grid Height="60" Margin="5,5,0,5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="52" Width="52">
+                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene002.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="榴弾砲C11式" />
                         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金10000" />
                     </Grid>
 
-                    <Grid Height="56" Margin="5,4,0,4">
+                    <Grid Height="60" Margin="5,5,0,5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="52" Width="52">
+                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="フランチェスカ竜騎兵" />
