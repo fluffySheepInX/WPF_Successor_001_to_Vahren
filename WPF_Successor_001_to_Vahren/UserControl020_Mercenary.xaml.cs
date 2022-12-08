@@ -28,7 +28,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // 項目サイズをここで調節できます
-        private const int item_height = 56, space_height = 4, btn_width = 52, btn_height = 52;
+        private const int item_height = 60, space_height = 5, btn_width = 54, btn_height = 54;
 
         // 最初に呼び出した時
         public void SetData()
@@ -239,7 +239,7 @@ namespace WPF_Successor_001_to_Vahren
                 Button btnUnit = new Button();
                 btnUnit.Name = "btnUnit" + item_count.ToString();
                 btnUnit.Tag = itemBaseUnit;
-                //btnUnit.Background = Brushes.Transparent;
+                btnUnit.BorderThickness = new Thickness(2, 2, 2, 2);
                 btnUnit.Width = btn_width;
                 btnUnit.Height = btn_height;
                 btnUnit.Focusable = false;
@@ -300,6 +300,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             double new_height = (item_height + space_height * 2) * item_count;
             this.scrollList.Height = new_height;
+
         }
 
 

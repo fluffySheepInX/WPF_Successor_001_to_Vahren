@@ -1,12 +1,11 @@
-﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl025_DetailSpot"
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl030_Help"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignWidth="542" d:DesignHeight="200"
-             MinWidth="542" >
+             d:DesignWidth="400" d:DesignHeight="150">
     <Grid IsHitTestVisible="False" UseLayoutRounding="True">
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -28,23 +27,11 @@
             <Rectangle Grid.Column="1" Name="rectWindowTop" />
             <Image Grid.Column="2" Name="imgWindowRightTop" />
             <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Margin="5" FontSize="19" LineHeight="30" Foreground="White" Text="操作方法や説明などを表示します。" Name="txtHelp"/>
             <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
             <Image Grid.Row="2" Name="imgWindowLeftBottom" />
             <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
-        </Grid>
-
-        <Grid Margin="16" Width="500">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock Margin="5" FontSize="23" Foreground="White" Name="txtNameSpot" Text="領地の名前"/>
-            <Image HorizontalAlignment="Right" Margin="0,0,5,0" Height="32" Width="32" Name="imgSpot" />
-
-            <TextBlock Grid.Row="1" Margin="5" FontSize="20" Foreground="White" Name="txtDetail"
-                    TextWrapping="Wrap" LineHeight="35"
-                    Text="spot構造体のtext要素です。長い文章は自動的に改行されます。"/>
         </Grid>
     </Grid>
 </UserControl>
