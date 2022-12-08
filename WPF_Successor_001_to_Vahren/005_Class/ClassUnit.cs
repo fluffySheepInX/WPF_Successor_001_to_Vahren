@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Documents;
 using System.Windows;
 using Point = System.Windows.Point;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -469,22 +470,34 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         //    set { flagMoveDisposeOK = value; }
         //}
         //#endregion
-        #region NowPosi
-        private Point nowPosi;
+        #region NowPosiLeft
+        private Point nowPosiLeft;
 
-        public Point NowPosi
+        public Point NowPosiLeft
         {
-            get { return nowPosi; }
-            set { nowPosi = value; }
+            get { return nowPosiLeft; }
+            set { nowPosiLeft = value; }
         }
         #endregion
-        #region OrderPosi
-        private Point orderPosi;
+        #region OrderPosiLeft
+        private Point orderPosiLeft;
 
-        public Point OrderPosi
+        public Point OrderPosiLeft
         {
-            get { return orderPosi; }
-            set { orderPosi = value; }
+            get { return orderPosiLeft; }
+            set { orderPosiLeft = value; }
+        }
+        #endregion
+        #region NowPosiCenter
+        public Point NowPosiCenter
+        {
+            get { return new Point(nowPosiLeft.X + (ClassStaticBattle.yokoUnit / 2), nowPosiLeft.Y + (ClassStaticBattle.TakasaUnit / 2)); }
+        }
+        #endregion
+        #region OrderPosiCenter
+        public Point OrderPosiCenter
+        {
+            get { return new Point(orderPosiLeft.X + (ClassStaticBattle.yokoUnit / 2), orderPosiLeft.Y + (ClassStaticBattle.TakasaUnit / 2)); }
         }
         #endregion
         #region VecMove

@@ -161,6 +161,7 @@ namespace WPF_Successor_001_to_Vahren
                         map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
                     }
 
+                    //Path描写
                     //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
                     List<(BitmapImage, int, int)> listTakaiObj = new List<(BitmapImage, int, int)>();
                     foreach (var itemCol in ClassGameStatus.ClassBattle.ClassMapBattle.MapData
@@ -214,7 +215,11 @@ namespace WPF_Successor_001_to_Vahren
                             path.Margin = new Thickness()
                             {
                                 Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                                Top = 
+                                    ((canvas.Height / 2) // マップ半分の高さ
+                                    + (itemCol.index * (takasaMapTip / 2)) 
+                                    + (itemRow.index * (-(takasaMapTip / 2)))) // マイナスになる 
+                                    - takasaMapTip / 2
                             };
                             canvas.Children.Add(path);
                         }
@@ -250,7 +255,7 @@ namespace WPF_Successor_001_to_Vahren
                             Left = (target.Item2 * (yokoMapTip / 2)) + (target.Item3 * (yokoMapTip / 2)),
                             Top = ((canvas.Height / 2) + (target.Item2 * (takasaMapTip / 2)) + (target.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
                         };
-                        classUnitBuilding.NowPosi = new Point(path.Margin.Left, path.Margin.Top);
+                        classUnitBuilding.NowPosiLeft = new Point(path.Margin.Left, path.Margin.Top);
                         canvas.Children.Add(path);
                     }
                 }
@@ -336,8 +341,8 @@ namespace WPF_Successor_001_to_Vahren
                         image.ImageSource = bi;
                         Button button = new Button();
                         button.Background = image;
-                        button.Width = 32;
-                        button.Height = 32;
+                        button.Width = ClassStaticBattle.yokoUnit;
+                        button.Height = ClassStaticBattle.TakasaUnit;
                         Canvas canvasChip = new Canvas();
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
@@ -347,8 +352,8 @@ namespace WPF_Successor_001_to_Vahren
                             canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
                         }
                         canvasChip.Children.Add(button);
-                        canvasChip.Width = 32;
-                        canvasChip.Height = 32;
+                        canvasChip.Width = ClassStaticBattle.yokoUnit;
+                        canvasChip.Height = ClassStaticBattle.TakasaUnit;
                         //内分点の公式
                         double left = (
                                         ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
@@ -373,12 +378,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top - 192
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 192
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 192
@@ -452,12 +457,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top - 86
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 86
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 86
@@ -531,12 +536,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
@@ -667,12 +672,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top + 192
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 192
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 192
@@ -747,12 +752,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top + 86
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 86
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 86
@@ -827,12 +832,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top

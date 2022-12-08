@@ -2029,7 +2029,7 @@ namespace WPF_Successor_001_to_Vahren
                             Left = (target.Item2 * (yokoMapTip / 2)) + (target.Item3 * (yokoMapTip / 2)),
                             Top = ((canvas.Height / 2) + (target.Item2 * (takasaMapTip / 2)) + (target.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
                         };
-                        classUnitBuilding.NowPosi = new Point(path.Margin.Left, path.Margin.Top);
+                        classUnitBuilding.NowPosiLeft = new Point(path.Margin.Left, path.Margin.Top);
                         canvas.Children.Add(path);
                     }
                 }
@@ -2149,12 +2149,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top - 192
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 192
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 192
@@ -2225,12 +2225,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top - 86
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 86
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top - 86
@@ -2301,12 +2301,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
@@ -2431,12 +2431,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top + 192
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 192
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 192
@@ -2508,12 +2508,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top + 86
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 86
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top + 86
@@ -2585,12 +2585,12 @@ namespace WPF_Successor_001_to_Vahren
                             Left = left,
                             Top = top
                         };
-                        itemListClassUnit.value.NowPosi = new Point()
+                        itemListClassUnit.value.NowPosiLeft = new Point()
                         {
                             X = left,
                             Y = top
                         };
-                        itemListClassUnit.value.OrderPosi = new Point()
+                        itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
                             X = left,
                             Y = top

@@ -18,6 +18,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
     {
         public static int TakasaMapTip { get; set; } = 32;
         public static int yokoMapTip { get; set; } = 64;
+        public static int TakasaUnit { get; set; } = 32;
+        public static int yokoUnit { get; set; } = 32;
 
         public static void AddBuilding(ClassGameStatus? classGameStatus)
         {
@@ -207,16 +209,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                     ClassVec classVec = new ClassVec();
-                    classVec.Target = new Point(classUnit.OrderPosi.X, classUnit.OrderPosi.Y);
+                    classVec.Target = new Point(classUnit.OrderPosiLeft.X, classUnit.OrderPosiLeft.Y);
                     classVec.Vec = new Point(classUnit.VecMove.X, classUnit.VecMove.Y);
                     classVec.Speed = classUnit.Speed;
 
-                    if (classVec.Hit(new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y)))
+                    if (classVec.Hit(new Point(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y)))
                     {
-                        classUnit.OrderPosi = new Point()
+                        classUnit.OrderPosiLeft = new Point()
                         {
-                            X = classUnit.NowPosi.X,
-                            Y = classUnit.NowPosi.Y
+                            X = classUnit.NowPosiLeft.X,
+                            Y = classUnit.NowPosiLeft.Y
                         };
                         classUnit.FlagMoving = false;
                         return;
@@ -234,8 +236,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         //移動後の位置計算
-                        double afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * classUnit.Speed);
-                        double afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * classUnit.Speed);
+                        double afterNowPosiX = classUnit.NowPosiLeft.X + (classUnit.VecMove.X * classUnit.Speed);
+                        double afterNowPosiY = classUnit.NowPosiLeft.Y + (classUnit.VecMove.Y * classUnit.Speed);
 
                         await Task.Run(() =>
                         {
@@ -250,7 +252,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     if (ch == true)
                                     {
                                         //移動後に建築物無し
-                                        classUnit.NowPosi = new Point()
+                                        classUnit.NowPosiLeft = new Point()
                                         {
                                             X = afterNowPosiX,
                                             Y = afterNowPosiY
@@ -263,7 +265,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
                                             if (re2 != null)
                                             {
-                                                re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                                re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
                                             }
                                         }
                                     }
@@ -271,12 +273,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         ////移動後に建築物有り
                                         //移動後の位置を再計算（一度バックする）
-                                        afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
-                                        afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
+                                        afterNowPosiX = classUnit.NowPosiLeft.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
+                                        afterNowPosiY = classUnit.NowPosiLeft.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
                                         //afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(32));
                                         //afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(16));
                                         //行列変換
-                                        var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosi.X, classUnit.NowPosi.Y);
+                                        var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y);
 
                                         bool ch2 = true;
                                         var targetTip2 = ClassStaticBattle.GetRecObj(classGameStatus.ClassBattle.ListBuildingAlive, resultConv.Item1, resultConv.Item2);
@@ -285,7 +287,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         if (ch2 == true)
                                         {
                                             //移動後に建築物無し
-                                            classUnit.NowPosi = new Point()
+                                            classUnit.NowPosiLeft = new Point()
                                             {
                                                 X = resultConv.Item1,
                                                 Y = resultConv.Item2
@@ -298,14 +300,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
                                                 if (re2 != null)
                                                 {
-                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                                    re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
                                                 }
                                             }
 
                                             //再計算する
                                             var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                from: new Point(classUnit.NowPosi.X, classUnit.NowPosi.Y),
-                                                to: classUnit.OrderPosi
+                                                from: new Point(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y),
+                                                to: classUnit.OrderPosiLeft
                                                 );
                                             classUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                                         }
@@ -320,10 +322,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
                                                 if (re2 != null)
                                                 {
-                                                    re2.Margin = new Thickness(classUnit.NowPosi.X, classUnit.NowPosi.Y, 0, 0);
+                                                    re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
                                                 }
                                             }
-                                            classUnit.OrderPosi = classUnit.NowPosi;
+                                            classUnit.OrderPosiLeft = classUnit.NowPosiLeft;
                                             classUnit.FlagMoving = false;
                                             return;
                                         }
@@ -376,12 +378,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 {
                     foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {
-                        if (itemGroupBy.NowPosi != itemGroupBy.OrderPosi)
+                        if (itemGroupBy.NowPosiLeft != itemGroupBy.OrderPosiLeft)
                         {
                             //移動スレッド開始
                             var calc0 = ClassCalcVec.ReturnVecDistance(
-                                from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
-                                to: itemGroupBy.OrderPosi
+                                from: new Point(itemGroupBy.NowPosiLeft.X, itemGroupBy.NowPosiLeft.Y),
+                                to: itemGroupBy.OrderPosiLeft
                                 );
                             itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                             itemGroupBy.FlagMoving = true;
@@ -409,24 +411,36 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
-        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window, Canvas canvasMain)
+        public static async void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window, Canvas canvasMain)
         {
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
                 case BattleWhichIsThePlayer.Sortie:
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.Def:
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.None:
                     break;
                 default:
                     break;
             }
-            List<Path> listPath = canvasMain.Children.OfType<Path>().ToList();
+
+            //アスターアルゴリズムの為
+            List<Path> listPath = new List<Path>(); ;
+            await Task.Run(() =>
+            {
+                Application.Current.Dispatcher.Invoke((Action)(() =>
+                {
+                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                    if (re1 == null) return;
+
+                    listPath = re1.Children.OfType<Path>().ToList();
+                }));
+            });
 
             while (true)
             {
@@ -442,13 +456,33 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 {
                     foreach (var itemGroupBy in item.ListClassUnit)
                     {
-                        //アスターアルゴリズムで移動経路取得
+                        ////アスターアルゴリズムで移動経路取得
+                        //まず現在のマップチップを取得
+                        await Task.Run(() =>
+                        {
+                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                            {
+                                var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < itemGroupBy.NowPosiCenter.X
+                                                                && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (itemGroupBy.NowPosiCenter.X - yokoMapTip))
+                                ;
+                                initMapTip = initMapTip
+                                .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
+                                        && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)));
 
+                                if (initMapTip == null) throw new Exception();
+
+                                foreach (var item in initMapTip)
+                                {
+                                    item.Stroke = Brushes.Blue;
+                                    item.StrokeThickness = 10;
+                                }
+                            }));
+                        });
 
                         //移動スレッド開始
                         var calc0 = ClassCalcVec.ReturnVecDistance(
-                            from: new Point(itemGroupBy.NowPosi.X, itemGroupBy.NowPosi.Y),
-                            to: itemGroupBy.OrderPosi
+                            from: new Point(itemGroupBy.NowPosiLeft.X, itemGroupBy.NowPosiLeft.Y),
+                            to: itemGroupBy.OrderPosiLeft
                             );
                         itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                         itemGroupBy.FlagMoving = true;
@@ -516,10 +550,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //体力計算処理
                     foreach (var item in listTarget)
                     {
-                        var re = item.ListClassUnit.Where(x => x.NowPosi.X <= classUnit.NowPosiSkill.X + 5
-                                                    && x.NowPosi.X >= classUnit.NowPosiSkill.X - 5
-                                                    && x.NowPosi.Y <= classUnit.NowPosiSkill.Y + 5
-                                                    && x.NowPosi.Y >= classUnit.NowPosiSkill.Y - 5);
+                        var re = item.ListClassUnit.Where(x => x.NowPosiLeft.X <= classUnit.NowPosiSkill.X + 5
+                                                    && x.NowPosiLeft.X >= classUnit.NowPosiSkill.X - 5
+                                                    && x.NowPosiLeft.Y <= classUnit.NowPosiSkill.Y + 5
+                                                    && x.NowPosiLeft.Y >= classUnit.NowPosiSkill.Y - 5);
 
                         foreach (var itemRe in re)
                         {
@@ -646,14 +680,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
                         {
                             //スキル射程範囲確認
-                            var xA = itemGroupBy.NowPosi;
+                            var xA = itemGroupBy.NowPosiLeft;
                             foreach (var itemDefUnitGroup in bbb)
                             {
                                 foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                 {
                                     //三平方の定理から射程内か確認
                                     {
-                                        var xB = itemDefUnitList.NowPosi;
+                                        var xB = itemDefUnitList.NowPosiLeft;
                                         double teihen = xA.X - xB.X;
                                         double takasa = xA.Y - xB.Y;
                                         double syahen = (teihen * teihen) + (takasa * takasa);
@@ -674,11 +708,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         }
                                     }
 
-                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosi.X, Y = itemGroupBy.NowPosi.Y };
-                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosi.X, Y = itemDefUnitList.NowPosi.Y };
+                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosiLeft.X, Y = itemGroupBy.NowPosiLeft.Y };
+                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosiLeft.X, Y = itemDefUnitList.NowPosiLeft.Y };
                                     var calc0 = ClassCalcVec.ReturnVecDistance(
                                                     from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
-                                                    to: itemDefUnitList.NowPosi
+                                                    to: itemDefUnitList.NowPosiLeft
                                                     );
                                     itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
                                     itemGroupBy.FlagMovingSkill = true;
