@@ -47,51 +47,51 @@
             <TextBlock Grid.ColumnSpan="2" Margin="45,0,0,0" FontSize="23" Foreground="White" Text="test" Name="txtNamePower"/>
 
             <ScrollViewer Grid.Row="1" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto" CanContentScroll="True" Focusable="False">
-                <StackPanel Width="170" >
+                <StackPanel Width="160" Margin="5,0">
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="軍資金"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="9999999" Name="txtMoney"/>
+                        <TextBlock FontSize="20" Foreground="#00ffff" Text="軍資金"/>
+                        <TextBlock FontSize="20" Foreground="#ffff00" TextAlignment="Right" Text="9999999" Name="txtMoney"/>
                     </Grid>
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="総収入"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="+999999" Name="txtTotalGain"/>
+                        <TextBlock FontSize="20" Foreground="#00ffff" Text="総収入"/>
+                        <TextBlock FontSize="20" Foreground="White" TextAlignment="Right" Text="+999999" Name="txtTotalGain"/>
                     </Grid>
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="領地数"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtNumberSpot"/>
+                        <TextBlock FontSize="20" Foreground="#00ffff" Text="領地数"/>
+                        <TextBlock FontSize="20" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberSpot"/>
                     </Grid>
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#00ffff" Text="ユニット数"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtNumberUnit"/>
+                        <TextBlock FontSize="20" Foreground="#00ffff" Text="ユニット数"/>
+                        <TextBlock FontSize="20" Foreground="White" TextAlignment="Right" Text="999" Name="txtNumberUnit"/>
                     </Grid>
                     <Grid Height="30" MouseEnter="TotalCost_MouseEnter">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffff00" Text="維持費"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="999" Name="txtTotalCost"/>
+                        <TextBlock FontSize="20" Foreground="#ffff00" Text="維持費"/>
+                        <TextBlock FontSize="20" Foreground="#ffff00" TextAlignment="Right" Text="999" Name="txtTotalCost"/>
                     </Grid>
                     <Grid Height="30" MouseEnter="TotalFinance_MouseEnter">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffff00" Text="財政値"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffff00" Text="999" Name="txtTotalFinance"/>
+                        <TextBlock FontSize="20" Foreground="#ffff00" Text="財政値"/>
+                        <TextBlock FontSize="20" Foreground="#ffff00" TextAlignment="Right" Text="999" Name="txtTotalFinance"/>
                     </Grid>
-                    <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="訓練限界"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="999" Name="txtTrainingAverage"/>
+                    <Grid Height="30" MouseEnter="TrainingAverage_MouseEnter">
+                        <TextBlock FontSize="20" Foreground="#ffc800" Text="訓練限界"/>
+                        <TextBlock FontSize="20" Foreground="#ffc800" TextAlignment="Right" Text="999" Name="txtTrainingAverage"/>
                     </Grid>
-                    <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="訓練上昇"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="999" Name="txtTrainingUp"/>
+                    <Grid Height="30" MouseEnter="TrainingUp_MouseEnter">
+                        <TextBlock FontSize="20" Foreground="#ffc800" Text="訓練上昇"/>
+                        <TextBlock FontSize="20" Foreground="#ffc800" TextAlignment="Right" Text="999" Name="txtTrainingUp"/>
                     </Grid>
-                    <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="#ffc800" Text="兵レベル"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="#ffc800" Text="+99" Name="txtBaseLevel"/>
+                    <Grid Height="30" MouseEnter="BaseLevel_MouseEnter">
+                        <TextBlock FontSize="20" Foreground="#ffc800" Text="兵レベル"/>
+                        <TextBlock FontSize="20" Foreground="#ffc800" TextAlignment="Right" Text="+99" Name="txtBaseLevel"/>
                     </Grid>
 
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="収入補正"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="+5%" Name="txtGainAdjust"/>
+                        <TextBlock FontSize="20" Foreground="White" Text="収入補正"/>
+                        <TextBlock FontSize="20" Foreground="White" TextAlignment="Right" Text="+5%" Name="txtGainAdjust"/>
                     </Grid>
                     <Grid Height="30">
-                        <TextBlock HorizontalAlignment="Left" FontSize="20" Margin="5,0,0,0" Foreground="White" Text="影響力"/>
-                        <TextBlock HorizontalAlignment="Right" FontSize="20" Margin="0,0,5,0" Foreground="White" Text="999" Name="txtInfluence"/>
+                        <TextBlock FontSize="20" Foreground="White" Text="影響力"/>
+                        <TextBlock FontSize="20" Foreground="White" TextAlignment="Right" Text="999" Name="txtInfluence"/>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
@@ -108,7 +108,9 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button BorderThickness="3" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="btnTurnEnd" Click="btnTurnEnd_Click" Focusable="False" Margin="2">
+                <Button BorderThickness="3" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Focusable="False" Margin="2"
+                        x:Name="btnTurnEnd" Click="btnTurnEnd_Click"
+                        MouseEnter="btnTurnEnd_MouseEnter">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

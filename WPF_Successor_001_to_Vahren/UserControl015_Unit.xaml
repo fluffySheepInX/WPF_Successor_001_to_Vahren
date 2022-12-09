@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" >
-    <Grid MouseLeftButtonDown="win_MouseLeftButtonDown" MouseRightButtonUp="btnClose_Click" >
+    <Grid UseLayoutRounding="True"
+            MouseLeftButtonDown="win_MouseLeftButtonDown"
+            MouseRightButtonUp="btnClose_Click"
+            MouseEnter="win_MouseEnter" >
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
@@ -118,17 +121,15 @@
             <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="580">
                 <Button x:Name="btnDismiss" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="解雇"
                         PreviewMouseDown="Raise_ZOrder"
-                        MouseRightButtonUp="Disable_MouseEvent"
-                        />
+                        MouseRightButtonUp="Disable_MouseEvent" />
                 <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
                         Click="btnMercenary_Click"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent"
-                        />
+                        MouseEnter="btnMercenary_MouseEnter" />
                 <Button x:Name="btnItem" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="アイテム"
                         PreviewMouseDown="Raise_ZOrder"
-                        MouseRightButtonUp="Disable_MouseEvent"
-                        />
+                        MouseRightButtonUp="Disable_MouseEvent" />
             </StackPanel>
 
         </Canvas>

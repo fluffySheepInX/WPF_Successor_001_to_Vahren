@@ -484,6 +484,85 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        // ユニット情報ウインドウにカーソルを乗せた時
+        private void win_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (UIElement)sender;
+            cast.MouseLeave += win_MouseLeave;
+
+            // 他のヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // ヘルプを作成する
+            var helpWindow = new UserControl030_Help();
+            helpWindow.Name = "Help_" + this.Name;
+            helpWindow.SetData("ウィンドウ内を右クリックするとウィンドウを閉じます。");
+            mainWindow.canvasUI.Children.Add(helpWindow);
+        }
+        private void win_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (UIElement)sender;
+            cast.MouseLeave -= win_MouseLeave;
+
+            // 表示中のヘルプを取り除く
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if (itemHelp.Name == "Help_" + this.Name)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemHelp);
+                    break;
+                }
+            }
+
+            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         // ユニットの雇用ウインドウを開く
         private void btnMercenary_Click(object sender, RoutedEventArgs e)
@@ -549,6 +628,86 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.canvasUI.Children.Add(windowMercenary);
             }
         }
+
+        // 雇用ボタンにカーソルを乗せた時
+        private void btnMercenary_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (UIElement)sender;
+            cast.MouseLeave += btnMercenary_MouseLeave;
+
+            // 他のヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // ヘルプを作成する
+            var helpWindow = new UserControl030_Help();
+            helpWindow.Name = "Help_" + this.Name + "_btnMercenary";
+            helpWindow.SetData("ユニットの雇用ウィンドウを表示します。");
+            mainWindow.canvasUI.Children.Add(helpWindow);
+        }
+        private void btnMercenary_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (UIElement)sender;
+            cast.MouseLeave -= btnMercenary_MouseLeave;
+
+            // 表示中のヘルプを取り除く
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if (itemHelp.Name == "Help_" + this.Name + "_btnMercenary")
+                {
+                    mainWindow.canvasUI.Children.Remove(itemHelp);
+                    break;
+                }
+            }
+
+            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
 }
