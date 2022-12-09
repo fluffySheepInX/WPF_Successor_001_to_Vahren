@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl040_PowerSelect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             d:DesignWidth="382" d:DesignHeight="182"
+             MinWidth="382">
+    <Grid UseLayoutRounding="True">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" Opacity="0.5" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Grid Margin="16" Width="350">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                <Button x:Name="btnWatch" Width="110" Height="35" Margin="10,0,0,0" FontSize="20" Focusable="False" Content="観戦する" />
+                <Button x:Name="btnTalent" Width="205" Height="35" Margin="15,0,0,0" FontSize="20" Focusable="False" Content="中立人材でプレイする" />
+            </StackPanel>
+            <ScrollViewer Grid.Row="1" Name="scrollList" Height="100" Focusable="False"
+                    VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
+                <StackPanel Name="panelList">
+
+<!--
+                    <Button Height="50" HorizontalContentAlignment="Left" Background="Transparent">
+                        <StackPanel Orientation="Horizontal">
+                            <Image HorizontalAlignment="Left" Height="32" Width="32" Margin="4,0,0,0" Source="./001_Warehouse/001_DefaultGame/030_FlagImage/flag1.png" />
+                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" Text="勢力の名前１" />
+                        </StackPanel>
+                    </Button>
+                    <Button Height="50" HorizontalContentAlignment="Left" Background="Transparent">
+                        <StackPanel Orientation="Horizontal">
+                            <Image HorizontalAlignment="Left" Height="32" Width="32" Margin="4,0,0,0" Source="./001_Warehouse/001_DefaultGame/030_FlagImage/flag2.png" />
+                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" Text="勢力の名前２" />
+                        </StackPanel>
+                    </Button>
+-->
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

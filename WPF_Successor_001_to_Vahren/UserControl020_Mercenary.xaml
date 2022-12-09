@@ -8,7 +8,9 @@
              d:DesignWidth="382" d:DesignHeight="535"
              MinWidth="382" >
     <Grid UseLayoutRounding="True"
-            MouseLeftButtonDown="win_MouseLeftButtonDown" MouseRightButtonUp="btnClose_Click">
+            MouseLeftButtonDown="win_MouseLeftButtonDown"
+            MouseRightButtonUp="btnClose_Click"
+            MouseEnter="win_MouseEnter" >
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
@@ -44,10 +46,8 @@
             <Button x:Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Width="35" Height="35" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="490" Margin="5" Background="#282828" Focusable="False"
-                    VerticalScrollBarVisibility="Auto"
-                    PreviewMouseLeftButtonDown="Raise_ZOrder"
-                    MouseRightButtonUp="Disable_MouseEvent"
-                    >
+                    VerticalScrollBarVisibility="Auto" CanContentScroll="True"
+                    MouseRightButtonUp="Disable_MouseEvent" >
                 <StackPanel Name="panelList">
 
 <!--
