@@ -312,111 +312,59 @@ namespace WPF_Successor_001_to_Vahren
 
             if (classPower.ListMember.Count > 0)
             {
-                const int ring_size = 80, big_ring_size = 88;
-                int diff_size = 16;
+                const int ring_size = 96, ring_size2 = 152;
 
-                // 円の大きさを時間経過で変化させる（1.5秒間隔でループする）
-                var animeBigRingSize = new DoubleAnimation();
-                animeBigRingSize.From = big_ring_size - diff_size;
-                animeBigRingSize.To = big_ring_size + diff_size;
-                animeBigRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
-                animeBigRingSize.AutoReverse = true;
-                animeBigRingSize.RepeatBehavior = RepeatBehavior.Forever;
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("005_BackgroundImage");
+                strings.Add("circle_yellow2.png");
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path) == false)
+                {
+                    // 画像が存在しない場合はエフェクトも無い
+                    return;
+                }
+                BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+
+                // 輪の大きさを時間経過で変化させる（1.5秒間隔でループする）
                 var animeRingSize = new DoubleAnimation();
-                animeRingSize.From = ring_size - diff_size;
-                animeRingSize.To = ring_size + diff_size;
+                animeRingSize.To = ring_size2;
                 animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
                 animeRingSize.AutoReverse = true;
                 animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
-
-                // 円の周りをぼかす（滑らかに見えるよう品質を上げても無駄？）
-                BlurEffect blurBig = new BlurEffect();
-                blurBig.Radius = 16;
-                blurBig.KernelType = KernelType.Gaussian;
-                //blurBig.RenderingBias = RenderingBias.Quality;
-                BlurEffect blurSmall = new BlurEffect();
-                blurSmall.Radius = 2;
-                blurSmall.KernelType = KernelType.Gaussian;
-                //blurSmall.RenderingBias = RenderingBias.Quality;
 
                 string powerNameTag = classPower.NameTag;
                 var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
                 foreach (var itemSpot in listSpot)
                 {
-                    // 太い円の上に細い円を描く
-                    Ellipse elliBig = new Ellipse();
-                    elliBig.Name = "HintSpot" + itemSpot.NameTag + "Big";
-                    elliBig.Stroke = Brushes.Yellow; // #FFFF00
-                    elliBig.StrokeThickness = 10;
-                    elliBig.Width = big_ring_size;
-                    elliBig.Height = big_ring_size;
-                    elliBig.Effect = blurBig;
-                    elliBig.HorizontalAlignment = HorizontalAlignment.Left;
-                    elliBig.VerticalAlignment = VerticalAlignment.Top;
-                    elliBig.Margin = new Thickness()
-                    {
-                        Left = itemSpot.X - big_ring_size / 2,
-                        Top = itemSpot.Y - big_ring_size / 2
-                    };
-                    gridMapStrategy.Children.Add(elliBig);
-
-                    // 円の大きさは共通アニメーションにする
-                    elliBig.BeginAnimation(Ellipse.WidthProperty, animeBigRingSize);
-                    elliBig.BeginAnimation(Ellipse.HeightProperty, animeBigRingSize);
-
-                    // 円の位置も変えないと中心がずれる
-                    var animeBigRingPos = new ThicknessAnimation();
-                    animeBigRingPos.From = new Thickness()
-                    {
-                        Left = itemSpot.X - (big_ring_size - diff_size) / 2,
-                        Top = itemSpot.Y - (big_ring_size - diff_size) / 2
-                    };
-                    animeBigRingPos.To = new Thickness()
-                    {
-                        Left = itemSpot.X - (big_ring_size + diff_size) / 2,
-                        Top = itemSpot.Y - (big_ring_size + diff_size) / 2
-                    };
-                    animeBigRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
-                    animeBigRingPos.AutoReverse = true;
-                    animeBigRingPos.RepeatBehavior = RepeatBehavior.Forever;
-                    elliBig.BeginAnimation(Ellipse.MarginProperty, animeBigRingPos);
-
-                    Ellipse elli = new Ellipse();
-                    elli.Name = "HintSpot" + itemSpot.NameTag;
-                    elli.Stroke = Brushes.Yellow; // #FFFF00
-                    elli.StrokeThickness = 2;
-                    elli.Width = ring_size;
-                    elli.Height = ring_size;
-                    elli.Effect = blurSmall;
-                    elli.HorizontalAlignment = HorizontalAlignment.Left;
-                    elli.VerticalAlignment = VerticalAlignment.Top;
-                    elli.Margin = new Thickness()
+                    Image imgRing = new Image();
+                    imgRing.Name = "SpotEffect" + itemSpot.NameTag;
+                    imgRing.Source = bitimg1;
+                    // アスペクト比を保って拡大縮小するので、横幅だけ指定する
+                    imgRing.Width = ring_size;
+                    imgRing.HorizontalAlignment = HorizontalAlignment.Left;
+                    imgRing.VerticalAlignment = VerticalAlignment.Top;
+                    imgRing.Margin = new Thickness()
                     {
                         Left = itemSpot.X - ring_size / 2,
                         Top = itemSpot.Y - ring_size / 2
                     };
-                    gridMapStrategy.Children.Add(elli);
+                    gridMapStrategy.Children.Add(imgRing);
 
                     // 円の大きさは共通アニメーションにする
-                    elli.BeginAnimation(Ellipse.WidthProperty, animeRingSize);
-                    elli.BeginAnimation(Ellipse.HeightProperty, animeRingSize);
+                    imgRing.BeginAnimation(Image.WidthProperty, animeRingSize);
 
                     // 円の位置も変えないと中心がずれる
                     var animeRingPos = new ThicknessAnimation();
-                    animeRingPos.From = new Thickness()
-                    {
-                        Left = itemSpot.X - (ring_size - diff_size) / 2,
-                        Top = itemSpot.Y - (ring_size - diff_size) / 2
-                    };
                     animeRingPos.To = new Thickness()
                     {
-                        Left = itemSpot.X - (ring_size + diff_size) / 2,
-                        Top = itemSpot.Y - (ring_size + diff_size) / 2
+                        Left = itemSpot.X - ring_size2 / 2,
+                        Top = itemSpot.Y - ring_size2 / 2
                     };
                     animeRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
                     animeRingPos.AutoReverse = true;
                     animeRingPos.RepeatBehavior = RepeatBehavior.Forever;
-                    elli.BeginAnimation(Ellipse.MarginProperty, animeRingPos);
+                    imgRing.BeginAnimation(Image.MarginProperty, animeRingPos);
                 }
             }
         }
@@ -450,13 +398,13 @@ namespace WPF_Successor_001_to_Vahren
                 for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
                 {
                     UIElement Child = gridMapStrategy.Children[i];
-                    if (Child is Ellipse)
+                    if (Child is Image)
                     {
-                        var itemElli = (Ellipse)Child;
-                        if (itemElli.Name.StartsWith("HintSpot"))
+                        var itemImage = (Image)Child;
+                        if (itemImage.Name.StartsWith("SpotEffect"))
                         {
                             // 円を取り除く
-                            gridMapStrategy.Children.Remove(itemElli);
+                            gridMapStrategy.Children.Remove(itemImage);
                         }
                     }
                 }
