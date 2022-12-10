@@ -317,7 +317,7 @@ namespace WPF_Successor_001_to_Vahren
                 List<string> strings = new List<string>();
                 strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
                 strings.Add("005_BackgroundImage");
-                strings.Add("circle_yellow2.png");
+                strings.Add("circle_yellow4.png");
                 string path = System.IO.Path.Combine(strings.ToArray());
                 if (System.IO.File.Exists(path) == false)
                 {
