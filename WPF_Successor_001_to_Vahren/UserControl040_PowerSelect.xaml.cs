@@ -9,6 +9,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -171,6 +173,7 @@ namespace WPF_Successor_001_to_Vahren
                 buttonItem.Background = Brushes.Transparent;
                 buttonItem.HorizontalContentAlignment = HorizontalAlignment.Left;
                 buttonItem.Click += btnPowerSelect_Click;
+                buttonItem.MouseEnter += btnPowerSelect_MouseEnter;
                 this.panelList.Children.Add(buttonItem);
                 item_count += 1;
             }
@@ -277,6 +280,185 @@ namespace WPF_Successor_001_to_Vahren
                             };
                         }));
                     });
+                }
+            }
+        }
+
+        // 勢力一覧ウィンドウのボタンにマウスを乗せた時
+        private void btnPowerSelect_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassPower)
+            {
+                return;
+            }
+
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += btnPowerSelect_MouseLeave;
+
+            // 同じ勢力の全ての領地を強調する
+            var classPower = (ClassPower)cast.Tag;
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy == null)
+            {
+                return;
+            }
+
+            if (classPower.ListMember.Count > 0)
+            {
+                const int ring_size = 80, big_ring_size = 88;
+                int diff_size = 16;
+
+                // 円の大きさを時間経過で変化させる（1.5秒間隔でループする）
+                var animeBigRingSize = new DoubleAnimation();
+                animeBigRingSize.From = big_ring_size - diff_size;
+                animeBigRingSize.To = big_ring_size + diff_size;
+                animeBigRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+                animeBigRingSize.AutoReverse = true;
+                animeBigRingSize.RepeatBehavior = RepeatBehavior.Forever;
+                var animeRingSize = new DoubleAnimation();
+                animeRingSize.From = ring_size - diff_size;
+                animeRingSize.To = ring_size + diff_size;
+                animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+                animeRingSize.AutoReverse = true;
+                animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
+
+                // 円の周りをぼかす（滑らかに見えるよう品質を上げても無駄？）
+                BlurEffect blurBig = new BlurEffect();
+                blurBig.Radius = 16;
+                blurBig.KernelType = KernelType.Gaussian;
+                //blurBig.RenderingBias = RenderingBias.Quality;
+                BlurEffect blurSmall = new BlurEffect();
+                blurSmall.Radius = 2;
+                blurSmall.KernelType = KernelType.Gaussian;
+                //blurSmall.RenderingBias = RenderingBias.Quality;
+
+                string powerNameTag = classPower.NameTag;
+                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+                foreach (var itemSpot in listSpot)
+                {
+                    // 太い円の上に細い円を描く
+                    Ellipse elliBig = new Ellipse();
+                    elliBig.Name = "HintSpot" + itemSpot.NameTag + "Big";
+                    elliBig.Stroke = Brushes.Yellow; // #FFFF00
+                    elliBig.StrokeThickness = 10;
+                    elliBig.Width = big_ring_size;
+                    elliBig.Height = big_ring_size;
+                    elliBig.Effect = blurBig;
+                    elliBig.HorizontalAlignment = HorizontalAlignment.Left;
+                    elliBig.VerticalAlignment = VerticalAlignment.Top;
+                    elliBig.Margin = new Thickness()
+                    {
+                        Left = itemSpot.X - big_ring_size / 2,
+                        Top = itemSpot.Y - big_ring_size / 2
+                    };
+                    gridMapStrategy.Children.Add(elliBig);
+
+                    // 円の大きさは共通アニメーションにする
+                    elliBig.BeginAnimation(Ellipse.WidthProperty, animeBigRingSize);
+                    elliBig.BeginAnimation(Ellipse.HeightProperty, animeBigRingSize);
+
+                    // 円の位置も変えないと中心がずれる
+                    var animeBigRingPos = new ThicknessAnimation();
+                    animeBigRingPos.From = new Thickness()
+                    {
+                        Left = itemSpot.X - (big_ring_size - diff_size) / 2,
+                        Top = itemSpot.Y - (big_ring_size - diff_size) / 2
+                    };
+                    animeBigRingPos.To = new Thickness()
+                    {
+                        Left = itemSpot.X - (big_ring_size + diff_size) / 2,
+                        Top = itemSpot.Y - (big_ring_size + diff_size) / 2
+                    };
+                    animeBigRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+                    animeBigRingPos.AutoReverse = true;
+                    animeBigRingPos.RepeatBehavior = RepeatBehavior.Forever;
+                    elliBig.BeginAnimation(Ellipse.MarginProperty, animeBigRingPos);
+
+                    Ellipse elli = new Ellipse();
+                    elli.Name = "HintSpot" + itemSpot.NameTag;
+                    elli.Stroke = Brushes.Yellow; // #FFFF00
+                    elli.StrokeThickness = 2;
+                    elli.Width = ring_size;
+                    elli.Height = ring_size;
+                    elli.Effect = blurSmall;
+                    elli.HorizontalAlignment = HorizontalAlignment.Left;
+                    elli.VerticalAlignment = VerticalAlignment.Top;
+                    elli.Margin = new Thickness()
+                    {
+                        Left = itemSpot.X - ring_size / 2,
+                        Top = itemSpot.Y - ring_size / 2
+                    };
+                    gridMapStrategy.Children.Add(elli);
+
+                    // 円の大きさは共通アニメーションにする
+                    elli.BeginAnimation(Ellipse.WidthProperty, animeRingSize);
+                    elli.BeginAnimation(Ellipse.HeightProperty, animeRingSize);
+
+                    // 円の位置も変えないと中心がずれる
+                    var animeRingPos = new ThicknessAnimation();
+                    animeRingPos.From = new Thickness()
+                    {
+                        Left = itemSpot.X - (ring_size - diff_size) / 2,
+                        Top = itemSpot.Y - (ring_size - diff_size) / 2
+                    };
+                    animeRingPos.To = new Thickness()
+                    {
+                        Left = itemSpot.X - (ring_size + diff_size) / 2,
+                        Top = itemSpot.Y - (ring_size + diff_size) / 2
+                    };
+                    animeRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+                    animeRingPos.AutoReverse = true;
+                    animeRingPos.RepeatBehavior = RepeatBehavior.Forever;
+                    elli.BeginAnimation(Ellipse.MarginProperty, animeRingPos);
+                }
+            }
+        }
+        private void btnPowerSelect_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassPower)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            cast.MouseLeave -= btnPowerSelect_MouseLeave;
+
+            // 勢力領の強調を解除する
+            var classPower = (ClassPower)cast.Tag;
+            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+            if (gridMapStrategy == null)
+            {
+                return;
+            }
+
+            if (classPower.ListMember.Count > 0)
+            {
+                for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
+                {
+                    UIElement Child = gridMapStrategy.Children[i];
+                    if (Child is Ellipse)
+                    {
+                        var itemElli = (Ellipse)Child;
+                        if (itemElli.Name.StartsWith("HintSpot"))
+                        {
+                            // 円を取り除く
+                            gridMapStrategy.Children.Remove(itemElli);
+                        }
+                    }
                 }
             }
         }

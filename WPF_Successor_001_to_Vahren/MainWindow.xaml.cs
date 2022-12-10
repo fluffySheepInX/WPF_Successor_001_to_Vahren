@@ -501,8 +501,15 @@ namespace WPF_Successor_001_to_Vahren
                     // ヘルプを作成する
                     var helpWindow = new UserControl030_Help();
                     helpWindow.Name = "Help_SelectPower";
-                    helpWindow.SetData("旗のある領地を左クリックするとプレイ勢力を選択します。\n右クリックするとシナリオ選択画面に戻ります。");
+                    helpWindow.SetData("旗のある領地を左クリックするとプレイ勢力を選択します。\n領地以外を左ドラッグするとワールドマップを動かせます。\n右クリックするとシナリオ選択画面に戻ります。");
                     this.canvasUI.Children.Add(helpWindow);
+
+                    // 領地のヒントが表示されてる時はヘルプを隠す
+                    var hintSpot = (UserControl011_SpotHint)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "HintSpot");
+                    if (hintSpot != null)
+                    {
+                        helpWindow.Visibility = Visibility.Hidden;
+                    }
                     break;
                 default:
                     break;
@@ -519,13 +526,10 @@ namespace WPF_Successor_001_to_Vahren
                     cast.MouseLeave -= GridMapStrategy_MouseLeave;
 
                     // 表示中のヘルプを取り除く
-                    foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
+                    var itemHelp = (UserControl030_Help)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "Help_SelectPower");
+                    if (itemHelp != null)
                     {
-                        if (itemHelp.Name == "Help_SelectPower")
-                        {
-                            this.canvasUI.Children.Remove(itemHelp);
-                            break;
-                        }
+                        this.canvasUI.Children.Remove(itemHelp);
                     }
                     break;
                 default:
@@ -771,11 +775,11 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         // 16進数で色を指定する場合はこちら
                         //myBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FFFF"));
-                        myBrush = Brushes.Cyan;
+                        myBrush = Brushes.Cyan; // #00FFFF
                     }
                     else
                     {
-                        myBrush = Brushes.Lime;
+                        myBrush = Brushes.Lime; // #00FF00
                     }
 
                     // 円の周りをぼかす
@@ -881,13 +885,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 領地のヒントは一個だけなので、見つけたら取り除いて終わる
-            foreach (var itemHint in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
+            var hintSpot = (UserControl011_SpotHint)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "HintSpot");
+            if (hintSpot != null)
             {
-                if (itemHint.Name == "HintSpot")
-                {
-                    this.canvasUI.Children.Remove(itemHint);
-                    break;
-                }
+                this.canvasUI.Children.Remove(hintSpot);
             }
 
             // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
@@ -918,25 +919,13 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if (itemHelp.Name == "Help_SelectPower")
-                {
-                    itemHelp.Visibility = Visibility.Visible;
-                    break;
-                }
-            }
-
             // 領地の説明文を取り除く
             if (classPowerAndCity.ClassSpot.Text != string.Empty)
             {
-                foreach (var itemDetail in this.canvasUI.Children.OfType<UserControl025_DetailSpot>())
+                var itemDetail = (UserControl025_DetailSpot)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "DetailSpot");
+                if (itemDetail != null)
                 {
-                    if (itemDetail.Name == "DetailSpot")
-                    {
-                        this.canvasUI.Children.Remove(itemDetail);
-                        break;
-                    }
+                    this.canvasUI.Children.Remove(itemDetail);
                 }
             }
         }
