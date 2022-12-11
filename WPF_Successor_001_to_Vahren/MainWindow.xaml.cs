@@ -861,7 +861,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            // 領地のヒントは一個だけなので、見つけたら取り除いて終わる
+            // 領地のヒントを取り除く
             var hintSpot = (UserControl011_SpotHint)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "HintSpot");
             if (hintSpot != null)
             {
@@ -1088,6 +1088,12 @@ namespace WPF_Successor_001_to_Vahren
                 windowSpot.Margin = posWindow;
                 windowSpot.SetData();
                 this.canvasUI.Children.Add(windowSpot);
+
+                // 透明から不透明になる
+                var animeOpacity = new DoubleAnimation();
+                animeOpacity.From = 0.1;
+                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                windowSpot.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
             }
             id_list.Clear();
         }

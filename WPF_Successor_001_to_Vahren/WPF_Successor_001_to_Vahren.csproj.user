@@ -16,6 +16,9 @@
     <Compile Update="UserControl015_Unit.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl016_UnitHint.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl020_Mercenary.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -23,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl030_Help.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControl031_HelpMember.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl040_PowerSelect.xaml.cs">
@@ -42,6 +48,9 @@
     <Page Update="UserControl015_Unit.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserControl016_UnitHint.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControl020_Mercenary.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -49,6 +58,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl030_Help.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl031_HelpMember.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl040_PowerSelect.xaml">
