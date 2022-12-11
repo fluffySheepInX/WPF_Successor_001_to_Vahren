@@ -17,11 +17,11 @@ using WPF_Successor_001_to_Vahren._005_Class;
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// UserControl011_SpotHint.xaml の相互作用ロジック
+    /// UserControl031_HelpMember.xaml の相互作用ロジック
     /// </summary>
-    public partial class UserControl011_SpotHint : UserControl
+    public partial class UserControl031_HelpMember : UserControl
     {
-        public UserControl011_SpotHint()
+        public UserControl031_HelpMember()
         {
             InitializeComponent();
         }
@@ -34,12 +34,8 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-            if (classPowerAndCity == null)
-            {
-                return;
-            }
-            if (classPowerAndCity.ClassSpot == null)
+            var classUnit = (ClassUnit)this.Tag;
+            if (classUnit == null)
             {
                 return;
             }
@@ -52,80 +48,11 @@ namespace WPF_Successor_001_to_Vahren
                 Canvas.SetZIndex(this, maxZ + 1);
             }
 
-            // 勢力名
-            if (classPowerAndCity.ClassPower.NameTag != string.Empty)
-            {
-                this.txtNamePower.Text = classPowerAndCity.ClassPower.Name;
-            }
-            else
-            {
-                this.txtNamePower.Text = "中立勢力";
-            }
+            // 種族のデータが存在しないので、暫定的にユニットの種族を表示する
+            this.txtRaceItem.Text = classUnit.Race;
 
-            // 領地名
-            this.txtNameSpot.Text = classPowerAndCity.ClassSpot.Name;
-
-            // 部隊数を数えてユニットを表示する
-            this.panelSpotUnit.Children.Clear();
-            int tile_height = 32;
-            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
-            int troop_count = listTroop.Count();
-            if (troop_count > 0)
-            {
-                // 画像のディレクトリ
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("040_ChipImage");
-                string pathDirectory = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
-
-                // 部隊数によって、一部隊ごとの高さを変える
-                // ８部隊までなら 32ドット。それを超えると画像が途切れる。最低でも半分の 16ドットは表示する。
-                tile_height = 256 / troop_count;
-                if (tile_height > 32)
-                {
-                    tile_height = 32;
-                }
-                else if (tile_height < 16)
-                {
-                    tile_height = 16;
-                }
-
-                // ユニットを並べる
-                foreach (var itemTroop in listTroop)
-                {
-                    // 部隊のパネル
-                    StackPanel panelTroop = new StackPanel();
-                    panelTroop.Orientation = Orientation.Horizontal;
-                    // 画像のサイズに関係なく、パネルの高さで表示する範囲を決める。
-                    panelTroop.Height = tile_height;
-
-                    foreach (var itemUnit in itemTroop.ListClassUnit)
-                    {
-                        // ユニットの画像
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(pathDirectory + itemUnit.Image));
-                        Image imgUnit = new Image();
-                        imgUnit.Source = bitimg1;
-                        // アスペクト比を保つので幅だけ 32までに制限すればいい
-                        int image_width = bitimg1.PixelWidth;
-                        if (image_width > 32)
-                        {
-                            image_width = 32;
-                        }
-                        imgUnit.Width = image_width;
-                        imgUnit.Height = bitimg1.PixelHeight;
-                        panelTroop.Children.Add(imgUnit);
-                    }
-
-                    this.panelSpotUnit.Children.Add(panelTroop);
-                }
-            }
-
-            // 経済、城壁、部隊、戦力
-            int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
-            this.txtStatus.Text = "経済" + classPowerAndCity.ClassSpot.Gain.ToString()
-                                + " 城壁" + classPowerAndCity.ClassSpot.Castle.ToString()
-                                + " 部隊" + troop_count.ToString() + "/" + spot_capacity.ToString()
-                                + " 戦力 ?";
+            // メンバーにできるクラスのデータが List になってないので、暫定的にそのまま表示する
+            this.txtClassItem.Text = classUnit.Friend;
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);

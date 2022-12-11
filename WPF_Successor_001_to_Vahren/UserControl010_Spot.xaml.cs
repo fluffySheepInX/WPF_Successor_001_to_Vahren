@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -1811,12 +1812,97 @@ namespace WPF_Successor_001_to_Vahren
             var panelUnit = (StackPanel)sender;
             // WPFの標準色をどうやって取得するのか知らないので、暗い色にする
             panelUnit.Background = Brushes.Gray;
+
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // 場所が重なるのでヘルプを全て隠す
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        itemHelp.Visibility = Visibility.Hidden;
+                    }
+                }
+
+                // メンバーにできるユニットを表示する
+                var helpMember = new UserControl031_HelpMember();
+                helpMember.Name = "HelpMember";
+                helpMember.Tag = panelUnit.Tag;
+                helpMember.SetData();
+                mainWindow.canvasUI.Children.Add(helpMember);
+
+                // ユニットが人材なら
+                if (((ClassUnit)panelUnit.Tag).Talent == "on")
+                {
+                    ClassCityAndUnit classCityAndUnit = new ClassCityAndUnit();
+                    classCityAndUnit.ClassPowerAndCity = (ClassPowerAndCity)this.Tag;
+                    classCityAndUnit.ClassUnit = (ClassUnit)panelUnit.Tag;
+
+                    // ユニット情報のヒントを表示する
+                    var hintUnit = new UserControl016_UnitHint();
+                    hintUnit.Tag = classCityAndUnit;
+                    hintUnit.Name = "UnitHint";
+                    hintUnit.SetData();
+                    mainWindow.canvasUI.Children.Add(hintUnit);
+                }
+            }
         }
         private void panel_MouseLeave(object sender, MouseEventArgs e)
         {
             var panelUnit = (StackPanel)sender;
             // 背景の設定自体を消去する
             panelUnit.Background = null;
+
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                // メンバーのヘルプを取り除く
+                var helpMember = (UserControl031_HelpMember)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "HelpMember");
+                if (helpMember != null)
+                {
+                    mainWindow.canvasUI.Children.Remove(helpMember);
+                }
+
+                // ユニットが人材なら
+                if (((ClassUnit)panelUnit.Tag).Talent == "on")
+                {
+                    // ユニット情報のヒントを取り除く
+                    var hintUnit = (UserControl016_UnitHint)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "UnitHint");
+                    if (hintUnit != null)
+                    {
+                        mainWindow.canvasUI.Children.Remove(hintUnit);
+                    }
+                }
+
+                // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
+                int maxZ = -1, thisZ;
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        thisZ = Canvas.GetZIndex(itemHelp);
+                        if (maxZ < thisZ)
+                        {
+                            maxZ = thisZ;
+                        }
+                    }
+                }
+                if (maxZ >= 0)
+                {
+                    foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                        {
+                            if (Canvas.GetZIndex(itemHelp) == maxZ)
+                            {
+                                itemHelp.Visibility = Visibility.Visible;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         #region ユニットのドラッグ移動
@@ -2300,6 +2386,19 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // ユニット情報のヒントが表示されてる場合は閉じる
+            bool bCloseHint = false;
+            if (((ClassUnit)((StackPanel)sender).Tag).Talent == "on")
+            {
+                // ユニット情報のヒントを取り除く
+                var hintUnit = (UserControl016_UnitHint)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "UnitHint");
+                if (hintUnit != null)
+                {
+                    mainWindow.canvasUI.Children.Remove(hintUnit);
+                    bCloseHint = true;
+                }
+            }
+
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
             if ((listWindow != null) && (listWindow.Any()))
@@ -2326,6 +2425,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 既に表示されてるユニット・ウインドウをチェックする
             int window_id, max_id = 0;
+            const int dY = 60, dX = 40, dX2 = 120;
             var id_list = new List<int>();
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl015_Unit>())
             {
@@ -2345,12 +2445,30 @@ namespace WPF_Successor_001_to_Vahren
                         max_id = -1;
                         itemWindow.Margin = new Thickness()
                         {
-                            Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
-                            Top = offsetTop + ((window_id - 1) % 10) * 50 + 100
+                            Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth - ((window_id - 1) % 10) * dX - ((window_id - 1) / 10) * dX2,
+                            Top = offsetTop + ((window_id - 1) % 10) * dY + dY
                         };
 
                         // ユニット・ウインドウをこのウインドウよりも前面に移動させる
                         Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+
+                        // ヒントを閉じた場合は右上から移動させる
+                        if (bCloseHint)
+                        {
+                            var animeOpacity = new DoubleAnimation();
+                            animeOpacity.From = 0.5;
+                            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                            itemWindow.rectWindowPlane.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
+
+                            var animeMargin = new ThicknessAnimation();
+                            animeMargin.From = new Thickness()
+                            {
+                                Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth,
+                                Top = offsetTop
+                            };
+                            animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                            itemWindow.BeginAnimation(Grid.MarginProperty, animeMargin);
+                        }
 
                         break;
                     }
@@ -2379,11 +2497,36 @@ namespace WPF_Successor_001_to_Vahren
                 windowUnit.Name = "WindowUnit" + window_id.ToString();
                 windowUnit.Margin = new Thickness()
                 {
-                    Left = offsetLeft + ((window_id - 1) % 10) * 50 + ((window_id - 1) / 10) * 50,
-                    Top = offsetTop + ((window_id - 1) % 10) * 50 + 100
+                    Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth - ((window_id - 1) % 10) * dX - ((window_id - 1) / 10) * dX2,
+                    Top = offsetTop + ((window_id - 1) % 10) * dY + dY
                 };
                 windowUnit.SetData();
                 mainWindow.canvasUI.Children.Add(windowUnit);
+
+                // ヒントを閉じた場合は右上から移動させる
+                if (bCloseHint)
+                {
+                    var animeOpacity = new DoubleAnimation();
+                    animeOpacity.From = 0.5;
+                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    windowUnit.rectWindowPlane.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
+
+                    var animeMargin = new ThicknessAnimation();
+                    animeMargin.From = new Thickness()
+                    {
+                        Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth,
+                        Top = offsetTop
+                    };
+                    animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    windowUnit.BeginAnimation(Grid.MarginProperty, animeMargin);
+                }
+                else
+                {
+                    var animeOpacity = new DoubleAnimation();
+                    animeOpacity.From = 0.1;
+                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    windowUnit.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
+                }
             }
             id_list.Clear();
 
@@ -2497,6 +2640,13 @@ namespace WPF_Successor_001_to_Vahren
             helpWindow.Name = "Help_" + this.Name;
             helpWindow.SetData(strHelp);
             mainWindow.canvasUI.Children.Add(helpWindow);
+
+            // メンバーにできるユニットが表示されてる時はヘルプを隠す
+            var helpMember = (UserControl031_HelpMember)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "HelpMember");
+            if (helpMember != null)
+            {
+                helpWindow.Visibility = Visibility.Hidden;
+            }
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
         {

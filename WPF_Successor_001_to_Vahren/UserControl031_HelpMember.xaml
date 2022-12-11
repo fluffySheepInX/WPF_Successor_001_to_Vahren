@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl031_HelpMember"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             d:DesignWidth="432" d:DesignHeight="232">
+    <Grid IsHitTestVisible="False" UseLayoutRounding="True">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="Auto"/>
+<!--
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="Auto"/>
+-->
+            </Grid.RowDefinitions>
+            <TextBlock Margin="5,0" FontSize="19" Foreground="Yellow" Text="メンバーにできるユニット"/>
+            <StackPanel Grid.Row="1" Margin="5,0" MaxWidth="600" Name="panelMember">
+                <TextBlock Height="25" FontSize="19" Foreground="White" Name="txtTitle" Text="以下の種族とクラスの両方に一致してれば可能です"/>
+                <TextBlock Height="25" FontSize="19" Foreground="Yellow" Name="txtRaceHeader" Text="種族の一覧"/>
+                <TextBlock MinHeight="25" FontSize="19" TextWrapping="Wrap" LineHeight="25" Foreground="White" Name="txtRaceItem" Text="種族の名前１ 種族の名前２"/>
+                <TextBlock Height="25" FontSize="19" Foreground="Yellow" Name="txtClassHeader" Text="クラスの一覧"/>
+                <TextBlock MinHeight="25" FontSize="19" TextWrapping="Wrap" LineHeight="25" Foreground="White" Name="txtClassItem" Text="基底クラスの名前１ 基底クラスの名前２ 基底クラスの名前３ 基底クラスの名前４"/>
+            </StackPanel>
+<!--
+            <TextBlock Grid.Row="2" Margin="5,10,5,0" FontSize="19" Foreground="Yellow" Text="雇用できるユニット"/>
+            <TextBlock Grid.Row="3" Margin="5,0" Height="25" FontSize="19" Foreground="White" Name="txtMercenary" Text="同種族同クラス 基底クラスの名前１ 基底クラスの名前２"/>
+-->
+        </Grid>
+    </Grid>
+</UserControl>

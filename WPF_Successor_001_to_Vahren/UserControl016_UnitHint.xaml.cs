@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -17,17 +18,16 @@ using WPF_Successor_001_to_Vahren._005_Class;
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// UserControl015_Unit.xaml の相互作用ロジック
+    /// UserControl016_UnitHint.xaml の相互作用ロジック
     /// </summary>
-    public partial class UserControl015_Unit : UserControl
+    public partial class UserControl016_UnitHint : UserControl
     {
-        public UserControl015_Unit()
+        public UserControl016_UnitHint()
         {
             InitializeComponent();
         }
 
         // 最初に呼び出した時
-        private bool _isControl = false; // 操作可能かどうかの設定
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -35,8 +35,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-
-            ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
 
             // 最前面に配置する
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
@@ -46,22 +44,43 @@ namespace WPF_Successor_001_to_Vahren
                 Canvas.SetZIndex(this, maxZ + 1);
             }
 
-            // プレイヤーが操作可能かどうか
-            if (classCityAndUnit.ClassPowerAndCity.ClassPower.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
-            {
-                // 同じ勢力なら、操作できる
-                _isControl = true;
-            }
-            else
-            {
-                _isControl = false;
-            }
-
             // ユニットの情報を表示する
             DisplayUnitStatus(mainWindow);
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);
+
+            // 画面の右上隅に配置する
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+            this.Margin = new Thickness()
+            {
+                Left = mainWindow.canvasUI.Width - offsetLeft - this.MinWidth,
+                Top = offsetTop
+            };
+
+            // 透明度を変化させる（移動が終わる前に不透明になる）
+            var animeOpacity = new DoubleAnimation();
+            animeOpacity.From = 0.1;
+            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+            this.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+
+            // 画面の右端から出現する（最初から半分は表示されてる）
+            var animeMargin = new ThicknessAnimation();
+            animeMargin.From = new Thickness()
+            {
+                Left = mainWindow.canvasUI.Width - offsetLeft - this.MinWidth / 2,
+                Top = offsetTop
+            };
+            animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
+            this.BeginAnimation(Grid.MarginProperty, animeMargin);
         }
 
         // ウインドウ枠を作る
@@ -185,19 +204,6 @@ namespace WPF_Successor_001_to_Vahren
                     break;
                 }
             }
-
-            // プレイヤーが操作可能かどうか
-            if (_isControl == false)
-            {
-                // 異なる勢力なら、操作ボタンを無効にする
-                btnDismiss.IsEnabled = false;
-                btnMercenary.IsEnabled = false;
-                btnItem.IsEnabled = false;
-            }
-
-            // まだ処理を作ってないのでボタンを無効にする
-            btnDismiss.IsEnabled = false;
-            btnItem.IsEnabled = false;
 
             // ユニット画像は戦場での大きさで表示したい、けど、サイズのデータがClassUnitにない
             if (targetUnit.Image != string.Empty)
@@ -367,6 +373,9 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // スキルのアイコンを重ねて表示する
                 Grid gridSkill = new Grid();
+                gridSkill.Width = 34;
+                gridSkill.Height = 34;
+                gridSkill.Background = Brushes.Black;
                 foreach (var itemIcon in Enumerable.Reverse(itemSkill.Icon).ToList())
                 {
                     List<string> strings = new List<string>();
@@ -396,14 +405,7 @@ namespace WPF_Successor_001_to_Vahren
                     gridSkill.Children.Add(imageSkill);
                 }
 
-                // ボタンの内枠の分だけサイズを画像よりも大きくする
-                Button buttonSkill = new Button();
-                buttonSkill.Content = gridSkill;
-                buttonSkill.Width = 34;
-                buttonSkill.Height = 34;
-                buttonSkill.Background = Brushes.Black;
-                buttonSkill.BorderThickness = new Thickness(0,0,0,0);
-                this.panelSkill.Children.Add(buttonSkill);
+                this.panelSkill.Children.Add(gridSkill);
             }
 
             // 耐性
@@ -411,345 +413,6 @@ namespace WPF_Successor_001_to_Vahren
 
 
         }
-
-
-        private void btnClose_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // 雇用ウインドウを開いてた場合は閉じる
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
-            {
-                if (itemWindow.Name == this.Name + "Mercenary")
-                {
-                    mainWindow.canvasUI.Children.Remove(itemWindow);
-                    break;
-                }
-            }
-
-            // キャンバスから自身を取り除く
-            mainWindow.canvasUI.Children.Remove(this);
-        }
-
-        #region ウインドウ移動
-        private bool _isDrag = false; // 外部に公開する必要なし
-        private Point _startPoint;
-
-        private void win_MouseLeftButtonDown(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
-            {
-                // 最前面に移動させる
-                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
-                {
-                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-            }
-
-            // ドラッグを開始する
-            UIElement el = (UIElement)sender;
-            if (el != null)
-            {
-                _isDrag = true;
-                _startPoint = e.GetPosition(el);
-                el.CaptureMouse();
-                el.MouseLeftButtonUp += win_MouseLeftButtonUp;
-                el.MouseMove += win_MouseMove;
-            }
-        }
-        private void win_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // ドラック中なら終了する
-            if (_isDrag == true)
-            {
-                UIElement el = (UIElement)sender;
-                el.ReleaseMouseCapture();
-                el.MouseLeftButtonUp -= win_MouseLeftButtonUp;
-                el.MouseMove -= win_MouseMove;
-                _isDrag = false;
-            }
-        }
-        private void win_MouseMove(object sender, MouseEventArgs e)
-        {
-            // ドラック中
-            if (_isDrag == true)
-            {
-                UIElement el = (UIElement)sender;
-                Point pt = e.GetPosition(el);
-
-                var thickness = new Thickness();
-                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
-                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
-                this.Margin = thickness;
-            }
-        }
-        #endregion
-
-        // ボタン等を右クリックした際に、親コントロールが反応しないようにする
-        private void Disable_MouseEvent(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
-            {
-                // 最前面に移動させる
-                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
-                {
-                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-            }
-
-            e.Handled = true;
-        }
-
-        // ボタン等をクリックした際に、UserControlを最前面に移動させる
-        private void Raise_ZOrder(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
-            {
-                // 最前面に移動させる
-                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ( (listWindow != null) && (listWindow.Any()) )
-                {
-                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-            }
-        }
-
-        // ユニット情報ウインドウにカーソルを乗せた時
-        private void win_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // カーソルを離した時のイベントを追加する
-            var cast = (UIElement)sender;
-            cast.MouseLeave += win_MouseLeave;
-
-            // 他のヘルプを全て隠す
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    itemHelp.Visibility = Visibility.Hidden;
-                }
-            }
-
-            // ヘルプを作成する
-            var helpWindow = new UserControl030_Help();
-            helpWindow.Name = "Help_" + this.Name;
-            helpWindow.SetData("ウィンドウ内を右クリックするとウィンドウを閉じます。");
-            mainWindow.canvasUI.Children.Add(helpWindow);
-        }
-        private void win_MouseLeave(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // イベントを取り除く
-            var cast = (UIElement)sender;
-            cast.MouseLeave -= win_MouseLeave;
-
-            // 表示中のヘルプを取り除く
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if (itemHelp.Name == "Help_" + this.Name)
-                {
-                    mainWindow.canvasUI.Children.Remove(itemHelp);
-                    break;
-                }
-            }
-
-            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
-            int maxZ = -1, thisZ;
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    thisZ = Canvas.GetZIndex(itemHelp);
-                    if (maxZ < thisZ)
-                    {
-                        maxZ = thisZ;
-                    }
-                }
-            }
-            if (maxZ >= 0)
-            {
-                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-                {
-                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                    {
-                        if (Canvas.GetZIndex(itemHelp) == maxZ)
-                        {
-                            itemHelp.Visibility = Visibility.Visible;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // ユニットの雇用ウインドウを開く
-        private void btnMercenary_Click(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // 領地から雇用なら、ClassUnit 部分を null にする
-            ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
-
-            // ユニット情報ウインドウの右横に雇用ウインドウを表示する
-            double offsetLeft = this.Margin.Left + this.ActualWidth;
-
-            // 既に雇用ウインドウが表示されてる場合は再利用する
-            bool isFound = false;
-            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
-            {
-                string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")) )
-                {
-                    // 新規に作らない
-                    itemWindow.Tag = classCityAndUnit;
-                    itemWindow.Name = this.Name + "Mercenary";
-                    if (this.Margin.Left + this.ActualWidth / 2  > mainWindow.CanvasMainWidth / 2)
-                    {
-                        // 画面の右側なら、左横に表示する
-                        offsetLeft = this.Margin.Left - itemWindow.MinWidth;
-                    }
-                    itemWindow.Margin = new Thickness()
-                    {
-                        Left = offsetLeft,
-                        Top = this.Margin.Top
-                    };
-                    itemWindow.DisplayMercenary(mainWindow);
-
-                    // 雇用ウインドウをこのウインドウよりも前面に移動させる
-                    Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
-
-                    isFound = true;
-                    break;
-                }
-            }
-            if (isFound == false)
-            {
-                // 新規に作成する
-                var windowMercenary = new UserControl020_Mercenary();
-                windowMercenary.Tag = classCityAndUnit;
-                windowMercenary.Name = this.Name + "Mercenary";
-                if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
-                {
-                    // 画面の右側なら、左横に表示する
-                    offsetLeft = this.Margin.Left - windowMercenary.MinWidth;
-                }
-                windowMercenary.Margin = new Thickness()
-                {
-                    Left = offsetLeft,
-                    Top = this.Margin.Top
-                };
-                windowMercenary.SetData();
-                mainWindow.canvasUI.Children.Add(windowMercenary);
-            }
-        }
-
-        // 雇用ボタンにカーソルを乗せた時
-        private void btnMercenary_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // カーソルを離した時のイベントを追加する
-            var cast = (UIElement)sender;
-            cast.MouseLeave += btnMercenary_MouseLeave;
-
-            // 他のヘルプを全て隠す
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    itemHelp.Visibility = Visibility.Hidden;
-                }
-            }
-
-            // ヘルプを作成する
-            var helpWindow = new UserControl030_Help();
-            helpWindow.Name = "Help_" + this.Name + "_btnMercenary";
-            helpWindow.SetData("ユニットの雇用ウィンドウを表示します。");
-            mainWindow.canvasUI.Children.Add(helpWindow);
-        }
-        private void btnMercenary_MouseLeave(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // イベントを取り除く
-            var cast = (UIElement)sender;
-            cast.MouseLeave -= btnMercenary_MouseLeave;
-
-            // 表示中のヘルプを取り除く
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if (itemHelp.Name == "Help_" + this.Name + "_btnMercenary")
-                {
-                    mainWindow.canvasUI.Children.Remove(itemHelp);
-                    break;
-                }
-            }
-
-            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
-            int maxZ = -1, thisZ;
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    thisZ = Canvas.GetZIndex(itemHelp);
-                    if (maxZ < thisZ)
-                    {
-                        maxZ = thisZ;
-                    }
-                }
-            }
-            if (maxZ >= 0)
-            {
-                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-                {
-                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                    {
-                        if (Canvas.GetZIndex(itemHelp) == maxZ)
-                        {
-                            itemHelp.Visibility = Visibility.Visible;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
 
     }
 }
