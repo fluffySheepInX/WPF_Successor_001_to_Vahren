@@ -768,63 +768,40 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
-                    // プレイヤー勢力なら色を変える
-                    SolidColorBrush? myBrush = null;
+                    const int ring_size = 128;
                     string powerNameTag = classPowerAndCity.ClassPower.NameTag;
+
+                    List<string> strings = new List<string>();
+                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+                    strings.Add("005_BackgroundImage");
+                    // プレイヤー勢力なら色を変える
                     if (this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
                     {
-                        // 16進数で色を指定する場合はこちら
-                        //myBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FFFF"));
-                        myBrush = Brushes.Cyan; // #00FFFF
+                        strings.Add("circle_cyan4.png");
                     }
                     else
                     {
-                        myBrush = Brushes.Lime; // #00FF00
+                        strings.Add("circle_lime4.png");
                     }
-
-                    // 円の周りをぼかす
-                    BlurEffect blurBig = new BlurEffect();
-                    blurBig.Radius = 16;
-                    blurBig.KernelType = KernelType.Gaussian;
-                    BlurEffect blurSmall = new BlurEffect();
-                    blurSmall.Radius = 2;
-                    blurSmall.KernelType = KernelType.Gaussian;
+                    string path = System.IO.Path.Combine(strings.ToArray());
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
 
                     var listSpot = this.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
                     foreach (var itemSpot in listSpot)
                     {
-                        // 太い円の上に細い円を描く
-                        Ellipse elliBig = new Ellipse();
-                        elliBig.Name = "HintSpot" + itemSpot.NameTag + "Big";
-                        elliBig.Stroke = myBrush;
-                        elliBig.StrokeThickness = 10;
-                        elliBig.Width = 88;
-                        elliBig.Height = 88;
-                        elliBig.Effect = blurBig;
-                        elliBig.HorizontalAlignment = HorizontalAlignment.Left;
-                        elliBig.VerticalAlignment = VerticalAlignment.Top;
-                        elliBig.Margin = new Thickness()
+                        Image imgRing = new Image();
+                        imgRing.Name = "SpotEffect" + itemSpot.NameTag;
+                        imgRing.Source = bitimg1;
+                        // アスペクト比を保つので、横幅だけ指定する
+                        imgRing.Width = ring_size;
+                        imgRing.HorizontalAlignment = HorizontalAlignment.Left;
+                        imgRing.VerticalAlignment = VerticalAlignment.Top;
+                        imgRing.Margin = new Thickness()
                         {
-                            Left = itemSpot.X - 44,
-                            Top = itemSpot.Y - 44
+                            Left = itemSpot.X - ring_size / 2,
+                            Top = itemSpot.Y - ring_size / 2
                         };
-                        gridMapStrategy.Children.Add(elliBig);
-
-                        Ellipse elli = new Ellipse();
-                        elli.Name = "HintSpot" + itemSpot.NameTag;
-                        elli.Stroke = myBrush;
-                        elli.StrokeThickness = 2;
-                        elli.Width = 80;
-                        elli.Height = 80;
-                        elli.Effect = blurSmall;
-                        elli.HorizontalAlignment = HorizontalAlignment.Left;
-                        elli.VerticalAlignment = VerticalAlignment.Top;
-                        elli.Margin = new Thickness()
-                        {
-                            Left = itemSpot.X - 40,
-                            Top = itemSpot.Y - 40
-                        };
-                        gridMapStrategy.Children.Add(elli);
+                        gridMapStrategy.Children.Add(imgRing);
                     }
                 }
             }
@@ -871,13 +848,13 @@ namespace WPF_Successor_001_to_Vahren
                     for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
                     {
                         UIElement Child = gridMapStrategy.Children[i];
-                        if (Child is Ellipse)
+                        if (Child is Image)
                         {
-                            var itemElli = (Ellipse)Child;
-                            if (itemElli.Name.StartsWith("HintSpot"))
+                            var itemImage = (Image)Child;
+                            if (itemImage.Name.StartsWith("SpotEffect"))
                             {
                                 // 円を取り除く
-                                gridMapStrategy.Children.Remove(itemElli);
+                                gridMapStrategy.Children.Remove(itemImage);
                             }
                         }
                     }
