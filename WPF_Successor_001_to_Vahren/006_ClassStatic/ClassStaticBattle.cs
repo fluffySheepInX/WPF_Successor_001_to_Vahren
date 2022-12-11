@@ -11,6 +11,9 @@ using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._010_Enum;
 using System.Threading;
+using System.Security.Cryptography.Xml;
+using System.Diagnostics;
+using System.Windows.Documents;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
@@ -413,15 +416,24 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="window"></param>
         public static async void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window, Canvas canvasMain)
         {
+            // チェック
+            if (classGameStatus.ClassBattle == null) return;
+            if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
+
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
+
+            // 移動する陣営決定
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
+            List<ClassHorizontalUnit> listEnemy = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
                 case BattleWhichIsThePlayer.Sortie:
                     listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    listEnemy = classGameStatus.ClassBattle.SortieUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.Def:
                     listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    listEnemy = classGameStatus.ClassBattle.DefUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.None:
                     break;
@@ -441,8 +453,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     listPath = re1.Children.OfType<Path>().ToList();
                 }));
             });
-            if (classGameStatus.ClassBattle == null) return;
-            if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
 
             while (true)
             {
@@ -460,8 +470,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         ////アスターアルゴリズムで移動経路取得
                         //まず現在のマップチップを取得
-                        int row = -1;
-                        int col = -1;
+                        int rowT = -1;
+                        int colT = -1;
                         await Task.Run(() =>
                         {
                             Application.Current.Dispatcher.Invoke((Action)(() =>
@@ -483,8 +493,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         if (itemC.value.MapPath == null) continue;
                                         if (itemC.value.MapPath.Name == initMapTip.Name)
                                         {
-                                            row = itemR.index;
-                                            col = itemC.index;
+                                            rowT = itemR.index;
+                                            colT = itemC.index;
                                             break;
                                         }
                                     }
@@ -495,9 +505,63 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.StrokeThickness = 10;
                             }));
                         });
+                        if (rowT == -1) continue;
+                        if (colT == -1) continue;
 
-                        if (row == -1) continue;
-                        if (col == -1) continue;
+                        //最寄りの敵のマップチップを取得
+                        Point xy1 = itemGroupBy.NowPosiCenter;
+                        xy1.X = xy1.X * xy1.X;
+                        xy1.Y = xy1.Y * xy1.Y;
+                        double disA = xy1.X + xy1.Y;
+                        Dictionary<ClassUnit, double> dicDis = new Dictionary<ClassUnit, double>();
+                        foreach (var itemEnemy in listEnemy)
+                        {
+                            foreach (var itemListClassUnit in itemEnemy.ListClassUnit)
+                            {
+                                Point xy2 = itemListClassUnit.NowPosiCenter;
+                                xy2.X = xy2.X * xy2.X;
+                                xy2.Y = xy2.Y * xy2.Y;
+                                double disB = xy2.X + xy2.Y;
+                                dicDis.Add(itemListClassUnit, disA - disB);
+                            }
+                        }
+                        var minValue = dicDis.Values.Min();
+                        var minElem = dicDis.FirstOrDefault(x => x.Value == minValue);
+
+                        //最寄りの敵のマップチップを取得
+                        int rowE = -1;
+                        int colE = -1;
+                        await Task.Run(() =>
+                        {
+                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                            {
+                                var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < minElem.Key.NowPosiCenter.X
+                                                                && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (minElem.Key.NowPosiCenter.X - yokoMapTip))
+                                                            .Where(y => y.Margin.Top < (minElem.Key.NowPosiCenter.Y)
+                                                                    && y.Margin.Top > ((minElem.Key.NowPosiCenter.Y - TakasaMapTip)))
+                                                            .FirstOrDefault();
+
+                                if (initMapTip == null) throw new Exception();
+
+                                foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                                        .Select((value, index) => (value, index)))
+                                {
+                                    foreach (var itemC in itemR.value
+                                                        .Select((value, index) => (value, index)))
+                                    {
+                                        if (itemC.value.MapPath == null) continue;
+                                        if (itemC.value.MapPath.Name == initMapTip.Name)
+                                        {
+                                            rowE = itemR.index;
+                                            colE = itemC.index;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }));
+                        });
+                        if (rowE == -1) continue;
+                        if (colE == -1) continue;
 
                         //移動経路取得
 
