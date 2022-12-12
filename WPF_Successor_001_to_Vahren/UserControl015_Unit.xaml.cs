@@ -560,6 +560,16 @@ namespace WPF_Successor_001_to_Vahren
             helpWindow.Name = "Help_" + this.Name;
             helpWindow.SetData("ウィンドウ内を右クリックするとウィンドウを閉じます。");
             mainWindow.canvasUI.Children.Add(helpWindow);
+
+            // スキルのヒントが表示されてる時はヘルプを隠す
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl046_SkillHint>())
+            {
+                if (itemWindow.Name == "SkillHint")
+                {
+                    helpWindow.Visibility = Visibility.Hidden;
+                    break;
+                }
+            }
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
         {
