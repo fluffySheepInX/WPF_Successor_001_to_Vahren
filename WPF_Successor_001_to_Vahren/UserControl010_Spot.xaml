@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
-             mc:Ignorable="d" >
+             mc:Ignorable="d"
+             MinWidth="502" MinHeight="702">
     <Grid UseLayoutRounding="True"
             MouseLeftButtonDown="win_MouseLeftButtonDown"
             MouseRightButtonUp="btnClose_Click"
@@ -12,7 +13,7 @@
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" Opacity="0.9" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>

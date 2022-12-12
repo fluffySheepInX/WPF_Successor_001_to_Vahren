@@ -9,36 +9,27 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// UserControl025_DetailSpot.xaml の相互作用ロジック
+    /// UserControl046_SkillHint.xaml の相互作用ロジック
     /// </summary>
-    public partial class UserControl025_DetailSpot : UserControl
+    public partial class UserControl046_SkillHint : UserControl
     {
-        public UserControl025_DetailSpot()
+        public UserControl046_SkillHint()
         {
             InitializeComponent();
         }
-
 
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
-            {
-                return;
-            }
-
-            var targetSpot = (ClassSpot)this.Tag;
-            if (targetSpot == null)
             {
                 return;
             }
@@ -51,84 +42,27 @@ namespace WPF_Successor_001_to_Vahren
                 Canvas.SetZIndex(this, maxZ + 1);
             }
 
-            // 領地名
-            this.txtNameSpot.Text = targetSpot.Name;
-
-            // 領地アイコン
-            if (targetSpot.ImagePath != string.Empty)
-            {
-                BitmapImage bitimg1 = new BitmapImage(new Uri(targetSpot.ImagePath));
-                this.imgSpot.Width = bitimg1.PixelWidth;
-                this.imgSpot.Height = bitimg1.PixelHeight;
-                this.imgSpot.Source = bitimg1;
-            }
-
-            // 説明文
-            this.txtDetail.Text = targetSpot.Text;
+            // スキルの情報を表示する
+            DisplaySkillInfo(mainWindow);
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);
 
-            // 位置を変更する前の状態が見えないようにする
-            this.Visibility = Visibility.Hidden;
-
-            // レイアウトが終わるのを待ってから位置を調節する
-            Dispatcher.BeginInvoke(new Action(() =>
+            // 画面の左上隅に配置する
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
             {
-                // ウインドウの大きさを取得する
-                // 自動サイズを整数にするため、UseLayoutRounding="true" にすること！
-                // （整数にするのが無理な場合は、ここで小数点以下を切り上げればいい）
-                double actual_height = this.ActualHeight;
-
-                // マウスの位置によってウインドウの位置を変える
-                Point pos = Mouse.GetPosition(mainWindow.canvasUI);
-                double offsetLeft = 0, offsetTop = 0;
-                if (mainWindow.canvasUI.Margin.Left < 0)
-                {
-                    offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
-                }
-                if (mainWindow.canvasUI.Margin.Top < 0)
-                {
-                    offsetTop = mainWindow.canvasUI.Margin.Top * -1;
-                }
-                if (pos.X < mainWindow.canvasUI.Width / 2)
-                {
-                    // 画面の右下隅に配置する
-                    this.Margin = new Thickness()
-                    {
-                        Left = mainWindow.canvasUI.Width - offsetLeft - this.MinWidth,
-                        Top = mainWindow.canvasUI.Height - offsetTop - actual_height
-                    };
-                }
-                else
-                {
-                    // 画面の左下隅に配置する
-                    this.Margin = new Thickness()
-                    {
-                        Left = offsetLeft,
-                        Top = mainWindow.canvasUI.Height - offsetTop - actual_height
-                    };
-                }
-                // 位置が決まったら、見えるようにする
-                this.Visibility = Visibility.Visible;
-
-                // 配置が終わったら、しゅっと表示されるようにする（少し上から落ちる）
-                var animeOpacity = new DoubleAnimation();
-                animeOpacity.From = 0.1;
-                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                this.BeginAnimation(Grid.OpacityProperty, animeOpacity);
-                var animeMargin = new ThicknessAnimation();
-                animeMargin.From = new Thickness()
-                {
-                    Left = this.Margin.Left,
-                    Top = this.Margin.Top - 100
-                };
-                animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
-                this.BeginAnimation(Grid.MarginProperty, animeMargin);
-
-            }),
-            DispatcherPriority.Loaded);
-
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+            this.Margin = new Thickness()
+            {
+                Left = offsetLeft,
+                Top = offsetTop
+            };
         }
 
         // ウインドウ枠を作る
@@ -138,7 +72,7 @@ namespace WPF_Successor_001_to_Vahren
             List<string> strings = new List<string>();
             strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
             strings.Add("006_WindowImage");
-            strings.Add("wnd2.png");
+            strings.Add("wnd1.png");
             string path = System.IO.Path.Combine(strings.ToArray());
             if (System.IO.File.Exists(path) == false)
             {
@@ -219,6 +153,98 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowRight.Fill = myImageBrush;
         }
+
+        public void DisplaySkillInfo(MainWindow mainWindow)
+        {
+            var classSkill = (ClassSkill)this.Tag;
+            if (classSkill == null)
+            {
+                return;
+            }
+
+            // スキルセット(Yellow)やリーダースキル(White)・アシストスキルなど
+            // 文字の色が用途によって違う。
+            // まだデータが存在しないのでセットしない。
+
+            // スキルのアイコンを重ねて表示する
+            foreach (var itemIcon in Enumerable.Reverse(classSkill.Icon).ToList())
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("041_ChipImageSkill");
+                strings.Add(itemIcon);
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path) == false)
+                {
+                    // スキル画像が存在しない場合はスキップする
+                    continue;
+                }
+                var bitmap = new BitmapImage(new Uri(path));
+                Image imageSkill = new Image();
+                imageSkill.Source = bitmap;
+                // 小さな画像はそのままのサイズで表示する
+                if ((bitmap.PixelWidth < 32) && (bitmap.PixelHeight < 32))
+                {
+                    imageSkill.Width = bitmap.PixelWidth;
+                    imageSkill.Height = bitmap.PixelHeight;
+                }
+                else
+                {
+                    imageSkill.Width = 32;
+                    imageSkill.Height = 32;
+                }
+                gridSkillIcon.Children.Add(imageSkill);
+            }
+
+            // スキル名
+            this.txtNameSkill.Text = classSkill.Name;
+
+            // Func種類
+            switch (classSkill.Func)
+            {
+                case _010_Enum.SkillFunc.sword:
+                    if (classSkill.Mp > 0)
+                    {
+                        this.txtFunc.Text = "（接近攻撃）消費MP" + classSkill.Mp.ToString();
+                    }
+                    else
+                    {
+                        this.txtFunc.Text = "（接近攻撃）";
+                    }
+                    break;
+                default: // 設定が無い場合は遠距離攻撃・攻撃魔法にする
+                    if (classSkill.Mp > 0)
+                    {
+                        this.txtFunc.Text = "（攻撃魔法）消費MP" + classSkill.Mp.ToString();
+                    }
+                    else
+                    {
+                        this.txtFunc.Text = "（遠距離攻撃）";
+                    }
+                    break;
+            }
+
+            // ヘルプ
+            this.txtHelp.Text = classSkill.Help;
+
+            // 実験用
+            this.txtDefault.Text = "ウインドウ名 = " + this.Name
+                    + "\nNameTag = " + classSkill.NameTag
+                    + "\nSlowPer = " + classSkill.SlowPer.ToString()
+                    + "\nSlowTime = " + classSkill.SlowTime.ToString()
+                    + "\nAttr = " + classSkill.Attr
+                    + "\nStr.Item1 = " + classSkill.Str.Item1
+                    + "\nStr.Item2 = " + classSkill.Str.Item2.ToString()
+                    + "\nRange = " + classSkill.Range.ToString()
+                    + "\nDamageRangeAdjust = " + classSkill.DamageRangeAdjust.ToString()
+                    + "\nRangeMin = " + classSkill.RangeMin.ToString()
+                    + "\nSpeed = " + classSkill.Speed.ToString()
+                    + "\nGunDelay.Item1 = " + classSkill.GunDelay.Item1
+                    + "\nGunDelay.Item2 = " + classSkill.GunDelay.Item2.ToString();
+
+
+        }
+
 
     }
 }

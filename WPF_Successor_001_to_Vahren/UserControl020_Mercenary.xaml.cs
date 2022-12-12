@@ -374,39 +374,6 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        // ボタン等を右クリックした際に、親コントロールが反応しないようにする
-        private void Disable_MouseEvent(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
-            {
-                // 最前面に移動させる
-                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ((listWindow != null) && (listWindow.Any()))
-                {
-                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-            }
-
-            e.Handled = true;
-        }
-
-        // ボタン等をクリックした際に、UserControlを最前面に移動させる
-        private void Raise_ZOrder(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow != null)
-            {
-                // 最前面に移動させる
-                var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-                if ((listWindow != null) && (listWindow.Any()))
-                {
-                    int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                    Canvas.SetZIndex(this, maxZ + 1);
-                }
-            }
-        }
 
         // 雇用ウインドウにカーソルを乗せた時
         private void win_MouseEnter(object sender, MouseEventArgs e)
@@ -623,6 +590,9 @@ namespace WPF_Successor_001_to_Vahren
         // ボタンを右クリックすると部隊の空の分まで雇う
         private void btnUnit_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             // 右ボタンを押した時にイベント・ハンドラーが追加されるので、必ず押してるはず
             UIElement el = (UIElement)sender;
             el.ReleaseMouseCapture();

@@ -14,7 +14,7 @@
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" Opacity="0.9" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -46,8 +46,7 @@
             <Button x:Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Width="35" Height="35" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="490" Margin="5" Background="#282828" Focusable="False"
-                    VerticalScrollBarVisibility="Auto" CanContentScroll="True"
-                    MouseRightButtonUp="Disable_MouseEvent" >
+                    VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
                 <StackPanel Name="panelList">
 
 <!--

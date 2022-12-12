@@ -505,10 +505,13 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasUI.Children.Add(helpWindow);
 
                     // 領地のヒントが表示されてる時はヘルプを隠す
-                    var hintSpot = (UserControl011_SpotHint)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "HintSpot");
-                    if (hintSpot != null)
+                    foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
                     {
-                        helpWindow.Visibility = Visibility.Hidden;
+                        if (itemWindow.Name == "HintSpot")
+                        {
+                            helpWindow.Visibility = Visibility.Hidden;
+                            break;
+                        }
                     }
                     break;
                 default:
@@ -525,11 +528,14 @@ namespace WPF_Successor_001_to_Vahren
                     var cast = (UIElement)sender;
                     cast.MouseLeave -= GridMapStrategy_MouseLeave;
 
-                    // 表示中のヘルプを取り除く
-                    var itemHelp = (UserControl030_Help)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "Help_SelectPower");
-                    if (itemHelp != null)
+                    // 表示中のヘルプを閉じる
+                    foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl030_Help>())
                     {
-                        this.canvasUI.Children.Remove(itemHelp);
+                        if (itemWindow.Name == "Help_SelectPower")
+                        {
+                            this.canvasUI.Children.Remove(itemWindow);
+                            break;
+                        }
                     }
                     break;
                 default:
@@ -861,11 +867,14 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            // 領地のヒントを取り除く
-            var hintSpot = (UserControl011_SpotHint)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "HintSpot");
-            if (hintSpot != null)
+            // 領地のヒントを閉じる
+            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
             {
-                this.canvasUI.Children.Remove(hintSpot);
+                if (itemWindow.Name == "HintSpot")
+                {
+                    this.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
             }
 
             // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
@@ -899,10 +908,13 @@ namespace WPF_Successor_001_to_Vahren
             // 領地の説明文を取り除く
             if (classPowerAndCity.ClassSpot.Text != string.Empty)
             {
-                var itemDetail = (UserControl025_DetailSpot)LogicalTreeHelper.FindLogicalNode(this.canvasUI, "DetailSpot");
-                if (itemDetail != null)
+                foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl025_DetailSpot>())
                 {
-                    this.canvasUI.Children.Remove(itemDetail);
+                    if (itemWindow.Name == "DetailSpot")
+                    {
+                        this.canvasUI.Children.Remove(itemWindow);
+                        break;
+                    }
                 }
             }
         }
@@ -1133,6 +1145,7 @@ namespace WPF_Successor_001_to_Vahren
 
 
             {
+                // 勢力一覧ウィンドウを消す
                 var ri2 = (UserControl040_PowerSelect)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, StringName.windowSelectionPowerMini);
                 if (ri2 != null)
                 {
