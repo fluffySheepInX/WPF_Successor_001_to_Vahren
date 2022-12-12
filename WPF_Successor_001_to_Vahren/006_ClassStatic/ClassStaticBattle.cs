@@ -750,11 +750,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 ClassVec classVec = new ClassVec();
-                classVec.Target = new Point(classUnit.OrderPosiSkill.X, classUnit.OrderPosiSkill.Y);
-                classVec.Vec = new Point(classUnit.VecMoveSkill.X, classUnit.VecMoveSkill.Y);
+                classVec.Target = classUnit.OrderPosiSkill;
+                classVec.Vec = classUnit.VecMoveSkill;
                 classVec.Speed = classSkill.Speed;
 
-                if (classVec.Hit(new Point(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y)))
+                if (classVec.Hit(classUnit.NowPosiSkill))
                 {
                     classUnit.FlagMovingSkill = false;
                     await Task.Run(() =>

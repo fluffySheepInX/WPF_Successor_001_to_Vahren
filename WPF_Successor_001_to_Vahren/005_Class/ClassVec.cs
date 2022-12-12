@@ -46,8 +46,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             double current_distanceX = this.Target.X - current.X;
             double current_distanceY = this.Target.Y - current.Y;
-            double next_distanceX = current_distanceX - (this.Vec.X * this.Speed);
-            double next_distanceY = current_distanceY - (this.Vec.Y * this.Speed);
+            double next_distanceX = current_distanceX - (this.Vec.X * (this.Speed / 100));
+            double next_distanceY = current_distanceY - (this.Vec.Y * (this.Speed / 100));
             if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
             {
                 return true;
