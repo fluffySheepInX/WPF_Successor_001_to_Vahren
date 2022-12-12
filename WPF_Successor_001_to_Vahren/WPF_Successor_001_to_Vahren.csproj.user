@@ -34,12 +34,6 @@
     <Compile Update="UserControl040_PowerSelect.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControl045_Skill.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="UserControl046_SkillHint.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Win010_TestBattle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -70,12 +64,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl040_PowerSelect.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="UserControl045_Skill.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="UserControl046_SkillHint.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">

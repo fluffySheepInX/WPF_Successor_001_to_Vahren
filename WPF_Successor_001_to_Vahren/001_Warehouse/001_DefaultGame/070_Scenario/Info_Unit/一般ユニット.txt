@@ -6,7 +6,7 @@
 	friend = "LineInfantryM14";
 	merce = "LineInfantryM14";
 	staff = "LineInfantryM14";
-	skill = "gun01";
+	skill = "gunLaphroaig";
 
 	level = "1";
 	level_max = "100";
@@ -81,7 +81,7 @@ NewFormatUnit DragoonFrancesca
 	merce = "DragoonFrancesca";
 	staff = "DragoonFrancesca";
 	formation = "1";
-	skill = "gun01";
+	skill = "gunLaphroaig";
 
 	level = "1";
 	level_max = "100";

@@ -3,10 +3,10 @@
 	name = "鬼火";
 	race = "human";
 	image = "ghostFire.png";
-	friend = "LineInfantryM14";
-	merce = "LineInfantryM14";
-	staff = "LineInfantryM14";
-	skill = "gun01";
+	friend = "ghostFire";
+	merce = "ghostFire";
+	staff = "ghostFire";
+	skill = "ghostFireB";
 
 	level = "1";
 	level_max = "100";
@@ -37,13 +37,13 @@
 
 NewFormatUnit ghostFireTest
 {
-	name = "鬼火";
+	name = "鬼火Test";
 	race = "human";
 	image = "ghostFire.png";
-	friend = "LineInfantryM14";
-	merce = "LineInfantryM14";
-	staff = "LineInfantryM14";
-	skill = "gun01Test";
+	friend = "ghostFireTest";
+	merce = "ghostFireTest";
+	staff = "ghostFireTest";
+	skill = "ghostFireB";
 
 	level = "1";
 	level_max = "100";

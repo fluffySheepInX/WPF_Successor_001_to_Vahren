@@ -724,7 +724,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return targetClassAStar;
         }
 
-        public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill, ClassGameStatus classGameStatus, Canvas canvasMain)
+        public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit,
+                                                            ClassUnit classUnitDef,
+                                                            ClassSkill classSkill,
+                                                            ClassGameStatus classGameStatus,
+                                                            Canvas canvasMain)
         {
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
@@ -834,8 +838,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
                     classUnit.NowPosiSkill = new Point()
                     {
-                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * classSkill.Speed),
-                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * classSkill.Speed)
+                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * (classSkill.Speed / 100)),
+                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * (classSkill.Speed / 100))
                     };
                     await Task.Run(() =>
                     {
