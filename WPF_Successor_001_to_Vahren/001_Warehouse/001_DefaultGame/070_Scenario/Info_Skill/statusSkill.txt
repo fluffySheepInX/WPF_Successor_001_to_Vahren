@@ -1,0 +1,11 @@
+﻿NewFormatSkill sikiPower01
+{
+	func = "status";
+	type = "0";
+	attr = "hp";
+	icon = "f_status.png, _num1.png, siki01.png";
+	name = "【指揮Power1】";
+	help = "戦え。$得意だろ？";
+	time = "10";
+	sortkey = "980";
+}

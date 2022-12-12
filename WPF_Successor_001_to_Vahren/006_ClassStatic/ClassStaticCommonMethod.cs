@@ -403,9 +403,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(center);
                 if (first == null)
                 {
-                    throw new Exception();
                 }
-                classSkill.Center = first.Value.Replace(Environment.NewLine, "");
+                else
+                {
+                    classSkill.Center = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //mp
             {
@@ -415,9 +417,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(mp);
                 if (first == null)
                 {
-                    throw new Exception();
                 }
-                classSkill.Mp = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                else
+                {
+                    classSkill.Mp = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //slow_per
             {
@@ -427,9 +431,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(slow_per);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.SlowPer = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //slow_time
             {
@@ -439,9 +446,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(slow_time);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.SlowTime = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //sound
             {
@@ -469,9 +479,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(image);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Image = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //direct
             {
@@ -481,9 +494,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(direct);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Direct = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //w
             {
@@ -493,9 +509,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(w);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.W = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //h
             {
@@ -505,9 +524,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(h);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.H = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //a
             {
@@ -517,9 +539,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(a);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.A = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //force_fire
             {
@@ -529,9 +554,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(force_fire);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.ForceFire = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //attr
             {
@@ -541,9 +569,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(attr);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Attr = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //str
             {
@@ -569,9 +600,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(range);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Range = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //damage_range_adjust
             {
@@ -581,9 +615,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(damage_range_adjust);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.DamageRangeAdjust = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //range_min
             {
@@ -593,9 +630,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(range_min);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.RangeMin = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //speed
             {
@@ -605,9 +645,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(speed);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Speed = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //gun_delay
             {
@@ -633,9 +676,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(pair_next);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.PairNext = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //next
             {
@@ -645,9 +691,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(next);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.Next = first.Value.Replace(Environment.NewLine, "");
+                }
             }
             //random_space
             {
@@ -657,9 +706,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(random_space);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.RandomSpace = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
             }
             //offset
             {
@@ -669,7 +721,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(offset);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
                 else
                 {
@@ -701,9 +753,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(force_ray);
                 if (first == null)
                 {
-                    throw new Exception();
+
                 }
+                else
+                {
                 classSkill.ForceRay = first.Value.Replace(Environment.NewLine, "");
+                }
             }
 
 

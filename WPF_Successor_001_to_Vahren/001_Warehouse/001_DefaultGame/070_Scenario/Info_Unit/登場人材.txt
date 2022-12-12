@@ -29,7 +29,7 @@ NewFormatUnit AbelIrijhorn
 	formation = "0";
 
 	//スキル
-	skill = "gunLaphroaig";
+	skill = "gunLaphroaig,sikiPower01";
 
 	level = "3";
 	level_max = "100";
