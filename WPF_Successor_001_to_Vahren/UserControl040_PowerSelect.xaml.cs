@@ -171,6 +171,7 @@ namespace WPF_Successor_001_to_Vahren
                 buttonItem.Tag = itemPower;
                 buttonItem.Background = Brushes.Transparent;
                 buttonItem.HorizontalContentAlignment = HorizontalAlignment.Left;
+                buttonItem.Focusable = false;
                 buttonItem.Click += btnPowerSelect_Click;
                 buttonItem.MouseEnter += btnPowerSelect_MouseEnter;
                 this.panelList.Children.Add(buttonItem);

@@ -1857,21 +1857,27 @@ namespace WPF_Successor_001_to_Vahren
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow != null)
             {
-                // メンバーのヘルプを取り除く
-                var helpMember = (UserControl031_HelpMember)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "HelpMember");
-                if (helpMember != null)
+                // メンバーのヘルプを閉じる
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl031_HelpMember>())
                 {
-                    mainWindow.canvasUI.Children.Remove(helpMember);
+                    if (itemWindow.Name == "HelpMember")
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        break;
+                    }
                 }
 
                 // ユニットが人材なら
                 if (((ClassUnit)panelUnit.Tag).Talent == "on")
                 {
-                    // ユニット情報のヒントを取り除く
-                    var hintUnit = (UserControl016_UnitHint)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "UnitHint");
-                    if (hintUnit != null)
+                    // ユニット情報のヒントを閉じる
+                    foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl016_UnitHint>())
                     {
-                        mainWindow.canvasUI.Children.Remove(hintUnit);
+                        if (itemWindow.Name == "UnitHint")
+                        {
+                            mainWindow.canvasUI.Children.Remove(itemWindow);
+                            break;
+                        }
                     }
                 }
 
@@ -2390,12 +2396,14 @@ namespace WPF_Successor_001_to_Vahren
             bool bCloseHint = false;
             if (((ClassUnit)((StackPanel)sender).Tag).Talent == "on")
             {
-                // ユニット情報のヒントを取り除く
-                var hintUnit = (UserControl016_UnitHint)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "UnitHint");
-                if (hintUnit != null)
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl016_UnitHint>())
                 {
-                    mainWindow.canvasUI.Children.Remove(hintUnit);
-                    bCloseHint = true;
+                    if (itemWindow.Name == "UnitHint")
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        bCloseHint = true;
+                        break;
+                    }
                 }
             }
 
@@ -2424,8 +2432,8 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 既に表示されてるユニット・ウインドウをチェックする
+            const int dY = 60, dX = 40, dX2 = 120, dZ = 8;
             int window_id, max_id = 0;
-            const int dY = 60, dX = 40, dX2 = 120;
             var id_list = new List<int>();
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl015_Unit>())
             {
@@ -2445,8 +2453,8 @@ namespace WPF_Successor_001_to_Vahren
                         max_id = -1;
                         itemWindow.Margin = new Thickness()
                         {
-                            Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth - ((window_id - 1) % 10) * dX - ((window_id - 1) / 10) * dX2,
-                            Top = offsetTop + ((window_id - 1) % 10) * dY + dY
+                            Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth - ((window_id - 1) % dZ) * dX - ((window_id - 1) / dZ) * dX2,
+                            Top = offsetTop + ((window_id - 1) % dZ) * dY
                         };
 
                         // ユニット・ウインドウをこのウインドウよりも前面に移動させる
@@ -2455,11 +2463,6 @@ namespace WPF_Successor_001_to_Vahren
                         // ヒントを閉じた場合は右上から移動させる
                         if (bCloseHint)
                         {
-                            var animeOpacity = new DoubleAnimation();
-                            animeOpacity.From = 0.5;
-                            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                            itemWindow.rectWindowPlane.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
-
                             var animeMargin = new ThicknessAnimation();
                             animeMargin.From = new Thickness()
                             {
@@ -2497,8 +2500,8 @@ namespace WPF_Successor_001_to_Vahren
                 windowUnit.Name = "WindowUnit" + window_id.ToString();
                 windowUnit.Margin = new Thickness()
                 {
-                    Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth - ((window_id - 1) % 10) * dX - ((window_id - 1) / 10) * dX2,
-                    Top = offsetTop + ((window_id - 1) % 10) * dY + dY
+                    Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth - ((window_id - 1) % dZ) * dX - ((window_id - 1) / dZ) * dX2,
+                    Top = offsetTop + ((window_id - 1) % dZ) * dY
                 };
                 windowUnit.SetData();
                 mainWindow.canvasUI.Children.Add(windowUnit);
@@ -2506,11 +2509,6 @@ namespace WPF_Successor_001_to_Vahren
                 // ヒントを閉じた場合は右上から移動させる
                 if (bCloseHint)
                 {
-                    var animeOpacity = new DoubleAnimation();
-                    animeOpacity.From = 0.5;
-                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    windowUnit.rectWindowPlane.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
-
                     var animeMargin = new ThicknessAnimation();
                     animeMargin.From = new Thickness()
                     {
@@ -2525,7 +2523,7 @@ namespace WPF_Successor_001_to_Vahren
                     var animeOpacity = new DoubleAnimation();
                     animeOpacity.From = 0.1;
                     animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    windowUnit.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
+                    windowUnit.BeginAnimation(Grid.OpacityProperty, animeOpacity);
                 }
             }
             id_list.Clear();
@@ -2598,6 +2596,25 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 windowMercenary.SetData();
                 mainWindow.canvasUI.Children.Add(windowMercenary);
+
+                // 親ウインドウから出てくるように見せる
+                double offsetFrom = this.Margin.Left;
+                if (offsetLeft > offsetFrom)
+                {
+                    offsetFrom = offsetLeft - windowMercenary.MinWidth;
+                }
+                var animeMargin = new ThicknessAnimation();
+                animeMargin.From = new Thickness()
+                {
+                    Left = offsetFrom,
+                    Top = this.Margin.Top
+                };
+                animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
+                windowMercenary.BeginAnimation(Grid.MarginProperty, animeMargin);
+                var animeOpacity = new DoubleAnimation();
+                animeOpacity.From = 0.1;
+                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                windowMercenary.BeginAnimation(Grid.OpacityProperty, animeOpacity);
             }
         }
 
@@ -2642,10 +2659,13 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.canvasUI.Children.Add(helpWindow);
 
             // メンバーにできるユニットが表示されてる時はヘルプを隠す
-            var helpMember = (UserControl031_HelpMember)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "HelpMember");
-            if (helpMember != null)
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl031_HelpMember>())
             {
-                helpWindow.Visibility = Visibility.Hidden;
+                if (itemWindow.Name == "HelpMember")
+                {
+                    helpWindow.Visibility = Visibility.Hidden;
+                    break;
+                }
             }
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)

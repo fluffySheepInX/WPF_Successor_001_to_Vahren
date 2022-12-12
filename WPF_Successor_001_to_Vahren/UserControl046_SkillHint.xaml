@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl046_SkillHint"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="400">
+    <Grid IsHitTestVisible="False" UseLayoutRounding="True">
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="40,0" VerticalAlignment="Bottom" Name="panelTitle">
+                <TextBlock Height="25" FontSize="19" Foreground="#c8ffff" Name="txtNameSkill" Text="スキルの名前"/>
+            </StackPanel>
+            <Grid Name="gridSkillIcon" Width="34" Height="35" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            <TextBlock Grid.Row="1" Margin="5,0" FontSize="19" Foreground="White" Name="txtFunc" Text="（スキルの種類）"/>
+            <TextBlock Grid.Row="2" Margin="5,0" MinHeight="25" FontSize="19" LineHeight="25" Foreground="#ffc800" Name="txtHelp" Text="ヘルプの文章&#xa;シナリオ作者が改行することも可能"/>
+
+            <TextBlock Grid.Row="3" Margin="5,0" FontSize="19" LineHeight="25" Foreground="White" Name="txtDefault" Text="標準でスキル説明文が自動的に生成される。&#xa;改行もコードで書き込む。"/>
+
+        </Grid>
+    </Grid>
+</UserControl>

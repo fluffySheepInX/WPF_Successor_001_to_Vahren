@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -189,10 +190,10 @@ namespace WPF_Successor_001_to_Vahren
             // プレイヤーが操作可能かどうか
             if (_isControl == false)
             {
-                // 異なる勢力なら、操作ボタンを無効にする
-                btnDismiss.IsEnabled = false;
-                btnMercenary.IsEnabled = false;
-                btnItem.IsEnabled = false;
+                // 異なる勢力なら、操作ボタンを隠す
+                btnDismiss.Visibility = Visibility.Hidden;
+                btnMercenary.Visibility = Visibility.Hidden;
+                btnItem.Visibility = Visibility.Hidden;
             }
 
             // まだ処理を作ってないのでボタンを無効にする
@@ -383,7 +384,7 @@ namespace WPF_Successor_001_to_Vahren
                     Image imageSkill = new Image();
                     imageSkill.Source = bitmap;
                     // 小さな画像はそのままのサイズで表示する
-                    if ((bitmap.PixelWidth < 32) || (bitmap.PixelHeight < 32))
+                    if ((bitmap.PixelWidth < 32) && (bitmap.PixelHeight < 32))
                     {
                         imageSkill.Width = bitmap.PixelWidth;
                         imageSkill.Height = bitmap.PixelHeight;
@@ -399,10 +400,15 @@ namespace WPF_Successor_001_to_Vahren
                 // ボタンの内枠の分だけサイズを画像よりも大きくする
                 Button buttonSkill = new Button();
                 buttonSkill.Content = gridSkill;
+                buttonSkill.Tag = itemSkill;
                 buttonSkill.Width = 34;
                 buttonSkill.Height = 34;
                 buttonSkill.Background = Brushes.Black;
                 buttonSkill.BorderThickness = new Thickness(0,0,0,0);
+                buttonSkill.Focusable = false;
+                buttonSkill.Click += btnSkill_Click;
+                buttonSkill.MouseEnter += btnSkill_MouseEnter;
+                buttonSkill.PreviewMouseLeftButtonDown += Raise_ZOrder;
                 this.panelSkill.Children.Add(buttonSkill);
             }
 
@@ -507,6 +513,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
             e.Handled = true;
         }
 
@@ -615,7 +622,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // 領地から雇用なら、ClassUnit 部分を null にする
+            // ユニットから雇用なので、ClassUnit 部分を null にしない
             ClassCityAndUnit classCityAndUnit = (ClassCityAndUnit)this.Tag;
 
             // ユニット情報ウインドウの右横に雇用ウインドウを表示する
@@ -668,6 +675,25 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 windowMercenary.SetData();
                 mainWindow.canvasUI.Children.Add(windowMercenary);
+
+                // 親ウインドウから出てくるように見せる
+                double offsetFrom = this.Margin.Left;
+                if (offsetLeft > offsetFrom)
+                {
+                    offsetFrom = offsetLeft - windowMercenary.MinWidth;
+                }
+                var animeMargin = new ThicknessAnimation();
+                animeMargin.From = new Thickness()
+                {
+                    Left = offsetFrom,
+                    Top = this.Margin.Top
+                };
+                animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
+                windowMercenary.BeginAnimation(Grid.MarginProperty, animeMargin);
+                var animeOpacity = new DoubleAnimation();
+                animeOpacity.From = 0.1;
+                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                windowMercenary.BeginAnimation(Grid.OpacityProperty, animeOpacity);
             }
         }
 
@@ -750,6 +776,228 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        // スキル情報ウインドウを開く
+        private void btnSkill_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassSkill)
+            {
+                return;
+            }
+
+            // スキルのヒントが表示されてる場合は閉じる
+            bool bCloseHint = false;
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl046_SkillHint>())
+            {
+                if (itemWindow.Name == "SkillHint")
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    bCloseHint = true;
+                    break;
+                }
+            }
+            if (bCloseHint)
+            {
+                // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
+                int maxZ = -1, thisZ;
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        thisZ = Canvas.GetZIndex(itemHelp);
+                        if (maxZ < thisZ)
+                        {
+                            maxZ = thisZ;
+                        }
+                    }
+                }
+                if (maxZ >= 0)
+                {
+                    foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                    {
+                        if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                        {
+                            if (Canvas.GetZIndex(itemHelp) == maxZ)
+                            {
+                                itemHelp.Visibility = Visibility.Visible;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ウインドウ番号によって表示位置を変える
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+
+            // 既に表示されてるユニット・ウインドウをチェックする
+            const int dY = 60, dX = 40, dX2 = 120, dZ = 8;
+            int window_id, max_id = 0;
+            var id_list = new List<int>();
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl045_Skill>())
+            {
+                string strTitle = itemWindow.Name;
+                if (strTitle.StartsWith("WindowSkill"))
+                {
+                    window_id = Int32.Parse(strTitle.Replace("WindowSkill", String.Empty));
+                    id_list.Add(window_id);
+                    if (max_id < window_id)
+                    {
+                        max_id = window_id;
+                    }
+                    var testSkill = (ClassSkill)itemWindow.Tag;
+                    if (testSkill == cast.Tag)
+                    {
+                        // スキル情報ウインドウを既に開いてる場合は、新規に作らない
+                        max_id = -1;
+                        itemWindow.Margin = new Thickness()
+                        {
+                            Left = offsetLeft + ((window_id - 1) % dZ) * dX + ((window_id - 1) / dZ) * dX2,
+                            Top = offsetTop + ((window_id - 1) % dZ) * dY
+                        };
+
+                        // スキル情報ウインドウをこのウインドウよりも前面に移動させる
+                        Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+
+                        break;
+                    }
+                }
+            }
+            if (max_id >= 0)
+            {
+                if (max_id > id_list.Count)
+                {
+                    // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                    for (window_id = 1; window_id < max_id; window_id++)
+                    {
+                        if (id_list.Contains(window_id) == false)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                    window_id = max_id + 1;
+                }
+                var windowSkill = new UserControl045_Skill();
+                windowSkill.Tag = cast.Tag;
+                windowSkill.Name = "WindowSkill" + window_id.ToString();
+                windowSkill.Margin = new Thickness()
+                {
+                    Left = offsetLeft + ((window_id - 1) % dZ) * dX + ((window_id - 1) / dZ) * dX2,
+                    Top = offsetTop + ((window_id - 1) % dZ) * dY
+                };
+                windowSkill.SetData();
+                mainWindow.canvasUI.Children.Add(windowSkill);
+            }
+            id_list.Clear();
+        }
+
+        // スキルのボタンにマウスを乗せた時
+        private void btnSkill_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassSkill)
+            {
+                return;
+            }
+
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += btnSkill_MouseLeave;
+
+            // 場所が重なるのでヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // スキルのヒントを表示する
+            var hintSkill = new UserControl046_SkillHint();
+            hintSkill.Tag = cast.Tag;
+            hintSkill.Name = "SkillHint";
+            hintSkill.SetData();
+            mainWindow.canvasUI.Children.Add(hintSkill);
+        }
+        private void btnSkill_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Button)sender;
+            if (cast.Tag is not ClassSkill)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            cast.MouseLeave -= btnSkill_MouseLeave;
+
+            // スキルのヒントを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl046_SkillHint>())
+            {
+                if (itemWindow.Name == "SkillHint")
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+
+            // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }
