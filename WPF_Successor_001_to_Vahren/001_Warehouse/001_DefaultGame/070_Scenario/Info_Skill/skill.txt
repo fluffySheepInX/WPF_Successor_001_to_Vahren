@@ -100,7 +100,7 @@
 	
 	//*数値と指定すると、その回数分、使えなくなる
 	//*2だと二回分同じグループのスキルが使えない
-	gun_delay = "skimgun*1";
+	gun_delay = "gunLaphroaig*1";
 
 	//発射と同時に発生する別スキル。スキル発射時のエフェクトとして使用する。
 	//術者が最初に発射するskillのみ有効です。
@@ -111,7 +111,8 @@
 	next = "m_hit_eff01";
 
 	//数値ﾄﾞｯﾄ半径内のランダム位置に着弾します。
-	random_space = "32";
+	//0を指定するとほぼ当たらないので、銃の場合は5や10などの数値を指定することをお勧めします。
+	random_space = "10";
 
 	//相殺できる属性と武器属性を列挙する。
 	offset = "on";
@@ -148,10 +149,10 @@ NewFormatSkill gun01Test
 	damage_range_adjust = "435";
 	range_min = "145";
 	speed = "500";
-	gun_delay = "skimgun*1";
+	gun_delay = "gunLaphroaig*1";
 	pair_next  = "b_kemuri_eff02";
 	next = "m_hit_eff01";
-	random_space = "32";
+	random_space = "10";
 	offset = "on";
 	ray = "185, 255, 255, 255";
 	force_ray = "on";

@@ -774,10 +774,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //体力計算処理
                     foreach (var item in listTarget)
                     {
-                        var re = item.ListClassUnit.Where(x => x.NowPosiLeft.X <= classUnit.NowPosiSkill.X + 5
-                                                    && x.NowPosiLeft.X >= classUnit.NowPosiSkill.X - 5
-                                                    && x.NowPosiLeft.Y <= classUnit.NowPosiSkill.Y + 5
-                                                    && x.NowPosiLeft.Y >= classUnit.NowPosiSkill.Y - 5);
+                        var re = item.ListClassUnit.Where(x => x.NowPosiLeft.X <= classUnit.NowPosiSkill.X + classSkill.RandomSpace
+                                                    && x.NowPosiLeft.X >= classUnit.NowPosiSkill.X - classSkill.RandomSpace
+                                                    && x.NowPosiLeft.Y <= classUnit.NowPosiSkill.Y + classSkill.RandomSpace
+                                                    && x.NowPosiLeft.Y >= classUnit.NowPosiSkill.Y - classSkill.RandomSpace);
 
                         foreach (var itemRe in re)
                         {

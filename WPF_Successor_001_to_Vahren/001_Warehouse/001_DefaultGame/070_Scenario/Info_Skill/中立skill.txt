@@ -23,11 +23,10 @@
 	damage_range_adjust = "435";
 	range_min = "145";
 	speed = "200";
-	gun_delay = "skimgun*1";
+	gun_delay = "ghostFireB*1";
 	pair_next  = "b_kemuri_eff02";
 	next = "m_hit_eff01";
-	random_space = "32";
+	random_space = "5";
 	offset = "on";
-	ray = "185, 255, 255, 255";
-	force_ray = "on";
+	force_ray = "off";
 }
