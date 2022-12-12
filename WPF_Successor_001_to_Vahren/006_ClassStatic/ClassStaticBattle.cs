@@ -14,6 +14,7 @@ using System.Threading;
 using System.Security.Cryptography.Xml;
 using System.Diagnostics;
 using System.Windows.Documents;
+using System.Runtime.CompilerServices;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
@@ -453,7 +454,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     listPath = re1.Children.OfType<Path>().ToList();
                 }));
             });
-
+            int counter = 1;
             while (true)
             {
                 if (cancelToken.IsCancellationRequested)
@@ -466,104 +467,202 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 foreach (var item in listTarget)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit)
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
                     {
-                        ////アスターアルゴリズムで移動経路取得
-                        //まず現在のマップチップを取得
-                        int rowT = -1;
-                        int colT = -1;
-                        await Task.Run(() =>
+                        var listRoot = new List<Point>();
+                        if (counter >= 180)
                         {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                            counter = 1;
+                            ////アスターアルゴリズムで移動経路取得
+                            //まず現在のマップチップを取得
+                            int rowT = -1;
+                            int colT = -1;
+                            await Task.Run(() =>
                             {
-                                var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < itemGroupBy.NowPosiCenter.X
-                                                                && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (itemGroupBy.NowPosiCenter.X - yokoMapTip))
-                                                            .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
-                                                                    && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)))
-                                                            .FirstOrDefault();
-
-                                if (initMapTip == null) throw new Exception();
-
-                                foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
-                                                        .Select((value, index) => (value, index)))
+                                Application.Current.Dispatcher.Invoke((Action)(() =>
                                 {
-                                    foreach (var itemC in itemR.value
-                                                        .Select((value, index) => (value, index)))
+                                    var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < itemGroupBy.NowPosiCenter.X
+                                                                    && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (itemGroupBy.NowPosiCenter.X - yokoMapTip))
+                                                                .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
+                                                                        && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)))
+                                                                .FirstOrDefault();
+
+                                    if (initMapTip == null) throw new Exception();
+
+                                    foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                                            .Select((value, index) => (value, index)))
                                     {
-                                        if (itemC.value.MapPath == null) continue;
-                                        if (itemC.value.MapPath.Name == initMapTip.Name)
+                                        foreach (var itemC in itemR.value
+                                                            .Select((value, index) => (value, index)))
                                         {
-                                            rowT = itemR.index;
-                                            colT = itemC.index;
-                                            break;
+                                            if (itemC.value.MapPath == null) continue;
+                                            if (itemC.value.MapPath.Name == initMapTip.Name)
+                                            {
+                                                rowT = itemR.index;
+                                                colT = itemC.index;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                //initMapTip.Stroke = Brushes.Blue;
-                                //initMapTip.StrokeThickness = 10;
-                                //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.Stroke = Brushes.Yellow;
-                                //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.StrokeThickness = 10;
-                            }));
-                        });
-                        if (rowT == -1) continue;
-                        if (colT == -1) continue;
+                                    //initMapTip.Stroke = Brushes.Blue;
+                                    //initMapTip.StrokeThickness = 10;
+                                    //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.Stroke = Brushes.Yellow;
+                                    //classGameStatus.ClassBattle.ClassMapBattle.MapData[row][col].MapPath.StrokeThickness = 10;
+                                }));
+                            });
+                            if (rowT == -1) continue;
+                            if (colT == -1) continue;
 
-                        //最寄りの敵のマップチップを取得
-                        Point xy1 = itemGroupBy.NowPosiCenter;
-                        xy1.X = xy1.X * xy1.X;
-                        xy1.Y = xy1.Y * xy1.Y;
-                        double disA = xy1.X + xy1.Y;
-                        Dictionary<ClassUnit, double> dicDis = new Dictionary<ClassUnit, double>();
-                        foreach (var itemEnemy in listEnemy)
-                        {
-                            foreach (var itemListClassUnit in itemEnemy.ListClassUnit)
+                            //最寄りの敵のマップチップを取得
+                            Point xy1 = itemGroupBy.NowPosiCenter;
+                            xy1.X = xy1.X * xy1.X;
+                            xy1.Y = xy1.Y * xy1.Y;
+                            double disA = xy1.X + xy1.Y;
+                            Dictionary<ClassUnit, double> dicDis = new Dictionary<ClassUnit, double>();
+                            foreach (var itemEnemy in listEnemy)
                             {
-                                Point xy2 = itemListClassUnit.NowPosiCenter;
-                                xy2.X = xy2.X * xy2.X;
-                                xy2.Y = xy2.Y * xy2.Y;
-                                double disB = xy2.X + xy2.Y;
-                                dicDis.Add(itemListClassUnit, disA - disB);
+                                foreach (var itemListClassUnit in itemEnemy.ListClassUnit)
+                                {
+                                    Point xy2 = itemListClassUnit.NowPosiCenter;
+                                    xy2.X = xy2.X * xy2.X;
+                                    xy2.Y = xy2.Y * xy2.Y;
+                                    double disB = xy2.X + xy2.Y;
+                                    dicDis.Add(itemListClassUnit, disA - disB);
+                                }
                             }
-                        }
-                        var minValue = dicDis.Values.Min();
-                        var minElem = dicDis.FirstOrDefault(x => x.Value == minValue);
+                            var minValue = dicDis.Values.Min();
+                            var minElem = dicDis.FirstOrDefault(x => x.Value == minValue);
 
-                        //最寄りの敵のマップチップを取得
-                        int rowE = -1;
-                        int colE = -1;
-                        await Task.Run(() =>
-                        {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                            //最寄りの敵のマップチップを取得
+                            int rowE = -1;
+                            int colE = -1;
+                            await Task.Run(() =>
                             {
-                                var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < minElem.Key.NowPosiCenter.X
-                                                                && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (minElem.Key.NowPosiCenter.X - yokoMapTip))
-                                                            .Where(y => y.Margin.Top < (minElem.Key.NowPosiCenter.Y)
-                                                                    && y.Margin.Top > ((minElem.Key.NowPosiCenter.Y - TakasaMapTip)))
-                                                            .FirstOrDefault();
-
-                                if (initMapTip == null) throw new Exception();
-
-                                foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
-                                                        .Select((value, index) => (value, index)))
+                                Application.Current.Dispatcher.Invoke((Action)(() =>
                                 {
-                                    foreach (var itemC in itemR.value
-                                                        .Select((value, index) => (value, index)))
+                                    var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < minElem.Key.NowPosiCenter.X
+                                                                    && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (minElem.Key.NowPosiCenter.X - yokoMapTip))
+                                                                .Where(y => y.Margin.Top < (minElem.Key.NowPosiCenter.Y)
+                                                                        && y.Margin.Top > ((minElem.Key.NowPosiCenter.Y - TakasaMapTip)))
+                                                                .FirstOrDefault();
+
+                                    if (initMapTip == null) throw new Exception();
+
+                                    foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                                            .Select((value, index) => (value, index)))
                                     {
-                                        if (itemC.value.MapPath == null) continue;
-                                        if (itemC.value.MapPath.Name == initMapTip.Name)
+                                        foreach (var itemC in itemR.value
+                                                            .Select((value, index) => (value, index)))
                                         {
-                                            rowE = itemR.index;
-                                            colE = itemC.index;
-                                            break;
+                                            if (itemC.value.MapPath == null) continue;
+                                            if (itemC.value.MapPath.Name == initMapTip.Name)
+                                            {
+                                                rowE = itemR.index;
+                                                colE = itemC.index;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                            }));
-                        });
-                        if (rowE == -1) continue;
-                        if (colE == -1) continue;
+                                }));
+                            });
+                            if (rowE == -1) continue;
+                            if (colE == -1) continue;
 
-                        //移動経路取得
+                            List<List<ClassAStar>> MapO = new List<List<ClassAStar>>();
+                            foreach (var itemMapData in classGameStatus.ClassBattle.ClassMapBattle.MapData.Select((value, index) => (value, index)))
+                            {
+                                MapO.Add(new List<ClassAStar>());
+                                foreach (var itemDetail in itemMapData.value.Select((value, index) => (value, index)))
+                                {
+                                    MapO[MapO.Count - 1].Add(new ClassAStar(itemMapData.index, itemDetail.index));
+                                }
+                            }
+
+                            ////現在地を開く
+                            ClassAStarManager classAStarManager = new ClassAStarManager(rowE, colE);
+                            ClassAStar? startAstar = classAStarManager.OpenOne(rowT, colT, 0, null);
+                            if (classAStarManager.ListClassAStar != null)
+                            {
+                                if (startAstar != null)
+                                {
+                                    classAStarManager.ListClassAStar.Add(startAstar);
+                                }
+                            }
+
+                            ////移動経路取得
+                            while (true)
+                            {
+                                if (startAstar == null)
+                                {
+                                    continue;
+                                }
+                                classAStarManager.RemoveClassAStar(startAstar);
+                                classAStarManager.OpenAround(startAstar, classGameStatus.ClassBattle.ClassMapBattle.MapData, classGameStatus);
+
+                                if (classAStarManager.ListClassAStar != null)
+                                {
+                                    startAstar = SearchMinScore(classAStarManager.ListClassAStar);
+                                    #region 開封範囲を見たい時用に
+                                    //if (startAstar != null)
+                                    //{
+                                    //    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    //    {
+                                    //        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+
+                                    //        Canvas canvas = new Canvas();
+                                    //        canvas.Background = Brushes.Blue;
+                                    //        canvas.Height = TakasaMapTip;
+                                    //        canvas.Width = yokoMapTip;
+                                    //        var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[startAstar.Row][startAstar.Col].MapPath;
+                                    //        canvas.Margin = new Thickness()
+                                    //        {
+                                    //            Left = aaaaa.Margin.Left,
+                                    //            Top = aaaaa.Margin.Top
+                                    //        };
+                                    //        re1.Children.Add(canvas);
+                                    //    }));
+                                    //}
+                                    #endregion
+                                }
+
+                                if (startAstar == null)
+                                {
+                                    continue;
+                                }
+
+                                if (startAstar.Row == classAStarManager.EndX && startAstar.Col == classAStarManager.EndY)
+                                {
+                                    startAstar.GetRoot(listRoot);
+                                    listRoot.Reverse();
+                                    break;
+                                }
+                            }
+
+                            #region 移動経路を見たい時用に
+                            if (listRoot.Count != 0)
+                            {
+                                foreach (var itemResultAStarRev in listRoot)
+                                {
+                                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    {
+                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+
+                                        Canvas canvas = new Canvas();
+                                        canvas.Background = Brushes.Yellow;
+                                        canvas.Height = TakasaMapTip;
+                                        canvas.Width = yokoMapTip;
+                                        var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
+                                        canvas.Margin = new Thickness()
+                                        {
+                                            Left = aaaaa.Margin.Left,
+                                            Top = aaaaa.Margin.Top
+                                        };
+                                        re1.Children.Add(canvas);
+                                    }));
+                                }
+                            }
+                            #endregion
+                        }
 
                         //移動スレッド開始
                         var calc0 = ClassCalcVec.ReturnVecDistance(
@@ -587,7 +686,42 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         t.Add(itemGroupBy.ID, aaa);
                     }
                 }
+
+                counter++;
             }
+        }
+
+        private static ClassAStar? SearchMinScore(List<ClassAStar> ls)
+        {
+            // 最小スコア
+            int min = 99999;
+            // 最小コスト
+            int minCost = 99999;
+            ClassAStar? targetClassAStar = null;
+            foreach (ClassAStar itemClassAStar in ls)
+            {
+                int score = itemClassAStar.Cost + itemClassAStar.HCost;
+                if (score > min)
+                {
+                    continue;
+                }
+
+                // スコアが同じ
+                if (score == min)
+                {
+                    //コストが最小コストより大きい
+                    if (itemClassAStar.Cost >= minCost)
+                    {
+                        continue;
+                    }
+                }
+
+                // 最小値更新.
+                min = score;
+                minCost = itemClassAStar.Cost;
+                targetClassAStar = itemClassAStar;
+            }
+            return targetClassAStar;
         }
 
         public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit, ClassUnit classUnitDef, ClassSkill classSkill, ClassGameStatus classGameStatus, Canvas canvasMain)
@@ -854,7 +988,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-
         #region HeuristicMethod
         /// <summary>
         /// エースターアルゴリズムで使用
@@ -866,8 +999,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <returns></returns>
         public static int HeuristicMethod(int nowX, int nowY, int targetX, int targetY)
         {
-            int result = Math.Abs(nowX - targetX) + Math.Abs(nowY - targetY);
-            return result;
+            var x = Math.Abs(nowX - targetX);
+            var y = Math.Abs(nowX - targetX);
+            if (x > y)
+            {
+                return x;
+            }
+            else
+            {
+                return y;
+            }
         }
         #endregion
     }

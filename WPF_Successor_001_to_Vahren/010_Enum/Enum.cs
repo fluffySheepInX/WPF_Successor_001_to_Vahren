@@ -73,4 +73,14 @@
             ,
         None
     }
+
+    public enum aStarStatus
+    {
+        None
+            ,
+        Open
+            ,
+        Closed
+    }
+
 }
