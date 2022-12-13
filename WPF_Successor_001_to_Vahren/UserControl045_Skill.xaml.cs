@@ -198,6 +198,39 @@ namespace WPF_Successor_001_to_Vahren
                         this.txtFunc.Text = "（接近攻撃）";
                     }
                     break;
+                case _010_Enum.SkillFunc.heal:
+                    if (classSkill.Mp > 0)
+                    {
+                        this.txtFunc.Text = "（治癒・強化魔法）消費MP" + classSkill.Mp.ToString();
+                    }
+                    else
+                    {
+                        this.txtFunc.Text = "（回復技）";
+                    }
+                    break;
+                case _010_Enum.SkillFunc.summon:
+                    if (classSkill.Mp > 0)
+                    {
+                        this.txtFunc.Text = "（召喚魔法）消費MP" + classSkill.Mp.ToString();
+                    }
+                    else
+                    {
+                        this.txtFunc.Text = "（召集技）";
+                    }
+                    break;
+                case _010_Enum.SkillFunc.charge:
+                    if (classSkill.Mp > 0)
+                    {
+                        this.txtFunc.Text = "（突撃攻撃）消費MP" + classSkill.Mp.ToString();
+                    }
+                    else
+                    {
+                        this.txtFunc.Text = "（突撃攻撃）";
+                    }
+                    break;
+                case _010_Enum.SkillFunc.status:
+                    this.txtFunc.Text = "";
+                    break;
                 default: // 設定が無い場合は遠距離攻撃・攻撃魔法にする
                     if (classSkill.Mp > 0)
                     {
