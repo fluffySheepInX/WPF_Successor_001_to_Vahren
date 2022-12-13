@@ -600,15 +600,7 @@ namespace WPF_Successor_001_to_Vahren
                     TextBlock tbDate1 = new TextBlock();
                     tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
 
-                    tbDate1.Text = String.Join(
-                                        Environment.NewLine,
-                                        this.ListClassScenarioInfo[tag].ScenarioIntroduce
-                                            .Split(Environment.NewLine)
-                                            .Select(x => x.TrimStart())
-                                            .Select(y => y.TrimEnd())
-                                            .ToArray()
-                                    )
-                                    .Replace("〇", "　");
+                    tbDate1.Text = this.ListClassScenarioInfo[tag].ScenarioIntroduce;
                     tbDate1.Height = canvas.Height;
                     tbDate1.Margin = new Thickness { Left = 15, Top = 15 };
                     canvas.Children.Add(tbDate1);
