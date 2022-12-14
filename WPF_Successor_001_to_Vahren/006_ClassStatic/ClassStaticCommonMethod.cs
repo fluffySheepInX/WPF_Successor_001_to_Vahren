@@ -1518,7 +1518,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    classPower.Text = first.Value;
+                    // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
+                    string strTemp = first.Value.Replace("\r\n", "\n").Replace("\r", "\n");
+                    // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
+                    char[] charsToTrim = {' ', '\t'};
+                    string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
+                    // 各行を連結して、一つに戻す。
+                    strTemp = String.Join("", strLines);
+                    // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
+                    classPower.Text = strTemp.Replace("$", System.Environment.NewLine);
                 }
             }
             {
