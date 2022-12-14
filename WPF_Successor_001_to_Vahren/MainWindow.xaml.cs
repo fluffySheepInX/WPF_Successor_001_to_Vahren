@@ -764,6 +764,47 @@ namespace WPF_Successor_001_to_Vahren
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
             if (gridMapStrategy != null)
             {
+                // 選択した領地を強調する
+                var txtNameSpot = (TextBlock)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotName" + classPowerAndCity.ClassSpot.NameTag);
+                if (txtNameSpot != null)
+                {
+                    // 領地名の色を変える（少し暗くする）
+                    txtNameSpot.Foreground = Brushes.Gainsboro;
+                }
+                var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
+                if (imgSpot != null)
+                {
+                    // 本体を透明にして、ダミー画像でアニメーション表示する
+                    // 余計なイベントが発生しないはず
+                    imgSpot.Opacity = 0;
+
+                    int spot_size = 32;
+                    Image imgDummy = new Image();
+                    imgDummy.Name = "SpotDummy" + classPowerAndCity.ClassSpot.NameTag;
+                    imgDummy.Source = imgSpot.Source;
+                    imgDummy.HorizontalAlignment = HorizontalAlignment.Left;
+                    imgDummy.VerticalAlignment = VerticalAlignment.Top;
+                    imgDummy.Width = spot_size;
+                    imgDummy.Height = spot_size;
+                    imgDummy.Margin = new Thickness()
+                    {
+                        Left = classPowerAndCity.ClassSpot.X - spot_size / 2,
+                        Top = classPowerAndCity.ClassSpot.Y - spot_size / 2
+                    };
+                    gridMapStrategy.Children.Add(imgDummy);
+
+                    // 少し上に上がって、元の位置に戻るアニメーション
+                    var animeIconPos = new ThicknessAnimation();
+                    animeIconPos.To = new Thickness()
+                    {
+                        Left = classPowerAndCity.ClassSpot.X - spot_size / 2,
+                        Top = classPowerAndCity.ClassSpot.Y - spot_size / 2 - 12
+                    };
+                    animeIconPos.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    animeIconPos.AutoReverse = true;
+                    imgDummy.BeginAnimation(Image.MarginProperty, animeIconPos);
+                }
+
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
                     const int ring_size = 128;
@@ -841,6 +882,25 @@ namespace WPF_Successor_001_to_Vahren
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
             if (gridMapStrategy != null)
             {
+                // 選択した領地の強調を解除する
+                var txtNameSpot = (TextBlock)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotName" + classPowerAndCity.ClassSpot.NameTag);
+                if (txtNameSpot != null)
+                {
+                    // 領地名の色を戻す
+                    txtNameSpot.Foreground = Brushes.White;
+                }
+                var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
+                if (imgSpot != null)
+                {
+                    // 透明度を元に戻して、ダミー画像を消す
+                    imgSpot.Opacity = 1;
+                    var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotDummy" + classPowerAndCity.ClassSpot.NameTag);
+                    if (imgDummy != null)
+                    {
+                        gridMapStrategy.Children.Remove(imgDummy);
+                    }
+                }
+
                 if (classPowerAndCity.ClassPower.ListMember.Count > 0)
                 {
                     for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
@@ -911,8 +971,11 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        private void ButtonSelectionCity_click(object sender, EventArgs e)
+        private void SelectionCity_MouseLeftButtonUp(object sender, MouseEventArgs e)
         {
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             if (this.NowSituation == Situation.PlayerTurn)
             {
                 DisplayCitySelection(sender);
@@ -924,14 +987,17 @@ namespace WPF_Successor_001_to_Vahren
                 DisplayPowerSelection(sender);
             }
         }
-        private void ButtonSelectionCity_RightKeyDown(object sender, EventArgs e)
+        private void SelectionCity_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             if (this.NowSituation == Situation.SelectGroup)
             {
                 return; //勢力選択中は出撃しない。
             }
 
-            var cast = (Button)sender;
+            var cast = (FrameworkElement)sender;
             if (cast.Tag is not ClassPowerAndCity)
             {
                 return;
@@ -1004,7 +1070,7 @@ namespace WPF_Successor_001_to_Vahren
 
         private void DisplayCitySelection(object sender)
         {
-            var cast = (Button)sender;
+            var cast = (FrameworkElement)sender;
             if (cast.Tag is not ClassPowerAndCity)
             {
                 return;
@@ -1109,7 +1175,7 @@ namespace WPF_Successor_001_to_Vahren
         /// <param name="sender"></param>
         private void DisplayPowerSelection(object sender)
         {
-            var cast = (Button)sender;
+            var cast = (FrameworkElement)sender;
             if (cast.Tag is not ClassPowerAndCity)
             {
                 return;
@@ -1301,7 +1367,7 @@ namespace WPF_Successor_001_to_Vahren
                         tbDate1.HorizontalAlignment = HorizontalAlignment.Left;
                         tbDate1.VerticalAlignment = VerticalAlignment.Top;
                         tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
-                        tbDate1.Text = classPowerAndCity.ClassPower.Text.Replace(" ", String.Empty).Replace("\t", String.Empty).Replace("　", String.Empty).Replace("〇", "　");
+                        tbDate1.Text = classPowerAndCity.ClassPower.Text;
                         tbDate1.TextWrapping = TextWrapping.Wrap;
                         tbDate1.Height = textHeight;
                         tbDate1.Width = 380;
@@ -2909,7 +2975,7 @@ namespace WPF_Successor_001_to_Vahren
 
         /// <summary>
         /// シナリオ選択画面から移行する戦略マップ表示画面
-        /// 次処理は恐らく「ButtonSelectionCity_click」
+        /// 次処理は恐らく「SelectionCity_MouseLeftButtonUp」
         /// </summary>
         private void SetMapStrategy()
         {
@@ -3010,6 +3076,7 @@ namespace WPF_Successor_001_to_Vahren
                     foreach (var item in result.Select((value, index) => (value, index)))
                     {
                         Grid gridButton = new Grid();
+                        gridButton.Name = "SpotGrid" + item.value.NameTag;
                         gridButton.HorizontalAlignment = HorizontalAlignment.Left;
                         gridButton.VerticalAlignment = VerticalAlignment.Top;
                         gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
@@ -3019,11 +3086,10 @@ namespace WPF_Successor_001_to_Vahren
                             Left = Math.Truncate(item.value.X - gridButton.Width / 2),
                             Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
+                        gridButton.MouseLeftButtonDown += Disable_MouseEvent;
+                        gridButton.MouseLeftButtonUp += SelectionCity_MouseLeftButtonUp;
+                        gridButton.MouseRightButtonUp += SelectionCity_MouseRightButtonUp;
                         gridButton.MouseEnter += SelectionCity_MouseEnter;
-
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
-                        Image img = new Image();
-                        img.Source = bitimg1;
 
                         int fontSizePlus = 5;
                         // 将来的には、領地アイコンのサイズを spot 構造体で指定する。
@@ -3031,9 +3097,20 @@ namespace WPF_Successor_001_to_Vahren
                         //int spot_size = 32 + (item.index % 3) * 8;
                         int spot_size = 32;
 
+                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
+                        Image imgSpot = new Image();
+                        imgSpot.Name = "SpotIcon" + item.value.NameTag;
+                        imgSpot.Source = bitimg1;
+                        imgSpot.HorizontalAlignment = HorizontalAlignment.Center;
+                        imgSpot.VerticalAlignment = VerticalAlignment.Center;
+                        imgSpot.Height = spot_size;
+                        imgSpot.Width = spot_size;
+                        gridButton.Children.Add(imgSpot);
+
                         TextBlock txtNameSpot = new TextBlock();
+                        txtNameSpot.Name = "SpotName" + item.value.NameTag;
                         txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        txtNameSpot.VerticalAlignment = VerticalAlignment.Bottom;
+                        txtNameSpot.VerticalAlignment = VerticalAlignment.Top;
                         txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
                         txtNameSpot.Text = item.value.Name;
                         txtNameSpot.Foreground = Brushes.White;
@@ -3047,17 +3124,11 @@ namespace WPF_Successor_001_to_Vahren
                                 BlurRadius = 0
                             };
                         // 領地アイコンと領地名の間隔は GridCityWidthAndHeight.Y によって決まる。
-                        txtNameSpot.Height = (gridButton.Height - spot_size) / 2;
+                        txtNameSpot.Margin = new Thickness()
+                        {
+                            Top = (gridButton.Height + spot_size) / 2
+                        };
                         gridButton.Children.Add(txtNameSpot);
-
-                        Button button = new Button();
-                        button.Name = StringName.buttonClassPowerAndCity + item.index;
-                        button.HorizontalAlignment = HorizontalAlignment.Center;
-                        button.VerticalAlignment = VerticalAlignment.Center;
-                        button.Content = img;
-                        button.Height = spot_size;
-                        button.Width = spot_size;
-                        button.Focusable = false;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
                         string flag_path = string.Empty;
@@ -3070,7 +3141,7 @@ namespace WPF_Successor_001_to_Vahren
                                 {
                                     // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
                                     var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
-                                    button.Tag = classPowerAndCity;
+                                    gridButton.Tag = classPowerAndCity;
                                     //ついでに、スポットの属する勢力名を設定
                                     var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
                                     if (ge != null)
@@ -3091,41 +3162,27 @@ namespace WPF_Successor_001_to_Vahren
                         }
 
                         //このタイミングで、そのボタンタグに何も設定されていない場合、無所属である
-                        if (button.Tag is not ClassPowerAndCity)
+                        if (gridButton.Tag is not ClassPowerAndCity)
                         {
-                            button.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
+                            gridButton.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
                         }
-
-                        //戦闘後の旗設定の為
-                        var aaaaaa = button.Tag as ClassPowerAndCity;
-                        if (aaaaaa != null)
-                        {
-                            gridButton.Tag = aaaaaa;
-                            gridButton.Name = aaaaaa.ClassSpot.NameTag;
-                        }
-
-                        button.Background = Brushes.Transparent;
-                        button.Foreground = Brushes.Transparent;
-                        button.BorderBrush = Brushes.Transparent;
-                        button.Click += ButtonSelectionCity_click;
-                        button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
-                        gridButton.Children.Add(button);
-
-                        // 旗を表示する
-                        Image flag_img = new Image();
-                        flag_img.Name = "flag_img" + gridButton.Name;
-                        if (aaaaaa != null)
-                        {
-                            if (aaaaaa.ClassPower.FlagPath != String.Empty)
-                            {
-                                flag_img = DisplayFlag(gridButton, spot_size, flag_path);
-                            }
-                        }
-                        gridButton.Children.Add(flag_img);
-
                         grid.Children.Add(gridButton);
                         // 後から連結線を変更しても、領地が前面に来るようにする
                         Panel.SetZIndex(gridButton, 1);
+
+                        // 旗を表示する
+                        if (flag_path != String.Empty)
+                        {
+                            Image imgFlag = DisplayFlag(flag_path);
+                            imgFlag.Name = "SpotFlag" + item.value.NameTag;
+                            imgFlag.Margin = new Thickness()
+                            {
+                                Left = item.value.X - spot_size / 4,
+                                Top = item.value.Y - spot_size / 2 - imgFlag.Height
+                            };
+                            grid.Children.Add(imgFlag);
+                            Panel.SetZIndex(imgFlag, 1);
+                        }
                     }
 
                 }
@@ -3265,6 +3322,7 @@ namespace WPF_Successor_001_to_Vahren
                     foreach (var item in result.Select((value, index) => (value, index)))
                     {
                         Grid gridButton = new Grid();
+                        gridButton.Name = "SpotGrid" + item.value.NameTag;
                         gridButton.HorizontalAlignment = HorizontalAlignment.Left;
                         gridButton.VerticalAlignment = VerticalAlignment.Top;
                         gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
@@ -3274,18 +3332,28 @@ namespace WPF_Successor_001_to_Vahren
                             Left = Math.Truncate(item.value.X - gridButton.Width / 2),
                             Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
                         };
+                        gridButton.MouseLeftButtonDown += Disable_MouseEvent;
+                        gridButton.MouseLeftButtonUp += SelectionCity_MouseLeftButtonUp;
+                        gridButton.MouseRightButtonUp += SelectionCity_MouseRightButtonUp;
                         gridButton.MouseEnter += SelectionCity_MouseEnter;
-
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
-                        Image img = new Image();
-                        img.Source = bitimg1;
 
                         int fontSizePlus = 5;
                         int spot_size = 32;
 
+                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
+                        Image imgSpot = new Image();
+                        imgSpot.Name = "SpotIcon" + item.value.NameTag;
+                        imgSpot.Source = bitimg1;
+                        imgSpot.HorizontalAlignment = HorizontalAlignment.Center;
+                        imgSpot.VerticalAlignment = VerticalAlignment.Center;
+                        imgSpot.Height = spot_size;
+                        imgSpot.Width = spot_size;
+                        gridButton.Children.Add(imgSpot);
+
                         TextBlock txtNameSpot = new TextBlock();
+                        txtNameSpot.Name = "SpotName" + item.value.NameTag;
                         txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        txtNameSpot.VerticalAlignment = VerticalAlignment.Bottom;
+                        txtNameSpot.VerticalAlignment = VerticalAlignment.Top;
                         txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
                         txtNameSpot.Text = item.value.Name;
                         txtNameSpot.Foreground = Brushes.White;
@@ -3297,17 +3365,11 @@ namespace WPF_Successor_001_to_Vahren
                                 Opacity = 1,
                                 BlurRadius = 0
                             };
-                        txtNameSpot.Height = (gridButton.Height - spot_size) / 2;
+                        txtNameSpot.Margin = new Thickness()
+                        {
+                            Top = (gridButton.Height + spot_size) / 2
+                        };
                         gridButton.Children.Add(txtNameSpot);
-
-                        Button button = new Button();
-                        button.Name = StringName.buttonClassPowerAndCity + item.index;
-                        button.HorizontalAlignment = HorizontalAlignment.Center;
-                        button.VerticalAlignment = VerticalAlignment.Center;
-                        button.Content = img;
-                        button.Height = spot_size;
-                        button.Width = spot_size;
-                        button.Focusable = false;
 
                         // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
                         string flag_path = string.Empty;
@@ -3320,7 +3382,7 @@ namespace WPF_Successor_001_to_Vahren
                                 {
                                     // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
                                     var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
-                                    button.Tag = classPowerAndCity;
+                                    gridButton.Tag = classPowerAndCity;
                                     //ついでに、スポットの属する勢力名を設定
                                     var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
                                     if (ge != null)
@@ -3340,42 +3402,27 @@ namespace WPF_Successor_001_to_Vahren
                         }
 
                         //このタイミングで、そのボタンタグに何も設定されていない場合、無所属である
-                        if (button.Tag is not ClassPowerAndCity)
+                        if (gridButton.Tag is not ClassPowerAndCity)
                         {
-                            button.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
+                            gridButton.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
                         }
-
-                        //戦闘後の旗設定の為
-                        var aaaaaa = button.Tag as ClassPowerAndCity;
-                        if (aaaaaa != null)
-                        {
-                            gridButton.Tag = aaaaaa;
-                            gridButton.Name = aaaaaa.ClassSpot.NameTag;
-                        }
-
-                        button.Background = Brushes.Transparent;
-                        button.Foreground = Brushes.Transparent;
-                        button.Background = Brushes.Transparent;
-                        button.BorderBrush = Brushes.Transparent;
-                        button.Click += ButtonSelectionCity_click;
-                        button.PreviewMouseRightButtonUp += ButtonSelectionCity_RightKeyDown;
-                        gridButton.Children.Add(button);
-
-                        // 旗を表示する
-                        Image flag_img = new Image();
-                        flag_img.Name = "flag_img" + gridButton.Name;
-                        if (aaaaaa != null)
-                        {
-                            if (aaaaaa.ClassPower.FlagPath != String.Empty)
-                            {
-                                flag_img = DisplayFlag(gridButton, spot_size, flag_path);
-                            }
-                        }
-                        gridButton.Children.Add(flag_img);
-
                         grid.Children.Add(gridButton);
                         // 後から連結線を変更しても、領地が前面に来るようにする
                         Panel.SetZIndex(gridButton, 1);
+
+                        // 旗を表示する
+                        if (flag_path != String.Empty)
+                        {
+                            Image imgFlag = DisplayFlag(flag_path);
+                            imgFlag.Name = "SpotFlag" + item.value.NameTag;
+                            imgFlag.Margin = new Thickness()
+                            {
+                                Left = item.value.X - spot_size / 4,
+                                Top = item.value.Y - spot_size / 2 - imgFlag.Height
+                            };
+                            grid.Children.Add(imgFlag);
+                            Panel.SetZIndex(imgFlag, 1);
+                        }
                     }
 
                 }
@@ -3391,7 +3438,8 @@ namespace WPF_Successor_001_to_Vahren
             SetWindowStrategyMenu();
         }
 
-        public Image DisplayFlag(Grid gridButton, int spot_size, string flag_path)
+        // 勢力の旗アイコンを用意する
+        public Image DisplayFlag(string flag_path)
         {
             BitmapImage flag_bitimg = new BitmapImage(new Uri(flag_path));
             // 旗のアニメーションは 64 * 32 ドットを想定
@@ -3413,21 +3461,15 @@ namespace WPF_Successor_001_to_Vahren
             animation.RepeatBehavior = RepeatBehavior.Forever;
             animation.Duration = new TimeSpan(0, 0, 0, 0, 500 * 2);
 
-            Image flag_img = new Image();
-            //flag_img.Source = flag_bitimg;
-            flag_img.BeginAnimation(Image.SourceProperty, animation);
-            flag_img.Height = 32;
-            flag_img.Width = 32;
-            flag_img.HorizontalAlignment = HorizontalAlignment.Center;
-            flag_img.VerticalAlignment = VerticalAlignment.Top;
-            // 旗アイコンと領地アイコンのずれ具合を設定する
-            flag_img.Margin = new Thickness
-            {
-                Left = Math.Truncate(flag_img.Width / 2),
-                Top = Math.Truncate((gridButton.Height - spot_size) / 2 - flag_img.Height)
-            };
+            Image imgFlag = new Image();
+            //imgFlag.Source = flag_bitimg;
+            imgFlag.BeginAnimation(Image.SourceProperty, animation);
+            imgFlag.Height = 32;
+            imgFlag.Width = 32;
+            imgFlag.HorizontalAlignment = HorizontalAlignment.Left;
+            imgFlag.VerticalAlignment = VerticalAlignment.Top;
 
-            return flag_img;
+            return imgFlag;
         }
 
         #region 各種構造体データ読み込みに必要なメソッド群
