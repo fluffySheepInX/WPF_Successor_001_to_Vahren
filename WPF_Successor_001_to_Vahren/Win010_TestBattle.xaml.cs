@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -206,7 +207,7 @@ namespace WPF_Successor_001_to_Vahren
                                 classBattleMapPath.KougekiOrBouei = "Kougeki";
                                 path.Tag = classBattleMapPath;
                             }
-                            path.Name = "a"+itemCol.index + "a" + itemRow.index;
+                            path.Name = "a" + itemCol.index + "a" + itemRow.index;
                             path.Stretch = Stretch.Fill;
                             path.StrokeThickness = 0;
                             path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
@@ -945,7 +946,7 @@ namespace WPF_Successor_001_to_Vahren
             };
             this.timerAfterFadeIn.Tick += (x, s) =>
             {
-                TimerAction60FPSBattle();
+                ClassStaticBattle.TimerAction60FPSBattle(this, this.ClassGameStatus, null);
                 MainWindow.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Start();
@@ -1020,153 +1021,6 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
-        }
-        private void TimerAction60FPSBattle()
-        {
-            //攻撃側勝利
-            {
-                bool flgaDefHp = false;
-                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
-                {
-                    if (itemDefUnitGroup.FlagBuilding == true)
-                    {
-                        continue;
-                    }
-                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
-                    {
-                        flgaDefHp = true;
-                    }
-                }
-
-                if (flgaDefHp == false)
-                {
-                    ////defの負け
-
-                    this.timerAfterFadeIn.Stop();
-
-                    //タスクキル
-                    if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
-                    }
-                    if (this.ClassGameStatus.TaskBattleMoveAsync.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleMoveAsync.Item2.Cancel();
-                    }
-                    if (this.ClassGameStatus.TaskBattleMoveDefAsync.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
-                    }
-
-                    //画面戻る
-
-                    //部隊所属領地変更
-                    {
-                        //出撃先領地
-                        var spots = Application.Current.Properties["selectSpots"];
-                        if (spots == null)
-                        {
-                            return;
-                        }
-
-                        var convSpots = spots as ClassPowerAndCity;
-                        if (convSpots == null)
-                        {
-                            return;
-                        }
-
-                        //出撃元領地
-                        var selectedItem = Application.Current.Properties["selectedItem"];
-                        if (selectedItem == null)
-                        {
-                            return;
-                        }
-
-                        var selectedItemClassSpot = selectedItem as ClassSpot;
-                        if (selectedItemClassSpot == null)
-                        {
-                            return;
-                        }
-
-                        //出撃先領地情報
-                        var aa = this.ClassGameStatus.AllListSpot
-                                .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
-                                .First();
-
-                        //spotの所属情報を書き換え
-                        convSpots.ClassSpot.PowerNameTag = selectedItemClassSpot.PowerNameTag;
-                        aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
-                        var po = this.ClassGameStatus.ListPower
-                                .Where(x => x.NameTag == convSpots.ClassSpot.PowerNameTag)
-                                .First();
-                        po.ListMember.Add(convSpots.ClassSpot.NameTag);
-
-                        ////unitの所属情報を書き換え
-                        //防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する
-                        aa.UnitGroup.Clear();
-                        foreach (var item in this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == selectedItemClassSpot.NameTag))
-                        {
-                            foreach (var itemUnitGroup in item.UnitGroup)
-                            {
-                                itemUnitGroup.Spot = convSpots.ClassSpot;
-                                itemUnitGroup.FlagDisplay = true;
-                                //unit移動
-                                aa.UnitGroup.Add(itemUnitGroup);
-                            }
-                            //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
-                            item.UnitGroup.Clear();
-                        }
-                    }
-
-                    //片付け
-                    this.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
-
-                    return;
-                }
-            }
-            //防衛側勝利
-            {
-                bool flgaAttackHp = false;
-                foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.SortieUnitGroup)
-                {
-                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
-                    {
-                        flgaAttackHp = true;
-                    }
-                }
-
-                if (flgaAttackHp == false)
-                {
-                    ////defの負け
-
-                    this.timerAfterFadeIn.Stop();
-
-                    //タスクキル
-                    if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
-                    }
-                    if (this.ClassGameStatus.TaskBattleMoveAsync.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleMoveAsync.Item2.Cancel();
-                    }
-                    if (this.ClassGameStatus.TaskBattleMoveDefAsync.Item1 != null)
-                    {
-                        this.ClassGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
-                    }
-
-                    //画面戻る
-
-                    //片付け
-                    this.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
-                    this.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
-
-                    return;
-                }
-            }
         }
         #endregion
 

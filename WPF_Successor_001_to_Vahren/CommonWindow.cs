@@ -158,6 +158,9 @@ namespace WPF_Successor_001_to_Vahren
 
         public DispatcherTimer timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
 
+        public delegate void DelegateMapRenderedFromBattle();
+        public DelegateMapRenderedFromBattle? delegateMapRenderedFromBattle = null;
+
         #region Event
         public void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
