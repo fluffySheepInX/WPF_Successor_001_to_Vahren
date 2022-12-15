@@ -562,7 +562,7 @@ namespace WPF_Successor_001_to_Vahren
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
-                var abc = canvas.Children.OfType<Path>();
+                var abc = canvas.Children.OfType<System.Windows.Shapes.Path>();
                 foreach (var item in abc)
                 {
                     ClassBattleMapPath? taggg = (item.Tag) as ClassBattleMapPath;
@@ -1028,6 +1028,10 @@ namespace WPF_Successor_001_to_Vahren
                 bool flgaDefHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
                 {
+                    if (itemDefUnitGroup.FlagBuilding == true)
+                    {
+                        continue;
+                    }
                     if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
                         flgaDefHp = true;

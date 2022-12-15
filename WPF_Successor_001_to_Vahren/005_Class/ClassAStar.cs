@@ -172,7 +172,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             {
                 for (int i = -1; i < 2; i++)
                 {
-                    if (x + i < 0 || y + j < 0)
+                    if (x + i < 0 || y + j < 0 || x + i >= MapData.Count() || y + j >= MapData[x + i].Count())
                     {
                         continue;
                     }

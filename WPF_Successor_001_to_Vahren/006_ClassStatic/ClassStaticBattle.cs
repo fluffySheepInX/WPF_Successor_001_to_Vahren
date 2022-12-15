@@ -487,7 +487,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                                         && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)))
                                                                 .FirstOrDefault();
 
-                                    if (initMapTip == null) throw new Exception();
+                                    if (initMapTip == null) return;
 
                                     foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
                                                             .Select((value, index) => (value, index)))

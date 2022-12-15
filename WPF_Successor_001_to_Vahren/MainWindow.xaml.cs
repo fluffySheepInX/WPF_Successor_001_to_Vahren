@@ -1782,8 +1782,8 @@ namespace WPF_Successor_001_to_Vahren
 
             //マップそのもの
             Canvas canvas = new Canvas();
-            int takasaMapTip = 32;
-            int yokoMapTip = 64;
+            int takasaMapTip = ClassStaticBattle.TakasaMapTip;
+            int yokoMapTip = ClassStaticBattle.yokoMapTip;
             canvas.Name = StringName.windowMapBattle;
             canvas.Background = Brushes.Black;
             canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
@@ -1833,6 +1833,7 @@ namespace WPF_Successor_001_to_Vahren
                         map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
                     }
 
+                    //Path描写
                     //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
                     List<(BitmapImage, int, int)> listTakaiObj = new List<(BitmapImage, int, int)>();
                     foreach (var itemCol in ClassGameStatus.ClassBattle.ClassMapBattle.MapData
@@ -1864,14 +1865,20 @@ namespace WPF_Successor_001_to_Vahren
                             image.ImageSource = bi;
                             System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
                             path.Fill = image;
+                            ClassBattleMapPath classBattleMapPath = new ClassBattleMapPath();
+                            classBattleMapPath.Col = itemCol.index;
+                            classBattleMapPath.Row = itemRow.index;
                             if (itemRow.value.BoueiButaiNoIti == true)
                             {
-                                path.Tag = "Bouei";
+                                classBattleMapPath.KougekiOrBouei = "Bouei";
+                                path.Tag = classBattleMapPath;
                             }
                             if (itemRow.value.KougekiButaiNoIti == true)
                             {
-                                path.Tag = "Kougeki";
+                                classBattleMapPath.KougekiOrBouei = "Kougeki";
+                                path.Tag = classBattleMapPath;
                             }
+                            path.Name = "a" + itemCol.index + "a" + itemRow.index;
                             path.Stretch = Stretch.Fill;
                             path.StrokeThickness = 0;
                             path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
@@ -1881,9 +1888,14 @@ namespace WPF_Successor_001_to_Vahren
                             path.Margin = new Thickness()
                             {
                                 Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                Top = ((canvas.Height / 2) + (itemCol.index * (takasaMapTip / 2)) + (itemRow.index * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                                Top =
+                                    ((canvas.Height / 2) // マップ半分の高さ
+                                    + (itemCol.index * (takasaMapTip / 2))
+                                    + (itemRow.index * (-(takasaMapTip / 2)))) // マイナスになる 
+                                    - takasaMapTip / 2
                             };
                             canvas.Children.Add(path);
+                            itemRow.value.MapPath = path;
                         }
                     }
 
@@ -1934,7 +1946,7 @@ namespace WPF_Successor_001_to_Vahren
             ////出撃ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(0, canvas.Height / 2);
                 Point migiTakasa = new Point(canvas.Width / 2, canvas.Height);
@@ -1960,7 +1972,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattle.SortieUnitGroup.Count % 2 == 0)
+                if (ClassGameStatus.ClassBattle.SortieUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -2003,16 +2015,19 @@ namespace WPF_Successor_001_to_Vahren
                         image.ImageSource = bi;
                         Button button = new Button();
                         button.Background = image;
-                        button.Width = 32;
-                        button.Height = 32;
+                        button.Width = ClassStaticBattle.yokoUnit;
+                        button.Height = ClassStaticBattle.TakasaUnit;
                         Canvas canvasChip = new Canvas();
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
-                        canvasChip.Width = 32;
-                        canvasChip.Height = 32;
+                        canvasChip.Width = ClassStaticBattle.yokoUnit;
+                        canvasChip.Height = ClassStaticBattle.TakasaUnit;
                         //内分点の公式
                         double left = (
                                         ((hiritu.X - itemListClassUnit.index) * hidariTakasa.X) + (itemListClassUnit.index * migiTakasa.X)
@@ -2085,7 +2100,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -2161,7 +2179,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Sortie)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -2209,33 +2230,37 @@ namespace WPF_Successor_001_to_Vahren
             ////防衛ユニット
             {
                 //中点
-                decimal countMeHalf = Math.Floor((decimal)this.ClassGameStatus.ClassBattle.DefUnitGroup.Count / 2);
+                decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.DefUnitGroup.Count / 2);
                 //線の端
                 Point hidariTakasa = new Point(canvas.Width / 2, 0);
                 Point migiTakasa = new Point(canvas.Width, canvas.Height / 2);
-                for (int i = 0; i < canvas.Children.Count; i++)
+                var abc = canvas.Children.OfType<System.Windows.Shapes.Path>();
+                foreach (var item in abc)
                 {
-                    if (canvas.Children[i] is System.Windows.Shapes.Path ppp)
+                    ClassBattleMapPath? taggg = (item.Tag) as ClassBattleMapPath;
+                    if (taggg == null) continue;
+                    if (taggg.KougekiOrBouei == "Bouei")
                     {
-                        string? taggg = Convert.ToString(ppp.Tag);
-                        if (taggg != null)
-                        {
-                            if (taggg == "Bouei")
-                            {
-                                //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
-                                //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
-                                //目標点P(Xp, Yp) とのズレを算出
+                        //とある線(Shape.Line型)を、掲題の通り移動させたい。
+                        //例えば、(X1 = 0, Y1 = 50, X2 = 50, Y2 = 100)の線Aと、点P(X = 30, Y = 30)があるとして、
+                        //点Pの座標に線Aの中心を置きたい。(傾きはそのまま)
 
-                                //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+                        //hidariTakasa
+                        //migiTakasa
+                        //を変えるのが目的
 
-                                //xxx = ppp.Margin.Left;
-                                //xxx = ppp.Margin.Top;
-                            }
-                        }
+                        //線分A の中点 C は、Xc = (X1+X2)÷2, Yc = (Y1+Y2)÷2 で求まる
+                        //なので、線分A (X1, Y1)-(X2, Y2) の中点となる(Xc, Yc)と、
+                        //目標点P(Xp, Yp) とのズレを算出
+
+                        //中点Cを求めて、点Pから中点Cを引き、結果のXとYを線AのXとYに加算
+
+                        //xxx = ppp.Margin.Left;
+                        //xxx = ppp.Margin.Top;
                     }
                 }
                 //ユニットの端の位置を算出
-                if (this.ClassGameStatus.ClassBattle.DefUnitGroup.Count % 2 == 0)
+                if (ClassGameStatus.ClassBattle.DefUnitGroup.Count % 2 == 0)
                 {
                     ////偶数
                     //これは正しくないが、案が思い浮かばない
@@ -2290,8 +2315,10 @@ namespace WPF_Successor_001_to_Vahren
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
                         //プレイヤー側のみイベントをくっつけるようにする
-                        //今は後回し
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -2368,7 +2395,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -2445,7 +2475,10 @@ namespace WPF_Successor_001_to_Vahren
                         //固有の情報
                         canvasChip.Name = "Chip" + itemListClassUnit.value.ID.ToString();
                         canvasChip.Tag = itemListClassUnit.value.ID.ToString();
-                        canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        if (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.Def)
+                        {
+                            canvasChip.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                        }
                         canvasChip.Children.Add(button);
                         canvasChip.Width = 32;
                         canvasChip.Height = 32;
@@ -4124,15 +4157,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-            var rec = this.fade.Children[this.fade.Children.Count - 1] as System.Windows.Shapes.Rectangle;
-            if (rec == null)
-            {
-                throw new Exception();
-            }
-            if (rec.Height > 0)
-            {
-                return;
-            }
 
             //この位置でなければダメ？
             AfterFadeIn = false;
@@ -4188,20 +4212,20 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Start();
 
             ////スキルスレッド開始
-            ////出撃ユニット
-            //{
-            //    var tokenSource = new CancellationTokenSource();
-            //    var token = tokenSource.Token;
-            //    (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
-            //    this.ClassGameStatus.TaskBattleSkill = a;
-            //}
-            ////防衛ユニット
-            //{
-            //    var tokenSource = new CancellationTokenSource();
-            //    var token = tokenSource.Token;
-            //    (Task, CancellationTokenSource) a = new(Task.Run(() => TaskBattleSkill(token)), tokenSource);
-            //    this.ClassGameStatus.TaskBattleSkillDef = a;
-            //}
+            //出撃ユニット
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
+                this.ClassGameStatus.TaskBattleSkill = a;
+            }
+            //防衛ユニット
+            {
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
+                this.ClassGameStatus.TaskBattleSkillDef = a;
+            }
             ////移動スレッド開始
             switch (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
@@ -4257,7 +4281,6 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
-
         }
 
         private void TimerAction60FPSBattle()
@@ -4267,6 +4290,10 @@ namespace WPF_Successor_001_to_Vahren
                 bool flgaDefHp = false;
                 foreach (var itemDefUnitGroup in this.ClassGameStatus.ClassBattle.DefUnitGroup)
                 {
+                    if (itemDefUnitGroup.FlagBuilding == true)
+                    {
+                        continue;
+                    }
                     if (itemDefUnitGroup.ListClassUnit.Count != 0)
                     {
                         flgaDefHp = true;
