@@ -43,6 +43,9 @@
     <Compile Update="Win010_TestBattle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Win020_Dialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="UserControl010_Spot.xaml">
@@ -79,6 +82,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Win020_Dialog.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

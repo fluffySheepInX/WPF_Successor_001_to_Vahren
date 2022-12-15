@@ -61,6 +61,32 @@ namespace WPF_Successor_001_to_Vahren
             // ユニットの情報を表示する
             DisplayUnitStatus(mainWindow);
 
+            // ボタンの背景
+            if (_isControl)
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("006_WindowImage");
+                strings.Add("wnd5.png");
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
+                    BitmapImage theImage = new BitmapImage(new Uri(path));
+                    ImageBrush myImageBrush = new ImageBrush(theImage);
+                    myImageBrush.Stretch = Stretch.Fill;
+                    this.btnDismiss.Background = myImageBrush;
+                    this.btnDismiss.Foreground = Brushes.White;
+                    this.btnDismiss.BorderBrush = Brushes.Silver;
+                    this.btnMercenary.Background = myImageBrush;
+                    this.btnMercenary.Foreground = Brushes.White;
+                    this.btnMercenary.BorderBrush = Brushes.Silver;
+                    this.btnItem.Background = myImageBrush;
+                    this.btnItem.Foreground = Brushes.White;
+                    this.btnItem.BorderBrush = Brushes.Silver;
+                }
+            }
+
             // ウインドウ枠
             SetWindowFrame(mainWindow);
         }
@@ -195,10 +221,6 @@ namespace WPF_Successor_001_to_Vahren
                 btnMercenary.Visibility = Visibility.Hidden;
                 btnItem.Visibility = Visibility.Hidden;
             }
-
-            // まだ処理を作ってないのでボタンを無効にする
-            btnDismiss.IsEnabled = false;
-            btnItem.IsEnabled = false;
 
             // ユニット画像は戦場での大きさで表示したい、けど、サイズのデータがClassUnitにない
             if (targetUnit.Image != string.Empty)

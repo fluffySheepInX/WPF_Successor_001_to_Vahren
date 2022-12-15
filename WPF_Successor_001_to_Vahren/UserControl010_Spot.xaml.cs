@@ -64,6 +64,32 @@ namespace WPF_Successor_001_to_Vahren
             // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
 
+            // ボタンの背景
+            if (_isControl)
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("006_WindowImage");
+                strings.Add("wnd5.png");
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
+                    BitmapImage theImage = new BitmapImage(new Uri(path));
+                    ImageBrush myImageBrush = new ImageBrush(theImage);
+                    myImageBrush.Stretch = Stretch.Fill;
+                    this.btnSelectAll.Background = myImageBrush;
+                    this.btnSelectAll.Foreground = Brushes.White;
+                    this.btnSelectAll.BorderBrush = Brushes.Silver;
+                    this.btnMercenary.Background = myImageBrush;
+                    this.btnMercenary.Foreground = Brushes.White;
+                    this.btnMercenary.BorderBrush = Brushes.Silver;
+                    this.btnPolitics.Background = myImageBrush;
+                    this.btnPolitics.Foreground = Brushes.White;
+                    this.btnPolitics.BorderBrush = Brushes.Silver;
+                }
+            }
+
             // ウインドウ枠
             SetWindowFrame(mainWindow);
         }
@@ -383,14 +409,11 @@ namespace WPF_Successor_001_to_Vahren
             // プレイヤーが操作可能かどうか
             if (_isControl == false)
             {
-                // 異なる勢力なら、操作ボタンを無効にする
-                btnSelectAll.IsEnabled = false;
-                btnMercenary.IsEnabled = false;
-                btnPolitics.IsEnabled = false;
+                // 異なる勢力なら、操作ボタンを隠す
+                btnSelectAll.Visibility = Visibility.Hidden;
+                btnMercenary.Visibility = Visibility.Hidden;
+                btnPolitics.Visibility = Visibility.Hidden;
             }
-
-            // まだ処理を作ってないのでボタンを無効にする
-            btnPolitics.IsEnabled = false;
 
             // 旗は存在する時だけ
             if (classPowerAndCity.ClassPower.FlagPath != string.Empty)
@@ -930,8 +953,7 @@ namespace WPF_Successor_001_to_Vahren
                         Border border = new Border();
                         border.Name = "DropTarget";
                         // 半透明のブラシを作成する (黒の50%)
-                        SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
-                        mySolidColorBrush.Opacity = 0.5;
+                        SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
                         border.Background = mySolidColorBrush;
                         border.BorderThickness = new Thickness(0);
                         border.Width = tile_width;
@@ -1134,8 +1156,7 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget";
                     // 半透明のブラシを作成する (黒の50%)
-                    SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
-                    mySolidColorBrush.Opacity = 0.5;
+                    SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
                     border.Background = mySolidColorBrush;
                     border.BorderThickness = new Thickness(0);
                     border.Width = tile_width * member_count;
@@ -1318,8 +1339,7 @@ namespace WPF_Successor_001_to_Vahren
                 Border border = new Border();
                 border.Name = "DropTarget";
                 // 半透明のブラシを作成する (黒の50%)
-                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Colors.Black);
-                mySolidColorBrush.Opacity = 0.5;
+                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
                 border.Background = mySolidColorBrush;
                 border.BorderThickness = new Thickness(0);
                 border.Width = tile_width * member_capacity;

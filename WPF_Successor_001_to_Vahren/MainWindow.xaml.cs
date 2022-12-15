@@ -1046,7 +1046,12 @@ namespace WPF_Successor_001_to_Vahren
                 //自国と隣接してないので出撃できない。
                 return;
             }
-            MessageBox.Show("出撃します");
+
+            // ダイアログを表示する
+            //MessageBox.Show("出撃します");
+            var dialog = new Win020_Dialog();
+            dialog.SetData(classPowerAndCity.ClassSpot.Name + "へ出撃します。\n青枠の領地から編成してください。");
+            dialog.ShowDialog();
 
             // 現在のマップ表示位置を記録しておく
             var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);

@@ -171,6 +171,23 @@ namespace WPF_Successor_001_to_Vahren
                 this.txtTitle.Text = targetUnit.Name + "の雇用";
             }
 
+            // ボタンの背景
+            ImageBrush? myImageBrush = null;
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("006_WindowImage");
+                strings.Add("wnd5.png");
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    // 画像が存在する時だけ、ボタンの背景にする
+                    BitmapImage theImage = new BitmapImage(new Uri(path));
+                    myImageBrush = new ImageBrush(theImage);
+                    myImageBrush.Stretch = Stretch.Fill;
+                }
+            }
+
             // 雇用可能なユニットのリストを初期化する
             this.panelList.Children.Clear();
             int item_count = 0;
@@ -240,6 +257,11 @@ namespace WPF_Successor_001_to_Vahren
                 btnUnit.Name = "btnUnit" + item_count.ToString();
                 btnUnit.Tag = itemBaseUnit;
                 btnUnit.BorderThickness = new Thickness(2, 2, 2, 2);
+                if (myImageBrush != null)
+                {
+                    btnUnit.Background = myImageBrush;
+                    btnUnit.BorderBrush = Brushes.Silver;
+                }
                 btnUnit.Width = btn_width;
                 btnUnit.Height = btn_height;
                 btnUnit.Focusable = false;
