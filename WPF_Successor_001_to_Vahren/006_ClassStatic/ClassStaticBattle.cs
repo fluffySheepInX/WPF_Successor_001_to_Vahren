@@ -199,6 +199,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        #region 移動関係
 
         public static async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token, ClassGameStatus classGameStatus, Window window)
         {
@@ -410,6 +411,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
+        #region アスターアルゴリズムで移動
         /// <summary>
         /// アスターアルゴリズムで移動
         /// </summary>
@@ -706,6 +708,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 counter++;
             }
         }
+        #endregion
 
         private static ClassAStar? SearchMinScore(List<ClassAStar> ls)
         {
@@ -739,6 +742,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
             return targetClassAStar;
         }
+        #endregion
+
+        #region スキル関係
 
         public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit,
                                                             ClassUnit classUnitDef,
@@ -781,9 +787,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             if (re1 == null) return;
                             var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
                             if (re2 == null) return;
-
                             re1.Children.Remove(re2);
-
+                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString());
+                            if (re3 == null) return;
+                            re1.Children.Remove(re3);
                         }));
                     });
 
@@ -867,9 +874,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 if (re1 == null) return;
                                 var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
                                 if (re2 == null) return;
-
                                 re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
-
+                                var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString());
+                                if (re3 == null) return;
+                                re3.X2 = classUnit.NowPosiSkill.X;
+                                re3.Y2 = classUnit.NowPosiSkill.Y;
                             }));
                         }
                         catch (Exception)
@@ -967,18 +976,44 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             {
                                                 re1.Children.Remove(re2);
                                             }
-
-                                            Canvas canvas = new Canvas();
-                                            canvas.Background = Brushes.Red;
-                                            canvas.Height = itemSkill.H;
-                                            canvas.Width = itemSkill.W;
-                                            canvas.Margin = new Thickness()
+                                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID);
+                                            if (re3 != null)
                                             {
-                                                Left = itemGroupBy.NowPosiSkill.X,
-                                                Top = itemGroupBy.NowPosiSkill.Y
-                                            };
-                                            canvas.Name = "skillEffect" + itemGroupBy.ID;
-                                            re1.Children.Add(canvas);
+                                                re1.Children.Remove(re3);
+                                            }
+
+                                            //スキル画像
+                                            {
+                                                Canvas canvas = new Canvas();
+                                                canvas.Background = Brushes.Red;
+                                                canvas.Height = itemSkill.H;
+                                                canvas.Width = itemSkill.W;
+                                                canvas.Margin = new Thickness()
+                                                {
+                                                    Left = itemGroupBy.NowPosiSkill.X,
+                                                    Top = itemGroupBy.NowPosiSkill.Y
+                                                };
+                                                canvas.Name = "skillEffect" + itemGroupBy.ID;
+                                                re1.Children.Add(canvas);
+                                            }
+                                            //ray表示
+                                            {
+                                                var alpha = itemSkill.Ray[0];
+                                                SolidColorBrush solidColorBrush =
+                                                    new SolidColorBrush(
+                                                        Color.FromRgb((byte)itemSkill.Ray[1], (byte)itemSkill.Ray[2], (byte)itemSkill.Ray[3]));
+                                                Line line = new Line();
+                                                line.Opacity = (double)alpha / 255;
+                                                line.Fill = solidColorBrush;
+                                                line.Stroke = solidColorBrush;
+                                                line.StrokeThickness = 5;
+                                                line.Name = "skillEffectRay" + itemGroupBy.ID;
+                                                line.X1 = line.X2 = itemGroupBy.NowPosiSkill.X;
+                                                line.Y1 = line.Y2 = itemGroupBy.NowPosiSkill.Y;
+                                                line.HorizontalAlignment= HorizontalAlignment.Left;
+                                                line.VerticalAlignment= VerticalAlignment.Top;
+                                                re1.Children.Add(line);
+                                            }
                                         }));
                                     }
 
@@ -1007,6 +1042,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
             }
         }
+        #endregion
 
         #region HeuristicMethod
         /// <summary>
