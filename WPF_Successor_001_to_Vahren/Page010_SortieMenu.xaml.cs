@@ -371,39 +371,44 @@ namespace WPF_Successor_001_to_Vahren
             //兵が存在する都市かチェック
             if (convSpots.ClassSpot.ListMember.Count == 0 && convSpots.ClassSpot.ListMonster.Count == 0)
             {
-                var aa = mainWindow.ClassGameStatus.AllListSpot
-                        .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
-                        .First();
+                // 他の勢力に所属してた場合は、取り除く
+                if (convSpots.ClassSpot.PowerNameTag != String.Empty)
+                {
+                    convSpots.ClassPower.ListMember.Remove(convSpots.ClassSpot.NameTag);
+                }
 
                 //spotの所属情報を書き換え
                 convSpots.ClassSpot.PowerNameTag = selectedItem.PowerNameTag;
-                aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
-                var po = mainWindow.ClassGameStatus.ListPower
+                var newPower = mainWindow.ClassGameStatus.ListPower
                             .Where(x => x.NameTag == selectedItem.PowerNameTag)
                             .First();
-                po.ListMember.Add(convSpots.ClassSpot.NameTag);
+                newPower.ListMember.Add(convSpots.ClassSpot.NameTag);
+                convSpots.ClassPower = newPower;
 
-                convSpots.ClassPower.ListMember.Add(selectedItem.NameTag);
-
-                var ri = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, convSpots.ClassSpot.NameTag);
-                if (ri == null)
+                // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
+                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
+                if (gridMapStrategy != null)
                 {
-                    throw new Exception();
-                }
-                var flag = (Image)LogicalTreeHelper.FindLogicalNode(ri, "flag_img" + convSpots.ClassSpot.NameTag);
-                if (flag == null)
-                {
-                    throw new Exception();
-                }
-                else
-                {
-                    mainWindow.canvasMain.Children.Remove(flag);
+                    var flag = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotFlag" + convSpots.ClassSpot.NameTag);
+                    if (flag != null)
+                    {
+                        gridMapStrategy.Children.Remove(flag);
+                    }
 
                     // 旗を表示する
-                    Image flag_img = new Image();
-                    flag_img.Name = convSpots.ClassSpot.NameTag;
-                    flag_img = mainWindow.DisplayFlag(ri, 32, po.FlagPath);
-                    ri.Children.Add(flag_img);
+                    if (newPower.FlagPath != String.Empty)
+                    {
+                        int spot_size = 32;
+                        Image imgFlag = mainWindow.DisplayFlag(newPower.FlagPath);
+                        imgFlag.Name = "SpotFlag" + convSpots.ClassSpot.NameTag;
+                        imgFlag.Margin = new Thickness()
+                        {
+                            Left = convSpots.ClassSpot.X - spot_size / 4,
+                            Top = convSpots.ClassSpot.Y - spot_size / 2 - imgFlag.Height
+                        };
+                        gridMapStrategy.Children.Add(imgFlag);
+                        Panel.SetZIndex(imgFlag, 1);
+                    }
                 }
 
                 //unitの所属情報を書き換え
@@ -414,7 +419,7 @@ namespace WPF_Successor_001_to_Vahren
                         itemUnitGroup.Spot = convSpots.ClassSpot;
                         itemUnitGroup.FlagDisplay = true;
                         //unit移動
-                        aa.UnitGroup.Add(itemUnitGroup);
+                        convSpots.ClassSpot.UnitGroup.Add(itemUnitGroup);
                     }
                     //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
                     item.UnitGroup.Clear();

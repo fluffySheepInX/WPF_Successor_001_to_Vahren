@@ -139,7 +139,6 @@ NewFormatSpot spot0011
 	x = "2450";
 	y = "670";
 	map = "wefwefwefwefw";
-	member = "FlammLavoie";
 }
 
 NewFormatSpot spot0006
@@ -149,6 +148,7 @@ NewFormatSpot spot0006
 	x = "2180";
 	y = "730";
 	map = "wefwefwefwefw";
+	member = "FlammLavoie";
 }
 
 ssss s001

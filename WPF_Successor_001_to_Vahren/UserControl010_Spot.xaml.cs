@@ -297,7 +297,8 @@ namespace WPF_Successor_001_to_Vahren
                     panelUnit.MouseEnter += panel_MouseEnter;
                     panelUnit.MouseLeave += panel_MouseLeave;
                     // ユニット情報を表示するためのイベント
-                    panelUnit.MouseLeftButtonDown += unit_MouseLeftButtonDown;
+                    panelUnit.MouseLeftButtonUp += unit_MouseLeftButtonUp;
+                    panelUnit.MouseLeftButtonDown += Disable_MouseEvent;
                     if (_isControl)
                     {
                         // 操作可能な時だけドラッグ移動の準備をしておく
@@ -2384,7 +2385,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ユニット情報ウインドウを開く
-        private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        private void unit_MouseLeftButtonUp(object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
