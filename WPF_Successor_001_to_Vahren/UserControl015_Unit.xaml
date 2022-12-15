@@ -118,15 +118,18 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="580">
-                <Button x:Name="btnDismiss" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="解雇"
+                <Button x:Name="btnDismiss" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="解雇"
+                        BorderThickness="2" Focusable="False"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent" />
-                <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
+                <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+                        BorderThickness="2" Focusable="False"
                         Click="btnMercenary_Click"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent"
                         MouseEnter="btnMercenary_MouseEnter" />
-                <Button x:Name="btnItem" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="アイテム"
+                <Button x:Name="btnItem" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="アイテム"
+                        BorderThickness="2" Focusable="False"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent" />
             </StackPanel>

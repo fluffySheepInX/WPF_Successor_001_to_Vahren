@@ -44,16 +44,19 @@
             <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="435" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="55">
-                <Button x:Name="btnSelectAll" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="全部"
+                <Button x:Name="btnSelectAll" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="全部"
+                        BorderThickness="2" Focusable="False"
                         PreviewMouseDown="whole_MouseDown"
                         MouseRightButtonUp="Disable_MouseEvent"
                         MouseEnter="btnSelectAll_MouseEnter" />
-                <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="雇用"
+                <Button x:Name="btnMercenary" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="雇用"
+                        BorderThickness="2" Focusable="False"
                         Click="btnMercenary_Click"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent"
                         MouseEnter="btnMercenary_MouseEnter" />
-                <Button x:Name="btnPolitics" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="内政"
+                <Button x:Name="btnPolitics" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Content="内政"
+                        BorderThickness="2" Focusable="False"
                         PreviewMouseDown="Raise_ZOrder"
                         MouseRightButtonUp="Disable_MouseEvent" />
             </StackPanel>

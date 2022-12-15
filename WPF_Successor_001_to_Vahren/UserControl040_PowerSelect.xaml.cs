@@ -42,6 +42,28 @@ namespace WPF_Successor_001_to_Vahren
             // 勢力選択リストを表示する
             DisplayPowerList(mainWindow);
 
+            // ボタンの背景
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("006_WindowImage");
+                strings.Add("wnd5.png");
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
+                    BitmapImage theImage = new BitmapImage(new Uri(path));
+                    ImageBrush myImageBrush = new ImageBrush(theImage);
+                    myImageBrush.Stretch = Stretch.Fill;
+                    this.btnWatch.Background = myImageBrush;
+                    this.btnWatch.Foreground = Brushes.White;
+                    this.btnWatch.BorderBrush = Brushes.Silver;
+                    this.btnTalent.Background = myImageBrush;
+                    this.btnTalent.Foreground = Brushes.White;
+                    this.btnTalent.BorderBrush = Brushes.Silver;
+                }
+            }
+
             // ウインドウ枠
             SetWindowFrame(mainWindow);
         }
@@ -137,6 +159,8 @@ namespace WPF_Successor_001_to_Vahren
 
         public void DisplayPowerList(MainWindow mainWindow)
         {
+            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(255, 200, 200, 255));
+
             // 勢力リストを初期化する
             this.panelList.Children.Clear();
             int item_count = 0;
@@ -170,6 +194,7 @@ namespace WPF_Successor_001_to_Vahren
                 buttonItem.Height = item_height;
                 buttonItem.Tag = itemPower;
                 buttonItem.Background = Brushes.Transparent;
+                buttonItem.BorderBrush = mySolidColorBrush;
                 buttonItem.HorizontalContentAlignment = HorizontalAlignment.Left;
                 buttonItem.Focusable = false;
                 buttonItem.Click += btnPowerSelect_Click;
