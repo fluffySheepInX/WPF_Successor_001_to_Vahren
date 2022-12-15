@@ -988,6 +988,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 canvas.Background = Brushes.Red;
                                                 canvas.Height = itemSkill.H;
                                                 canvas.Width = itemSkill.W;
+                                                canvas.Opacity = (double)itemSkill.A / 255;
                                                 canvas.Margin = new Thickness()
                                                 {
                                                     Left = itemGroupBy.NowPosiSkill.X,
@@ -1010,8 +1011,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 line.Name = "skillEffectRay" + itemGroupBy.ID;
                                                 line.X1 = line.X2 = itemGroupBy.NowPosiSkill.X;
                                                 line.Y1 = line.Y2 = itemGroupBy.NowPosiSkill.Y;
-                                                line.HorizontalAlignment= HorizontalAlignment.Left;
-                                                line.VerticalAlignment= VerticalAlignment.Top;
+                                                line.HorizontalAlignment = HorizontalAlignment.Left;
+                                                line.VerticalAlignment = VerticalAlignment.Top;
                                                 re1.Children.Add(line);
                                             }
                                         }));

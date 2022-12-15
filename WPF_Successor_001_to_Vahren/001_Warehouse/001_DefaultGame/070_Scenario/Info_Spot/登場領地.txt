@@ -29,6 +29,9 @@
 	map = "wefwefwefwefw";
 
 	#都市のフレーバーテキスト
+	#タブと改行は取り除かれます。
+	#改行したい場合は$記号を改行位置に配置して下さい
+	#全角スペースは取り除かれません
 	text = "
 			帝国の極東と言えば、この都市であった。$
 			未開の地であった「ニュージ」と「ハラーハッフ」を$
@@ -117,7 +120,7 @@ NewFormatSpot spot0004
 	image = "099_WASTE6.png";
 	x = "2650";
 	y = "450";
-	map = "ca";
+	map = "ca3";
 	#滅亡等で中立になった時のユニット
 	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
 	#中立時初期ユニット
