@@ -216,7 +216,11 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 case DialogLiteral dialogLiteral:
                     if (dialogLiteral.Token.Type == TokenType.DIALOG)
                     {
-                        MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                        //MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                        // 改行記号がヴァーレンのイベントスクリプトと異なる？
+                        var dialog = new Win020_Dialog();
+                        dialog.SetData(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                        dialog.ShowDialog();
                     }
                     return null;
                 case ChoiceLiteral choiceLiteral:

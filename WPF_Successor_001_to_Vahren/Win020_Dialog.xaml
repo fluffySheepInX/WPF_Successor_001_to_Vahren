@@ -13,6 +13,8 @@
         Background="Transparent"
         KeyDown="Window_KeyDown"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        Activated="Window_Activated"
+        Deactivated="Window_Deactivated"
         mc:Ignorable="d">
     <Grid UseLayoutRounding="True">
         <Grid>
@@ -41,15 +43,23 @@
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
 
-        <Grid Margin="16">
+        <Grid Margin="16" MinWidth="170">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="55"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="10" FontSize="20" Foreground="White" Name="txtMain"
-                    TextWrapping="Wrap" LineHeight="30" MaxWidth="500"
-                    Text="ダイアログの文章"/>
-            <Button Grid.Row="1" Name="okButton" Margin="10" Width="100" FontSize="20" Content="確認"
+            <Border Margin="10" Height="100" HorizontalAlignment="Left" Visibility="Hidden"
+                    BorderBrush="White" BorderThickness="2" Name="borderLeft">
+                <Image Height="96" Name="imgFaceLeft"/>
+            </Border>
+            <Border Margin="10" Height="100" HorizontalAlignment="Right" Visibility="Hidden"
+                    BorderBrush="White" BorderThickness="2" Name="borderRight">
+                <Image Height="96" Name="imgFaceRight"/>
+            </Border>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" FontSize="20" Foreground="White"
+                    TextWrapping="Wrap" LineHeight="30" MaxWidth="500" Name="txtMain"
+                    Text="ダイアログの文章&#xa;３行までなら同じ高さ"/>
+            <Button Grid.Row="1" Name="btnOK" Margin="0,5,0,10" Width="100" Height="35" FontSize="20" Content="確認"
                     BorderThickness="2" Focusable="False" Click="btnOK_Click" />
         </Grid>
     </Grid>
