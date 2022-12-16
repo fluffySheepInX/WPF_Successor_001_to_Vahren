@@ -910,6 +910,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 default:
                     break;
             }
+            if (classGameStatus.CommonWindow == null)
+            {
+                return;
+            }
+            string fP = classGameStatus.CommonWindow.GetPathDirectoryGameTitleFullName();
 
             while (true)
             {
@@ -984,17 +989,41 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                             //スキル画像
                                             {
+                                                List<string> strings = new List<string>();
+                                                strings.Add(fP);
+                                                strings.Add("042_ChipImageSkillEffect");
+                                                if (true)
+                                                {
+                                                    strings.Add(itemSkill.Image + "N.png");
+                                                }
+                                                else
+                                                {
+                                                    strings.Add(itemSkill.Image + "NW.png");
+                                                }
+                                                string path = System.IO.Path.Combine(strings.ToArray());
+
+                                                var bi = new BitmapImage(new Uri(path));
+                                                Image image = new Image();
+                                                image.Stretch = Stretch.Fill;
+                                                image.Source = bi;
+                                                image.Margin = new Thickness(0, 0, 0, 0);
+                                                image.Height = itemSkill.H;
+                                                image.Width = itemSkill.W;
+                                                image.HorizontalAlignment = HorizontalAlignment.Left;
+                                                image.VerticalAlignment = VerticalAlignment.Top;
+
                                                 Canvas canvas = new Canvas();
-                                                canvas.Background = Brushes.Red;
+                                                canvas.Background = Brushes.Transparent;
                                                 canvas.Height = itemSkill.H;
                                                 canvas.Width = itemSkill.W;
                                                 canvas.Opacity = (double)itemSkill.A / 255;
                                                 canvas.Margin = new Thickness()
                                                 {
-                                                    Left = itemGroupBy.NowPosiSkill.X,
-                                                    Top = itemGroupBy.NowPosiSkill.Y
+                                                    Left = itemGroupBy.NowPosiSkill.X + (yokoUnit / 2),
+                                                    Top = itemGroupBy.NowPosiSkill.Y + (TakasaUnit / 2)
                                                 };
                                                 canvas.Name = "skillEffect" + itemGroupBy.ID;
+                                                canvas.Children.Add(image);
                                                 re1.Children.Add(canvas);
                                             }
                                             //ray表示
@@ -1007,10 +1036,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 line.Opacity = (double)alpha / 255;
                                                 line.Fill = solidColorBrush;
                                                 line.Stroke = solidColorBrush;
-                                                line.StrokeThickness = 5;
+                                                line.StrokeThickness = 3;
                                                 line.Name = "skillEffectRay" + itemGroupBy.ID;
-                                                line.X1 = line.X2 = itemGroupBy.NowPosiSkill.X;
-                                                line.Y1 = line.Y2 = itemGroupBy.NowPosiSkill.Y;
+                                                line.X1 = line.X2 = itemGroupBy.NowPosiSkill.X + (yokoUnit / 2);
+                                                line.Y1 = line.Y2 = itemGroupBy.NowPosiSkill.Y + (TakasaUnit / 2);
                                                 line.HorizontalAlignment = HorizontalAlignment.Left;
                                                 line.VerticalAlignment = VerticalAlignment.Top;
                                                 re1.Children.Add(line);

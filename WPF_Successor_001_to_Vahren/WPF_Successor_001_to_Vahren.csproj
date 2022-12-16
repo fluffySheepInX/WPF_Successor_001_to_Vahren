@@ -12,13 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
+    <EmbeddedResource Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
+    <None Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
+    <Page Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\001_MessageWindow\" />
     <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\005_LoadImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\010_MainMenuImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\001_TitleImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\010_EventImage\" />
     <Folder Include="001_Warehouse\001_DefaultGame\020_BattleUnitImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\" />
   </ItemGroup>
 
   <ItemGroup>
