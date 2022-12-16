@@ -210,5 +210,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region CommonWindow
+        private CommonWindow? commonWindow;
+        public CommonWindow? CommonWindow
+        {
+            get { return commonWindow; }
+            set { commonWindow = value; }
+        }
+        #endregion
     }
 }

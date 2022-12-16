@@ -36,6 +36,7 @@ namespace WPF_Successor_001_to_Vahren
             this.classTestBattle = classTestBattle;
             this.ClassConfigGameTitle = _classConfigGameTitle;
             this.ClassGameStatus = classGameStatus;
+            this.ClassGameStatus.CommonWindow = this;
 
             this.DataContext = new
             {

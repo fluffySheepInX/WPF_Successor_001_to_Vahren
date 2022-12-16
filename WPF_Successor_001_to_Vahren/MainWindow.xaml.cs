@@ -1701,6 +1701,7 @@ namespace WPF_Successor_001_to_Vahren
                             string a = System.IO.Path.Combine(this.Dir001_Warehouse, resultSplit[1]);
                             var b = System.IO.Directory.CreateDirectory(a);
                             ClassConfigGameTitle.DirectoryGameTitle.Add(b);
+                            this.ClassGameStatus.CommonWindow = this;
                         }
                         break;
                     case "Language":

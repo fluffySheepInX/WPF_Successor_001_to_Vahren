@@ -438,6 +438,10 @@ namespace WPF_Successor_001_to_Vahren
 
         #endregion
 
+        public string GetPathDirectoryGameTitleFullName()
+        {
+            return ClassConfigGameTitle.DirectoryGameTitle[NowNumberGameTitle].FullName;
+        }
 
         public static Canvas SetAndGetCanvasBattleBack(Canvas canvas,
                                                 int _sizeClientWinWidth,
