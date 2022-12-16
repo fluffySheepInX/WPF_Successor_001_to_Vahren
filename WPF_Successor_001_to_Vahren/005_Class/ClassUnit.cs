@@ -479,6 +479,10 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { nowPosiLeft = value; }
         }
         #endregion
+        public Point GetNowPosiCenter()
+        {
+            return new Point(NowPosiLeft.X + (ClassStaticBattle.yokoUnit / 2), NowPosiLeft.Y + (ClassStaticBattle.TakasaUnit / 2));
+        }
         #region OrderPosiLeft
         private Point orderPosiLeft;
 

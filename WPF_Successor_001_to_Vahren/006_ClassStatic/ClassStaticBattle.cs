@@ -16,6 +16,9 @@ using System.Diagnostics;
 using System.Windows.Documents;
 using System.Runtime.CompilerServices;
 using static WPF_Successor_001_to_Vahren.CommonWindow;
+using static System.Net.Mime.MediaTypeNames;
+using Image = System.Windows.Controls.Image;
+using Application = System.Windows.Application;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
@@ -877,8 +880,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
                                 var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString());
                                 if (re3 == null) return;
-                                re3.X2 = classUnit.NowPosiSkill.X;
-                                re3.Y2 = classUnit.NowPosiSkill.Y;
+                                re3.X2 = classUnit.NowPosiSkill.X + (classSkill.W / 2);
+                                re3.Y2 = classUnit.NowPosiSkill.Y + (classSkill.H / 2);
                             }));
                         }
                         catch (Exception)
@@ -962,11 +965,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         }
                                     }
 
-                                    itemGroupBy.NowPosiSkill = new Point() { X = itemGroupBy.NowPosiLeft.X, Y = itemGroupBy.NowPosiLeft.Y };
-                                    itemGroupBy.OrderPosiSkill = new Point() { X = itemDefUnitList.NowPosiLeft.X, Y = itemDefUnitList.NowPosiLeft.Y };
+                                    itemGroupBy.NowPosiSkill = itemGroupBy.GetNowPosiCenter();
+                                    itemGroupBy.OrderPosiSkill = itemDefUnitList.GetNowPosiCenter();
                                     var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                    from: new Point(itemGroupBy.NowPosiSkill.X, itemGroupBy.NowPosiSkill.Y),
-                                                    to: itemDefUnitList.NowPosiLeft
+                                                    from: itemGroupBy.NowPosiSkill,
+                                                    to: itemGroupBy.OrderPosiSkill
                                                     );
                                     itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
                                     itemGroupBy.FlagMovingSkill = true;
@@ -989,10 +992,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                             //スキル画像
                                             {
+                                                //二点間の角度を求める
+                                                var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiLeft.Y - itemGroupBy.NowPosiSkill.Y),
+                                                                            (float)(itemDefUnitList.NowPosiLeft.X - itemGroupBy.NowPosiSkill.X));
+                                                var degree = radian * (180 / Math.PI);
+
                                                 List<string> strings = new List<string>();
                                                 strings.Add(fP);
                                                 strings.Add("042_ChipImageSkillEffect");
-                                                if (true)
+                                                if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
                                                 {
                                                     strings.Add(itemSkill.Image + "N.png");
                                                 }
@@ -1019,10 +1027,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 canvas.Opacity = (double)itemSkill.A / 255;
                                                 canvas.Margin = new Thickness()
                                                 {
-                                                    Left = itemGroupBy.NowPosiSkill.X + (yokoUnit / 2),
-                                                    Top = itemGroupBy.NowPosiSkill.Y + (TakasaUnit / 2)
+                                                    Left = itemGroupBy.NowPosiSkill.X,
+                                                    Top = itemGroupBy.NowPosiSkill.Y
                                                 };
                                                 canvas.Name = "skillEffect" + itemGroupBy.ID;
+
+                                                RotateTransform rotateTransform2 =
+                                                    new RotateTransform(degree + 90);
+                                                canvas.RenderTransform = rotateTransform2;
+                                                canvas.RenderTransformOrigin = new Point(0.5, 0.5);
+
                                                 canvas.Children.Add(image);
                                                 re1.Children.Add(canvas);
                                             }
@@ -1038,8 +1052,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 line.Stroke = solidColorBrush;
                                                 line.StrokeThickness = 3;
                                                 line.Name = "skillEffectRay" + itemGroupBy.ID;
-                                                line.X1 = line.X2 = itemGroupBy.NowPosiSkill.X + (yokoUnit / 2);
-                                                line.Y1 = line.Y2 = itemGroupBy.NowPosiSkill.Y + (TakasaUnit / 2);
+                                                line.X1 = itemGroupBy.NowPosiSkill.X;
+                                                line.X2 = itemGroupBy.NowPosiSkill.X + (itemSkill.W / 2);
+                                                line.Y1 = itemGroupBy.NowPosiSkill.Y;
+                                                line.Y2 = itemGroupBy.NowPosiSkill.Y + (itemSkill.H / 2);
                                                 line.HorizontalAlignment = HorizontalAlignment.Left;
                                                 line.VerticalAlignment = VerticalAlignment.Top;
                                                 re1.Children.Add(line);
