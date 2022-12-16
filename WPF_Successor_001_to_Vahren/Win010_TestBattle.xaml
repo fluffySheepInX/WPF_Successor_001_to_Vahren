@@ -12,7 +12,7 @@
         MinWidth="800"
         Top="0"
         Left="0"
-        KeyDown="MainWindow_KeyDown" 
+        KeyDown="MainWindow_KeyDown" ContentRendered="CommonWindow_ContentRendered" 
         >
     <Canvas x:Name="canvasTop" Opacity="1" Background="Transparent" SizeChanged="canvasTop_SizeChanged">
         <Canvas x:Name="canvasUIRightTop"

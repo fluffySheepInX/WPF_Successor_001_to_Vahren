@@ -452,7 +452,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             Canvas backCanvas = new Canvas();
             backCanvas.Name = StringName.gridMapBattle;
-            backCanvas.Background = Brushes.AliceBlue;
+            backCanvas.Background = Brushes.Brown;
             backCanvas.Width = _sizeClientWinWidth;
             backCanvas.Height = _sizeClientWinHeight;
             backCanvas.Margin = new Thickness()

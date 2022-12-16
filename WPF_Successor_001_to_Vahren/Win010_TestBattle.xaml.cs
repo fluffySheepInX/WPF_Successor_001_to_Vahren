@@ -97,8 +97,6 @@ namespace WPF_Successor_001_to_Vahren
                     this.ClassGameStatus.ClassBattle.DefUnitGroup.Add(aaa);
                 }
             }
-
-            SetBattleMap();
         }
 
         /// <summary>
@@ -1025,5 +1023,9 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
+        private void CommonWindow_ContentRendered(object sender, EventArgs e)
+        {
+            SetBattleMap();
+        }
     }
 }
