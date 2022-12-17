@@ -21,18 +21,21 @@ using WPF_Successor_001_to_Vahren._005_Class;
 var dialog = new Win020_Dialog();
 
 文章を指定します。改行することもできます。
-文章が３行以下なら、顔絵がある場合と同じ高さで表示されます。
-４行以上だと、ウインドウが高くなっていきます。
+文章の長さによってウインドウは自動的に大きくなります。
+なお、確認ボタンは常に同じ位置になります。（親ウインドウの中央付近）
 dialog.SetData("なんたら国\nと友好が深まりました。");
 
 顔絵を追加する際は、ユニットの識別名（NameTag）かファイル名を指定します。
 通常は文章の左側に顔絵を表示するけど、右側に追加することもできます。
+中央に顔絵を追加すると、文章の下側になって、左右の顔絵との間隔が広がります。
 dialog.AddFace("AbelIrijhorn", "");
 dialog.AddFaceRight("", "face002.png");
+dialog.AddFaceCenter("", "face003.png");
 
-設定されてる顔絵を消すことも可能（左右個別に指定）
+設定されてる顔絵を消すことも可能（個別に指定）
 dialog.RemoveFace();
 dialog.RemoveFaceRight();
+dialog.RemoveFaceCenter();
 
 ダイアログを放置すると 5秒後に自動的に閉じます。
 マウス左ドラッグで動かすと、閉じなくなります。
@@ -51,7 +54,7 @@ dialog.ShowDialog();
 戻り値で、手動で閉じたか、自動で閉じたかを判別可能です。
 bool? result = dialog.ShowDialog();
 
-ダイアログが表示されてる状態で、
+ダイアログが表示されてる状態で、確認ボタンをクリックするか、
 Enter, Space, Z キーを押すと、閉じます。
 
 */
@@ -198,6 +201,51 @@ namespace WPF_Successor_001_to_Vahren
             this.rectWindowRight.Fill = myImageBrush;
         }
 
+        #region ウインドウ配置
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 親ウインドウの中央付近に配置する
+            double mainLeft = mainWindow.Left;
+            double mainTop = mainWindow.Top;
+            double mainWidth = mainWindow.ActualWidth;
+            double mainHeight = mainWindow.ActualHeight;
+
+            // 横方向は中央だけど、ウインドウの下端を同じ位置にする
+            double newLeft = mainLeft + mainWidth / 2 - this.ActualWidth / 2;
+            double newTop = mainTop + mainHeight / 2 - this.ActualHeight + 100;
+
+            // 画面の外に出ないようにする
+            double maxLeft = System.Windows.SystemParameters.WorkArea.Width - this.ActualWidth;
+            double maxTop = System.Windows.SystemParameters.WorkArea.Height - this.ActualHeight;
+            if (newLeft < 0)
+            {
+                newLeft = 0;
+            }
+            if (newLeft > maxLeft)
+            {
+                newLeft = maxLeft;
+            }
+            if (newTop < 0)
+            {
+                newTop = 0;
+            }
+            if (newTop > maxTop)
+            {
+                newTop = maxTop;
+            }
+
+            // 座標を整数にする
+            this.Left = Math.Truncate(newLeft);
+            this.Top = Math.Truncate(newTop);
+        }
+        #endregion
+
         #region ウインドウ移動
         private void Window_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
@@ -306,10 +354,11 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     imgFaceLeft.Source = bitimg1;
+                    imgFaceLeft.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderLeft.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(130, 10, txtMain.Margin.Right, 10);
+                    txtMain.Margin = new Thickness(130, 10, txtMain.Margin.Right, txtMain.Margin.Bottom);
                 }
             }
         }
@@ -321,10 +370,11 @@ namespace WPF_Successor_001_to_Vahren
             if (imgFaceLeft.Source != null)
             {
                 imgFaceLeft.Source = null;
+                imgFaceLeft.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
-                borderLeft.Visibility = Visibility.Hidden;
-                txtMain.Margin = new Thickness(15, 10, txtMain.Margin.Right, 10);
+                borderLeft.Visibility = Visibility.Collapsed;
+                txtMain.Margin = new Thickness(15, 10, txtMain.Margin.Right, txtMain.Margin.Bottom);
             }
         }
 
@@ -367,10 +417,11 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     imgFaceRight.Source = bitimg1;
+                    imgFaceRight.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderRight.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 130, 10);
+                    txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 130, txtMain.Margin.Bottom);
                 }
             }
         }
@@ -382,10 +433,74 @@ namespace WPF_Successor_001_to_Vahren
             if (imgFaceRight.Source != null)
             {
                 imgFaceRight.Source = null;
+                imgFaceRight.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
-                borderRight.Visibility = Visibility.Hidden;
-                txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 15, 10);
+                borderRight.Visibility = Visibility.Collapsed;
+                txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 15, txtMain.Margin.Bottom);
+            }
+        }
+
+        // 文章の下側に顔絵を追加する
+        public void AddFaceCenter(string strNameTag, string strFilename)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            string strFaceFile = string.Empty;
+
+            // ユニットの識別名を指定した場合
+            if (strNameTag != string.Empty)
+            {
+                var classUnit = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == strNameTag).FirstOrDefault();
+                if (classUnit != null)
+                {
+                    strFaceFile = classUnit.Face;
+                }
+            }
+
+            // ユニットに顔絵が無い場合でも、ファイル名を直接指定できる
+            if (strFaceFile == string.Empty)
+            {
+                strFaceFile = strFilename;
+            }
+
+            // 顔絵のファイルを読み込む
+            if (strFaceFile != string.Empty)
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("010_FaceImage");
+                strings.Add(strFaceFile);
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                    imgFaceCenter.Source = bitimg1;
+                    imgFaceCenter.Visibility = Visibility.Visible;
+
+                    // 枠を表示して間隔を空ける
+                    borderCenter.Visibility = Visibility.Visible;
+                    txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, txtMain.Margin.Right, 120);
+                }
+            }
+        }
+
+        // 文章の下側の顔絵を取り除く
+        public void RemoveFaceCenter()
+        {
+            // 顔絵のファイルを読み込む
+            if (imgFaceCenter.Source != null)
+            {
+                imgFaceCenter.Source = null;
+                imgFaceCenter.Visibility = Visibility.Collapsed;
+
+                // 枠を隠す
+                borderCenter.Visibility = Visibility.Collapsed;
+                txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, txtMain.Margin.Right, 10);
             }
         }
 

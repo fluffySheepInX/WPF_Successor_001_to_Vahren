@@ -7,10 +7,10 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         SizeToContent="WidthAndHeight"
-        WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        SourceInitialized="Window_SourceInitialized"
         KeyDown="Window_KeyDown"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Activated="Window_Activated"
@@ -43,23 +43,27 @@
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
 
-        <Grid Margin="16" MinWidth="170">
+        <Grid Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Border Margin="10" Height="100" HorizontalAlignment="Left" Visibility="Hidden"
+            <Border Margin="10" Height="100" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed"
                     BorderBrush="White" BorderThickness="2" Name="borderLeft">
-                <Image Height="96" Name="imgFaceLeft"/>
+                <Image Height="96" Visibility="Collapsed" Name="imgFaceLeft"/>
             </Border>
-            <Border Margin="10" Height="100" HorizontalAlignment="Right" Visibility="Hidden"
+            <Border Margin="10" Height="100" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed"
                     BorderBrush="White" BorderThickness="2" Name="borderRight">
-                <Image Height="96" Name="imgFaceRight"/>
+                <Image Height="96" Visibility="Collapsed" Name="imgFaceRight"/>
+            </Border>
+            <Border Margin="175,10" Height="100" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed"
+                    BorderBrush="White" BorderThickness="2" Name="borderCenter">
+                <Image Height="96" Visibility="Collapsed" Name="imgFaceCenter"/>
             </Border>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10" FontSize="20" Foreground="White"
                     TextWrapping="Wrap" LineHeight="30" MaxWidth="500" Name="txtMain"
-                    Text="ダイアログの文章&#xa;３行までなら同じ高さ"/>
-            <Button Grid.Row="1" Name="btnOK" Margin="0,5,0,10" Width="100" Height="35" FontSize="20" Content="確認"
+                    Text="ダイアログの文章&#10;改行もできる"/>
+            <Button Grid.Row="1" Name="btnOK" Margin="10,5,10,10" Width="120" Height="35" FontSize="20" Content="確認"
                     BorderThickness="2" Focusable="False" Click="btnOK_Click" />
         </Grid>
     </Grid>
