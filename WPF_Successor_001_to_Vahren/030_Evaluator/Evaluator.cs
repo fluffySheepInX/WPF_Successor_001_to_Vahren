@@ -219,16 +219,22 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         //MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
                         // 改行記号がヴァーレンのイベントスクリプトと異なる？
                         var dialog = new Win020_Dialog();
-                        dialog.SetData(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                        dialog.SetText(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
                         dialog.ShowDialog();
                     }
                     return null;
                 case ChoiceLiteral choiceLiteral:
                     if (choiceLiteral.Token.Type == TokenType.CHOICE)
                     {
+                        /*
                         Win005_Choice dlg = new Win005_Choice(choiceLiteral.Parameters.Select(x => x.Value).ToList());
                         dlg.ShowDialog();
                         enviroment.Set(choiceLiteral.VaName, new IntegerObject(dlg.ChoiceNumber));
+                        */
+                        var dialog = new Win030_Choice();
+                        dialog.SetList(choiceLiteral.Parameters.Select(x => x.Value).ToList());
+                        dialog.ShowDialog();
+                        enviroment.Set(choiceLiteral.VaName, new IntegerObject(dialog.ChoiceNumber));
                     }
                     return null;
                 case DialogSelectLiteral dialogSelectLiteral:
@@ -242,7 +248,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         }
                         */
                         var dialog = new Win025_Select();
-                        dialog.SetData(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+                        dialog.SetText(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
                         bool? result = dialog.ShowDialog();
                         if (result == true)
                         {
