@@ -1,4 +1,4 @@
-﻿<Window x:Class="WPF_Successor_001_to_Vahren.Win020_Dialog"
+﻿<Window x:Class="WPF_Successor_001_to_Vahren.Win025_Select"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,8 +13,6 @@
         SourceInitialized="Window_SourceInitialized"
         KeyDown="Window_KeyDown"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        Activated="Window_Activated"
-        Deactivated="Window_Deactivated"
         mc:Ignorable="d">
     <Grid UseLayoutRounding="True">
         <Grid>
@@ -52,19 +50,15 @@
                     BorderBrush="White" BorderThickness="2" Name="borderLeft">
                 <Image Height="96" Visibility="Collapsed" Name="imgFaceLeft"/>
             </Border>
-            <Border Margin="10" Height="100" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed"
-                    BorderBrush="White" BorderThickness="2" Name="borderRight">
-                <Image Height="96" Visibility="Collapsed" Name="imgFaceRight"/>
-            </Border>
-            <Border Margin="175,10" Height="100" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed"
-                    BorderBrush="White" BorderThickness="2" Name="borderCenter">
-                <Image Height="96" Visibility="Collapsed" Name="imgFaceCenter"/>
-            </Border>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,10,15,15" FontSize="20" Foreground="White"
                     TextWrapping="Wrap" LineHeight="30" MaxWidth="500" Name="txtMain"
                     Text="ダイアログの文章&#10;改行もできる"/>
-            <Button Grid.Row="1" Name="btnOK" Margin="10,5,10,10" Width="120" Height="35" FontSize="20" Content="確認"
-                    BorderThickness="2" Focusable="False" Click="btnOK_Click" />
+            <StackPanel Grid.Row="1" Margin="0,5,0,10" Height="35" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Name="btnOK" Margin="10,0" Width="120" FontSize="20" Content="決定"
+                        BorderThickness="2" Focusable="False" Click="btnOK_Click" />
+                <Button Name="btnCancel" Margin="10,0" Width="120" FontSize="20" Content="取消"
+                        BorderThickness="2" Focusable="False" Click="btnCancel_Click" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
