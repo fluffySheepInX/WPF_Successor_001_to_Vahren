@@ -28,7 +28,7 @@ namespace MapEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<List<(string, string, string, string)>>? MapData { get; set; } = null;
+        public List<List<ClassMap>>? MapData { get; set; } = null;
         public string NameSelectionMapTip { get; set; } = string.Empty;
         public bool NameSelectionMapTipObj { get; set; } = false;
         public int TipSize { get; set; } = 64;
@@ -41,8 +41,8 @@ namespace MapEditor
 
         private void win_Loaded(object sender, RoutedEventArgs e)
         {
-            this.txtMapHeight.Text = "10";
-            this.txtMapWidth.Text = "10";
+            this.txtMapHeight.Text = "50";
+            this.txtMapWidth.Text = "50";
             this.TipSize = (int)(slTipSize.Value * 12.8);
             int size = TipSize;
 
@@ -55,14 +55,14 @@ namespace MapEditor
             gridMaptip.Height = (size * wrapCanvas.Rows);
             gridMaptip.Width = (size * wrapCanvas.Columns);
 
-            MapData = new List<List<(string, string, string, string)>>();
+            MapData = new List<List<ClassMap>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<(string, string, string, string)>());
+                MapData.Add(new List<ClassMap>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add(("", "", "", ""));
+                    MapData[i].Add(new ClassMap());
                     DisplayGrid(size, i, j);
                 }
             }
@@ -75,6 +75,14 @@ namespace MapEditor
             border.Height = size;
             border.BorderBrush = Brushes.Black;
             border.BorderThickness = new Thickness() { Left = 1, Top = 1, Right = 1, Bottom = 1 };
+            var cm = new ContextMenu();
+            var i1 = new MenuItem() { Header = "退却位置とする" };
+            cm.Items.Add(i1);
+            var i2 = new MenuItem() { Header = "出撃位置とする" };
+            cm.Items.Add(i2);
+            var i3 = new MenuItem() { Header = "防衛位置とする" };
+            cm.Items.Add(i3);
+            border.ContextMenu = cm;
 
             Canvas canvas = new Canvas();
             canvas.Width = size;
@@ -82,13 +90,13 @@ namespace MapEditor
 
             if (MapData != null)
             {
-                if (MapData[col][hei].Item1 == String.Empty)
+                if (MapData[col][hei].field == String.Empty)
                 {
                     canvas.Background = Brushes.AliceBlue;
                 }
                 else
                 {
-                    var bi = new BitmapImage(new Uri(MapData[col][hei].Item1));
+                    var bi = new BitmapImage(new Uri(MapData[col][hei].field));
                     Image image = new Image();
                     image.Width = slTipSize.Value * 12.8;
                     image.Height = slTipSize.Value * 12.8;
@@ -192,45 +200,45 @@ namespace MapEditor
 
         private void DisplayTip(object sender)
         {
-            if (this.NameSelectionMapTip == String.Empty)
-            {
-                return;
-            }
+            if (this.NameSelectionMapTip == String.Empty) return;
+            if (Mouse.LeftButton != MouseButtonState.Pressed) return;
+            if (MapData == null) return;
 
-            if (Mouse.LeftButton != MouseButtonState.Pressed)
-            {
-                return;
-            }
-            if (MapData == null)
-            {
-                return;
-            }
             var target = (Canvas)sender;
-            if (target == null)
-            {
-                return;
-            }
-            if (target.Tag == null)
-            {
-                return;
-            }
+            if (target == null) return;
+            if (target.Tag == null) return;
+
             string? abc = Convert.ToString(target.Tag);
-            if (abc == null)
-            {
-                return;
-            }
+            if (abc == null) return;
+
             var strings = abc.Split(",");
             int first = int.Parse(strings[0]);
             int second = int.Parse(strings[1]);
             if (this.NameSelectionMapTipObj == true)
             {
                 MapData[first][second]
-                    = new(MapData[first][second].Item1, this.NameSelectionMapTip, MapData[first][second].Item3, MapData[first][second].Item4);
+                    = new ClassMap()
+                    {
+                        field = MapData[first][second].field,
+                        build = this.NameSelectionMapTip,
+                        flag = MapData[first][second].flag,
+                        unit = MapData[first][second].unit,
+                        direction = MapData[first][second].direction,
+                        formation = MapData[first][second].formation
+                    };
             }
             else
             {
                 MapData[first][second]
-                    = new(this.NameSelectionMapTip, MapData[first][second].Item2, MapData[first][second].Item3, MapData[first][second].Item4);
+                    = new ClassMap()
+                    {
+                        field = this.NameSelectionMapTip,
+                        build = MapData[first][second].build,
+                        flag = MapData[first][second].flag,
+                        unit = MapData[first][second].unit,
+                        direction = MapData[first][second].direction,
+                        formation = MapData[first][second].formation
+                    };
             }
 
             target.Children.Clear();
@@ -258,14 +266,14 @@ namespace MapEditor
             gridMaptip.Height = (size * wrapCanvas.Rows);
             gridMaptip.Width = (size * wrapCanvas.Columns);
 
-            MapData = new List<List<(string, string, string, string)>>();
+            MapData = new List<List<ClassMap>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<(string, string, string, string)>());
+                MapData.Add(new List<ClassMap>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add(new("", "", "", ""));
+                    MapData[i].Add(new ClassMap());
                     DisplayGrid(size, i, j);
                 }
             }
@@ -327,14 +335,14 @@ namespace MapEditor
                 return;
             }
 
-            MapData = new List<List<(string, string, string, string)>>();
+            MapData = new List<List<ClassMap>>();
 
             for (int i = 0; i < wrapCanvas.Columns; i++)
             {
-                MapData.Add(new List<(string, string, string, string)>());
+                MapData.Add(new List<ClassMap>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add(new(this.NameSelectionMapTip, "", "", ""));
+                    MapData[i].Add(new ClassMap(this.NameSelectionMapTip, "", 0, "", "", ""));
                 }
             }
 
@@ -383,7 +391,7 @@ namespace MapEditor
                     var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
                     foreach (var item in b)
                     {
-                        groupString.Add(item.Key.Item1);
+                        groupString.Add(item.Key.field);
                     }
                 }
                 for (int i = 0; i < MapData.Count; i++)
@@ -391,11 +399,11 @@ namespace MapEditor
                     var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
                     foreach (var item in b)
                     {
-                        if (item.Key.Item2 == String.Empty)
+                        if (item.Key.build == String.Empty)
                         {
                             continue;
                         }
-                        groupString2.Add(item.Key.Item2);
+                        groupString2.Add(item.Key.build);
                     }
                 }
             }
@@ -429,42 +437,53 @@ namespace MapEditor
             {
                 for (int k = 0; k < MapData[i].Count; k++)
                 {
-                    targetString.TryGetValue(MapData[i][k].Item1, out string? value);
-                    if (value == null)
+                    targetString.TryGetValue(MapData[i][k].field, out string? valueField);
+                    if (valueField == null)
                     {
                         continue;
                     }
-                    string value2 = "";
-                    targetString.TryGetValue(MapData[i][k].Item2, out string? getValue2);
-                    if (getValue2 == null)
+                    string getValueBuild = "";
+                    targetString.TryGetValue(MapData[i][k].build, out string? valueBuild);
+                    if (valueBuild == null)
                     {
-                        value2 = "null";
+                        getValueBuild = "null";
                     }
                     else
                     {
-                        value2 = getValue2;
+                        getValueBuild = valueBuild;
+                    }
+                    string unit;
+                    if (MapData[i][k].unit == String.Empty)
+                    {
+                        unit = "null";
+                    }
+                    else
+                    {
+                        unit = MapData[i][k].unit;
                     }
                     string houkou;
-                    if (MapData[i][k].Item3 == String.Empty)
+                    if (MapData[i][k].direction == String.Empty)
                     {
                         houkou = "null";
                     }
                     else
                     {
-                        houkou = MapData[i][k].Item3;
+                        houkou = MapData[i][k].direction;
                     }
                     string zinkei;
-                    if (MapData[i][k].Item4 == String.Empty)
+                    if (MapData[i][k].formation == String.Empty)
                     {
                         zinkei = "null";
                     }
                     else
                     {
-                        zinkei = MapData[i][k].Item4;
+                        zinkei = MapData[i][k].formation;
                     }
 
-                    stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(value) +
-                                    "*" + System.IO.Path.GetFileNameWithoutExtension(value2) +
+                    stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(valueField) +
+                                    "*" + System.IO.Path.GetFileNameWithoutExtension(getValueBuild) +
+                                    "*" + Convert.ToString(MapData[i][k].flag) +
+                                    "*" + unit +
                                     "*" + houkou +
                                     "*" + zinkei +
                                     ",");
@@ -486,6 +505,11 @@ namespace MapEditor
                 slTipSize.Value = slTipSize.Value + ((e.Delta > 0) ? 1 : -1);
                 SizeChangeTip((int)(slTipSize.Value * 12.8));
             }
+        }
+
+        private void btnPreMap_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

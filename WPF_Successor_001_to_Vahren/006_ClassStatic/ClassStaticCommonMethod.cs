@@ -133,7 +133,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             MapDetail mapDetail = new MapDetail();
                             var sonomama = re[i].Replace(System.Environment.NewLine, string.Empty);
+
                             var splitA = sonomama.Split("*");
+                            
                             map.TryGetValue(splitA[0], out string? mapValue);
                             if (mapValue != null) mapDetail.Tip = mapValue;
                             map.TryGetValue(splitA[1], out string? mapValue2);

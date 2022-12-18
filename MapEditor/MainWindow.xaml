@@ -55,7 +55,7 @@
                             </StackPanel>
                         </Canvas>
                     </Border>
-                    <Border  Height="120" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Height="120" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
                         <Canvas Height="110" Background="Azure">
                             <Canvas Height="45" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <Button Content="実行" Canvas.Left="67" Canvas.Top="12"></Button>
@@ -91,7 +91,7 @@
                             </Canvas>
                         </Canvas>
                     </Border>
-                    <Border  Height="130" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Height="130" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
                         <Canvas Height="120" Background="Azure">
                             <Button Content="前undo" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64"/>
                             <Button Content="先undo" Canvas.Top="20" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64"/>
@@ -110,6 +110,16 @@
                             </Button>
 
                         </Canvas>
+                    </Border>
+                    <Border Height="130" Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=StackPanel}}" Background="#454545" BorderBrush="Black" BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Button x:Name="btnPreMap" Canvas.Left="160" Height="120" Width="200" Canvas.Top="10" Click="btnPreMap_Click">
+                            <TextBlock>マップをプレビューする
+                                    <LineBreak />実際に使った時と。
+                                    <LineBreak />外観が異なることもありえます。
+                                    <LineBreak />参考程度にして下さい。
+                            </TextBlock>
+                        </Button>
+
                     </Border>
                 </StackPanel>
             </ScrollViewer>

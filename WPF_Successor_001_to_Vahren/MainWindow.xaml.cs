@@ -1050,7 +1050,7 @@ namespace WPF_Successor_001_to_Vahren
             // ダイアログを表示する
             //MessageBox.Show("出撃します");
             var dialog = new Win020_Dialog();
-            dialog.SetData(classPowerAndCity.ClassSpot.Name + "へ出撃します。\n青枠の領地から編成してください。");
+            dialog.SetText(classPowerAndCity.ClassSpot.Name + "へ出撃します。\n青枠の領地から編成してください。");
             dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
             dialog.ShowDialog();
 
