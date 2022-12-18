@@ -13,43 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
 
-/*
-選択ダイアログの使い方
-
-まずは、初期化します。
-var dialog = new Win025_Select();
-
-文章を指定します。改行することもできます。
-文章の長さによってウインドウは自動的に大きくなります。
-なお、ボタンは常に同じ位置になります。（親ウインドウの中央付近）
-dialog.SetText("なんたら国でよろしいですか？");
-
-顔絵を追加する際は、ユニットの識別名（NameTag）かファイル名を指定します。
-dialog.AddFace("AbelIrijhorn", "");
-
-設定されてる顔絵を消すことも可能
-dialog.RemoveFace();
-
-ダイアログを表示してる間、親ウインドウへ入力できなくなります。
-bool? result = dialog.ShowDialog();
-
-戻り値で、どちらのボタンを押したかを判別します。
-true  = 決定ボタン
-false = 取消ボタン
-
-キー入力で選択することも可能です。
-Enter, Space, Z キーを押すと、決定します。
-X, Insert, NumPad0 キーを押すと、取り消します。
-
-*/
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
-    /// Win025_Select.xaml の相互作用ロジック
+    /// Win030_Choice.xaml の相互作用ロジック
     /// </summary>
-    public partial class Win025_Select : Window
+    public partial class Win030_Choice : Window
     {
-        public Win025_Select()
+        public Win030_Choice()
         {
             InitializeComponent();
 
@@ -61,28 +32,6 @@ namespace WPF_Successor_001_to_Vahren
 
             // 親ウインドウをセットする
             this.Owner = mainWindow;
-
-            // ボタンの背景
-            {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
-                {
-                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    ImageBrush myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
-                    this.btnOK.Background = myImageBrush;
-                    this.btnOK.Foreground = Brushes.White;
-                    this.btnOK.BorderBrush = Brushes.Silver;
-                    this.btnCancel.Background = myImageBrush;
-                    this.btnCancel.Foreground = Brushes.White;
-                    this.btnCancel.BorderBrush = Brushes.Silver;
-                }
-            }
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);
@@ -192,9 +141,9 @@ namespace WPF_Successor_001_to_Vahren
             double mainWidth = mainWindow.ActualWidth;
             double mainHeight = mainWindow.ActualHeight;
 
-            // 横方向は中央だけど、ウインドウの下端を同じ位置にする
+            // 縦横両方とも中央位置にする
             double newLeft = mainLeft + mainWidth / 2 - this.ActualWidth / 2;
-            double newTop = mainTop + mainHeight / 2 - this.ActualHeight + 100;
+            double newTop = mainTop + mainHeight / 2 - this.ActualHeight / 2;
 
             // 画面の外に出ないようにする
             double maxLeft = System.Windows.SystemParameters.WorkArea.Width - this.ActualWidth;
@@ -230,111 +179,164 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
+
         #region キー入力
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            // Enter, Space, Z キー = OK
-            if ((e.Key == Key.Return) || (e.Key == Key.Space) || (e.Key == Key.Z))
+            int input_num = -1;
+
+            // 数字キー
+            if ((e.Key == Key.D0) || (e.Key == Key.NumPad0))
             {
+                // 選択肢が無い状態でも 0キーだけは常に受け付ける
+                this.ChoiceNumber = 0;
+
                 // 戻り値をセットすると自動的に閉じる
                 DialogResult = true;
             }
-            // X, Insert, NumPad0 キー = Cancel
-            else if ((e.Key == Key.X) || (e.Key == Key.Insert) || (e.Key == Key.NumPad0))
+            else if ((e.Key == Key.D1) || (e.Key == Key.NumPad1))
             {
+                input_num = 1;
+            }
+            else if ((e.Key == Key.D2) || (e.Key == Key.NumPad2))
+            {
+                input_num = 2;
+            }
+            else if ((e.Key == Key.D3) || (e.Key == Key.NumPad3))
+            {
+                input_num = 3;
+            }
+            else if ((e.Key == Key.D4) || (e.Key == Key.NumPad4))
+            {
+                input_num = 4;
+            }
+            else if ((e.Key == Key.D5) || (e.Key == Key.NumPad5))
+            {
+                input_num = 5;
+            }
+            else if ((e.Key == Key.D6) || (e.Key == Key.NumPad6))
+            {
+                input_num = 6;
+            }
+            else if ((e.Key == Key.D7) || (e.Key == Key.NumPad7))
+            {
+                input_num = 7;
+            }
+            else if ((e.Key == Key.D8) || (e.Key == Key.NumPad8))
+            {
+                input_num = 8;
+            }
+            else if ((e.Key == Key.D9) || (e.Key == Key.NumPad9))
+            {
+                input_num = 9;
+            }
+
+            // 選択肢が存在する番号だけ返す
+            if ((input_num > 0) && (input_num < this.panelList.Children.Count))
+            {
+                this.ChoiceNumber = input_num;
+
                 // 戻り値をセットすると自動的に閉じる
-                DialogResult = false;
+                DialogResult = true;
             }
         }
         #endregion
 
-        // 決定ボタン = OK
-        private void btnOK_Click(object sender, RoutedEventArgs e)
-        {
-            // 戻り値をセットすると自動的に閉じる
-            DialogResult = true;
-        }
-
-        // 取消ボタン = Cancel
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            // 戻り値をセットすると自動的に閉じる
-            DialogResult = false;
-        }
-
         // 文章を指定する
-        public void SetText(string txtInput)
+        public void SetTitle(string txtInput)
         {
-            // 文章
-            this.txtMain.Text = txtInput;
+            // タイトル文章
+            this.txtTitle.Text = txtInput;
         }
 
-        #region 顔絵表示
+        // 選択されたボタンの番号 0,1,2,~
+        public int ChoiceNumber { get; set; }
 
-        // 文章の左側に顔絵を追加する
-        public void AddFace(string strNameTag, string strFilename)
+        // 選択肢を設定する
+        public void SetList(List<string> ChoiceList)
         {
+            const int button_height = 45;
+
+            // 既に存在する選択肢を消去する
+            this.panelList.Children.Clear();
+            if (ChoiceList.Count == 0)
+            {
+                // 選択肢が無くてもエラーにしない
+                Button btnItem = new Button();
+                btnItem.Content = "選択肢を設定してください";
+                btnItem.Height = button_height;
+                btnItem.FontSize = 20;
+                btnItem.Focusable = false;
+                btnItem.Tag = 0;
+                btnItem.Click += btnItem_Click;
+                this.panelList.Children.Add(btnItem);
+                this.scrollList.Height = button_height;
+                return;
+            }
+
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
                 return;
             }
 
-            string strFaceFile = string.Empty;
-
-            // ユニットの識別名を指定した場合
-            if (strNameTag != string.Empty)
-            {
-                var classUnit = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == strNameTag).FirstOrDefault();
-                if (classUnit != null)
-                {
-                    strFaceFile = classUnit.Face;
-                }
-            }
-
-            // ユニットに顔絵が無い場合でも、ファイル名を直接指定できる
-            if (strFaceFile == string.Empty)
-            {
-                strFaceFile = strFilename;
-            }
-
-            // 顔絵のファイルを読み込む
-            if (strFaceFile != string.Empty)
+            // ボタンの背景
+            ImageBrush? myImageBrush = null;
             {
                 List<string> strings = new List<string>();
                 strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("010_FaceImage");
-                strings.Add(strFaceFile);
+                strings.Add("006_WindowImage");
+                strings.Add("wnd5.png");
                 string path = System.IO.Path.Combine(strings.ToArray());
                 if (System.IO.File.Exists(path))
                 {
-                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    imgFaceLeft.Source = bitimg1;
-                    imgFaceLeft.Visibility = Visibility.Visible;
-
-                    // 枠を表示して間隔を空ける
-                    borderLeft.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(130, 10, 15, 15);
+                    // 画像が存在する時だけ、ボタンの背景にする
+                    BitmapImage theImage = new BitmapImage(new Uri(path));
+                    myImageBrush = new ImageBrush(theImage);
+                    myImageBrush.Stretch = Stretch.Fill;
                 }
             }
-        }
 
-        // 文章の左側の顔絵を取り除く
-        public void RemoveFace()
-        {
-            // 顔絵のファイルを読み込む
-            if (imgFaceLeft.Source != null)
+            // ボタンを追加していく
+            int i;
+            for (i = 0; i < ChoiceList.Count; i++)
             {
-                imgFaceLeft.Source = null;
-                imgFaceLeft.Visibility = Visibility.Collapsed;
-
-                // 枠を隠す
-                borderLeft.Visibility = Visibility.Collapsed;
-                txtMain.Margin = new Thickness(15, 10, 15, 15);
+                Button btnItem = new Button();
+                btnItem.Content = ChoiceList[i];
+                btnItem.Height = button_height;
+                btnItem.Margin = new Thickness(10,10,10,10);
+                btnItem.Padding = new Thickness(15,0,15,0);
+                btnItem.FontSize = 20;
+                btnItem.BorderThickness = new Thickness(2,2,2,2);
+                if (myImageBrush != null)
+                {
+                    btnItem.Background = myImageBrush;
+                    btnItem.Foreground = Brushes.White;
+                    btnItem.BorderBrush = Brushes.Silver;
+                }
+                btnItem.Focusable = false;
+                btnItem.Tag = i;
+                btnItem.Click += btnItem_Click;
+                this.panelList.Children.Add(btnItem);
             }
+
+            // 一度に表示するのは 6個まで
+            if (i > 6)
+            {
+                i = 6;
+            }
+            this.scrollList.Height = (button_height + 20) * i;
+            // ウインドウが縦長にならないようにする
+            this.gridMain.MinWidth = (button_height + 20) * i + 40;
         }
 
-        #endregion
+        private void btnItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.ChoiceNumber = Convert.ToInt32(((Button)sender).Tag);
+
+            // 戻り値をセットすると自動的に閉じる
+            DialogResult = true;
+        }
 
     }
 }

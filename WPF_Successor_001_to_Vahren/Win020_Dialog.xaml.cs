@@ -22,8 +22,8 @@ var dialog = new Win020_Dialog();
 
 文章を指定します。改行することもできます。
 文章の長さによってウインドウは自動的に大きくなります。
-なお、確認ボタンは常に同じ位置になります。（親ウインドウの中央付近）
-dialog.SetData("なんたら国\nと友好が深まりました。");
+なお、ボタンは常に同じ位置になります。（親ウインドウの中央付近）
+dialog.SetText("なんたら国\nと友好が深まりました。");
 
 顔絵を追加する際は、ユニットの識別名（NameTag）かファイル名を指定します。
 通常は文章の左側に顔絵を表示するけど、右側に追加することもできます。
@@ -69,25 +69,18 @@ namespace WPF_Successor_001_to_Vahren
         {
             InitializeComponent();
 
-            // 親ウインドウをセットする
-            this.Owner = Application.Current.MainWindow;
-
             // タイマーの初期化
             _timerClose.Tick += new EventHandler(Window_AutoClose);
             _timerClose.Interval = TimeSpan.FromSeconds(5); // 5秒間隔に設定
-        }
 
-        // 文章を指定する
-        public void SetData(string txtInput)
-        {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
                 return;
             }
 
-            // 文章
-            this.txtMain.Text = txtInput;
+            // 親ウインドウをセットする
+            this.Owner = mainWindow;
 
             // ボタンの背景
             {
@@ -318,6 +311,13 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         #endregion
+
+        // 文章を指定する
+        public void SetText(string txtInput)
+        {
+            // 文章
+            this.txtMain.Text = txtInput;
+        }
 
         #region 顔絵表示
 
