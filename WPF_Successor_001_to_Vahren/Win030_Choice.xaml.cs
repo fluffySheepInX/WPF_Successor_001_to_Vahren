@@ -13,6 +13,30 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
 
+/*
+選択肢ダイアログの使い方
+
+まずは、初期化します。
+var dialog = new Win030_Choice();
+
+選択肢のリストを指定します。
+項目数や長さによってウインドウは自動的に大きくなります。
+dialog.SetList(List<string> ChoiceList);
+
+タイトルを指定することもできます。
+dialog.SetTitle("どれにしますか？");
+
+ダイアログを表示してる間、親ウインドウへ入力できなくなります。
+dialog.ShowDialog();
+
+int型で選択した番号を取得します。
+int result = dialog.ChoiceNumber;
+
+キー入力で選択することも可能です。
+0 ~ 9 までの数字キーに対応してます。
+（選択肢が10個を超えるとキー入力では選択できません。）
+
+*/
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
