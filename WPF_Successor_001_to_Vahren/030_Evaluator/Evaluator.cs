@@ -234,8 +234,17 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                 case DialogSelectLiteral dialogSelectLiteral:
                     if (dialogSelectLiteral.Token.Type == TokenType.SELECT)
                     {
+                        /*
                         MessageBoxResult result = MessageBox.Show(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine), "スキップ時はNoを選択", MessageBoxButton.YesNo);
                         if (result == MessageBoxResult.Yes)
+                        {
+                            enviroment.Set(dialogSelectLiteral.Parameters[0].Value, new IntegerObject(1));
+                        }
+                        */
+                        var dialog = new Win025_Select();
+                        dialog.SetData(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+                        bool? result = dialog.ShowDialog();
+                        if (result == true)
                         {
                             enviroment.Set(dialogSelectLiteral.Parameters[0].Value, new IntegerObject(1));
                         }
