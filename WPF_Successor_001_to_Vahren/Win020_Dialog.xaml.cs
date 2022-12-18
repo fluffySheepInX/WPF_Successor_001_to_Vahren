@@ -38,7 +38,7 @@ dialog.RemoveFaceRight();
 dialog.RemoveFaceCenter();
 
 ダイアログを放置すると 5秒後に自動的に閉じます。
-マウス左ドラッグでウインドウを動かすと、閉じなくなります。
+マウスでウインドウを動かすか、C キーを押すと、閉じなくなります。
 他のウインドウの後ろにある時も、閉じません。
 最前面に戻すと、自動的に閉じるようになります。
 
@@ -265,6 +265,12 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 戻り値をセットすると自動的に閉じる
                 DialogResult = true;
+            }
+            // C キー = Menu
+            else if (e.Key == Key.C)
+            {
+                // タイマーを止める
+                _timerClose.Stop();
             }
         }
         #endregion
