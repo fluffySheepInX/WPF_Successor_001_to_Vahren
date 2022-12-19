@@ -4306,6 +4306,11 @@ namespace WPF_Successor_001_to_Vahren
 
         public void DoWork(SystemFunctionLiteral systemFunctionLiteral)
         {
+            if (Application.Current == null)
+            {
+                return;
+            }
+
             Frame frame = new Frame();
 
             // メッセージ枠に表示する文字列を設定する。
@@ -4344,7 +4349,15 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 待っている間も一定時間ごとに表示を更新する。
                 // これによって、ウインドウの操作や入力の処理が動くっぽい。
-                DoEvents();
+                if (this.IsActive == true)
+                {
+                    DoEvents();
+                }
+                else
+                {
+                    //アプリケーションを強制終了します
+                    Environment.Exit(0);
+                }
             }
             Thread.Sleep(1);
             condition.Reset();
