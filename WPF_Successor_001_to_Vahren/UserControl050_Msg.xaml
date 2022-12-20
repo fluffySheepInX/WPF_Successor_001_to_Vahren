@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Width="950" Height="350">
+             Width="1050" Height="350">
     <Canvas Background="Transparent" >
-        <Grid Name="gridMain" UseLayoutRounding="True" Width="932" Height="332"
+        <Grid Name="gridMain" UseLayoutRounding="True" Width="1024" Height="314"
                 MouseLeftButtonUp="win_MouseLeftButtonUp">
             <Grid>
                 <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -36,13 +36,45 @@
             </Grid>
 
             <Grid Margin="16">
-                <TextBlock Margin="20,15,20,0" FontSize="26" Foreground="White" Name="txtMain"
+                <TextBlock Margin="20,20,20,0" FontSize="26" Foreground="White" Name="txtMain"
                         TextWrapping="Wrap" LineHeight="50"
-                        Text="長い文章を一文字ずつ表示するようにみえるけど。標準だと３行までになるけど、文字の流れる速度がかなり速いので、ほとんど全くもって分からないような。&#10;テキストウインドウの文章です。改行することもできます。長い文章は自動的に改行されます。これくらいかな？"/>
-                <Image Name="imgNext" VerticalAlignment="Bottom" 
-                        Width="24" Height="24" Source="./001_Warehouse/001_DefaultGame/006_WindowImage/nextmsg.png"/>
+                        Text="テキストウィンドウの文章です。改行することもできます。とても長い文章は自動的に改行されます。"/>
+                <Border Margin="0,8,20,0" HorizontalAlignment="Right" VerticalAlignment="Center" BorderBrush="White" BorderThickness="2" Name="borderFace">
+                    <Image Name="imgFace"/>
+                </Border>
+                <Image Name="imgNext" VerticalAlignment="Bottom" Width="24" Height="24" />
+            </Grid>
+
+            <Grid Name="gridSub" Margin="0,-36,12,0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="60">
+                <Grid>
+                    <Rectangle Margin="0,8,0,24" Width="8" HorizontalAlignment="Right" Name="rectShadowRight2" Fill="Black" Opacity="0.5" />
+                    <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="16"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="16"/>
+                        <RowDefinition />
+                        <RowDefinition Height="16"/>
+                    </Grid.RowDefinitions>
+                    <Image Name="imgWindowLeftTop2" />
+                    <Rectangle Grid.Column="1" Name="rectWindowTop2" />
+                    <Image Grid.Column="2" Name="imgWindowRightTop2" />
+                    <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="20,0">
+                        <TextBlock Margin="10,0" FontSize="20" Foreground="#ffc800" Name="txtHelp" Text="肩書" />
+                        <TextBlock Margin="10,0" FontSize="20" Foreground="White" Name="txtName" Text="名前" />
+                    </StackPanel>
+                    <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
+                    <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
+                    <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
+                    <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
+                </Grid>
             </Grid>
         </Grid>
-
     </Canvas>
 </UserControl>

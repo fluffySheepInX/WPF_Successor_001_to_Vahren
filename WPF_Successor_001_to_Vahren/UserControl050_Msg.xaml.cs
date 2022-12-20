@@ -64,7 +64,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // ウインドウ枠
-            SetWindowFrame(mainWindow);
+            SetWindowFrame2(mainWindow);
 
             // 後ろのコントロールに入力できないよう、画面全体に広げる
             this.Width = mainWindow.canvasTop.ActualWidth;
@@ -85,7 +85,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ウインドウ枠を作る
-        private void SetWindowFrame(MainWindow mainWindow)
+        private void SetWindowFrame2(MainWindow mainWindow)
         {
             // ウインドウスキンを読み込む
             List<string> strings = new List<string>();
@@ -110,11 +110,13 @@ namespace WPF_Successor_001_to_Vahren
                 myImageBrush = new ImageBrush(skin_bitmap);
                 myImageBrush.Stretch = Stretch.Fill;
                 this.rectWindowPlane.Fill = myImageBrush;
+                this.rectWindowPlane2.Fill = myImageBrush;
                 return;
             }
 
             // 不要な背景を表示しない
             this.rectShadowRight.Visibility = Visibility.Hidden;
+            this.rectShadowRight2.Visibility = Visibility.Hidden;
             this.rectShadowBottom.Visibility = Visibility.Hidden;
 
             // 中央
@@ -123,22 +125,28 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.Stretch = Stretch.Fill;
             this.rectWindowPlane.Margin = new Thickness(4, 4, 4, 4);
             this.rectWindowPlane.Fill = myImageBrush;
+            this.rectWindowPlane2.Margin = new Thickness(4, 4, 4, 4);
+            this.rectWindowPlane2.Fill = myImageBrush;
 
             // 左上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 0, 16, 16);
             this.imgWindowLeftTop.Source = new CroppedBitmap(skin_bitmap, rect);
+            this.imgWindowLeftTop2.Source = new CroppedBitmap(skin_bitmap, rect);
 
             // 右上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 0, 16, 16);
             this.imgWindowRightTop.Source = new CroppedBitmap(skin_bitmap, rect);
+            this.imgWindowRightTop2.Source = new CroppedBitmap(skin_bitmap, rect);
 
             // 左下
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 48, 16, 16);
             this.imgWindowLeftBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+            this.imgWindowLeftBottom2.Source = new CroppedBitmap(skin_bitmap, rect);
 
             // 右上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 48, 16, 16);
             this.imgWindowRightBottom.Source = new CroppedBitmap(skin_bitmap, rect);
+            this.imgWindowRightBottom2.Source = new CroppedBitmap(skin_bitmap, rect);
 
             // 上
             rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 0, 32, 16);
@@ -147,6 +155,7 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowTop.Fill = myImageBrush;
+            this.rectWindowTop2.Fill = myImageBrush;
 
             // 下
             rect = new Int32Rect(skin_bitmap.PixelWidth - 48, 48, 32, 16);
@@ -155,6 +164,7 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowBottom.Fill = myImageBrush;
+            this.rectWindowBottom2.Fill = myImageBrush;
 
             // 左
             rect = new Int32Rect(skin_bitmap.PixelWidth - 64, 16, 16, 32);
@@ -163,6 +173,7 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowLeft.Fill = myImageBrush;
+            this.rectWindowLeft2.Fill = myImageBrush;
 
             // 右
             rect = new Int32Rect(skin_bitmap.PixelWidth - 16, 16, 16, 32);
@@ -171,6 +182,7 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowRight.Fill = myImageBrush;
+            this.rectWindowRight2.Fill = myImageBrush;
         }
 
         // マウスの左クリック
@@ -182,7 +194,6 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            //MessageBox.Show("マウス入力 ok ?");
             // カウンターが 0よりも多い時だけ減らす
             if (mainWindow.condition.IsSet == false)
             {
@@ -197,6 +208,115 @@ namespace WPF_Successor_001_to_Vahren
             // 文章
             this.txtMain.Text = txtInput;
 
+        }
+
+        // 名前を指定する
+        public void AddName(string txtInput)
+        {
+            if (txtInput == string.Empty)
+            {
+                this.RemoveName();
+                return;
+            }
+
+            // 名前
+            this.txtName.Text = txtInput;
+            this.txtName.Visibility = Visibility.Visible;
+
+            // タイトル全体を表示する
+            this.gridSub.Visibility = Visibility.Visible;
+        }
+        public void RemoveName()
+        {
+            // 名前を消す
+            this.txtName.Text = string.Empty;
+            this.txtName.Visibility = Visibility.Collapsed;
+
+            // 名前と肩書の両方が空なら、タイトル全体を隠す
+            if (this.txtHelp.Text == string.Empty)
+            {
+                this.gridSub.Visibility = Visibility.Hidden;
+            }
+        }
+
+        // 肩書を指定する
+        public void AddHelp(string txtInput)
+        {
+            if (txtInput == string.Empty)
+            {
+                this.RemoveHelp();
+                return;
+            }
+
+            // 肩書
+            this.txtHelp.Text = txtInput;
+            this.txtHelp.Visibility = Visibility.Visible;
+
+            // タイトル全体を表示する
+            this.gridSub.Visibility = Visibility.Visible;
+        }
+        public void RemoveHelp()
+        {
+            // 肩書を消す
+            this.txtHelp.Text = string.Empty;
+            this.txtHelp.Visibility = Visibility.Collapsed;
+
+            // 名前と肩書の両方が空なら、タイトル全体を隠す
+            if (this.txtName.Text == string.Empty)
+            {
+                this.gridSub.Visibility = Visibility.Hidden;
+            }
+        }
+
+        // 顔絵を指定する
+        public void AddFace(string strFilename)
+        {
+            if (strFilename == string.Empty)
+            {
+                this.RemoveFace();
+                return;
+            }
+
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 顔絵のファイルを読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("010_FaceImage");
+            strings.Add(strFilename);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path))
+            {
+                BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                this.imgFace.Source = bitimg1;
+                this.imgFace.Visibility = Visibility.Visible;
+                this.borderFace.Visibility = Visibility.Visible;
+
+                // 小さな画像はそのままのサイズで表示する
+                const int max_size = 192;
+                if ((bitimg1.PixelWidth < max_size) && (bitimg1.PixelHeight < max_size))
+                {
+                    this.imgFace.Width = bitimg1.PixelWidth;
+                    this.imgFace.Height = bitimg1.PixelHeight;
+                }
+                else
+                {
+                    this.imgFace.Width = max_size;
+                }
+                this.txtMain.Margin = new Thickness(20, 20, this.imgFace.Width + 4 + 40, 0);
+            }
+        }
+        public void RemoveFace()
+        {
+            // 顔絵を消す
+            this.imgFace.Source = null;
+            this.imgFace.Visibility = Visibility.Collapsed;
+            this.borderFace.Visibility = Visibility.Collapsed;
+            this.txtMain.Margin = new Thickness(20, 20, 20, 0);
         }
 
     }
