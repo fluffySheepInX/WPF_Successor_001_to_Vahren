@@ -265,6 +265,20 @@ namespace WPF_Successor_001_to_Vahren
                 // タイマーを止める
                 _timerClose.Stop();
             }
+            // Escape キー = ゲーム終了
+            else if (e.Key == Key.Escape)
+            {
+                if (MessageBox.Show("ゲームを終了しますか？", "ローガントゥーガ", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    // ゲーム画面とダイアログの両方を閉じる
+                    var mainWindow = (MainWindow)Application.Current.MainWindow;
+                    if (mainWindow != null)
+                    {
+                        mainWindow.Close();
+                    }
+                    DialogResult = false;
+                }
+            }
         }
         #endregion
 

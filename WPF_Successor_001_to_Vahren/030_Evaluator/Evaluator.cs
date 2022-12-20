@@ -24,6 +24,12 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
 
         public IObject? Eval(INode? node, Enviroment enviroment)
         {
+            // 動作中か確認する
+            if (Application.Current == null)
+            {
+                return null;
+            }
+
             switch (node)
             {
                 //文
@@ -105,7 +111,8 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     {
                         if (this.window != null)
                         {
-                            this.window.DoWork(systemFunctionLiteral);
+                            //this.window.DoWork(systemFunctionLiteral);
+                            this.window.DoTextWindow(systemFunctionLiteral);
                         }
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.PUSHTURN)

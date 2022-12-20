@@ -4138,6 +4138,18 @@ namespace WPF_Successor_001_to_Vahren
                     evaluator.Eval(ev.Root, enviroment);
                     ev.Yet = false;
                 }
+                // イベント実行中にウインドウを閉じたら、ここで終わる
+                if (Application.Current == null)
+                {
+                    return;
+                }
+
+                // テキストウィンドウを閉じる
+                if (this.ClassGameStatus.TextWindow != null)
+                {
+                    this.canvasTop.Children.Remove(this.ClassGameStatus.TextWindow);
+                    this.ClassGameStatus.TextWindow = null;
+                }
             }
 
             //ステータス設定
@@ -4345,18 +4357,16 @@ namespace WPF_Successor_001_to_Vahren
             // 実際にはcanvasのどこかに入力ハンドラーを作ればいいっぽい。
             // メインウインドウ全体の入力イベントに連動させた方が、操作しやすそう。
             condition.Reset();
-            while (condition.Wait(100) == false)
+            while (condition.Wait(10) == false)
             {
                 // 待っている間も一定時間ごとに表示を更新する。
                 // これによって、ウインドウの操作や入力の処理が動くっぽい。
-                if (this.IsActive == true)
+                DoEvents();
+
+                // アプリケーション終了ならループから出る
+                if (Application.Current == null)
                 {
-                    DoEvents();
-                }
-                else
-                {
-                    //アプリケーションを強制終了します
-                    Environment.Exit(0);
+                    break;
                 }
             }
             Thread.Sleep(1);
@@ -4364,6 +4374,56 @@ namespace WPF_Successor_001_to_Vahren
 
             // メッセージ枠を取り除く。
             this.canvasMain.Children.Remove(frame);
+        }
+
+        public void DoTextWindow(SystemFunctionLiteral systemFunctionLiteral)
+        {
+            if (Application.Current == null)
+            {
+                return;
+            }
+
+            // テキストウィンドウに表示する文字列を設定する。
+            if (systemFunctionLiteral.Token.Type == TokenType.MSG)
+            {
+                if (this.ClassGameStatus.TextWindow == null)
+                {
+                    this.ClassGameStatus.TextWindow = new UserControl050_Msg();
+                    this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
+                }
+                var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
+                textWindow.SetText(systemFunctionLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+            }
+            else if (systemFunctionLiteral.Token.Type == TokenType.TALK)
+            {
+                if (this.ClassGameStatus.TextWindow == null)
+                {
+                    this.ClassGameStatus.TextWindow = new UserControl050_Msg();
+                    this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
+                }
+                var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
+                textWindow.SetText(systemFunctionLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+            }
+
+            // キャンバス表示を更新する。これが無いとメッセージ枠が表示されない。
+            DoEvents();
+
+            // テキストウィンドウへの入力を待つ。
+            condition.Reset();
+            while (condition.Wait(10) == false)
+            {
+                // 待っている間も一定時間ごとに表示を更新する。
+                // これによって、ウインドウの操作や入力の処理が動くっぽい。
+                DoEvents();
+
+                // アプリケーション終了ならループから出る
+                if (Application.Current == null)
+                {
+                    break;
+                }
+            }
+            Thread.Sleep(1);
+            condition.Reset();
         }
 
         public void ExecuteEvent()
@@ -4380,6 +4440,13 @@ namespace WPF_Successor_001_to_Vahren
                 evaluator.window = this;
                 evaluator.Eval(ev.Root, enviroment);
                 ev.Yet = false;
+            }
+
+            // テキストウィンドウを閉じる
+            if (this.ClassGameStatus.TextWindow != null)
+            {
+                this.canvasTop.Children.Remove(this.ClassGameStatus.TextWindow);
+                this.ClassGameStatus.TextWindow = null;
             }
         }
 

@@ -218,5 +218,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { commonWindow = value; }
         }
         #endregion
+
+        #region TextWindow
+        private FrameworkElement? textWindow = null;
+        public FrameworkElement? TextWindow
+        {
+            get { return textWindow; }
+            set { textWindow = value; }
+        }
+        #endregion
     }
 }

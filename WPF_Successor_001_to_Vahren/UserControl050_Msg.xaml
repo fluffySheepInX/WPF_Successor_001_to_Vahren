@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl050_Msg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             Width="950" Height="350">
+    <Canvas Background="Transparent" >
+        <Grid Name="gridMain" UseLayoutRounding="True" Width="932" Height="332"
+                MouseLeftButtonUp="win_MouseLeftButtonUp">
+            <Grid>
+                <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="16"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition />
+                    <RowDefinition Height="16"/>
+                </Grid.RowDefinitions>
+                <Image Name="imgWindowLeftTop" />
+                <Rectangle Grid.Column="1" Name="rectWindowTop" />
+                <Image Grid.Column="2" Name="imgWindowRightTop" />
+                <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+                <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+                <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+            </Grid>
+
+            <Grid Margin="16">
+                <TextBlock Margin="20,15,20,0" FontSize="26" Foreground="White" Name="txtMain"
+                        TextWrapping="Wrap" LineHeight="50"
+                        Text="長い文章を一文字ずつ表示するようにみえるけど。標準だと３行までになるけど、文字の流れる速度がかなり速いので、ほとんど全くもって分からないような。&#10;テキストウインドウの文章です。改行することもできます。長い文章は自動的に改行されます。これくらいかな？"/>
+                <Image Name="imgNext" VerticalAlignment="Bottom" 
+                        Width="24" Height="24" Source="./001_Warehouse/001_DefaultGame/006_WindowImage/nextmsg.png"/>
+            </Grid>
+        </Grid>
+
+    </Canvas>
+</UserControl>
