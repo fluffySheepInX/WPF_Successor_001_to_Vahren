@@ -373,12 +373,12 @@ namespace WPF_Successor_001_to_Vahren
                 if (System.IO.File.Exists(path))
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    imgFaceLeft.Source = bitimg1;
-                    imgFaceLeft.Visibility = Visibility.Visible;
+                    this.imgFaceLeft.Source = bitimg1;
+                    this.imgFaceLeft.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderLeft.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(130, 10, txtMain.Margin.Right, txtMain.Margin.Bottom);
+                    this.txtMain.Margin = new Thickness(130, 10, this.txtMain.Margin.Right, this.txtMain.Margin.Bottom);
                 }
             }
         }
@@ -387,14 +387,14 @@ namespace WPF_Successor_001_to_Vahren
         public void RemoveFace()
         {
             // 顔絵のファイルを読み込む
-            if (imgFaceLeft.Source != null)
+            if (this.imgFaceLeft.Source != null)
             {
-                imgFaceLeft.Source = null;
-                imgFaceLeft.Visibility = Visibility.Collapsed;
+                this.imgFaceLeft.Source = null;
+                this.imgFaceLeft.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
                 borderLeft.Visibility = Visibility.Collapsed;
-                txtMain.Margin = new Thickness(15, 10, txtMain.Margin.Right, txtMain.Margin.Bottom);
+                this.txtMain.Margin = new Thickness(15, 10, this.txtMain.Margin.Right, this.txtMain.Margin.Bottom);
             }
         }
 
@@ -436,12 +436,12 @@ namespace WPF_Successor_001_to_Vahren
                 if (System.IO.File.Exists(path))
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    imgFaceRight.Source = bitimg1;
-                    imgFaceRight.Visibility = Visibility.Visible;
+                    this.imgFaceRight.Source = bitimg1;
+                    this.imgFaceRight.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderRight.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 130, txtMain.Margin.Bottom);
+                    this.txtMain.Margin = new Thickness(this.txtMain.Margin.Left, 10, 130, this.txtMain.Margin.Bottom);
                 }
             }
         }
@@ -450,14 +450,14 @@ namespace WPF_Successor_001_to_Vahren
         public void RemoveFaceRight()
         {
             // 顔絵のファイルを読み込む
-            if (imgFaceRight.Source != null)
+            if (this.imgFaceRight.Source != null)
             {
-                imgFaceRight.Source = null;
-                imgFaceRight.Visibility = Visibility.Collapsed;
+                this.imgFaceRight.Source = null;
+                this.imgFaceRight.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
                 borderRight.Visibility = Visibility.Collapsed;
-                txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, 15, txtMain.Margin.Bottom);
+                this.txtMain.Margin = new Thickness(this.txtMain.Margin.Left, 10, 15, this.txtMain.Margin.Bottom);
             }
         }
 
@@ -499,12 +499,12 @@ namespace WPF_Successor_001_to_Vahren
                 if (System.IO.File.Exists(path))
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    imgFaceCenter.Source = bitimg1;
-                    imgFaceCenter.Visibility = Visibility.Visible;
+                    this.imgFaceCenter.Source = bitimg1;
+                    this.imgFaceCenter.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderCenter.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, txtMain.Margin.Right, 125);
+                    this.txtMain.Margin = new Thickness(this.txtMain.Margin.Left, 10, this.txtMain.Margin.Right, 125);
                 }
             }
         }
@@ -513,14 +513,14 @@ namespace WPF_Successor_001_to_Vahren
         public void RemoveFaceCenter()
         {
             // 顔絵のファイルを読み込む
-            if (imgFaceCenter.Source != null)
+            if (this.imgFaceCenter.Source != null)
             {
-                imgFaceCenter.Source = null;
-                imgFaceCenter.Visibility = Visibility.Collapsed;
+                this.imgFaceCenter.Source = null;
+                this.imgFaceCenter.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
                 borderCenter.Visibility = Visibility.Collapsed;
-                txtMain.Margin = new Thickness(txtMain.Margin.Left, 10, txtMain.Margin.Right, 15);
+                this.txtMain.Margin = new Thickness(this.txtMain.Margin.Left, 10, this.txtMain.Margin.Right, 15);
             }
         }
 

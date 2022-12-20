@@ -392,7 +392,7 @@ namespace WPF_Successor_001_to_Vahren
                     Image imageSkill = new Image();
                     imageSkill.Source = bitmap;
                     // 小さな画像はそのままのサイズで表示する
-                    if ((bitmap.PixelWidth < 32) || (bitmap.PixelHeight < 32))
+                    if ((bitmap.PixelWidth < 32) && (bitmap.PixelHeight < 32))
                     {
                         imageSkill.Width = bitmap.PixelWidth;
                         imageSkill.Height = bitmap.PixelHeight;

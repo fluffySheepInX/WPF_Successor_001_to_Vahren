@@ -4393,6 +4393,9 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
                 textWindow.SetText(systemFunctionLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                textWindow.RemoveName();
+                textWindow.RemoveHelp();
+                textWindow.RemoveFace();
             }
             else if (systemFunctionLiteral.Token.Type == TokenType.TALK)
             {
@@ -4403,6 +4406,25 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
                 textWindow.SetText(systemFunctionLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+
+                // ユニットの識別名から肩書と名前を取得する
+                string unitNameTag = systemFunctionLiteral.Parameters[0].Value;
+                var classUnit = this.ClassGameStatus.ListUnit
+                    .Where(x => x.NameTag == unitNameTag)
+                    .FirstOrDefault();
+                if (classUnit != null)
+                {
+                    // データが存在する時だけ表示する
+                    textWindow.AddName(classUnit.Name);
+                    textWindow.AddHelp(classUnit.Help);
+                    textWindow.AddFace(classUnit.Face);
+                }
+                else
+                {
+                    textWindow.RemoveName();
+                    textWindow.RemoveHelp();
+                    textWindow.RemoveFace();
+                }
             }
 
             // キャンバス表示を更新する。これが無いとメッセージ枠が表示されない。

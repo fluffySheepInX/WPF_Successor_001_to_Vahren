@@ -323,12 +323,12 @@ namespace WPF_Successor_001_to_Vahren
                 if (System.IO.File.Exists(path))
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    imgFaceLeft.Source = bitimg1;
-                    imgFaceLeft.Visibility = Visibility.Visible;
+                    this.imgFaceLeft.Source = bitimg1;
+                    this.imgFaceLeft.Visibility = Visibility.Visible;
 
                     // 枠を表示して間隔を空ける
                     borderLeft.Visibility = Visibility.Visible;
-                    txtMain.Margin = new Thickness(130, 10, 15, 15);
+                    this.txtMain.Margin = new Thickness(130, 10, 15, 15);
                 }
             }
         }
@@ -337,14 +337,14 @@ namespace WPF_Successor_001_to_Vahren
         public void RemoveFace()
         {
             // 顔絵のファイルを読み込む
-            if (imgFaceLeft.Source != null)
+            if (this.imgFaceLeft.Source != null)
             {
-                imgFaceLeft.Source = null;
-                imgFaceLeft.Visibility = Visibility.Collapsed;
+                this.imgFaceLeft.Source = null;
+                this.imgFaceLeft.Visibility = Visibility.Collapsed;
 
                 // 枠を隠す
                 borderLeft.Visibility = Visibility.Collapsed;
-                txtMain.Margin = new Thickness(15, 10, 15, 15);
+                this.txtMain.Margin = new Thickness(15, 10, 15, 15);
             }
         }
 
