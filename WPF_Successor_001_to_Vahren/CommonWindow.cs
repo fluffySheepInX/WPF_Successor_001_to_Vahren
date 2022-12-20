@@ -167,7 +167,10 @@ namespace WPF_Successor_001_to_Vahren
             // ESCキーを押すと終了する。
             if (e.Key == Key.Escape)
             {
-                this.Close();
+                if (MessageBox.Show("ゲームを終了しますか？", "ローガントゥーガ", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    this.Close();
+                }
             }
             // F11キーを押すとフルスクリーン状態を切り替える。
             else if (e.Key == Key.F11)
@@ -183,6 +186,23 @@ namespace WPF_Successor_001_to_Vahren
                     // 通常サイズか最小化中なら、最大化する。
                     this.WindowStyle = WindowStyle.None; // タイトルバーと境界線を非表示にします。
                     this.WindowState = WindowState.Maximized;
+                }
+            }
+            // Enter, Space, Z キー = OK
+            else if ((e.Key == Key.Return) || (e.Key == Key.Space) || (e.Key == Key.Z))
+            {
+                // テキストウィンドウが存在する時
+                if (this.ClassGameStatus.TextWindow != null)
+                {
+                    var mainWindow = (MainWindow)Application.Current.MainWindow;
+                    if (mainWindow != null)
+                    {
+                        // カウンターが 0よりも多い時だけ減らす
+                        if (mainWindow.condition.IsSet == false)
+                        {
+                            mainWindow.condition.Signal();
+                        }
+                    }
                 }
             }
         }
