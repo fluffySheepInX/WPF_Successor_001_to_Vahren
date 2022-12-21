@@ -4135,7 +4135,6 @@ namespace WPF_Successor_001_to_Vahren
                     var enviroment = new Enviroment();
                     var evaluator = new Evaluator();
                     evaluator.ClassGameStatus = this.ClassGameStatus;
-                    evaluator.window = this;
                     evaluator.Eval(ev.Root, enviroment);
                     ev.Yet = false;
                 }
@@ -4393,7 +4392,7 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
-                textWindow.SetText(systemFunctionLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[0].Value, "$"));
                 textWindow.RemoveName();
                 textWindow.RemoveHelp();
                 textWindow.RemoveFace();
@@ -4406,10 +4405,7 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
-
-                string setText = string.Empty;
-                setText = MoldingText(systemFunctionLiteral.Parameters[1].Value, "textWindow");
-                textWindow.SetText(setText);
+                textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[1].Value, "$"));
 
                 // ユニットの識別名から肩書と名前を取得する
                 string unitNameTag = systemFunctionLiteral.Parameters[0].Value;
@@ -4452,25 +4448,23 @@ namespace WPF_Successor_001_to_Vahren
             condition.Reset();
         }
 
-        private static string MoldingText(string target, string status)
+        public string MoldingText(string strTarget, string strStatus)
         {
-            string setText;
-
-            if (status == "textWindow")
-            {
-                target = target.Replace("$", "$" + System.Environment.NewLine);
-            }
-
             // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-            string strTemp = target.Replace("\r\n", "\n").Replace("\r", "\n");
+            string strTemp = strTarget.Replace("\r\n", "\n").Replace("\r", "\n");
             // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
             char[] charsToTrim = { ' ', '\t' };
             string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
             // 各行を連結して、一つに戻す。
             strTemp = String.Join("", strLines);
-            // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
-            setText = strTemp.Replace("$", System.Environment.NewLine);
-            return setText;
+
+            if (strStatus.Contains("$"))
+            {
+                // ヴァーレントゥーガのテキスト用特殊記号「$」を改行に置換する。
+                strTemp = strTemp.Replace("$", System.Environment.NewLine);
+            }
+
+            return strTemp;
         }
 
         public void ExecuteEvent()
@@ -4484,7 +4478,6 @@ namespace WPF_Successor_001_to_Vahren
                 var enviroment = new Enviroment();
                 var evaluator = new Evaluator();
                 evaluator.ClassGameStatus = this.ClassGameStatus;
-                evaluator.window = this;
                 evaluator.Eval(ev.Root, enviroment);
                 ev.Yet = false;
             }
