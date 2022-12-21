@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -4405,7 +4406,10 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
-                textWindow.SetText(systemFunctionLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+
+                string setText = string.Empty;
+                setText = MoldingText(systemFunctionLiteral.Parameters[1].Value, "textWindow");
+                textWindow.SetText(setText);
 
                 // ユニットの識別名から肩書と名前を取得する
                 string unitNameTag = systemFunctionLiteral.Parameters[0].Value;
@@ -4446,6 +4450,27 @@ namespace WPF_Successor_001_to_Vahren
             }
             Thread.Sleep(1);
             condition.Reset();
+        }
+
+        private static string MoldingText(string target, string status)
+        {
+            string setText;
+
+            if (status == "textWindow")
+            {
+                target = target.Replace("$", "$" + System.Environment.NewLine);
+            }
+
+            // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
+            string strTemp = target.Replace("\r\n", "\n").Replace("\r", "\n");
+            // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
+            char[] charsToTrim = { ' ', '\t' };
+            string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
+            // 各行を連結して、一つに戻す。
+            strTemp = String.Join("", strLines);
+            // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
+            setText = strTemp.Replace("$", System.Environment.NewLine);
+            return setText;
         }
 
         public void ExecuteEvent()
