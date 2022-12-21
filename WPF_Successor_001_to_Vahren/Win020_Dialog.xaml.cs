@@ -327,10 +327,133 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         // 文章を指定する
-        public void SetText(string txtInput)
+        public void SetText(string strInput)
         {
-            // 文章
-            this.txtMain.Text = txtInput;
+            // 文字色を変更するかどうか調べる
+            if (strInput.Contains("#"))
+            {
+                // まずは Text を空にする
+                this.txtMain.Text = string.Empty;
+                this.txtMain.Inlines.Clear();
+
+                // 行単位で色を変えるので、行ごとに分割する
+                string strTemp = strInput.Replace("\r\n", "\n").Replace("\r", "\n");
+                string[] everyLines = strTemp.Split("\n");
+
+                // 行ごとに先頭と末尾をチェックする
+                bool IsColorChange = false;
+                string strOutput = string.Empty;
+                int countLines = everyLines.Length;
+                for (int i = 0; i < countLines; i++)
+                {
+                    string eachLine = everyLines[i];
+
+                    // 行頭の「#}」は通常色に戻す
+                    if (eachLine.StartsWith("#}"))
+                    {
+                        IsColorChange = false;
+                        strOutput += eachLine.Substring(2);
+                        if (i + 1 < countLines)
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                    }
+                    // 行頭の「#{」は橙色
+                    else if ((eachLine.StartsWith("#{") == true) || (IsColorChange == true))
+                    {
+                        // 以前の文章が存在するなら出力する
+                        if (strOutput != string.Empty)
+                        {
+                            this.txtMain.Inlines.Add(strOutput);
+                        }
+
+                        // この行以降の色を変えて出力する
+                        IsColorChange = true;
+                        if (eachLine.StartsWith("#{"))
+                        {
+                            strOutput = eachLine.Substring(2);
+                        }
+                        else
+                        {
+                            strOutput = eachLine;
+                        }
+                        if (i + 1 < countLines)
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                        Run txtRun = new Run();
+                        txtRun.Text = strOutput;
+                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 200, 0));
+                        this.txtMain.Inlines.Add(txtRun);
+
+                        strOutput = string.Empty;
+                    }
+                    // 行頭の「##」は淡い水色
+                    else if (eachLine.StartsWith("##"))
+                    {
+                        // 以前の文章が存在するなら出力する
+                        if (strOutput != string.Empty)
+                        {
+                            this.txtMain.Inlines.Add(strOutput);
+                        }
+
+                        // この行だけ色を変えて出力する
+                        strOutput = eachLine.Substring(2);
+                        if (i + 1 < countLines)
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                        Run txtRun = new Run();
+                        txtRun.Text = strOutput;
+                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 255, 255));
+                        this.txtMain.Inlines.Add(txtRun);
+
+                        strOutput = string.Empty;
+                    }
+                    // 行頭の「#」は黄色
+                    else if (eachLine.StartsWith("#"))
+                    {
+                        // 以前の文章が存在するなら出力する
+                        if (strOutput != string.Empty)
+                        {
+                            this.txtMain.Inlines.Add(strOutput);
+                        }
+
+                        // この行だけ色を変えて出力する
+                        strOutput = eachLine.Substring(1);
+                        if (i + 1 < countLines)
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                        Run txtRun = new Run();
+                        txtRun.Text = strOutput;
+                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 255, 0));
+                        this.txtMain.Inlines.Add(txtRun);
+
+                        strOutput = string.Empty;
+                    }
+                    // 通常色
+                    else
+                    {
+                        strOutput += eachLine;
+                        if (i + 1 < countLines)
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                    }
+                }
+
+                // 文章が残ってれば出力する
+                if (strOutput != string.Empty)
+                {
+                    this.txtMain.Inlines.Add(strOutput);
+                }
+            }
+            else
+            {
+                // そのまま表示する
+                this.txtMain.Text = strInput;
+            }
         }
 
         #region 顔絵表示

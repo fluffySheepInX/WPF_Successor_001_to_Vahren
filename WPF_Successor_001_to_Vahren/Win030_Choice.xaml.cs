@@ -281,10 +281,10 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         // 文章を指定する
-        public void SetTitle(string txtInput)
+        public void SetTitle(string strInput)
         {
             // タイトル文章
-            this.txtTitle.Text = txtInput;
+            this.txtTitle.Text = strInput;
         }
 
         // 選択されたボタンの番号 0,1,2,~

@@ -19,13 +19,18 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         public BooleanObject True = new BooleanObject(true);
         public BooleanObject False = new BooleanObject(false);
         public NullObject Null = new NullObject();
-        public MainWindow? window = null;
         public ClassGameStatus ClassGameStatus { get; set; } = new ClassGameStatus();
 
         public IObject? Eval(INode? node, Enviroment enviroment)
         {
             // 動作中か確認する
             if (Application.Current == null)
+            {
+                return null;
+            }
+            // ゲーム画面の存在を確認する
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
             {
                 return null;
             }
@@ -109,124 +114,99 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     if (systemFunctionLiteral.Token.Type == TokenType.TALK ||
                         systemFunctionLiteral.Token.Type == TokenType.MSG)
                     {
-                        if (this.window != null)
-                        {
-                            //this.window.DoWork(systemFunctionLiteral);
-                            this.window.DoTextWindow(systemFunctionLiteral);
-                        }
+                        //mainWindow.DoWork(systemFunctionLiteral);
+                        mainWindow.DoTextWindow(systemFunctionLiteral);
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.PUSHTURN)
                     {
-                        if (this.window != null)
-                        {
-                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
-                                            new IntegerObject(this.window.ClassGameStatus.NowTurn));
-                        }
+                        enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                        new IntegerObject(mainWindow.ClassGameStatus.NowTurn));
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.STOREPLAYERPOWER)
                     {
-                        if (this.window != null)
-                        {
-                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
-                                            new IntegerObject(this.window.ClassGameStatus.SelectionPowerAndCity.ClassPower.Index));
-                        }
+                        enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                        new IntegerObject(mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Index));
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.PUSHCOUNTPOWER)
                     {
-                        if (this.window != null)
-                        {
-                            enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
-                                            new IntegerObject(this.window.ClassGameStatus.NowCountPower));
-                        }
+                        enviroment.Set(systemFunctionLiteral.Parameters[0].Value,
+                                        new IntegerObject(mainWindow.ClassGameStatus.NowCountPower));
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.PUSHSPOT)
                     {
-                        if (this.window != null)
-                        {
-                            var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
-                            var intRe = re.Item1 as IntegerObject;
-                            if (intRe == null) return null;
+                        var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
+                        var intRe = re.Item1 as IntegerObject;
+                        if (intRe == null) return null;
 
-                            var getPo = this.window.ClassGameStatus.ListPower.Where(x => x.Index == intRe.Value).FirstOrDefault();
-                            if (getPo == null) return null;
-                            enviroment.Set(systemFunctionLiteral.Parameters[1].Value,
-                                            new IntegerObject(getPo.ListNowMember.Count));
-                        }
+                        var getPo = mainWindow.ClassGameStatus.ListPower.Where(x => x.Index == intRe.Value).FirstOrDefault();
+                        if (getPo == null) return null;
+                        enviroment.Set(systemFunctionLiteral.Parameters[1].Value,
+                                        new IntegerObject(getPo.ListNowMember.Count));
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.YET)
                     {
-                        if (this.window != null)
-                        {
-                            string nameEvent = systemFunctionLiteral.Parameters[0].Value;
-                            if (nameEvent == string.Empty) return this.False;
+                        string nameEvent = systemFunctionLiteral.Parameters[0].Value;
+                        if (nameEvent == string.Empty) return this.False;
 
-                            var ev = this.ClassGameStatus.ListEvent
-                                        .Where(x => x.Name == nameEvent)
-                                        .FirstOrDefault();
-                            if (ev == null)
-                            {
-                                return this.False;
-                            }
-                            if (ev.Yet == true)
-                            {
-                                return this.True;
-                            }
-                            else
-                            {
-                                return this.False;
-                            }
+                        var ev = this.ClassGameStatus.ListEvent
+                                    .Where(x => x.Name == nameEvent)
+                                    .FirstOrDefault();
+                        if (ev == null)
+                        {
+                            return this.False;
+                        }
+                        if (ev.Yet == true)
+                        {
+                            return this.True;
+                        }
+                        else
+                        {
+                            return this.False;
                         }
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.ISALIVE)
                     {
-                        if (this.window != null)
+                        var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
+                        var intRe = re.Item1 as IntegerObject;
+                        if (intRe == null) return null;
+
+                        int powerIndex = intRe.Value;
+                        if (powerIndex == -1) return this.False;
+
+                        var ev = this.ClassGameStatus.ListPower
+                                    .Where(x => x.Index == powerIndex)
+                                    .FirstOrDefault();
+                        if (ev == null)
                         {
-                            var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
-                            var intRe = re.Item1 as IntegerObject;
-                            if (intRe == null) return null;
-
-                            int powerIndex = intRe.Value;
-                            if (powerIndex == -1) return this.False;
-
-                            var ev = this.ClassGameStatus.ListPower
-                                        .Where(x => x.Index == powerIndex)
-                                        .FirstOrDefault();
-                            if (ev == null)
-                            {
-                                return this.False;
-                            }
-                            if (ev.IsDownfall == true)
-                            {
-                                return this.False;
-                            }
-                            else
-                            {
-                                return this.True;
-                            }
+                            return this.False;
+                        }
+                        if (ev.IsDownfall == true)
+                        {
+                            return this.False;
+                        }
+                        else
+                        {
+                            return this.True;
                         }
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.DISPLAYGAMERESULT)
                     {
-                        if (this.window != null)
-                        {
-                            Uri uri = new Uri("/Page030_GameResult.xaml", UriKind.Relative);
-                            Frame frame = new Frame();
-                            frame.Source = uri;
-                            frame.Margin = new Thickness(0, 0, 0, 0);
-                            frame.Name = StringName.windowGameResult;
-                            this.window.canvasMain.Children.Add(frame);
-                            Application.Current.Properties["window"] = this.window;
-                        }
+                        Uri uri = new Uri("/Page030_GameResult.xaml", UriKind.Relative);
+                        Frame frame = new Frame();
+                        frame.Source = uri;
+                        frame.Margin = new Thickness(0, 0, 0, 0);
+                        frame.Name = StringName.windowGameResult;
+                        mainWindow.canvasMain.Children.Add(frame);
+                        Application.Current.Properties["window"] = mainWindow;
                     }
 
                     return null;
                 case DialogLiteral dialogLiteral:
                     if (dialogLiteral.Token.Type == TokenType.DIALOG)
                     {
-                        //MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
-                        // 改行記号がヴァーレンのイベントスクリプトと異なる？
+                        //MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("$", System.Environment.NewLine));
                         var dialog = new Win020_Dialog();
-                        dialog.SetText(dialogLiteral.Parameters[0].Value.Replace("@@", System.Environment.NewLine));
+                        dialog.SetText(mainWindow.MoldingText(dialogLiteral.Parameters[0].Value, "$"));
                         dialog.ShowDialog();
                     }
                     return null;
@@ -238,8 +218,9 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         dlg.ShowDialog();
                         enviroment.Set(choiceLiteral.VaName, new IntegerObject(dlg.ChoiceNumber));
                         */
+                        // choiceダイアログでは「$」を改行に置換しない
                         var dialog = new Win030_Choice();
-                        dialog.SetList(choiceLiteral.Parameters.Select(x => x.Value).ToList());
+                        dialog.SetList(choiceLiteral.Parameters.Select(x => mainWindow.MoldingText(x.Value,"")).ToList());
                         dialog.ShowDialog();
                         enviroment.Set(choiceLiteral.VaName, new IntegerObject(dialog.ChoiceNumber));
                     }
@@ -248,14 +229,14 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     if (dialogSelectLiteral.Token.Type == TokenType.SELECT)
                     {
                         /*
-                        MessageBoxResult result = MessageBox.Show(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine), "スキップ時はNoを選択", MessageBoxButton.YesNo);
+                        MessageBoxResult result = MessageBox.Show(dialogSelectLiteral.Parameters[1].Value.Replace("$", System.Environment.NewLine), "スキップ時はNoを選択", MessageBoxButton.YesNo);
                         if (result == MessageBoxResult.Yes)
                         {
                             enviroment.Set(dialogSelectLiteral.Parameters[0].Value, new IntegerObject(1));
                         }
                         */
                         var dialog = new Win025_Select();
-                        dialog.SetText(dialogSelectLiteral.Parameters[1].Value.Replace("@@", System.Environment.NewLine));
+                        dialog.SetText(mainWindow.MoldingText(dialogSelectLiteral.Parameters[1].Value,"$"));
                         bool? result = dialog.ShowDialog();
                         if (result == true)
                         {
@@ -264,10 +245,6 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     }
                     return null;
                 case EventLiteral eventLiteral:
-                    if (this.window == null)
-                    {
-                        return null;
-                    }
                     {
                         var ev = this.ClassGameStatus.ListEvent
                             .Where(x => x.Name == eventLiteral.Parameters[0].Value)
@@ -279,13 +256,11 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
 
                         var evaluator = new Evaluator();
                         evaluator.ClassGameStatus = this.ClassGameStatus;
-                        evaluator.window = this.window;
                         evaluator.Eval(ev.Root, enviroment);
                         ev.Yet = false;
+
+                        return null;
                     }
-
-                    return null;
-
             }
             return null;
         }

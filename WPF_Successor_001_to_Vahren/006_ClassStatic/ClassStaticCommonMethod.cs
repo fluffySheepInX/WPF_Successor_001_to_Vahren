@@ -814,9 +814,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 throw new Exception();
             }
 
-            value = result.Value.Replace(Environment.NewLine, "");
-
-            var lexer = new Lexer(value);
+            var lexer = new Lexer(result.Value);
             var parser = new Parser(lexer);
             var root = parser.ParseProgram();
             classEvent.Root = root;
