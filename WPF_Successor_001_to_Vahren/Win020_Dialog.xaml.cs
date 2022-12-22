@@ -337,8 +337,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.txtMain.Inlines.Clear();
 
                 // 行単位で色を変えるので、行ごとに分割する
-                string strTemp = strInput.Replace("\r\n", "\n").Replace("\r", "\n");
-                string[] everyLines = strTemp.Split("\n");
+                string[] everyLines = strInput.ReplaceLineEndings().Split(System.Environment.NewLine);
 
                 // 行ごとに先頭と末尾をチェックする
                 bool IsColorChange = false;

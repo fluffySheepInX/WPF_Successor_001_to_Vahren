@@ -188,6 +188,12 @@ namespace WPF_Successor_001_to_Vahren
         // マウスの左クリック
         private void win_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // 次の文章を表示した場合はまだ終わらない
+            if (this.NextText() == true)
+            {
+                return;
+            }
+
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
@@ -201,26 +207,89 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        // 文章を指定する
-        public void SetText(string txtInput)
-        {
-        
-            // 文章
-            this.txtMain.Text = txtInput;
+        // 文章の表示を待ってる位置 (マイナスなら待ってない)
+        private int _indexWait = -1;
+        // 表示待ちの残り文章
+        private string _strRemain = string.Empty;
 
+        // 文章を指定する
+        public void SetText(string strInput)
+        {
+            char[] charsToWait = { '@', '#' };
+            _indexWait = strInput.IndexOfAny(charsToWait);
+
+            // クリック待ちするか調べる
+            if (_indexWait >= 0)
+            {
+                // 待機文字まで表示する
+                this.txtMain.Text = strInput.Substring(0, _indexWait);
+
+                // 「@」で待つ場合は改行を挿入する
+                if (strInput[_indexWait] == '@')
+                {
+                    this.txtMain.Text += System.Environment.NewLine;
+                }
+
+                // 残りの文章を記録しておく
+                _strRemain = strInput.Substring(_indexWait + 1);
+            }
+            else
+            {
+                // そのまま表示する
+                this.txtMain.Text = strInput;
+                _strRemain = string.Empty;
+            }
+        }
+
+        // 待機中に、残りの文章を表示する
+        public bool NextText()
+        {
+            // 待機中でなければ false を返して終わる
+            if (_indexWait < 0)
+            {
+                return false;
+            }
+
+            char[] charsToWait = { '@', '#' };
+            _indexWait = _strRemain.IndexOfAny(charsToWait);
+
+            // 更にクリック待ちするか調べる
+            if (_indexWait >= 0)
+            {
+                // 待機文字まで表示する
+                this.txtMain.Text += _strRemain.Substring(0, _indexWait);
+
+                // 「@」で待つ場合は改行を挿入する
+                if (_strRemain[_indexWait] == '@')
+                {
+                    this.txtMain.Text += System.Environment.NewLine;
+                }
+
+                // 残りの文章を記録しておく
+                _strRemain = _strRemain.Substring(_indexWait + 1);
+            }
+            else
+            {
+                // 残りを全て表示する
+                this.txtMain.Text += _strRemain;
+                _strRemain = string.Empty;
+            }
+
+            // 次の文章を表示したら true を返す
+            return true;
         }
 
         // 名前を指定する
-        public void AddName(string txtInput)
+        public void AddName(string strInput)
         {
-            if (txtInput == string.Empty)
+            if (strInput == string.Empty)
             {
                 this.RemoveName();
                 return;
             }
 
             // 名前
-            this.txtName.Text = txtInput;
+            this.txtName.Text = strInput;
             this.txtName.Visibility = Visibility.Visible;
 
             // タイトル全体を表示する
@@ -240,16 +309,16 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 肩書を指定する
-        public void AddHelp(string txtInput)
+        public void AddHelp(string strInput)
         {
-            if (txtInput == string.Empty)
+            if (strInput == string.Empty)
             {
                 this.RemoveHelp();
                 return;
             }
 
             // 肩書
-            this.txtHelp.Text = txtInput;
+            this.txtHelp.Text = strInput;
             this.txtHelp.Visibility = Visibility.Visible;
 
             // タイトル全体を表示する

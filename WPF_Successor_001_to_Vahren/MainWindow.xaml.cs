@@ -4450,11 +4450,11 @@ namespace WPF_Successor_001_to_Vahren
 
         public string MoldingText(string strTarget, string strStatus)
         {
-            // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-            string strTemp = strTarget.Replace("\r\n", "\n").Replace("\r", "\n");
+            // 改行ごとに分割 (Split) するため、改行コードを統一する。
+            string strTemp = strTarget.ReplaceLineEndings();
             // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
             char[] charsToTrim = { ' ', '\t' };
-            string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
+            string[] strLines = strTemp.Split(System.Environment.NewLine).Select(x => x.Trim(charsToTrim)).ToArray();
             // 各行を連結して、一つに戻す。
             strTemp = String.Join("", strLines);
 
