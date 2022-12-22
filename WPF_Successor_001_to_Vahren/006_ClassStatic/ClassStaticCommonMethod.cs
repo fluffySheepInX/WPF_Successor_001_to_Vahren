@@ -397,15 +397,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-                    string strTemp = first.Value.Replace("\r\n", "\n").Replace("\r", "\n");
-                    // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
-                    char[] charsToTrim = {' ', '\t'};
-                    string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
-                    // 各行を連結して、一つに戻す。
-                    strTemp = String.Join("", strLines);
-                    // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
-                    classSkill.Help = strTemp.Replace("$", System.Environment.NewLine);
+                    // 改行前後の余分なスペースとタブを除去してから、$を改行に置換する
+                    classSkill.Help = MoldingText(first.Value, "$");
                 }
             }
             //center
@@ -1035,15 +1028,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-                    string strTemp = first.Value.Replace("\r\n", "\n").Replace("\r", "\n");
-                    // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
-                    char[] charsToTrim = {' ', '\t'};
-                    string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
-                    // 各行を連結して、一つに戻す。
-                    strTemp = String.Join("", strLines);
-                    // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
-                    classSpot.Text = strTemp.Replace("$", System.Environment.NewLine);
+                    // 改行前後の余分なスペースとタブを除去してから、$を改行に置換する
+                    classSpot.Text = MoldingText(first.Value, "$");
                 }
             }
 
@@ -1184,15 +1170,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-                    string strTemp = first.Value.Replace("\r\n", "\n").Replace("\r", "\n");
-                    // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
-                    char[] charsToTrim = {' ', '\t'};
-                    string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
-                    // 各行を連結して、一つに戻す。
-                    strTemp = String.Join("", strLines);
-                    // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
-                    classScenario.ScenarioIntroduce = strTemp.Replace("$", System.Environment.NewLine);
+                    // 改行前後の余分なスペースとタブを除去してから、$を改行に置換する
+                    classScenario.ScenarioIntroduce = MoldingText(first.Value, "$");
                 }
             }
             //scenario_image_bool
@@ -1518,15 +1497,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    // 改行ごとに分割 (Split) するため、改行コードを「\n」に統一する。
-                    string strTemp = first.Value.Replace("\r\n", "\n").Replace("\r", "\n");
-                    // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
-                    char[] charsToTrim = {' ', '\t'};
-                    string[] strLines = strTemp.Split("\n").Select(x => x.Trim(charsToTrim)).ToArray();
-                    // 各行を連結して、一つに戻す。
-                    strTemp = String.Join("", strLines);
-                    // ヴァーレントゥーガのテキスト用特殊文字「$」を改行に置換する。
-                    classPower.Text = strTemp.Replace("$", System.Environment.NewLine);
+                    // 改行前後の余分なスペースとタブを除去してから、$を改行に置換する
+                    classPower.Text = MoldingText(first.Value, "$");
                 }
             }
             {
@@ -2354,5 +2326,25 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return @"(?<=" + tag + @"[\s]*" + name + @"[\S\n\s]*<-)([\S\n\s]+?)(?=->)";
         }
         #endregion
+
+        private static string MoldingText(string strTarget, string strStatus)
+        {
+            // 改行ごとに分割 (Split) するため、改行コードを統一する。
+            string strTemp = strTarget.ReplaceLineEndings();
+            // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
+            char[] charsToTrim = { ' ', '\t' };
+            string[] strLines = strTemp.Split(System.Environment.NewLine).Select(x => x.Trim(charsToTrim)).ToArray();
+            // 各行を連結して、一つに戻す。
+            strTemp = String.Join("", strLines);
+
+            if (strStatus.Contains("$"))
+            {
+                // ヴァーレントゥーガのテキスト用特殊記号「$」を改行に置換する。
+                strTemp = strTemp.Replace("$", System.Environment.NewLine);
+            }
+
+            return strTemp;
+        }
+
     }
 }
