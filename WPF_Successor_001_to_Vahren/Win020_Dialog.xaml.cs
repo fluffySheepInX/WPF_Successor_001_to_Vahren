@@ -57,6 +57,12 @@ bool? result = dialog.ShowDialog();
 ダイアログが表示されてる状態で、確認ボタンをクリックするか、
 Enter, Space, Z キーを押すと、閉じます。
 
+行の先頭に特殊記号が存在すると、その行の文字色を変えます。
+#	黄色
+##	淡い水色
+#{	橙色（行を跨いだ一括指定が可能）
+#}	橙色から通常色に戻る
+
 */
 namespace WPF_Successor_001_to_Vahren
 {
@@ -329,13 +335,13 @@ namespace WPF_Successor_001_to_Vahren
         // 文章を指定する
         public void SetText(string strInput)
         {
+            // まずは Text を空にする
+            this.txtMain.Text = string.Empty;
+            this.txtMain.Inlines.Clear();
+
             // 文字色を変更するかどうか調べる
             if (strInput.Contains("#"))
             {
-                // まずは Text を空にする
-                this.txtMain.Text = string.Empty;
-                this.txtMain.Inlines.Clear();
-
                 // 行単位で色を変えるので、行ごとに分割する
                 string[] everyLines = strInput.ReplaceLineEndings().Split(System.Environment.NewLine);
 
@@ -380,10 +386,10 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             strOutput += System.Environment.NewLine;
                         }
-                        Run txtRun = new Run();
-                        txtRun.Text = strOutput;
-                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 200, 0));
-                        this.txtMain.Inlines.Add(txtRun);
+                        Run runColor = new Run();
+                        runColor.Text = strOutput;
+                        runColor.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 200, 0));
+                        this.txtMain.Inlines.Add(runColor);
 
                         strOutput = string.Empty;
                     }
@@ -402,10 +408,10 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             strOutput += System.Environment.NewLine;
                         }
-                        Run txtRun = new Run();
-                        txtRun.Text = strOutput;
-                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 255, 255));
-                        this.txtMain.Inlines.Add(txtRun);
+                        Run runColor = new Run();
+                        runColor.Text = strOutput;
+                        runColor.Foreground = new SolidColorBrush(Color.FromArgb(255, 200, 255, 255));
+                        this.txtMain.Inlines.Add(runColor);
 
                         strOutput = string.Empty;
                     }
@@ -424,10 +430,10 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             strOutput += System.Environment.NewLine;
                         }
-                        Run txtRun = new Run();
-                        txtRun.Text = strOutput;
-                        txtRun.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 255, 0));
-                        this.txtMain.Inlines.Add(txtRun);
+                        Run runColor = new Run();
+                        runColor.Text = strOutput;
+                        runColor.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 255, 0));
+                        this.txtMain.Inlines.Add(runColor);
 
                         strOutput = string.Empty;
                     }
