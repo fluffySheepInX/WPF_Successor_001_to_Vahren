@@ -4357,7 +4357,7 @@ namespace WPF_Successor_001_to_Vahren
             // 実際にはcanvasのどこかに入力ハンドラーを作ればいいっぽい。
             // メインウインドウ全体の入力イベントに連動させた方が、操作しやすそう。
             condition.Reset();
-            while (condition.Wait(10) == false)
+            while (condition.Wait(1) == false)
             {
                 // 待っている間も一定時間ごとに表示を更新する。
                 // これによって、ウインドウの操作や入力の処理が動くっぽい。
@@ -4432,7 +4432,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // テキストウィンドウへの入力を待つ。
             condition.Reset();
-            while (condition.Wait(10) == false)
+            while (condition.Wait(1) == false)
             {
                 // 待っている間も一定時間ごとに表示を更新する。
                 // これによって、ウインドウの操作や入力の処理が動くっぽい。

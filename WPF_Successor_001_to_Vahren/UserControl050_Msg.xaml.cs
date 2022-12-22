@@ -15,6 +15,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
 
+/*
+文章中の特殊記号やタグの説明
+
+文章に @ や # が含まれてると、そこまで表示して待機します。
+@	クリック待ちして改行する
+#	クリック待ちして改行しない
+
+ルビ文字は HTML と同じタグで指定します。
+<ruby>難しい漢字<rt>よみがな</rt></ruby>
+
+*/
 namespace WPF_Successor_001_to_Vahren
 {
     /// <summary>
@@ -81,7 +92,6 @@ namespace WPF_Successor_001_to_Vahren
                 Left = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2),
                 Top = this.Height - this.gridMain.Height - offsetTop
             };
-
         }
 
         // ウインドウ枠を作る
@@ -207,6 +217,60 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+/*
+        // ウィンドウ位置を変更できるようにする？
+        // ヴァーレンの msg2 / talk2 / chat2 は上端に表示される
+        public void PositionBottom()
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // テキストウィンドウを画面の下中央に配置する
+            double offsetTop = mainWindow.canvasUI.Margin.Top;
+            if (offsetTop < 0)
+            {
+                offsetTop = 0;
+            }
+            double newLeft = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2);
+            double newTop = this.Height - this.gridMain.Height - offsetTop;
+            if ((this.gridMain.Margin.Left != newLeft) || (this.gridMain.Margin.Top != newTop))
+            {
+                this.gridMain.Margin = new Thickness()
+                {
+                    Left = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2),
+                    Top = this.Height - this.gridMain.Height - offsetTop
+                };
+
+                // 画面下から出てくるアニメーションを付ける
+                // 最初から文章が表示されたまま動くと変に見える・・・
+                {
+                    var animeOpacity = new DoubleAnimation();
+                    animeOpacity.From = 0.1;
+                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    this.gridMain.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+
+                    var animeMargin = new ThicknessAnimation();
+                    animeMargin.From = new Thickness()
+                    {
+                        Left = this.gridMain.Margin.Left,
+                        Top = Math.Truncate(this.gridMain.Margin.Top + this.gridMain.Height / 2)
+                    };
+                    animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
+                    this.gridMain.BeginAnimation(Grid.MarginProperty, animeMargin);
+                }
+            }
+            else
+            {
+                // アニメーションを消す
+                this.gridMain.BeginAnimation(Grid.OpacityProperty, null);
+                this.gridMain.BeginAnimation(Grid.MarginProperty, null);
+            }
+        }
+*/
+
         // 文章の表示を待ってる位置 (マイナスなら待ってない)
         private int _indexWait = -1;
         // 表示待ちの残り文章
@@ -215,20 +279,117 @@ namespace WPF_Successor_001_to_Vahren
         // 文章を指定する
         public void SetText(string strInput)
         {
+            // 特殊記号を探す
             char[] charsToWait = { '@', '#' };
             _indexWait = strInput.IndexOfAny(charsToWait);
 
+            // ルビ文字のタグを探す
+            string strOutput, strRubyBottom, strRubyTop;
+            int indexRuby = strInput.IndexOf("<ruby>");
+            int indexRuby2 = strInput.IndexOf("</ruby>");
+            int indexRT = strInput.IndexOf("<rt>");
+            int indexRT2 = strInput.IndexOf("</rt>");
+
+            // まずは Text を空にする
+            this.txtMain.Text = string.Empty;
+            this.txtMain.Inlines.Clear();
+
+            // ルビ文字のタグが存在するか調べる
+            if ((indexRuby >= 0) && (indexRT > indexRuby) && (indexRT2 > indexRT) && (indexRuby2 > indexRT2))
+            {
+                // ルビ文字のタグが存在する限り続行する
+                _strRemain = strInput;
+                while ((indexRuby >= 0) && (indexRT > indexRuby) && (indexRT2 > indexRT) && (indexRuby2 > indexRT2))
+                {
+                    // 特殊記号がルビ文字までに存在する場合は、そこまで表示して待機する
+                    if ((_indexWait >= 0) && (_indexWait < indexRuby))
+                    {
+                        // 待機文字まで表示する
+                        strOutput = _strRemain.Substring(0, _indexWait);
+                        // 「@」で待つ場合は改行を挿入する
+                        if (_strRemain[_indexWait] == '@')
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                        this.txtMain.Inlines.Add(strOutput);
+
+                        // 残りの文章を記録しておく
+                        _strRemain = _strRemain.Substring(_indexWait + 1);
+                        return;
+                    }
+
+                    // ルビ文字まで表示する
+                    strOutput = _strRemain.Substring(0, indexRuby);
+                    this.txtMain.Inlines.Add(strOutput);
+
+                    // ルビを付ける文字
+                    strRubyBottom = _strRemain.Substring(indexRuby + 6, indexRT - indexRuby - 6);
+                    // ルビの文字
+                    strRubyTop = _strRemain.Substring(indexRT + 4, indexRT2 - indexRT - 4);
+                    // 残りの文章
+                    _strRemain = _strRemain.Substring(indexRuby2 + 7);
+
+                    // ルビの部分を２行にする
+                    Run runRuby = new Run();
+                    runRuby.Text = strRubyTop + System.Environment.NewLine;
+                    // ルビ文字のフォントサイズを本文の半分にする
+                    runRuby.FontSize = this.txtMain.FontSize / 2;
+                    runRuby.Typography.Variants = FontVariants.Ruby;
+                    TextBlock txtBody = new TextBlock();
+                    // 本文の少し上にルビ文字を置く
+                    txtBody.LineHeight = this.txtMain.FontSize + 2;
+                    txtBody.TextAlignment = TextAlignment.Center;
+                    txtBody.Inlines.Add(runRuby);
+                    txtBody.Inlines.Add(strRubyBottom);
+                    this.txtMain.Inlines.Add(txtBody);
+
+                    // 次の特殊記号を探す
+                    _indexWait = _strRemain.IndexOfAny(charsToWait);
+
+                    // 次のルビ文字のタグの位置
+                    indexRuby = _strRemain.IndexOf("<ruby>");
+                    indexRuby2 = _strRemain.IndexOf("</ruby>");
+                    indexRT = _strRemain.IndexOf("<rt>");
+                    indexRT2 = _strRemain.IndexOf("</rt>");
+                }
+
+                // 文章が残ってれば出力する
+                if (_strRemain != string.Empty)
+                {
+                    // 残りの文章に特殊記号が含まれてるなら、更にクリック待ちする
+                    if (_indexWait >= 0)
+                    {
+                        // 待機文字まで表示する
+                        strOutput = _strRemain.Substring(0, _indexWait);
+                        // 「@」で待つ場合は改行を挿入する
+                        if (_strRemain[_indexWait] == '@')
+                        {
+                            strOutput += System.Environment.NewLine;
+                        }
+                        this.txtMain.Inlines.Add(strOutput);
+
+                        // 残りの文章を記録しておく
+                        _strRemain = _strRemain.Substring(_indexWait + 1);
+                    }
+                    else
+                    {
+                        // 残りの文章を全て表示する
+                        this.txtMain.Inlines.Add(_strRemain);
+                        _strRemain = string.Empty;
+                    }
+                }
+            }
             // クリック待ちするか調べる
-            if (_indexWait >= 0)
+            else if (_indexWait >= 0)
             {
                 // 待機文字まで表示する
-                this.txtMain.Text = strInput.Substring(0, _indexWait);
-
+                strOutput = strInput.Substring(0, _indexWait);
                 // 「@」で待つ場合は改行を挿入する
                 if (strInput[_indexWait] == '@')
                 {
-                    this.txtMain.Text += System.Environment.NewLine;
+                    strOutput += System.Environment.NewLine;
                 }
+                this.txtMain.Inlines.Add(strOutput);
 
                 // 残りの文章を記録しておく
                 _strRemain = strInput.Substring(_indexWait + 1);
@@ -250,29 +411,96 @@ namespace WPF_Successor_001_to_Vahren
                 return false;
             }
 
+            // 特殊記号を探す
             char[] charsToWait = { '@', '#' };
             _indexWait = _strRemain.IndexOfAny(charsToWait);
 
-            // 更にクリック待ちするか調べる
-            if (_indexWait >= 0)
-            {
-                // 待機文字まで表示する
-                this.txtMain.Text += _strRemain.Substring(0, _indexWait);
+            // ルビ文字のタグを探す
+            string strOutput, strRubyBottom, strRubyTop;
+            int indexRuby = _strRemain.IndexOf("<ruby>");
+            int indexRuby2 = _strRemain.IndexOf("</ruby>");
+            int indexRT = _strRemain.IndexOf("<rt>");
+            int indexRT2 = _strRemain.IndexOf("</rt>");
 
-                // 「@」で待つ場合は改行を挿入する
-                if (_strRemain[_indexWait] == '@')
+            // まだルビ文字のタグが存在するか調べる
+            while ((indexRuby >= 0) && (indexRT > indexRuby) && (indexRT2 > indexRT) && (indexRuby2 > indexRT2))
+            {
+                // 特殊記号がルビ文字までに存在する場合は、そこまで表示して待機する
+                if ((_indexWait >= 0) && (_indexWait < indexRuby))
                 {
-                    this.txtMain.Text += System.Environment.NewLine;
+                    // 待機文字まで表示する
+                    strOutput = _strRemain.Substring(0, _indexWait);
+                    // 「@」で待つ場合は改行を挿入する
+                    if (_strRemain[_indexWait] == '@')
+                    {
+                        strOutput += System.Environment.NewLine;
+                    }
+                    this.txtMain.Inlines.Add(strOutput);
+
+                    // 残りの文章を記録しておく
+                    _strRemain = _strRemain.Substring(_indexWait + 1);
+                    return true;
                 }
 
-                // 残りの文章を記録しておく
-                _strRemain = _strRemain.Substring(_indexWait + 1);
+                // ルビ文字まで表示する
+                strOutput = _strRemain.Substring(0, indexRuby);
+                this.txtMain.Inlines.Add(strOutput);
+
+                // ルビを付ける文字
+                strRubyBottom = _strRemain.Substring(indexRuby + 6, indexRT - indexRuby - 6);
+                // ルビの文字
+                strRubyTop = _strRemain.Substring(indexRT + 4, indexRT2 - indexRT - 4);
+                // 残りの文章
+                _strRemain = _strRemain.Substring(indexRuby2 + 7);
+
+                // ルビの部分を２行にする
+                Run runRuby = new Run();
+                runRuby.Text = strRubyTop + System.Environment.NewLine;
+                // ルビ文字のフォントサイズを本文の半分にする
+                runRuby.FontSize = this.txtMain.FontSize / 2;
+                runRuby.Typography.Variants = FontVariants.Ruby;
+                TextBlock txtBody = new TextBlock();
+                // 本文の少し上にルビ文字を置く
+                txtBody.LineHeight = this.txtMain.FontSize + 2;
+                txtBody.TextAlignment = TextAlignment.Center;
+                txtBody.Inlines.Add(runRuby);
+                txtBody.Inlines.Add(strRubyBottom);
+                this.txtMain.Inlines.Add(txtBody);
+
+                // 次の特殊記号を探す
+                _indexWait = _strRemain.IndexOfAny(charsToWait);
+
+                // 次のルビ文字のタグの位置
+                indexRuby = _strRemain.IndexOf("<ruby>");
+                indexRuby2 = _strRemain.IndexOf("</ruby>");
+                indexRT = _strRemain.IndexOf("<rt>");
+                indexRT2 = _strRemain.IndexOf("</rt>");
             }
-            else
+
+            // 文章が残ってれば出力する
+            if (_strRemain != string.Empty)
             {
-                // 残りを全て表示する
-                this.txtMain.Text += _strRemain;
-                _strRemain = string.Empty;
+                // 残りの文章に特殊記号が含まれてるなら、更にクリック待ちする
+                if (_indexWait >= 0)
+                {
+                    // 待機文字まで表示する
+                    strOutput = _strRemain.Substring(0, _indexWait);
+                    // 「@」で待つ場合は改行を挿入する
+                    if (_strRemain[_indexWait] == '@')
+                    {
+                        strOutput += System.Environment.NewLine;
+                    }
+                    this.txtMain.Inlines.Add(strOutput);
+
+                    // 残りの文章を記録しておく
+                    _strRemain = _strRemain.Substring(_indexWait + 1);
+                }
+                else
+                {
+                    // 残りの文章を全て表示する
+                    this.txtMain.Inlines.Add(_strRemain);
+                    _strRemain = string.Empty;
+                }
             }
 
             // 次の文章を表示したら true を返す
@@ -376,7 +604,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     this.imgFace.Width = max_size;
                 }
-                this.txtMain.Margin = new Thickness(20, 20, this.imgFace.Width + 4 + 40, 0);
+                this.txtMain.Margin = new Thickness(20, 15, this.imgFace.Width + 4 + 40, 0);
             }
         }
         public void RemoveFace()
@@ -385,7 +613,7 @@ namespace WPF_Successor_001_to_Vahren
             this.imgFace.Source = null;
             this.imgFace.Visibility = Visibility.Collapsed;
             this.borderFace.Visibility = Visibility.Collapsed;
-            this.txtMain.Margin = new Thickness(20, 20, 20, 0);
+            this.txtMain.Margin = new Thickness(20, 15, 20, 0);
         }
 
     }

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              Width="1050" Height="350">
     <Canvas Background="Transparent" >
-        <Grid Name="gridMain" UseLayoutRounding="True" Width="1024" Height="314"
+        <Grid Name="gridMain" UseLayoutRounding="True" Width="1024" Height="312"
                 MouseLeftButtonUp="win_MouseLeftButtonUp">
             <Grid>
                 <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -36,8 +36,8 @@
             </Grid>
 
             <Grid Margin="16">
-                <TextBlock Margin="20,20,20,0" FontSize="26" Foreground="White" Name="txtMain"
-                        TextWrapping="Wrap" LineHeight="50"
+                <TextBlock Margin="20,15,20,0" FontSize="26" Foreground="White" Name="txtMain"
+                        TextWrapping="Wrap" LineHeight="50" LineStackingStrategy="BlockLineHeight"
                         Text="テキストウィンドウの文章です。改行することもできます。とても長い文章は自動的に改行されます。"/>
                 <Border Margin="0,8,20,0" HorizontalAlignment="Right" VerticalAlignment="Center" BorderBrush="White" BorderThickness="2" Name="borderFace">
                     <Image Name="imgFace"/>
