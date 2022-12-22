@@ -194,6 +194,16 @@ namespace WPF_Successor_001_to_Vahren
                 // テキストウィンドウが存在する時
                 if (this.ClassGameStatus.TextWindow != null)
                 {
+                    if (this.ClassGameStatus.TextWindow is UserControl050_Msg)
+                    {
+                        // 次の文章を表示待ちなら
+                        var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
+                        if (textWindow.NextText() == true)
+                        {
+                            return;
+                        }
+                    }
+
                     var mainWindow = (MainWindow)Application.Current.MainWindow;
                     if (mainWindow != null)
                     {
