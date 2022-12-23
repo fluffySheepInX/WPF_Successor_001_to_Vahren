@@ -81,6 +81,7 @@ namespace WPF_Successor_001_to_Vahren
             this.Width = mainWindow.canvasTop.ActualWidth;
             this.Height = mainWindow.canvasTop.ActualHeight;
 
+            /*
             // テキストウィンドウを画面の下中央に配置する
             double offsetTop = mainWindow.canvasUI.Margin.Top;
             if (offsetTop < 0)
@@ -92,6 +93,7 @@ namespace WPF_Successor_001_to_Vahren
                 Left = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2),
                 Top = this.Height - this.gridMain.Height - offsetTop
             };
+            */
         }
 
         // ウインドウ枠を作る
@@ -217,7 +219,6 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-/*
         // ウィンドウ位置を変更できるようにする？
         // ヴァーレンの msg2 / talk2 / chat2 は上端に表示される
         public void PositionBottom()
@@ -236,6 +237,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             double newLeft = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2);
             double newTop = this.Height - this.gridMain.Height - offsetTop;
+            // 違う場所にあった場合だけ、アニメーションしながら出現させる
             if ((this.gridMain.Margin.Left != newLeft) || (this.gridMain.Margin.Top != newTop))
             {
                 this.gridMain.Margin = new Thickness()
@@ -245,31 +247,34 @@ namespace WPF_Successor_001_to_Vahren
                 };
 
                 // 画面下から出てくるアニメーションを付ける
-                // 最初から文章が表示されたまま動くと変に見える・・・
-                {
-                    var animeOpacity = new DoubleAnimation();
-                    animeOpacity.From = 0.1;
-                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    this.gridMain.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+                // 文章が表示されたまま動くと変なので、アニメーションが終わってから表示する
+                this.txtMain.Visibility = Visibility.Hidden;
 
-                    var animeMargin = new ThicknessAnimation();
-                    animeMargin.From = new Thickness()
-                    {
-                        Left = this.gridMain.Margin.Left,
-                        Top = Math.Truncate(this.gridMain.Margin.Top + this.gridMain.Height / 2)
-                    };
-                    animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
-                    this.gridMain.BeginAnimation(Grid.MarginProperty, animeMargin);
-                }
-            }
-            else
-            {
-                // アニメーションを消す
-                this.gridMain.BeginAnimation(Grid.OpacityProperty, null);
-                this.gridMain.BeginAnimation(Grid.MarginProperty, null);
+                // かなり速く動く（1/8秒で終わる）
+                var animeOpacity = new DoubleAnimation();
+                animeOpacity.From = 0.1;
+                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.11));
+                this.gridMain.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+
+                var animeMargin = new ThicknessAnimation();
+                animeMargin.From = new Thickness()
+                {
+                    Left = this.gridMain.Margin.Left,
+                    Top = this.gridMain.Margin.Top + Math.Truncate(this.gridMain.Height / 2)
+                };
+                animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.125));
+                animeMargin.Completed += anime_PositionBottom_Completed;
+                this.gridMain.BeginAnimation(Grid.MarginProperty, animeMargin);
             }
         }
-*/
+
+        private void anime_PositionBottom_Completed(object? sender, EventArgs e)
+        {
+            // ウィンドウを動かすアニメーションを消して、文章を表示する
+            this.gridMain.BeginAnimation(Grid.OpacityProperty, null);
+            this.gridMain.BeginAnimation(Grid.MarginProperty, null);
+            this.txtMain.Visibility = Visibility.Visible;
+        }
 
         // 文章の表示を待ってる位置 (マイナスなら待ってない)
         private int _indexWait = -1;
