@@ -80,6 +80,7 @@ namespace MapEditor
                 var i1 = new MenuItem() { Header = "退却位置とする" };
                 cm.Items.Add(i1);
                 i1.Click += CmMenu1_Click;
+                i1.Tag = "A" + col + "," + hei;
             }
             {
                 var i1 = new MenuItem() { Header = "出撃位置とする" };
@@ -132,7 +133,16 @@ namespace MapEditor
 
         private void CmMenu1_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("test");
+            if (MapData is null) return;
+
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].unit = "@ESC@";
+            MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
