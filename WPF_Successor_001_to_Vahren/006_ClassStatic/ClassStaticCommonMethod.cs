@@ -135,7 +135,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             var sonomama = re[i].Replace(System.Environment.NewLine, string.Empty);
 
                             var splitA = sonomama.Split("*");
-                            
+
                             map.TryGetValue(splitA[0], out string? mapValue);
                             if (mapValue != null) mapDetail.Tip = mapValue;
                             map.TryGetValue(splitA[1], out string? mapValue2);
@@ -441,7 +441,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.SlowPer = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.SlowPer = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //slow_time
@@ -456,7 +456,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.SlowTime = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.SlowTime = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //sound
@@ -489,7 +489,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Image = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.Image = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //direct
@@ -504,7 +504,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Direct = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.Direct = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //w
@@ -519,7 +519,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.W = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.W = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //h
@@ -534,7 +534,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.H = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.H = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //a
@@ -549,7 +549,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.A = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.A = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //force_fire
@@ -564,7 +564,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.ForceFire = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.ForceFire = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //attr
@@ -579,7 +579,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Attr = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.Attr = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //str
@@ -610,7 +610,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Range = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.Range = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //damage_range_adjust
@@ -625,7 +625,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.DamageRangeAdjust = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.DamageRangeAdjust = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //range_min
@@ -640,7 +640,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.RangeMin = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.RangeMin = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //speed
@@ -655,7 +655,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Speed = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.Speed = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //gun_delay
@@ -686,7 +686,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.PairNext = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.PairNext = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //next
@@ -701,7 +701,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.Next = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.Next = first.Value.Replace(Environment.NewLine, "");
                 }
             }
             //random_space
@@ -716,7 +716,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.RandomSpace = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                    classSkill.RandomSpace = int.Parse(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //offset
@@ -763,7 +763,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                classSkill.ForceRay = first.Value.Replace(Environment.NewLine, "");
+                    classSkill.ForceRay = first.Value.Replace(Environment.NewLine, "");
                 }
             }
 
@@ -949,7 +949,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         if (item.Contains("*") == true)
                         {
                             var tete2 = item.Split("*");
-                            tete.Add(new(tete2[0], Convert.ToInt32(tete2[1])));
+                            for (int i = 0; i < Convert.ToInt32(tete2[1]); i++)
+                            {
+                                tete.Add(new(tete2[0], 1));
+                            }
                         }
                         else
                         {
