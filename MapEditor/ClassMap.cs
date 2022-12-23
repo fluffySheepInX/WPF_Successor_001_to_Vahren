@@ -8,7 +8,7 @@ namespace MapEditor
 {
     public class ClassMap
     {
-        public ClassMap(string field, string build, int flag, string unit, string direction, string formation)
+        public ClassMap(string field, List<string> build, int flag, string unit, string direction, string formation)
         {
             this.field = field;
             this.build = build;
@@ -25,7 +25,7 @@ namespace MapEditor
         /// <summary>
         /// 城壁や矢倉など
         /// </summary>
-        public string build { get; set; } = string.Empty;
+        public List<string> build { get; set; } = new List<string>();
         /// <summary>
         /// 部隊チップの種別
         /// flag = 0 なら「ユニットの識別名」として扱う。

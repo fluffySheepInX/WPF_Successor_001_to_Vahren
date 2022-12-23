@@ -76,12 +76,27 @@ namespace MapEditor
             border.BorderBrush = Brushes.Black;
             border.BorderThickness = new Thickness() { Left = 1, Top = 1, Right = 1, Bottom = 1 };
             var cm = new ContextMenu();
-            var i1 = new MenuItem() { Header = "退却位置とする" };
-            cm.Items.Add(i1);
-            var i2 = new MenuItem() { Header = "出撃位置とする" };
-            cm.Items.Add(i2);
-            var i3 = new MenuItem() { Header = "防衛位置とする" };
-            cm.Items.Add(i3);
+            {
+                var i1 = new MenuItem() { Header = "退却位置とする" };
+                cm.Items.Add(i1);
+                i1.Click += CmMenu1_Click;
+            }
+            {
+                var i1 = new MenuItem() { Header = "出撃位置とする" };
+                cm.Items.Add(i1);
+            }
+            {
+                var i1 = new MenuItem() { Header = "防衛位置とする" };
+                cm.Items.Add(i1);
+            }
+            {
+                var i1 = new MenuItem() { Header = "オブジェクトを配置する（複数可能" };
+                cm.Items.Add(i1);
+            }
+            {
+                var i1 = new MenuItem() { Header = "ユニット、陣形、方角を指定する" };
+                cm.Items.Add(i1);
+            }
             border.ContextMenu = cm;
 
             Canvas canvas = new Canvas();
@@ -113,6 +128,11 @@ namespace MapEditor
             border.Child = canvas;
 
             this.wrapCanvas.Children.Add(border);
+        }
+
+        private void CmMenu1_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("test");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -216,11 +236,13 @@ namespace MapEditor
             int second = int.Parse(strings[1]);
             if (this.NameSelectionMapTipObj == true)
             {
+                var li = MapData[first][second].build.ToList();
+                li.Add(this.NameSelectionMapTip);
                 MapData[first][second]
                     = new ClassMap()
                     {
                         field = MapData[first][second].field,
-                        build = this.NameSelectionMapTip,
+                        build = li,
                         flag = MapData[first][second].flag,
                         unit = MapData[first][second].unit,
                         direction = MapData[first][second].direction,
@@ -342,7 +364,7 @@ namespace MapEditor
                 MapData.Add(new List<ClassMap>());
                 for (int j = 0; j < wrapCanvas.Rows; j++)
                 {
-                    MapData[i].Add(new ClassMap(this.NameSelectionMapTip, "", 0, "", "", ""));
+                    MapData[i].Add(new ClassMap(this.NameSelectionMapTip, new List<string>(), 0, "", "", ""));
                 }
             }
 
@@ -399,11 +421,10 @@ namespace MapEditor
                     var b = MapData[i].GroupBy(x => x).GroupBy(x => x.Key).Select(x => x.First()).ToList();
                     foreach (var item in b)
                     {
-                        if (item.Key.build == String.Empty)
+                        foreach (var itemBuild in item.Key.build)
                         {
-                            continue;
+                            groupString2.Add(itemBuild);
                         }
-                        groupString2.Add(item.Key.build);
                     }
                 }
             }
@@ -442,15 +463,30 @@ namespace MapEditor
                     {
                         continue;
                     }
-                    string getValueBuild = "";
-                    targetString.TryGetValue(MapData[i][k].build, out string? valueBuild);
-                    if (valueBuild == null)
+                    List<string> liGetValueBuild = new List<string>();
+                    foreach (var item in MapData[i][k].build)
+                    {
+                        targetString.TryGetValue(item, out string? valueBuild);
+                        if (valueBuild == null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            liGetValueBuild.Add(valueBuild);
+                        }
+                    }
+                    string getValueBuild = string.Empty;
+                    if (liGetValueBuild.Count == 0)
                     {
                         getValueBuild = "null";
                     }
                     else
                     {
-                        getValueBuild = valueBuild;
+                        foreach (var item in liGetValueBuild)
+                        {
+                            getValueBuild = getValueBuild + "$" + System.IO.Path.GetFileNameWithoutExtension(item);
+                        }
                     }
                     string unit;
                     if (MapData[i][k].unit == String.Empty)
@@ -481,7 +517,7 @@ namespace MapEditor
                     }
 
                     stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(valueField) +
-                                    "*" + System.IO.Path.GetFileNameWithoutExtension(getValueBuild) +
+                                    "*" + getValueBuild +
                                     "*" + Convert.ToString(MapData[i][k].flag) +
                                     "*" + unit +
                                     "*" + houkou +
