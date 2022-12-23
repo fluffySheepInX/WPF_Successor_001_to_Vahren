@@ -4393,6 +4393,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
                 textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[0].Value, "$"));
+                textWindow.PositionBottom();
                 textWindow.RemoveName();
                 textWindow.RemoveHelp();
                 textWindow.RemoveFace();
@@ -4406,6 +4407,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
                 textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[1].Value, "$"));
+                textWindow.PositionBottom();
 
                 // ユニットの識別名から肩書と名前を取得する
                 string unitNameTag = systemFunctionLiteral.Parameters[0].Value;

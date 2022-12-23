@@ -50,7 +50,7 @@ NewFormatSpot spot0009
 	map = "wefwefwefwefw";
 
 	capacity = "6";
-	member = "LineInfantryM14*6,DragoonFrancesca*8,HowitzerC11*7";
+	member = "LineInfantryM14*2,DragoonFrancesca,HowitzerC11";
 	text = "短い文章です。";
 }
 NewFormatSpot spot0010
