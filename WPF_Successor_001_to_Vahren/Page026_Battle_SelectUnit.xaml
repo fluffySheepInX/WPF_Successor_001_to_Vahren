@@ -1,4 +1,4 @@
-﻿<Page x:Class="WPF_Successor_001_to_Vahren.Page026_Battle_SelectUnit"
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.Page026_Battle_SelectUnit"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       Background="AliceBlue"
       d:DesignHeight="60" d:DesignWidth="100"
-      Title="Page026_Battle_SelectUnit" Loaded="Page_Loaded">
+      Loaded="Page_Loaded">
     <Border x:Name="borPage026" BorderBrush="Black" BorderThickness="4" Height="60" Width="100">
         <Canvas>
             <Canvas.Background>
@@ -17,4 +17,4 @@
             <StackPanel x:Name="stackUnit" Height="52" Margin="80,0,0,0" Orientation="Horizontal"></StackPanel>
         </Canvas>
     </Border>
-</Page>
+</UserControl>

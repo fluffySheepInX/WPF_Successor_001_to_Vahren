@@ -21,7 +21,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page025_Battle_Command.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page025_Battle_Command : Page
+    public partial class Page025_Battle_Command : UserControl
     {
         public Page025_Battle_Command()
         {

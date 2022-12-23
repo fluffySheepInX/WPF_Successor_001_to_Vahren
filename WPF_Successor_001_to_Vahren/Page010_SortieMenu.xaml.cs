@@ -21,7 +21,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page010_SortieMenu.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page010_SortieMenu : Page
+    public partial class Page010_SortieMenu : UserControl
     {
         public Page010_SortieMenu()
         {

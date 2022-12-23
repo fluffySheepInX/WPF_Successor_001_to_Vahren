@@ -21,7 +21,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page015_Message.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page020_Talk : Page
+    public partial class Page020_Talk : UserControl
     {
         public Page020_Talk()
         {

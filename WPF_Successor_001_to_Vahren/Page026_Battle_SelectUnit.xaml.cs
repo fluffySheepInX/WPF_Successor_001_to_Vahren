@@ -19,7 +19,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page026_Battle_SelectUnit.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page026_Battle_SelectUnit : Page
+    public partial class Page026_Battle_SelectUnit : UserControl
     {
         public Page026_Battle_SelectUnit()
         {

@@ -20,7 +20,7 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page001_Conscription.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page001_Conscription : Page
+    public partial class Page001_Conscription : UserControl
     {
         public Page001_Conscription()
         {

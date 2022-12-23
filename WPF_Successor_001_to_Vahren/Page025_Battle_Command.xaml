@@ -1,4 +1,4 @@
-﻿<Page x:Class="WPF_Successor_001_to_Vahren.Page025_Battle_Command"
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.Page025_Battle_Command"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
       mc:Ignorable="d" 
       d:DesignHeight="250" d:DesignWidth="320"
-      Title="Page025_Battle_Command" Loaded="Page_Loaded">
+      Loaded="Page_Loaded">
     <Border BorderBrush="Black" BorderThickness="4" Height="250" Width="320">
         <Canvas>
             <Canvas.Background>
@@ -40,4 +40,4 @@
             </StackPanel>
         </Canvas>
     </Border>
-</Page>
+</UserControl>

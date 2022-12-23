@@ -18,45 +18,29 @@ namespace WPF_Successor_001_to_Vahren
     /// <summary>
     /// Page030_GameResult.xaml の相互作用ロジック
     /// </summary>
-    public partial class Page030_GameResult : Page
+    public partial class Page030_GameResult : UserControl
     {
+        public MainWindow? MyProperty { get; set; } = null;
+
         public Page030_GameResult()
         {
             InitializeComponent();
 
             var window = Application.Current.Properties["window"];
-            if (window == null)
-            {
-                return;
-            }
-            var mainWindow = window as MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-
-
+            if (window is null) return;
+            if (window is not MainWindow) return;
+            MyProperty = window as MainWindow;
         }
 
         private void btnBackTitle_Click(object sender, RoutedEventArgs e)
         {
-            var window = Application.Current.Properties["window"];
-            if (window == null)
-            {
-                return;
-            }
-            var mainWindow = window as MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
+            if (MyProperty == null) return;
 
-            mainWindow.FadeOut = true;
+            MyProperty.FadeOut = true;
 
-            mainWindow.delegateMainWindowContentRendered = mainWindow.MainWindowContentRendered;
+            MyProperty.delegateMainWindowContentRendered = MyProperty.MainWindowContentRendered;
 
-            mainWindow.FadeIn = true;
+            MyProperty.FadeIn = true;
         }
     }
 }
