@@ -789,10 +789,93 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // プレイヤーのターン中なら、領地ウィンドウを表示する
             if (mainWindow.NowSituation == _010_Enum.Situation.PlayerTurn)
             {
-                mainWindow.DisplayCitySelection(sender);
+                var cast = (FrameworkElement)sender;
+                if (cast.Tag is not ClassPowerAndCity)
+                {
+                    return;
+                }
+                var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+
+                // ウインドウの左上が領地の場所になるように配置する
+                // （領地のクリック範囲が広いので、マウスカーソルを基準にする）
+                Point posMouse = Mouse.GetPosition(mainWindow.canvasUI);
+                Thickness posWindow = new Thickness()
+                {
+                    Left = posMouse.X - 40,
+                    Top = posMouse.Y - 40
+                };
+
+                // 既に表示されてる領地ウインドウをチェックする
+                int window_id, max_id = 0;
+                var id_list = new List<int>();
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
+                {
+                    string strTitle = itemWindow.Name;
+                    if (strTitle.StartsWith("WindowSpot"))
+                    {
+                        window_id = Int32.Parse(strTitle.Replace("WindowSpot", string.Empty));
+                        id_list.Add(window_id);
+                        if (max_id < window_id)
+                        {
+                            max_id = window_id;
+                        }
+                        var ri = (ClassPowerAndCity)itemWindow.Tag;
+                        if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                        {
+                            // 領地ウインドウを既に開いてる場合は、新規に作らない
+                            max_id = -1;
+                            itemWindow.Margin = posWindow;
+
+                            // 最前面に移動する
+                            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
+                            if ((listWindow != null) && (listWindow.Any()))
+                            {
+                                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                                Canvas.SetZIndex(itemWindow, maxZ + 1);
+                            }
+
+                            break;
+                        }
+                    }
+                }
+                if (max_id >= 0)
+                {
+                    if (max_id > id_list.Count)
+                    {
+                        // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                        for (window_id = 1; window_id < max_id; window_id++)
+                        {
+                            if (id_list.Contains(window_id) == false)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                        window_id = max_id + 1;
+                    }
+                    var windowSpot = new UserControl010_Spot();
+                    windowSpot.Tag = classPowerAndCity;
+                    windowSpot.Name = "WindowSpot" + window_id.ToString();
+                    windowSpot.Margin = posWindow;
+                    windowSpot.SetData();
+                    mainWindow.canvasUI.Children.Add(windowSpot);
+
+                    // 透明から不透明になる
+                    var animeOpacity = new DoubleAnimation();
+                    animeOpacity.From = 0.1;
+                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    windowSpot.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
+                }
+                id_list.Clear();
+
             }
+            // 勢力を選択中なら、勢力詳細ウィンドウを表示する
             else if (mainWindow.NowSituation == _010_Enum.Situation.SelectGroup)
             {
                 mainWindow.DisplayPowerSelection(sender);
