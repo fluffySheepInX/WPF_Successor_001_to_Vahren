@@ -9,6 +9,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassTestBattle
     {
+        private string nameTag = "";
+        public string NameTag
+        {
+            get { return nameTag; }
+            set { nameTag = value; }
+        }
+
         private BattleWhichIsThePlayer player = BattleWhichIsThePlayer.Sortie;
         public BattleWhichIsThePlayer Player
         {

@@ -77,7 +77,7 @@ namespace WPF_Successor_001_to_Vahren
                         }
 
                         //ファイル毎に繰り返し
-                        ClassTestBattle classTestBattle = new ClassTestBattle();
+                        List<ClassTestBattle> classTestBattle = new List<ClassTestBattle>();
                         ClassGameStatus classGameStatus = new ClassGameStatus();
                         foreach (var item in files)
                         {
@@ -139,7 +139,7 @@ namespace WPF_Successor_001_to_Vahren
 
                                         if (kind == 0)
                                         {
-                                            classTestBattle = GetClassTestBattle(getData.Value);
+                                            classTestBattle.Add(GetClassTestBattle(getData.Value));
                                         }
                                         else
                                         {
@@ -350,10 +350,17 @@ namespace WPF_Successor_001_to_Vahren
                             }
                         }
 
-                        classGameStatus.ClassBattle.BattleWhichIsThePlayer =
-                            classTestBattle.Player;
 
-                        CreateMap(classTestBattle, _classConfigGameTitle, classGameStatus);
+                        foreach (var item in classTestBattle)
+                        {
+                            if (string.Join("", e.Args[2].Skip(1).ToList()) == item.NameTag)
+                            {
+                                classGameStatus.ClassBattle.BattleWhichIsThePlayer =
+                                    item.Player;
+                                CreateMap(item, _classConfigGameTitle, classGameStatus);
+                                return;
+                            }
+                        }
                     }
 
                     break;
@@ -380,6 +387,18 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
                 value = String.Join(Environment.NewLine, line);
+            }
+
+            //tag name
+            {
+                var nameTag = new Regex(ClassStaticCommonMethod.GetPatTag("TestBattle"), RegexOptions.IgnoreCase)
+                                .Matches(value);
+                var first = ClassStaticCommonMethod.CheckMatchElement(nameTag);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classTestBattle.NameTag = first.Value.Replace(Environment.NewLine, "");
             }
 
             //map
@@ -416,7 +435,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var member =
                     new Regex(ClassStaticCommonMethod.GetPatComma("memberKougeki"), RegexOptions.IgnoreCase)
-                    .Matches(value);    
+                    .Matches(value);
                 var first = ClassStaticCommonMethod.CheckMatchElement(member);
                 if (first == null)
                 {

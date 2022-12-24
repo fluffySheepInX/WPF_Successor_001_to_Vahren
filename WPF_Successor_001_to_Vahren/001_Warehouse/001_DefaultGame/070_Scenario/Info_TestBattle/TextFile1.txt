@@ -12,3 +12,18 @@
 	#None
 	player = "Def";
 }
+
+TestBattle ca2
+{
+	#戦闘マップ
+	map = "ca3";
+	#出撃
+	memberKougeki = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
+	#防衛
+	memberBouei = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
+	#プレイヤー
+	#Sortie
+	#Def
+	#None
+	player = "Sortie";
+}
