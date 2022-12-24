@@ -386,29 +386,10 @@ namespace WPF_Successor_001_to_Vahren
                 convSpots.ClassPower = newPower;
 
                 // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
-                    var flag = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotFlag" + convSpots.ClassSpot.NameTag);
-                    if (flag != null)
-                    {
-                        gridMapStrategy.Children.Remove(flag);
-                    }
-
-                    // 旗を表示する
-                    if (newPower.FlagPath != String.Empty)
-                    {
-                        int spot_size = 32;
-                        Image imgFlag = mainWindow.DisplayFlag(newPower.FlagPath);
-                        imgFlag.Name = "SpotFlag" + convSpots.ClassSpot.NameTag;
-                        imgFlag.Margin = new Thickness()
-                        {
-                            Left = convSpots.ClassSpot.X - spot_size / 4,
-                            Top = convSpots.ClassSpot.Y - spot_size / 2 - imgFlag.Height
-                        };
-                        gridMapStrategy.Children.Add(imgFlag);
-                        Panel.SetZIndex(imgFlag, 1);
-                    }
+                    worldMap.ChangeFlag(newPower.FlagPath, convSpots.ClassSpot.NameTag);
                 }
 
                 //unitの所属情報を書き換え
@@ -441,10 +422,9 @@ namespace WPF_Successor_001_to_Vahren
                 MessageBox.Show(convSpots.ClassSpot.Name + "を占領しました！");
 
                 // 勢力メニューを更新する
-                var uc5 = (UserControl005_StrategyMenu)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUIRightBottom, StringName.canvasStrategyMenu);
-                if (uc5 != null)
+                if (mainWindow.ClassGameStatus.WindowStrategyMenu != null)
                 {
-                    uc5.DisplayPowerStatus(mainWindow);
+                    mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
                 }
 
                 return;

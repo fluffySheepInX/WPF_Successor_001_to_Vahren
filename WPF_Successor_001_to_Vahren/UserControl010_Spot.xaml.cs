@@ -323,8 +323,7 @@ namespace WPF_Successor_001_to_Vahren
                     panelUnit.MouseEnter += panel_MouseEnter;
                     panelUnit.MouseLeave += panel_MouseLeave;
                     // ユニット情報を表示するためのイベント
-                    panelUnit.MouseLeftButtonUp += unit_MouseLeftButtonUp;
-                    panelUnit.MouseLeftButtonDown += Disable_MouseEvent;
+                    panelUnit.MouseLeftButtonDown += unit_MouseLeftButtonDown;
                     if (_isControl)
                     {
                         // 操作可能な時だけドラッグ移動の準備をしておく
@@ -1094,8 +1093,8 @@ namespace WPF_Successor_001_to_Vahren
             // 戦略マップ上の領地アイコンも
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
             {
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
                     var listSpot = mainWindow.ClassGameStatus.AllListSpot;
                     int spot_count = listSpot.Count;
@@ -1116,9 +1115,6 @@ namespace WPF_Successor_001_to_Vahren
                                 border.Background = Brushes.Transparent;
                                 border.BorderThickness = new Thickness(2);
                                 border.BorderBrush = Brushes.Aqua;
-                                // 親コントロールが Grid なので、標準だと中央配置になる。左上を原点に変えておく。
-                                border.HorizontalAlignment = HorizontalAlignment.Left;
-                                border.VerticalAlignment = VerticalAlignment.Top;
                                 // 領地アイコンの大きさが不明なので、大きめの枠にする
                                 border.Width = 64;
                                 border.Height = 64;
@@ -1127,7 +1123,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Left = itemSpot.X - 32,
                                     Top = itemSpot.Y - 32
                                 };
-                                gridMapStrategy.Children.Add(border);
+                                worldMap.canvasMap.Children.Add(border);
                                 Panel.SetZIndex(border, 2);
                             }
                         }
@@ -1281,8 +1277,8 @@ namespace WPF_Successor_001_to_Vahren
             // 戦略マップ上の領地アイコンも
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
             {
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
                     var listSpot = mainWindow.ClassGameStatus.AllListSpot;
                     int spot_count = listSpot.Count;
@@ -1314,7 +1310,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Left = itemSpot.X - 32,
                                     Top = itemSpot.Y - 32
                                 };
-                                gridMapStrategy.Children.Add(border);
+                                worldMap.canvasMap.Children.Add(border);
                                 Panel.SetZIndex(border, 2);
                             }
                         }
@@ -1407,8 +1403,8 @@ namespace WPF_Successor_001_to_Vahren
             // 戦略マップ上の領地アイコンも
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
             {
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
                     var listSpot = mainWindow.ClassGameStatus.AllListSpot;
                     int spot_count = listSpot.Count;
@@ -1440,7 +1436,7 @@ namespace WPF_Successor_001_to_Vahren
                                     Left = itemSpot.X - 32,
                                     Top = itemSpot.Y - 32
                                 };
-                                gridMapStrategy.Children.Add(border);
+                                worldMap.canvasMap.Children.Add(border);
                                 Panel.SetZIndex(border, 2);
                             }
                         }
@@ -1563,12 +1559,12 @@ namespace WPF_Successor_001_to_Vahren
             // 戦略マップ上の枠も
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
             {
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
-                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
+                    for (int i = worldMap.canvasMap.Children.Count - 1; i >= 0; i += -1)
                     {
-                        UIElement Child = gridMapStrategy.Children[i];
+                        UIElement Child = worldMap.canvasMap.Children[i];
                         if (Child is Border)
                         {
                             var border = (Border)Child;
@@ -1599,7 +1595,7 @@ namespace WPF_Successor_001_to_Vahren
                                     }
                                 }
                                 // 枠を取り除く
-                                gridMapStrategy.Children.Remove(border);
+                                worldMap.canvasMap.Children.Remove(border);
                             }
                         }
                     }
@@ -1695,10 +1691,10 @@ namespace WPF_Successor_001_to_Vahren
             // 戦略マップ上の枠も
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count > 1)
             {
-                var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-                if (gridMapStrategy != null)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
-                    foreach (var border in gridMapStrategy.Children.OfType<Border>())
+                    foreach (var border in worldMap.canvasMap.Children.OfType<Border>())
                     {
                         if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                         {
@@ -1733,6 +1729,9 @@ namespace WPF_Successor_001_to_Vahren
 
             // キャンバスから自身を取り除く
             mainWindow.canvasUI.Children.Remove(this);
+
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
         }
 
         #region ウインドウ移動
@@ -1943,6 +1942,9 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
             if ((listWindow != null) && (listWindow.Any()))
@@ -2050,6 +2052,9 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
+
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
 
             // 最前面に移動させる
             var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
@@ -2218,6 +2223,9 @@ namespace WPF_Successor_001_to_Vahren
         // 全部ボタンを押した場合は、全ての部隊が移動する
         private void whole_MouseDown(object sender, MouseEventArgs e)
         {
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
@@ -2405,7 +2413,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ユニット情報ウインドウを開く
-        private void unit_MouseLeftButtonUp(object sender, RoutedEventArgs e)
+        private void unit_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)

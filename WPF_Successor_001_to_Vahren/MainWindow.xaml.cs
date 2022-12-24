@@ -296,7 +296,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ScenarioSelection_MouseRightButtonUp(object sender, MouseEventArgs e)
+        private void ScenarioSelection_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             this.FadeOut = true;
 
@@ -366,182 +366,6 @@ namespace WPF_Successor_001_to_Vahren
             this.FadeIn = true;
         }
 
-        #region マップ移動
-        private void GridMapStrategy_MouseLeftButtonDown(object sender, MouseEventArgs e)
-        {
-            // ドラッグを開始する
-            UIElement? el = sender as UIElement;
-            if (el == null) return;
-            this.ClassGameStatus.IsDrag = true;
-            this.ClassGameStatus.StartPoint = e.GetPosition(el);
-            el.CaptureMouse();
-            el.MouseLeftButtonUp += GridMapStrategy_MouseLeftButtonUp;
-            el.MouseMove += GridMapStrategy_MouseMove;
-        }
-        private void GridMapStrategy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // ドラック中なら終了する
-            if (this.ClassGameStatus.IsDrag == true)
-            {
-                UIElement? el = sender as UIElement;
-                if (el == null) return;
-                el.ReleaseMouseCapture();
-                el.MouseLeftButtonUp -= GridMapStrategy_MouseLeftButtonUp;
-                el.MouseMove -= GridMapStrategy_MouseMove;
-                this.ClassGameStatus.IsDrag = false;
-            }
-        }
-        private void GridMapStrategy_MouseMove(object sender, MouseEventArgs e)
-        {
-            // ドラック中
-            if (this.ClassGameStatus.IsDrag == true)
-            {
-                var ri = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-                if (ri != null)
-                {
-                    UIElement? el = sender as UIElement;
-                    if (el == null) return;
-                    Point pt = e.GetPosition(el);
-
-                    var thickness = new Thickness();
-                    thickness.Left = Math.Truncate(ri.Margin.Left + (pt.X - this.ClassGameStatus.StartPoint.X));
-                    if (thickness.Left > this.CanvasMainWidth / 2)
-                    {
-                        thickness.Left = this.CanvasMainWidth / 2;
-                    }
-                    if (thickness.Left < this.CanvasMainWidth / 2 - ri.Width)
-                    {
-                        thickness.Left = this.CanvasMainWidth / 2 - ri.Width;
-                    }
-                    thickness.Top = Math.Truncate(ri.Margin.Top + (pt.Y - this.ClassGameStatus.StartPoint.Y));
-                    if (thickness.Top > this.CanvasMainHeight / 2)
-                    {
-                        thickness.Top = this.CanvasMainHeight / 2;
-                    }
-                    if (thickness.Top < this.CanvasMainHeight / 2 - ri.Height)
-                    {
-                        thickness.Top = this.CanvasMainHeight / 2 - ri.Height;
-                    }
-                    ri.Margin = thickness;
-
-                    this.ClassGameStatus.StartPoint = pt; // senderと移動対象が異なるので、開始位置を更新する
-                }
-            }
-        }
-        #endregion
-
-        private void GridMapStrategy_MouseRightButtonUp(object sender, MouseEventArgs e)
-        {
-            switch (this.NowSituation)
-            {
-                case Situation.Title:
-                    break;
-                case Situation.MainMenu:
-                    break;
-                case Situation.SelectGroup:
-
-                    this.FadeOut = true;
-
-                    this.delegateMainWindowContentRendered = SetWindowMainMenu;
-
-                    this.FadeIn = true;
-
-                    break;
-                case Situation.TextWindow_Conversation:
-                    break;
-                case Situation.PlayerTurn:
-                    break;
-                case Situation.EnemyTurn:
-                    break;
-                case Situation.InfoWindowMini:
-                    break;
-                case Situation.DebugGame:
-                    break;
-                case Situation.PlayerTurnEnemyCityLeftClick:
-                    break;
-                case Situation.PlayerTurnPlayerCityLeftClick:
-                    break;
-                case Situation.Battle_InfoWindowMini:
-                    break;
-                case Situation.Battle:
-                    break;
-                case Situation.BattleStop:
-                    break;
-                case Situation.Game:
-                    break;
-                case Situation.GenusList:
-                    break;
-                case Situation.ToolList:
-                    break;
-                case Situation.GameStop:
-                    break;
-                case Situation.PreparationBattle:
-                    break;
-                case Situation.PreparationBattle_UnitList:
-                    break;
-                case Situation.PreparationBattle_MiniWindow:
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        // 勢力選択中のヘルプ
-        private void GridMapStrategy_MouseEnter(object sender, MouseEventArgs e)
-        {
-            switch (this.NowSituation)
-            {
-                // 勢力選択画面
-                case Situation.SelectGroup:
-                    // カーソルを離した時のイベントを追加する
-                    var cast = (UIElement)sender;
-                    cast.MouseLeave += GridMapStrategy_MouseLeave;
-
-                    // ヘルプを作成する
-                    var helpWindow = new UserControl030_Help();
-                    helpWindow.Name = "Help_SelectPower";
-                    helpWindow.SetData("旗のある領地を左クリックするとプレイ勢力を選択します。\n領地以外を左ドラッグするとワールドマップを動かせます。\n右クリックするとシナリオ選択画面に戻ります。");
-                    this.canvasUI.Children.Add(helpWindow);
-
-                    // 領地のヒントが表示されてる時はヘルプを隠す
-                    foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
-                    {
-                        if (itemWindow.Name == "HintSpot")
-                        {
-                            helpWindow.Visibility = Visibility.Hidden;
-                            break;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        private void GridMapStrategy_MouseLeave(object sender, MouseEventArgs e)
-        {
-            switch (this.NowSituation)
-            {
-                // 勢力選択画面
-                case Situation.SelectGroup:
-                    // イベントを取り除く
-                    var cast = (UIElement)sender;
-                    cast.MouseLeave -= GridMapStrategy_MouseLeave;
-
-                    // 表示中のヘルプを閉じる
-                    foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl030_Help>())
-                    {
-                        if (itemWindow.Name == "Help_SelectPower")
-                        {
-                            this.canvasUI.Children.Remove(itemWindow);
-                            break;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
         private void WindowMainMenuLeftTop_MouseEnter(object sender, MouseEventArgs e)
         {
             {
@@ -579,7 +403,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = 0
                 };
                 canvas.Name = StringName.windowMainMenuRightTop;
-                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
+                canvas.MouseRightButtonDown += ScenarioSelection_MouseRightButtonDown;
                 {
                     // 枠
                     var rectangleInfo = new Rectangle();
@@ -623,7 +447,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = canvas.Height
                 };
                 canvas.Name = StringName.windowMainMenuRightUnder;
-                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
+                canvas.MouseRightButtonDown += ScenarioSelection_MouseRightButtonDown;
                 canvas.MouseEnter += ImageScenarioSelection_MouseEnter;
                 canvas.MouseLeave += ImageScenarioSelection_MouseLeave;
                 canvas.Background = Brushes.Transparent;
@@ -746,439 +570,12 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        // 戦略マップの領地にマウスを乗せた時
-        private void SelectionCity_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var cast = (FrameworkElement)sender;
-            if (cast.Tag is not ClassPowerAndCity)
-            {
-                return;
-            }
-
-            // マウスを離した時のイベントを追加する
-            cast.MouseLeave += SelectionCity_MouseLeave;
-
-            // 同じ勢力の全ての領地を強調する
-            ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy != null)
-            {
-                // 選択した領地を強調する
-                var txtNameSpot = (TextBlock)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotName" + classPowerAndCity.ClassSpot.NameTag);
-                if (txtNameSpot != null)
-                {
-                    // 領地名の色を変える（少し暗くする）
-                    txtNameSpot.Foreground = Brushes.Gainsboro;
-                }
-                var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
-                if (imgSpot != null)
-                {
-                    // 本体を透明にして、ダミー画像でアニメーション表示する
-                    // 余計なイベントが発生しないはず
-                    imgSpot.Opacity = 0;
-
-                    int spot_size = 32;
-                    Image imgDummy = new Image();
-                    imgDummy.Name = "SpotDummy" + classPowerAndCity.ClassSpot.NameTag;
-                    imgDummy.Source = imgSpot.Source;
-                    imgDummy.HorizontalAlignment = HorizontalAlignment.Left;
-                    imgDummy.VerticalAlignment = VerticalAlignment.Top;
-                    imgDummy.Width = spot_size;
-                    imgDummy.Height = spot_size;
-                    imgDummy.Margin = new Thickness()
-                    {
-                        Left = classPowerAndCity.ClassSpot.X - spot_size / 2,
-                        Top = classPowerAndCity.ClassSpot.Y - spot_size / 2
-                    };
-                    gridMapStrategy.Children.Add(imgDummy);
-
-                    // 少し上に上がって、元の位置に戻るアニメーション
-                    var animeIconPos = new ThicknessAnimation();
-                    animeIconPos.To = new Thickness()
-                    {
-                        Left = classPowerAndCity.ClassSpot.X - spot_size / 2,
-                        Top = classPowerAndCity.ClassSpot.Y - spot_size / 2 - 12
-                    };
-                    animeIconPos.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    animeIconPos.AutoReverse = true;
-                    imgDummy.BeginAnimation(Image.MarginProperty, animeIconPos);
-                }
-
-                if (classPowerAndCity.ClassPower.ListMember.Count > 0)
-                {
-                    const int ring_size = 128;
-                    string powerNameTag = classPowerAndCity.ClassPower.NameTag;
-
-                    List<string> strings = new List<string>();
-                    strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("005_BackgroundImage");
-                    // プレイヤー勢力なら色を変える
-                    if (this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
-                    {
-                        strings.Add("circle_cyan4.png");
-                    }
-                    else
-                    {
-                        strings.Add("circle_lime4.png");
-                    }
-                    string path = System.IO.Path.Combine(strings.ToArray());
-                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-
-                    var listSpot = this.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
-                    foreach (var itemSpot in listSpot)
-                    {
-                        Image imgRing = new Image();
-                        imgRing.Name = "SpotEffect" + itemSpot.NameTag;
-                        imgRing.Source = bitimg1;
-                        // アスペクト比を保つので、横幅だけ指定する
-                        imgRing.Width = ring_size;
-                        imgRing.HorizontalAlignment = HorizontalAlignment.Left;
-                        imgRing.VerticalAlignment = VerticalAlignment.Top;
-                        imgRing.Margin = new Thickness()
-                        {
-                            Left = itemSpot.X - ring_size / 2,
-                            Top = itemSpot.Y - ring_size / 2
-                        };
-                        gridMapStrategy.Children.Add(imgRing);
-                    }
-                }
-            }
-
-            // 場所が重なるのでヘルプを全て隠す
-            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    itemHelp.Visibility = Visibility.Hidden;
-                }
-            }
-
-            // 領地のヒントを作成する
-            var hintSpot = new UserControl011_SpotHint();
-            hintSpot.Name = "HintSpot";
-            hintSpot.Tag = classPowerAndCity;
-            hintSpot.SetData();
-            this.canvasUI.Children.Add(hintSpot);
-
-            // 領地の説明文を表示する
-            if (classPowerAndCity.ClassSpot.Text != string.Empty)
-            {
-                var detailSpot = new UserControl025_DetailSpot();
-                detailSpot.Name = "DetailSpot";
-                detailSpot.Tag = classPowerAndCity.ClassSpot;
-                detailSpot.SetData();
-                this.canvasUI.Children.Add(detailSpot);
-            }
-        }
-        private void SelectionCity_MouseLeave(object sender, MouseEventArgs e)
-        {
-            // イベントを取り除く
-            var cast = (FrameworkElement)sender;
-            cast.MouseLeave -= SelectionCity_MouseLeave;
-
-            // 勢力領の強調を解除する
-            ClassPowerAndCity classPowerAndCity = (ClassPowerAndCity)cast.Tag;
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy != null)
-            {
-                // 選択した領地の強調を解除する
-                var txtNameSpot = (TextBlock)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotName" + classPowerAndCity.ClassSpot.NameTag);
-                if (txtNameSpot != null)
-                {
-                    // 領地名の色を戻す
-                    txtNameSpot.Foreground = Brushes.White;
-                }
-                var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
-                if (imgSpot != null)
-                {
-                    // 透明度を元に戻して、ダミー画像を消す
-                    imgSpot.Opacity = 1;
-                    var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(gridMapStrategy, "SpotDummy" + classPowerAndCity.ClassSpot.NameTag);
-                    if (imgDummy != null)
-                    {
-                        gridMapStrategy.Children.Remove(imgDummy);
-                    }
-                }
-
-                if (classPowerAndCity.ClassPower.ListMember.Count > 0)
-                {
-                    for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
-                    {
-                        UIElement Child = gridMapStrategy.Children[i];
-                        if (Child is Image)
-                        {
-                            var itemImage = (Image)Child;
-                            if (itemImage.Name.StartsWith("SpotEffect"))
-                            {
-                                // 円を取り除く
-                                gridMapStrategy.Children.Remove(itemImage);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 領地のヒントを閉じる
-            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl011_SpotHint>())
-            {
-                if (itemWindow.Name == "HintSpot")
-                {
-                    this.canvasUI.Children.Remove(itemWindow);
-                    break;
-                }
-            }
-
-            // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
-            int maxZ = -1, thisZ;
-            foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    thisZ = Canvas.GetZIndex(itemHelp);
-                    if (maxZ < thisZ)
-                    {
-                        maxZ = thisZ;
-                    }
-                }
-            }
-            if (maxZ >= 0)
-            {
-                foreach (var itemHelp in this.canvasUI.Children.OfType<UserControl030_Help>())
-                {
-                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
-                    {
-                        if (Canvas.GetZIndex(itemHelp) == maxZ)
-                        {
-                            itemHelp.Visibility = Visibility.Visible;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // 領地の説明文を取り除く
-            if (classPowerAndCity.ClassSpot.Text != string.Empty)
-            {
-                foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl025_DetailSpot>())
-                {
-                    if (itemWindow.Name == "DetailSpot")
-                    {
-                        this.canvasUI.Children.Remove(itemWindow);
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void SelectionCity_MouseLeftButtonUp(object sender, MouseEventArgs e)
-        {
-            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
-            e.Handled = true;
-
-            if (this.NowSituation == Situation.PlayerTurn)
-            {
-                DisplayCitySelection(sender);
-            }
-            else if (this.NowSituation == Situation.SelectGroup)
-            {
-                //await DoWork(new SystemFunctionLiteral());
-                //MessageBox.Show("aa");
-                DisplayPowerSelection(sender);
-            }
-        }
-        private void SelectionCity_MouseRightButtonUp(object sender, MouseEventArgs e)
-        {
-            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
-            e.Handled = true;
-
-            if (this.NowSituation == Situation.SelectGroup)
-            {
-                return; //勢力選択中は出撃しない。
-            }
-
-            var cast = (FrameworkElement)sender;
-            if (cast.Tag is not ClassPowerAndCity)
-            {
-                return;
-            }
-            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
-
-            //自ターンチェック
-            //CPUタイムに押されても平気なように
-
-            //所属チェック
-            if (classPowerAndCity.ClassPower.NameTag == this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
-            {
-                return; //自国には攻め込まない。
-            }
-
-            ////隣接チェック
-            //国に関係なく隣接都市名を抽出
-            List<string> NameRinsetuSpot = new List<string>();
-            foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
-            {
-                if (classPowerAndCity.ClassSpot.NameTag == item.Item1)
-                {
-                    NameRinsetuSpot.Add(item.Item2);
-                    continue;
-                }
-                if (classPowerAndCity.ClassSpot.NameTag == item.Item2)
-                {
-                    NameRinsetuSpot.Add(item.Item1);
-                }
-            }
-            //国で隣接都市名を抽出
-            List<ClassSpot> classSpots = new List<ClassSpot>();
-            foreach (var item in NameRinsetuSpot)
-            {
-                var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
-                if (ge == null)
-                {
-                    continue;
-                }
-                if (ge.PowerNameTag != this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
-                {
-                    continue;
-                }
-                classSpots.Add(ge);
-            }
-            if (classSpots.Count == 0)
-            {
-                //自国と隣接してないので出撃できない。
-                return;
-            }
-
-            // ダイアログを表示する
-            //MessageBox.Show("出撃します");
-            var dialog = new Win020_Dialog();
-            dialog.SetText(classPowerAndCity.ClassSpot.Name + "へ出撃します。\n青枠の領地から編成してください。");
-            dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
-            dialog.ShowDialog();
-
-            // 現在のマップ表示位置を記録しておく
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy != null)
-            {
-                this.ClassGameStatus.Camera = new Point(gridMapStrategy.Margin.Left, gridMapStrategy.Margin.Top);
-            }
-
-            Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
-            Frame frame = new Frame();
-            frame.Source = uri;
-            frame.Margin = new Thickness(0, 0, 0, 0);
-            frame.Name = StringName.windowSortieMenu;
-            this.canvasMain.Children.Add(frame);
-            Application.Current.Properties["window"] = this;
-            Application.Current.Properties["spots"] = classSpots;
-            Application.Current.Properties["selectSpots"] = classPowerAndCity;
-        }
-
-        private void DisplayCitySelection(object sender)
-        {
-            var cast = (FrameworkElement)sender;
-            if (cast.Tag is not ClassPowerAndCity)
-            {
-                return;
-            }
-
-            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
-
-            /*
-                        Uri uri = new Uri("/Page001_Conscription.xaml", UriKind.Relative);
-                        Frame frame = new Frame();
-                        frame.Source = uri;
-                        frame.Margin = new Thickness(0, 0, 0, 0);
-                        frame.Name = StringName.windowConscription;
-                        this.canvasMain.Children.Add(frame);
-            */
-            Application.Current.Properties["window"] = this;
-            Application.Current.Properties["ClassPowerAndCity"] = classPowerAndCity;
-
-            // ウインドウの左上が領地の場所になるように配置する
-            Thickness posWindow = new Thickness(0);
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy != null)
-            {
-                posWindow = new Thickness()
-                {
-                    Left = gridMapStrategy.Margin.Left + classPowerAndCity.ClassSpot.X - 32,
-                    Top = gridMapStrategy.Margin.Top + classPowerAndCity.ClassSpot.Y - 32
-                };
-            }
-
-            // 既に表示されてる領地ウインドウをチェックする
-            int window_id, max_id = 0;
-            var id_list = new List<int>();
-            foreach (var itemWindow in this.canvasUI.Children.OfType<UserControl010_Spot>())
-            {
-                string strTitle = itemWindow.Name;
-                if (strTitle.StartsWith("WindowSpot"))
-                {
-                    window_id = Int32.Parse(strTitle.Replace("WindowSpot", String.Empty));
-                    id_list.Add(window_id);
-                    if (max_id < window_id)
-                    {
-                        max_id = window_id;
-                    }
-                    var ri = (ClassPowerAndCity)itemWindow.Tag;
-                    if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                    {
-                        // 領地ウインドウを既に開いてる場合は、新規に作らない
-                        max_id = -1;
-                        itemWindow.Margin = posWindow;
-
-                        // 最前面に移動する
-                        var listWindow = this.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
-                        if ((listWindow != null) && (listWindow.Any()))
-                        {
-                            int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                            Canvas.SetZIndex(itemWindow, maxZ + 1);
-                        }
-
-                        break;
-                    }
-                }
-            }
-            if (max_id >= 0)
-            {
-                if (max_id > id_list.Count)
-                {
-                    // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
-                    for (window_id = 1; window_id < max_id; window_id++)
-                    {
-                        if (id_list.Contains(window_id) == false)
-                        {
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
-                    window_id = max_id + 1;
-                }
-                var windowSpot = new UserControl010_Spot();
-                windowSpot.Tag = classPowerAndCity;
-                windowSpot.Name = "WindowSpot" + window_id.ToString();
-                windowSpot.Margin = posWindow;
-                windowSpot.SetData();
-                this.canvasUI.Children.Add(windowSpot);
-
-                // 透明から不透明になる
-                var animeOpacity = new DoubleAnimation();
-                animeOpacity.From = 0.1;
-                animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                windowSpot.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
-            }
-            id_list.Clear();
-        }
-
         /// <summary>
         /// 勢力選択画面での勢力情報表示
         /// 決定ボタン押下時「ButtonSelectionPowerDecide_click」
         /// </summary>
         /// <param name="sender"></param>
-        private void DisplayPowerSelection(object sender)
+        public void DisplayPowerSelection(object sender)
         {
             var cast = (FrameworkElement)sender;
             if (cast.Tag is not ClassPowerAndCity)
@@ -1190,12 +587,6 @@ namespace WPF_Successor_001_to_Vahren
             if (classPowerAndCity.ClassPower.MasterTag == string.Empty)
             {
                 return; //選択領地のマスター名が空なら、勢力情報画面を表示しない。
-            }
-
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            if (ri == null)
-            {
-                return;
             }
 
             {
@@ -1247,7 +638,7 @@ namespace WPF_Successor_001_to_Vahren
                 Top = (this.CanvasMainHeight - canvas.Height) / 2
             };
             canvas.Name = StringName.windowSelectionPower;
-            canvas.MouseRightButtonUp += SelectionPower_MouseRightButtonUp;
+            canvas.MouseRightButtonDown += SelectionPower_MouseRightButtonDown;
             {
                 //LeftTop
                 {
@@ -1541,7 +932,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            ri.Children.Add(canvas);
+            this.canvasMain.Children.Add(canvas);
         }
         /// <summary>
         /// 勢力選択画面で決定押した時の処理
@@ -1604,18 +995,10 @@ namespace WPF_Successor_001_to_Vahren
 
         private void NewGameWithButtonClick()
         {
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            if (ri == null)
+            var windowSelectionPower = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowSelectionPower);
+            if (windowSelectionPower != null)
             {
-                return;
-            }
-
-            {
-                var windowSelectionPower = (Canvas)LogicalTreeHelper.FindLogicalNode(ri, StringName.windowSelectionPower);
-                if (windowSelectionPower != null)
-                {
-                    ri.Children.Remove(windowSelectionPower);
-                }
+                this.canvasMain.Children.Remove(windowSelectionPower);
             }
         }
 
@@ -1626,18 +1009,10 @@ namespace WPF_Successor_001_to_Vahren
         /// <param name="e"></param>
         private void ButtonSelectionPowerRemove_click(object sender, EventArgs e)
         {
-            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowMapStrategy);
-            if (ri == null)
+            var windowSelectionPower = (Canvas)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.windowSelectionPower);
+            if (windowSelectionPower != null)
             {
-                return;
-            }
-
-            {
-                var windowSelectionPower = (Canvas)LogicalTreeHelper.FindLogicalNode(ri, StringName.windowSelectionPower);
-                if (windowSelectionPower != null)
-                {
-                    ri.Children.Remove(windowSelectionPower);
-                }
+                this.canvasMain.Children.Remove(windowSelectionPower);
             }
 
             var ri2 = (UserControl040_PowerSelect)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, StringName.windowSelectionPowerMini);
@@ -1653,7 +1028,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectionPower_MouseRightButtonUp(object sender, MouseEventArgs e)
+        private void SelectionPower_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             ButtonSelectionPowerRemove_click(sender, e);
 
@@ -2734,7 +2109,7 @@ namespace WPF_Successor_001_to_Vahren
         /// シナリオ選択ボタンを押す画面
         /// 次処理は恐らく「ScenarioSelectionButton_click」
         /// </summary>
-        private void SetWindowMainMenu()
+        public void SetWindowMainMenu()
         {
             this.canvasMain.Children.Clear();
             this.canvasUIRightTop.Children.Clear();
@@ -2766,7 +2141,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = 0
                 };
                 canvas.Name = StringName.windowMainMenuLeftTop;
-                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
+                canvas.MouseRightButtonDown += ScenarioSelection_MouseRightButtonDown;
                 {
                     // 枠
                     var rectangleInfo = new Rectangle();
@@ -2799,7 +2174,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Tag = item.index;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
-                        button.MouseRightButtonUp += Disable_MouseEvent;
+                        button.MouseRightButtonDown += Disable_MouseEvent;
 
                         canvas.Children.Add(button);
                     }
@@ -2821,7 +2196,7 @@ namespace WPF_Successor_001_to_Vahren
                     Top = canvas.Height
                 };
                 canvas.Name = StringName.windowMainMenuLeftUnder;
-                canvas.MouseRightButtonUp += ScenarioSelection_MouseRightButtonUp;
+                canvas.MouseRightButtonDown += ScenarioSelection_MouseRightButtonDown;
                 {
                     // 枠下
                     {
@@ -2888,7 +2263,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Tag = tag + item.index;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
-                        button.MouseRightButtonUp += Disable_MouseEvent;
+                        button.MouseRightButtonDown += Disable_MouseEvent;
 
                         canvas.Children.Add(button);
                     }
@@ -3014,221 +2389,19 @@ namespace WPF_Successor_001_to_Vahren
 
         /// <summary>
         /// シナリオ選択画面から移行する戦略マップ表示画面
-        /// 次処理は恐らく「SelectionCity_MouseLeftButtonUp」
+        /// 次処理は勢力の選択
         /// </summary>
         private void SetMapStrategy()
         {
             this.canvasMain.Children.Clear();
 
-            this.canvasMain.Background = Brushes.Black;
-
+            // ワールドマップを構築する
+            if (this.ClassGameStatus.WorldMap == null)
             {
-                Canvas canvas = new Canvas();
-                canvas.Height = this.CanvasMainHeight;
-                canvas.Width = this.CanvasMainWidth;
-                canvas.Margin = new Thickness()
-                {
-                    Left = 0,
-                    Top = 0
-                };
-                canvas.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
-
-                canvas.Name = StringName.windowMapStrategy;
-                canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
-                canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
-
-                Grid grid = new Grid();
-                grid.Name = StringName.gridMapStrategy;
-                grid.Height = this.CanvasMainHeight * 2;
-                grid.Width = this.CanvasMainWidth * 2;
-                // 最初はマップの中央を画面の中央にする
-                grid.Margin = new Thickness()
-                {
-                    Left = -(this.CanvasMainWidth / 2),
-                    Top = -(this.CanvasMainHeight / 2)
-                };
-                this.ClassGameStatus.Camera = new Point(grid.Margin.Left, grid.Margin.Top);
-                grid.MouseEnter += GridMapStrategy_MouseEnter;
-
-                // mapImage読み込み
-                {
-                    List<string> strings = new List<string>();
-                    strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("005_BackgroundImage");
-                    strings.Add("015_MapImage");
-                    strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-
-                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    Image img = new Image();
-                    img.Height = grid.Height;
-                    img.Width = grid.Width;
-                    img.Stretch = Stretch.Fill;
-                    img.Source = bitimg1;
-                    img.Margin = new Thickness()
-                    {
-                        Left = 0,
-                        Top = 0
-                    };
-                    grid.Children.Add(img);
-                }
-
-                //spot読み込み
-                {
-                    //現シナリオで使用するスポットを抽出する
-                    List<ClassSpot> result = new List<ClassSpot>();
-                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
-                    {
-                        foreach (var item2 in this.ClassGameStatus.AllListSpot)
-                        {
-                            if (item == item2.NameTag)
-                            {
-                                result.Add(item2);
-                            }
-                        }
-                    }
-
-                    //spotをlineで繋ぐ
-                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
-                    {
-                        var ext1 = result.Where(x => x.NameTag == item.Item1).FirstOrDefault();
-                        if (ext1 == null)
-                        {
-                            continue;
-                        }
-                        var ext2 = result.Where(x => x.NameTag == item.Item2).FirstOrDefault();
-                        if (ext2 == null)
-                        {
-                            continue;
-                        }
-                        Line line = new Line();
-                        line.X1 = ext1.X;
-                        line.Y1 = ext1.Y;
-                        line.X2 = ext2.X;
-                        line.Y2 = ext2.Y;
-                        line.Stroke = Brushes.Black;
-                        line.StrokeThickness = 3;
-                        grid.Children.Add(line);
-                    }
-
-                    //spotを出す
-                    foreach (var item in result.Select((value, index) => (value, index)))
-                    {
-                        Grid gridButton = new Grid();
-                        gridButton.Name = "SpotGrid" + item.value.NameTag;
-                        gridButton.HorizontalAlignment = HorizontalAlignment.Left;
-                        gridButton.VerticalAlignment = VerticalAlignment.Top;
-                        gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
-                        gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
-                        gridButton.Margin = new Thickness()
-                        {
-                            Left = Math.Truncate(item.value.X - gridButton.Width / 2),
-                            Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
-                        };
-                        gridButton.MouseLeftButtonDown += Disable_MouseEvent;
-                        gridButton.MouseLeftButtonUp += SelectionCity_MouseLeftButtonUp;
-                        gridButton.MouseRightButtonUp += SelectionCity_MouseRightButtonUp;
-                        gridButton.MouseEnter += SelectionCity_MouseEnter;
-
-                        int fontSizePlus = 5;
-                        // 将来的には、領地アイコンのサイズを spot 構造体で指定する。
-                        //// 標準は 32、とりあえず（32, 40, 48）で実験する。
-                        //int spot_size = 32 + (item.index % 3) * 8;
-                        int spot_size = 32;
-
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
-                        Image imgSpot = new Image();
-                        imgSpot.Name = "SpotIcon" + item.value.NameTag;
-                        imgSpot.Source = bitimg1;
-                        imgSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        imgSpot.VerticalAlignment = VerticalAlignment.Center;
-                        imgSpot.Height = spot_size;
-                        imgSpot.Width = spot_size;
-                        gridButton.Children.Add(imgSpot);
-
-                        TextBlock txtNameSpot = new TextBlock();
-                        txtNameSpot.Name = "SpotName" + item.value.NameTag;
-                        txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        txtNameSpot.VerticalAlignment = VerticalAlignment.Top;
-                        txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
-                        txtNameSpot.Text = item.value.Name;
-                        txtNameSpot.Foreground = Brushes.White;
-                        // 文字に影を付ける (右下45度方向に1.5ピクセル)
-                        txtNameSpot.Effect =
-                            new DropShadowEffect
-                            {
-                                Direction = 315,
-                                ShadowDepth = 1.5,
-                                Opacity = 1,
-                                BlurRadius = 0
-                            };
-                        // 領地アイコンと領地名の間隔は GridCityWidthAndHeight.Y によって決まる。
-                        txtNameSpot.Margin = new Thickness()
-                        {
-                            Top = (gridButton.Height + spot_size) / 2
-                        };
-                        gridButton.Children.Add(txtNameSpot);
-
-                        // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
-                        string flag_path = string.Empty;
-                        bool ch = false;
-                        for (int i = 0; i < ClassGameStatus.ListPower.Count; i++)
-                        {
-                            foreach (var item3 in ClassGameStatus.ListPower[i].ListMember)
-                            {
-                                if (item3 == item.value.NameTag)
-                                {
-                                    // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
-                                    var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
-                                    gridButton.Tag = classPowerAndCity;
-                                    //ついでに、スポットの属する勢力名を設定
-                                    var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
-                                    if (ge != null)
-                                    {
-                                        ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
-                                    }
-                                    // 旗画像のパスを取得する
-                                    flag_path = ClassGameStatus.ListPower[i].FlagPath;
-                                    ch = true;
-                                    break;
-                                }
-                            }
-
-                            if (ch == true)
-                            {
-                                break;
-                            }
-                        }
-
-                        //このタイミングで、そのボタンタグに何も設定されていない場合、無所属である
-                        if (gridButton.Tag is not ClassPowerAndCity)
-                        {
-                            gridButton.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
-                        }
-                        grid.Children.Add(gridButton);
-                        // 後から連結線を変更しても、領地が前面に来るようにする
-                        Panel.SetZIndex(gridButton, 1);
-
-                        // 旗を表示する
-                        if (flag_path != String.Empty)
-                        {
-                            Image imgFlag = DisplayFlag(flag_path);
-                            imgFlag.Name = "SpotFlag" + item.value.NameTag;
-                            imgFlag.Margin = new Thickness()
-                            {
-                                Left = item.value.X - spot_size / 4,
-                                Top = item.value.Y - spot_size / 2 - imgFlag.Height
-                            };
-                            grid.Children.Add(imgFlag);
-                            Panel.SetZIndex(imgFlag, 1);
-                        }
-                    }
-
-                }
-
-                canvas.Children.Add(grid);
-                this.canvasMain.Children.Add(canvas);
+                this.ClassGameStatus.WorldMap = new UserControl060_WorldMap();
             }
+            this.ClassGameStatus.WorldMap.SetData();
+            this.canvasMain.Children.Add(this.ClassGameStatus.WorldMap);
 
             // 領地に初期メンバーを配置する（中立領地のランダムモンスターは勢力選択後）
             foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
@@ -3268,207 +2441,21 @@ namespace WPF_Successor_001_to_Vahren
         {
             this.canvasMain.Children.Clear();
 
-            this.canvasMain.Background = Brushes.Black;
-
+            // ワールドマップを表示する
+            var worldMap = this.ClassGameStatus.WorldMap;
+            if (worldMap == null)
             {
-                Canvas canvas = new Canvas();
-                canvas.Height = this.CanvasMainHeight;
-                canvas.Width = this.CanvasMainWidth;
-                canvas.Margin = new Thickness()
-                {
-                    Left = 0,
-                    Top = 0
-                };
-                canvas.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
-
-                canvas.Name = StringName.windowMapStrategy;
-                canvas.MouseLeftButtonDown += GridMapStrategy_MouseLeftButtonDown;
-                canvas.MouseRightButtonUp += GridMapStrategy_MouseRightButtonUp;
-
-                Grid grid = new Grid();
-                grid.Name = StringName.gridMapStrategy;
-                grid.Height = this.CanvasMainHeight * 2;
-                grid.Width = this.CanvasMainWidth * 2;
-                // 戦闘前のマップ位置にする
-                grid.Margin = new Thickness()
-                {
-                    Left = this.ClassGameStatus.Camera.X,
-                    Top = this.ClassGameStatus.Camera.Y
-                };
-
-                // mapImage読み込み
-                {
-                    List<string> strings = new List<string>();
-                    strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
-                    strings.Add("005_BackgroundImage");
-                    strings.Add("015_MapImage");
-                    strings.Add(this.ListClassScenarioInfo[this.NumberScenarioSelection].NameMapImageFile);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-
-                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-                    Image img = new Image();
-                    img.Height = grid.Height;
-                    img.Width = grid.Width;
-                    img.Stretch = Stretch.Fill;
-                    img.Source = bitimg1;
-                    img.Margin = new Thickness()
-                    {
-                        Left = 0,
-                        Top = 0
-                    };
-                    grid.Children.Add(img);
-                }
-
-                //spot読み込み
-                {
-                    //現シナリオで使用するスポットを抽出する
-                    List<ClassSpot> result = new List<ClassSpot>();
-                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].DisplayListSpot)
-                    {
-                        foreach (var item2 in this.ClassGameStatus.AllListSpot)
-                        {
-                            if (item == item2.NameTag)
-                            {
-                                result.Add(item2);
-                            }
-                        }
-                    }
-
-                    //spotをlineで繋ぐ
-                    foreach (var item in this.ListClassScenarioInfo[this.NumberScenarioSelection].ListLinkSpot)
-                    {
-                        var ext1 = result.Where(x => x.NameTag == item.Item1).FirstOrDefault();
-                        if (ext1 == null)
-                        {
-                            continue;
-                        }
-                        var ext2 = result.Where(x => x.NameTag == item.Item2).FirstOrDefault();
-                        if (ext2 == null)
-                        {
-                            continue;
-                        }
-                        Line line = new Line();
-                        line.X1 = ext1.X;
-                        line.Y1 = ext1.Y;
-                        line.X2 = ext2.X;
-                        line.Y2 = ext2.Y;
-                        line.Stroke = Brushes.Black;
-                        line.StrokeThickness = 3;
-                        grid.Children.Add(line);
-                    }
-
-                    //spotを出す
-                    foreach (var item in result.Select((value, index) => (value, index)))
-                    {
-                        Grid gridButton = new Grid();
-                        gridButton.Name = "SpotGrid" + item.value.NameTag;
-                        gridButton.HorizontalAlignment = HorizontalAlignment.Left;
-                        gridButton.VerticalAlignment = VerticalAlignment.Top;
-                        gridButton.Height = this.ClassGameStatus.GridCityWidthAndHeight.Y;
-                        gridButton.Width = this.ClassGameStatus.GridCityWidthAndHeight.X;
-                        gridButton.Margin = new Thickness()
-                        {
-                            Left = Math.Truncate(item.value.X - gridButton.Width / 2),
-                            Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
-                        };
-                        gridButton.MouseLeftButtonDown += Disable_MouseEvent;
-                        gridButton.MouseLeftButtonUp += SelectionCity_MouseLeftButtonUp;
-                        gridButton.MouseRightButtonUp += SelectionCity_MouseRightButtonUp;
-                        gridButton.MouseEnter += SelectionCity_MouseEnter;
-
-                        int fontSizePlus = 5;
-                        int spot_size = 32;
-
-                        BitmapImage bitimg1 = new BitmapImage(new Uri(item.value.ImagePath));
-                        Image imgSpot = new Image();
-                        imgSpot.Name = "SpotIcon" + item.value.NameTag;
-                        imgSpot.Source = bitimg1;
-                        imgSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        imgSpot.VerticalAlignment = VerticalAlignment.Center;
-                        imgSpot.Height = spot_size;
-                        imgSpot.Width = spot_size;
-                        gridButton.Children.Add(imgSpot);
-
-                        TextBlock txtNameSpot = new TextBlock();
-                        txtNameSpot.Name = "SpotName" + item.value.NameTag;
-                        txtNameSpot.HorizontalAlignment = HorizontalAlignment.Center;
-                        txtNameSpot.VerticalAlignment = VerticalAlignment.Top;
-                        txtNameSpot.FontSize = txtNameSpot.FontSize + fontSizePlus;
-                        txtNameSpot.Text = item.value.Name;
-                        txtNameSpot.Foreground = Brushes.White;
-                        txtNameSpot.Effect =
-                            new DropShadowEffect
-                            {
-                                Direction = 315,
-                                ShadowDepth = 1.5,
-                                Opacity = 1,
-                                BlurRadius = 0
-                            };
-                        txtNameSpot.Margin = new Thickness()
-                        {
-                            Top = (gridButton.Height + spot_size) / 2
-                        };
-                        gridButton.Children.Add(txtNameSpot);
-
-                        // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
-                        string flag_path = string.Empty;
-                        bool ch = false;
-                        for (int i = 0; i < ClassGameStatus.ListPower.Count; i++)
-                        {
-                            foreach (var item3 in ClassGameStatus.ListPower[i].ListMember)
-                            {
-                                if (item3 == item.value.NameTag)
-                                {
-                                    // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
-                                    var classPowerAndCity = new ClassPowerAndCity(ClassGameStatus.ListPower[i], item.value);
-                                    gridButton.Tag = classPowerAndCity;
-                                    //ついでに、スポットの属する勢力名を設定
-                                    var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
-                                    if (ge != null)
-                                    {
-                                        ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
-                                    }
-                                    flag_path = ClassGameStatus.ListPower[i].FlagPath;
-                                    ch = true;
-                                    break;
-                                }
-                            }
-
-                            if (ch == true)
-                            {
-                                break;
-                            }
-                        }
-
-                        //このタイミングで、そのボタンタグに何も設定されていない場合、無所属である
-                        if (gridButton.Tag is not ClassPowerAndCity)
-                        {
-                            gridButton.Tag = new ClassPowerAndCity(new ClassPower(), item.value);
-                        }
-                        grid.Children.Add(gridButton);
-                        // 後から連結線を変更しても、領地が前面に来るようにする
-                        Panel.SetZIndex(gridButton, 1);
-
-                        // 旗を表示する
-                        if (flag_path != String.Empty)
-                        {
-                            Image imgFlag = DisplayFlag(flag_path);
-                            imgFlag.Name = "SpotFlag" + item.value.NameTag;
-                            imgFlag.Margin = new Thickness()
-                            {
-                                Left = item.value.X - spot_size / 4,
-                                Top = item.value.Y - spot_size / 2 - imgFlag.Height
-                            };
-                            grid.Children.Add(imgFlag);
-                            Panel.SetZIndex(imgFlag, 1);
-                        }
-                    }
-
-                }
-
-                canvas.Children.Add(grid);
-                this.canvasMain.Children.Add(canvas);
+                worldMap = new UserControl060_WorldMap();
+                worldMap.SetData();
             }
+            this.canvasMain.Children.Add(worldMap);
+
+            // 戦闘前のマップ位置にする
+            worldMap.Margin = new Thickness()
+            {
+                Left = this.ClassGameStatus.Camera.X,
+                Top = this.ClassGameStatus.Camera.Y
+            };
 
             //メッセージ
             MessageBox.Show("戦闘が終了しました。");
@@ -4081,16 +3068,16 @@ namespace WPF_Successor_001_to_Vahren
                 delegateNewGameAfterFadeIn = null;
             }
 
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy == null)
+            var worldMap = this.ClassGameStatus.WorldMap;
+            if (worldMap == null)
             {
                 return;
             }
 
             ClassVec classVec = new ClassVec();
             // 現在の Margin
-            classVec.X = gridMapStrategy.Margin.Left;
-            classVec.Y = gridMapStrategy.Margin.Top;
+            classVec.X = worldMap.Margin.Left;
+            classVec.Y = worldMap.Margin.Top;
 
             // 目標にする領地の座標をウインドウ中央にするための Margin
             classVec.Target = new Point(
@@ -4116,7 +3103,7 @@ namespace WPF_Successor_001_to_Vahren
                         var ge = classVec.Get(new Point(classVec.X, classVec.Y));
                         classVec.X = ge.X;
                         classVec.Y = ge.Y;
-                        gridMapStrategy.Margin = new Thickness()
+                        worldMap.Margin = new Thickness()
                         {
                             Left = Math.Truncate(ge.X),
                             Top = Math.Truncate(ge.Y)
@@ -4492,6 +3479,7 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        // 勢力メニューウィンドウ
         private void SetWindowStrategyMenu()
         {
             if (this.ClassGameStatus.WindowStrategyMenu == null)
@@ -4501,7 +3489,6 @@ namespace WPF_Successor_001_to_Vahren
 
             // 右下の隅に配置する
             this.ClassGameStatus.WindowStrategyMenu.SetData();
-            this.ClassGameStatus.WindowStrategyMenu.Name = StringName.canvasStrategyMenu;
             this.canvasUIRightBottom.Children.Add(this.ClassGameStatus.WindowStrategyMenu);
             Canvas.SetLeft(this.ClassGameStatus.WindowStrategyMenu, this.canvasUIRightBottom.Width - this.ClassGameStatus.WindowStrategyMenu.Width);
             Canvas.SetTop(this.ClassGameStatus.WindowStrategyMenu, this.canvasUIRightBottom.Height - this.ClassGameStatus.WindowStrategyMenu.Height);

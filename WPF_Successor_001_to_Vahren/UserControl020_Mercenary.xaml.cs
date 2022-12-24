@@ -337,6 +337,9 @@ namespace WPF_Successor_001_to_Vahren
 
             // キャンバスから自身を取り除く
             mainWindow.canvasUI.Children.Remove(this);
+
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
         }
 
         #region ウインドウ移動

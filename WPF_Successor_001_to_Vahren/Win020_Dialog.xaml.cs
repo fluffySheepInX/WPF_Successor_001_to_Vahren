@@ -259,6 +259,12 @@ namespace WPF_Successor_001_to_Vahren
         #region キー入力
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            // キーを押しっぱなしにしても無視する
+            if (e.IsRepeat)
+            {
+                return;
+            }
+
             // Enter, Space, Z キー = OK
             if ((e.Key == Key.Return) || (e.Key == Key.Space) || (e.Key == Key.Z))
             {

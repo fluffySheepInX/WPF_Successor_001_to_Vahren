@@ -9,7 +9,7 @@
              MinWidth="382" >
     <Grid UseLayoutRounding="True"
             MouseLeftButtonDown="win_MouseLeftButtonDown"
-            MouseRightButtonUp="btnClose_Click"
+            MouseRightButtonDown="btnClose_Click"
             MouseEnter="win_MouseEnter" >
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
