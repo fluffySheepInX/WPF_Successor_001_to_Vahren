@@ -207,6 +207,12 @@ namespace WPF_Successor_001_to_Vahren
         #region キー入力
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            // キーを押しっぱなしにしても無視する
+            if (e.IsRepeat)
+            {
+                return;
+            }
+
             int input_num = -1;
 
             // 数字キー

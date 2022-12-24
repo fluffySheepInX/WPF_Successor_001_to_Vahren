@@ -165,7 +165,7 @@ namespace WPF_Successor_001_to_Vahren
         public void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // ESCキーを押すと終了する。
-            if (e.Key == Key.Escape)
+            if ((e.Key == Key.Escape) && (e.IsRepeat == false))
             {
                 if (MessageBox.Show("ゲームを終了しますか？", "ローガントゥーガ", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
@@ -173,7 +173,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
             // F11キーを押すとフルスクリーン状態を切り替える。
-            else if (e.Key == Key.F11)
+            else if ((e.Key == Key.F11) && (e.IsRepeat == false))
             {
                 if (this.WindowState == WindowState.Maximized)
                 {
@@ -190,6 +190,37 @@ namespace WPF_Successor_001_to_Vahren
             }
             // Enter, Space, Z キー = OK
             else if ((e.Key == Key.Return) || (e.Key == Key.Space) || (e.Key == Key.Z))
+            {
+                // キーを押しっぱなしにしても無視する
+                if (e.IsRepeat == false)
+                {
+                    // テキストウィンドウが存在する時
+                    if (this.ClassGameStatus.TextWindow != null)
+                    {
+                        if (this.ClassGameStatus.TextWindow is UserControl050_Msg)
+                        {
+                            // 次の文章を表示待ちなら
+                            var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
+                            if (textWindow.NextText() == true)
+                            {
+                                return;
+                            }
+                        }
+
+                        var mainWindow = (MainWindow)Application.Current.MainWindow;
+                        if (mainWindow != null)
+                        {
+                            // カウンターが 0よりも多い時だけ減らす
+                            if (mainWindow.condition.IsSet == false)
+                            {
+                                mainWindow.condition.Signal();
+                            }
+                        }
+                    }
+                }
+            }
+            // Control キー = Repeating OK
+            else if ((e.Key == Key.RightCtrl) || (e.Key == Key.LeftCtrl))
             {
                 // テキストウィンドウが存在する時
                 if (this.ClassGameStatus.TextWindow != null)

@@ -197,7 +197,7 @@ namespace WPF_Successor_001_to_Vahren
                 buttonItem.BorderBrush = mySolidColorBrush;
                 buttonItem.HorizontalContentAlignment = HorizontalAlignment.Left;
                 buttonItem.Focusable = false;
-                buttonItem.Click += btnPowerSelect_Click;
+                buttonItem.PreviewMouseLeftButtonDown += btnPowerSelect_MouseLeftButtonDown;
                 buttonItem.MouseEnter += btnPowerSelect_MouseEnter;
                 this.panelList.Children.Add(buttonItem);
                 item_count += 1;
@@ -221,7 +221,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void btnPowerSelect_Click(Object sender, EventArgs e)
+        private async void btnPowerSelect_MouseLeftButtonDown(Object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -235,8 +235,8 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy == null)
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap == null)
             {
                 return;
             }
@@ -262,7 +262,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // 目標にする座標をウインドウ中央にする
                 /*
-                gridMapStrategy.Margin = new Thickness()
+                worldMap.Margin = new Thickness()
                 {
                     Top = mainWindow.CanvasMainHeight / 2 - target_Y,
                     Left = mainWindow.CanvasMainWidth / 2 - target_X
@@ -271,8 +271,8 @@ namespace WPF_Successor_001_to_Vahren
 
                 ClassVec classVec = new ClassVec();
                 // 現在の Margin
-                classVec.X = gridMapStrategy.Margin.Left;
-                classVec.Y = gridMapStrategy.Margin.Top;
+                classVec.X = worldMap.Margin.Left;
+                classVec.Y = worldMap.Margin.Top;
 
                 // 目標にする領地の座標をウインドウ中央にするための Margin
                 classVec.Target = new Point(
@@ -298,7 +298,7 @@ namespace WPF_Successor_001_to_Vahren
                             var ge = classVec.Get(new Point(classVec.X, classVec.Y));
                             classVec.X = ge.X;
                             classVec.Y = ge.Y;
-                            gridMapStrategy.Margin = new Thickness()
+                            worldMap.Margin = new Thickness()
                             {
                                 Left = Math.Truncate(ge.X),
                                 Top = Math.Truncate(ge.Y)
@@ -307,6 +307,9 @@ namespace WPF_Successor_001_to_Vahren
                     });
                 }
             }
+
+            // ルーティングを処理済みとしてマークする
+            e.Handled = true;
         }
 
         // 勢力一覧ウィンドウのボタンにマウスを乗せた時
@@ -329,67 +332,12 @@ namespace WPF_Successor_001_to_Vahren
 
             // 同じ勢力の全ての領地を強調する
             var classPower = (ClassPower)cast.Tag;
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy == null)
-            {
-                return;
-            }
-
             if (classPower.ListMember.Count > 0)
             {
-                const int ring_size = 96, ring_size2 = 152;
-
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("005_BackgroundImage");
-                strings.Add("circle_yellow4.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path) == false)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
-                    // 画像が存在しない場合はエフェクトも無い
-                    return;
-                }
-                BitmapImage bitimg1 = new BitmapImage(new Uri(path));
-
-                // 輪の大きさを時間経過で変化させる（1.5秒間隔でループする）
-                var animeRingSize = new DoubleAnimation();
-                animeRingSize.To = ring_size2;
-                animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
-                animeRingSize.AutoReverse = true;
-                animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
-
-                string powerNameTag = classPower.NameTag;
-                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
-                foreach (var itemSpot in listSpot)
-                {
-                    Image imgRing = new Image();
-                    imgRing.Name = "SpotEffect" + itemSpot.NameTag;
-                    imgRing.Source = bitimg1;
-                    // アスペクト比を保って拡大縮小するので、横幅だけ指定する
-                    imgRing.Width = ring_size;
-                    imgRing.HorizontalAlignment = HorizontalAlignment.Left;
-                    imgRing.VerticalAlignment = VerticalAlignment.Top;
-                    imgRing.Margin = new Thickness()
-                    {
-                        Left = itemSpot.X - ring_size / 2,
-                        Top = itemSpot.Y - ring_size / 2
-                    };
-                    gridMapStrategy.Children.Add(imgRing);
-
-                    // 円の大きさは共通アニメーションにする
-                    imgRing.BeginAnimation(Image.WidthProperty, animeRingSize);
-
-                    // 円の位置も変えないと中心がずれる
-                    var animeRingPos = new ThicknessAnimation();
-                    animeRingPos.To = new Thickness()
-                    {
-                        Left = itemSpot.X - ring_size2 / 2,
-                        Top = itemSpot.Y - ring_size2 / 2
-                    };
-                    animeRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
-                    animeRingPos.AutoReverse = true;
-                    animeRingPos.RepeatBehavior = RepeatBehavior.Forever;
-                    imgRing.BeginAnimation(Image.MarginProperty, animeRingPos);
+                    worldMap.PowerMarkAnime("circle_yellow4.png", classPower.NameTag);
                 }
             }
         }
@@ -412,26 +360,12 @@ namespace WPF_Successor_001_to_Vahren
 
             // 勢力領の強調を解除する
             var classPower = (ClassPower)cast.Tag;
-            var gridMapStrategy = (Grid)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasMain, StringName.gridMapStrategy);
-            if (gridMapStrategy == null)
-            {
-                return;
-            }
-
             if (classPower.ListMember.Count > 0)
             {
-                for (int i = gridMapStrategy.Children.Count - 1; i >= 0; i += -1)
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
                 {
-                    UIElement Child = gridMapStrategy.Children[i];
-                    if (Child is Image)
-                    {
-                        var itemImage = (Image)Child;
-                        if (itemImage.Name.StartsWith("SpotEffect"))
-                        {
-                            // 円を取り除く
-                            gridMapStrategy.Children.Remove(itemImage);
-                        }
-                    }
+                    worldMap.RemoveMark();
                 }
             }
         }
