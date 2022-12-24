@@ -85,10 +85,14 @@ namespace MapEditor
             {
                 var i1 = new MenuItem() { Header = "出撃位置とする" };
                 cm.Items.Add(i1);
+                i1.Click += CmMenu2_Click;
+                i1.Tag = "A" + col + "," + hei;
             }
             {
                 var i1 = new MenuItem() { Header = "防衛位置とする" };
                 cm.Items.Add(i1);
+                i1.Click += CmMenu3_Click;
+                i1.Tag = "A" + col + "," + hei;
             }
             {
                 var i1 = new MenuItem() { Header = "オブジェクトを配置する（複数可能" };
@@ -97,6 +101,8 @@ namespace MapEditor
             {
                 var i1 = new MenuItem() { Header = "ユニット、陣形、方角を指定する" };
                 cm.Items.Add(i1);
+                i1.Click += CmMenu5_Click;
+                i1.Tag = "A" + col + "," + hei;
             }
             border.ContextMenu = cm;
 
@@ -143,6 +149,39 @@ namespace MapEditor
             int hei = int.Parse(ccc[1]);
             MapData[col][hei].unit = "@ESC@";
             MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
+        }
+        private void CmMenu2_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].unit = "@@";
+            MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
+        }
+        private void CmMenu3_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].unit = "@";
+            MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
+        }
+        private void CmMenu5_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var dialog = new WinUnit();
+            dialog.ShowDialog();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

@@ -1,0 +1,31 @@
+﻿<Window x:Class="MapEditor.WinUnit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MapEditor"
+             mc:Ignorable="d" 
+             Background="AliceBlue"
+             Height="300" Width="400"
+             d:DesignHeight="300" d:DesignWidth="400">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="16"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="16"/>
+            <RowDefinition />
+            <RowDefinition Height="16"/>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Column="1" x:Name="txtUnitName" HorizontalAlignment="Left" Margin="136,84,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label Grid.Column="1" Content="ユニット名" HorizontalAlignment="Left" Margin="81,80,0,0" Grid.Row="1" VerticalAlignment="Top" Loaded="Label_Loaded"/>
+        <Label Grid.Column="1" Content="方向" HorizontalAlignment="Left" Margin="81,106,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <ComboBox Grid.Column="1" x:Name="cmbHoukou" HorizontalAlignment="Left" Margin="136,108,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120"/>
+        <Label Grid.Column="1" Content="陣形" HorizontalAlignment="Left" Margin="81,133,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <ComboBox Grid.Column="1" x:Name="cmbZinkei" HorizontalAlignment="Left" Margin="136,135,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120"/>
+        <Button Grid.Column="1" Name="btnDecide" Content="決定する" HorizontalAlignment="Left" Margin="81,164,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175" Click="btnDecide_Click"/>
+        <Label Grid.Column="1" Content="先頭に@は不要" HorizontalAlignment="Left" Margin="261,80,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
