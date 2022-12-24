@@ -201,9 +201,18 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region WorldMap
+        private UserControl060_WorldMap? _worldMap = null;
+        public UserControl060_WorldMap? WorldMap
+        {
+            get { return _worldMap; }
+            set { _worldMap = value; }
+        }
+        #endregion
+
         #region WindowStrategyMenu
-        private UserControl005_StrategyMenu _windowStrategyMenu = new UserControl005_StrategyMenu();
-        public UserControl005_StrategyMenu WindowStrategyMenu
+        private UserControl005_StrategyMenu? _windowStrategyMenu = null;
+        public UserControl005_StrategyMenu? WindowStrategyMenu
         {
             get { return _windowStrategyMenu; }
             set { _windowStrategyMenu = value; }
