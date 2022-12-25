@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -87,6 +88,26 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return building; }
             set { building = value; }
+        }
+        #endregion
+
+        #region Flag
+        private FlagBattleMapUnit flagBattleMapUnit;
+
+        public FlagBattleMapUnit FlagBattleMapUnit
+        {
+            get { return flagBattleMapUnit; }
+            set { flagBattleMapUnit = value; }
+        }
+        #endregion
+
+        #region Unit
+        private string unit = string.Empty;
+
+        public string Unit
+        {
+            get { return unit; }
+            set { unit = value; }
         }
         #endregion
 

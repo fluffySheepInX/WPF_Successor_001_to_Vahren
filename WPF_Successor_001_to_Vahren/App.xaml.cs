@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -361,6 +362,8 @@ namespace WPF_Successor_001_to_Vahren
                                 return;
                             }
                         }
+
+                        MessageBox.Show("/Battle end");
                     }
 
                     break;
@@ -368,6 +371,8 @@ namespace WPF_Successor_001_to_Vahren
                     MessageBox.Show("未知の引数：" + e.Args[0]);
                     break;
             }
+
+            return;
         }
         #endregion
         #region GetClassTestBattle
@@ -579,6 +584,7 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         if (re[i] == "@")
                         {
+                            //改行コード時処理
                             classMapBattle.MapData.Add(new List<MapDetail>());
                             continue;
                         }
@@ -587,25 +593,43 @@ namespace WPF_Successor_001_to_Vahren
                             MapDetail mapDetail = new MapDetail();
                             var sonomama = re[i].Replace(System.Environment.NewLine, string.Empty);
                             var splitA = sonomama.Split("*");
+
+                            //field(床画像
                             map.TryGetValue(splitA[0], out string? mapValue);
                             if (mapValue != null) mapDetail.Tip = mapValue;
+
+                            //build(城壁や矢倉など
                             map.TryGetValue(splitA[1], out string? mapValue2);
                             if (mapValue2 != null) mapDetail.Building = mapValue2;
-                            map.TryGetValue(splitA[2], out string? mapValue3);
-                            if (mapValue3 != null) mapDetail.Houkou = mapValue3;
-                            map.TryGetValue(splitA[3], out string? mapValue4);
-                            if (mapValue4 != null) mapDetail.Zinkei = mapValue4;
-                            if (splitA.Length == 5)
+
+                            //flag(部隊チップの種別
+                            int num = -1;
+                            int temp = -1;
+                            if (int.TryParse(splitA[2], out temp) != true)
                             {
-                                if (splitA[4] == "kougeki")
-                                {
-                                    mapDetail.KougekiButaiNoIti = true;
-                                }
-                                if (splitA[4] == "bouei")
-                                {
-                                    mapDetail.BoueiButaiNoIti = true;
-                                }
+                                throw new Exception("");
                             }
+                            num = temp;
+                            FlagBattleMapUnit sEnum = (FlagBattleMapUnit)Enum.ToObject(typeof(FlagBattleMapUnit), num);
+                            mapDetail.FlagBattleMapUnit = sEnum;
+
+                            //部隊
+                            mapDetail.Unit = splitA[3];
+                            if (mapDetail.Unit == "@@")
+                            {
+                                mapDetail.KougekiButaiNoIti = true;
+                            }
+                            if (mapDetail.Unit == "@")
+                            {
+                                mapDetail.BoueiButaiNoIti = true;
+                            }
+
+                            //方向
+                            mapDetail.Houkou = splitA[4];
+
+                            //陣形
+                            mapDetail.Zinkei = splitA[5];
+
                             classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
                         }
                     }
@@ -617,6 +641,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 classMapBattle.MapData.RemoveAt(classMapBattle.MapData.Count - 1);
             }
+
             return classMapBattle;
         }
 

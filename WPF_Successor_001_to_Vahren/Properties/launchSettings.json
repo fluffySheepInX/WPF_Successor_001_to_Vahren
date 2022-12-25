@@ -5,7 +5,7 @@
     },
     "debug battle": {
       "commandName": "Project",
-      "commandLineArgs": "/debug /battle /ca2"
+      "commandLineArgs": "/debug /battle /testMap001"
     }
   }
 }
