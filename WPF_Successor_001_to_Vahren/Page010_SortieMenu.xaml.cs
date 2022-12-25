@@ -372,7 +372,7 @@ namespace WPF_Successor_001_to_Vahren
             if (convSpots.ClassSpot.ListMember.Count == 0 && convSpots.ClassSpot.ListMonster.Count == 0)
             {
                 // 他の勢力に所属してた場合は、取り除く
-                if (convSpots.ClassSpot.PowerNameTag != String.Empty)
+                if (convSpots.ClassSpot.PowerNameTag != string.Empty)
                 {
                     convSpots.ClassPower.ListMember.Remove(convSpots.ClassSpot.NameTag);
                 }

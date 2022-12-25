@@ -177,16 +177,7 @@ namespace WPF_Successor_001_to_Vahren
                                 gridButton.Tag = classPowerAndCity;
                                 //ついでに、スポットの属する勢力名を設定
                                 item.value.PowerNameTag = mainWindow.ClassGameStatus.ListPower[i].NameTag;
-                                
-                                /*
-                                var ge = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item.value.NameTag).FirstOrDefault();
-                                if (ge != null)
-                                {
-                                    ge.PowerNameTag = ClassGameStatus.ListPower[i].NameTag;
-                                }
-                                */
-                                
-                                // 旗画像のパスを取得する
+                                 // 旗画像のパスを取得する
                                 flag_path = mainWindow.ClassGameStatus.ListPower[i].FlagPath;
                                 ch = true;
                                 break;
@@ -296,8 +287,15 @@ namespace WPF_Successor_001_to_Vahren
             var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
+                // 領地が既に強調されてる場合はとばす
+                var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotMark" + itemSpot.NameTag);
+                if (itemImage != null)
+                {
+                    continue;
+                }
+
                 Image imgRing = new Image();
-                imgRing.Name = "SpotEffect" + itemSpot.NameTag;
+                imgRing.Name = "PowerMark" + itemSpot.NameTag;
                 imgRing.Source = bitimg1;
                 // アスペクト比を保つので、横幅だけ指定する
                 imgRing.Width = ring_size;
@@ -344,8 +342,15 @@ namespace WPF_Successor_001_to_Vahren
             var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
+                // 領地が既に強調されてる場合はとばす
+                var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotMark" + itemSpot.NameTag);
+                if (itemImage != null)
+                {
+                    continue;
+                }
+
                 Image imgRing = new Image();
-                imgRing.Name = "SpotEffect" + itemSpot.NameTag;
+                imgRing.Name = "PowerMark" + itemSpot.NameTag;
                 imgRing.Source = bitimg1;
                 // アスペクト比を保って拡大縮小するので、横幅だけ指定する
                 imgRing.Width = ring_size;
@@ -373,8 +378,29 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        // 全領地の強調を解除する
-        public void RemoveMark()
+        // 勢力領の強調を解除する
+        public void RemovePowerMark(string powerNameTag)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            foreach (var itemSpot in listSpot)
+            {
+                var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "PowerMark" + itemSpot.NameTag);
+                if (itemImage != null)
+                {
+                    // 円を取り除く
+                    this.canvasMap.Children.Remove(itemImage);
+                }
+            }
+        }
+
+        // 全ての勢力領の強調を解除する
+        public void RemovePowerMarkAll()
         {
             for (int i = this.canvasMap.Children.Count - 1; i >= 0; i += -1)
             {
@@ -382,7 +408,109 @@ namespace WPF_Successor_001_to_Vahren
                 if (Child is Image)
                 {
                     var itemImage = (Image)Child;
-                    if (itemImage.Name.StartsWith("SpotEffect"))
+                    if (itemImage.Name.StartsWith("PowerMark"))
+                    {
+                        // 円を取り除く
+                        this.canvasMap.Children.Remove(itemImage);
+                    }
+                }
+            }
+        }
+
+
+        // 領地をアニメーション付きで強調する
+        public void SpotMarkAnime(string strFilename, string spotNameTag)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            if (classSpot == null)
+            {
+                return;
+            }
+
+            // 領地が既に強調されてる場合は古い方を消す
+            var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotMark" + classSpot.NameTag);
+            if (itemImage != null)
+            {
+                this.canvasMap.Children.Remove(itemImage);
+            }
+
+            // エフェクトの画像を読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("005_BackgroundImage");
+            strings.Add(strFilename);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合はエフェクトも無い
+                return;
+            }
+
+            BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+            const int ring_size = 96, ring_size2 = 152;
+
+            // 輪の大きさを時間経過で変化させる（1.5秒間隔でループする）
+            var animeRingSize = new DoubleAnimation();
+            animeRingSize.To = ring_size2;
+            animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+            animeRingSize.AutoReverse = true;
+            animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
+
+            Image imgRing = new Image();
+            imgRing.Name = "SpotMark" + classSpot.NameTag;
+            imgRing.Source = bitimg1;
+            // アスペクト比を保って拡大縮小するので、横幅だけ指定する
+            imgRing.Width = ring_size;
+            imgRing.Margin = new Thickness()
+            {
+                Left = classSpot.X - ring_size / 2,
+                Top = classSpot.Y - ring_size / 2
+            };
+            this.canvasMap.Children.Add(imgRing);
+
+            // 円の大きさは共通アニメーションにする
+            imgRing.BeginAnimation(Image.WidthProperty, animeRingSize);
+
+            // 円の位置も変えないと中心がずれる
+            var animeRingPos = new ThicknessAnimation();
+            animeRingPos.To = new Thickness()
+            {
+                Left = classSpot.X - ring_size2 / 2,
+                Top = classSpot.Y - ring_size2 / 2
+            };
+            animeRingPos.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+            animeRingPos.AutoReverse = true;
+            animeRingPos.RepeatBehavior = RepeatBehavior.Forever;
+            imgRing.BeginAnimation(Image.MarginProperty, animeRingPos);
+        }
+
+        // 領地の強調を解除する
+        public void RemoveSpotMark(string spotNameTag)
+        {
+            var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotMark" + spotNameTag);
+            if (itemImage != null)
+            {
+                // 円を取り除く
+                this.canvasMap.Children.Remove(itemImage);
+            }
+        }
+
+        // 全ての領地の強調を解除する
+        public void RemoveSpotMarkAll()
+        {
+            for (int i = this.canvasMap.Children.Count - 1; i >= 0; i += -1)
+            {
+                UIElement Child = this.canvasMap.Children[i];
+                if (Child is Image)
+                {
+                    var itemImage = (Image)Child;
+                    if (itemImage.Name.StartsWith("SpotMark"))
                     {
                         // 円を取り除く
                         this.canvasMap.Children.Remove(itemImage);
@@ -723,7 +851,7 @@ namespace WPF_Successor_001_to_Vahren
             // 勢力領の強調を解除する
             if (classPowerAndCity.ClassPower.ListMember.Count > 0)
             {
-                RemoveMark();
+                RemovePowerMark(classPowerAndCity.ClassPower.NameTag);
             }
 
             // 領地のヒントを閉じる
