@@ -781,11 +781,11 @@ namespace WPF_Successor_001_to_Vahren
                 // プレイヤー勢力なら色を変える
                 if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
                 {
-                    strFilename = "circle_cyan4.png";
+                    strFilename = "circle_Aqua.png";
                 }
                 else
                 {
-                    strFilename =  "circle_lime4.png";
+                    strFilename =  "circle_Lime.png";
                 }
                 PowerMark(strFilename, powerNameTag);
             }

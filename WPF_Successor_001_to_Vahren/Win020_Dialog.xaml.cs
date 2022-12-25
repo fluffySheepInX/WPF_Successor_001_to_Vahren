@@ -259,20 +259,18 @@ namespace WPF_Successor_001_to_Vahren
         #region キー入力
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            // キーを押しっぱなしにしても無視する
-            if (e.IsRepeat)
-            {
-                return;
-            }
-
             // Enter, Space, Z キー = OK
             if ((e.Key == Key.Return) || (e.Key == Key.Space) || (e.Key == Key.Z))
             {
-                // 戻り値をセットすると自動的に閉じる
-                DialogResult = true;
+                // キーを押しっぱなしにしても無視する
+                if (e.IsRepeat == false)
+                {
+                    // 戻り値をセットすると自動的に閉じる
+                    DialogResult = true;
+                }
             }
             // C キー = Menu
-            else if (e.Key == Key.C)
+            else if ((e.Key == Key.C) && (e.IsRepeat == false))
             {
                 // タイマーを止める
                 _timerClose.Stop();
