@@ -177,7 +177,7 @@ namespace WPF_Successor_001_to_Vahren
                                 gridButton.Tag = classPowerAndCity;
                                 //ついでに、スポットの属する勢力名を設定
                                 item.value.PowerNameTag = mainWindow.ClassGameStatus.ListPower[i].NameTag;
-                                 // 旗画像のパスを取得する
+                                // 旗画像のパスを取得する
                                 flag_path = mainWindow.ClassGameStatus.ListPower[i].FlagPath;
                                 ch = true;
                                 break;
