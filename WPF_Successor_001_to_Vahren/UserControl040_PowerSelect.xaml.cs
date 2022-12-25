@@ -365,7 +365,7 @@ namespace WPF_Successor_001_to_Vahren
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    worldMap.RemoveMark();
+                    worldMap.RemovePowerMark(classPower.NameTag);
                 }
             }
         }

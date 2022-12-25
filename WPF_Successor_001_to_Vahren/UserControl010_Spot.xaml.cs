@@ -61,6 +61,28 @@ namespace WPF_Successor_001_to_Vahren
                 _isControl = false;
             }
 
+            // 領地ウィンドウを開いてる間、ワールドマップ上で強調する
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap != null)
+            {
+                string strFilename;
+                // プレイヤー勢力なら色を変える
+                if (_isControl)
+                {
+                    strFilename = "circle_cyan4.png";
+                }
+                // 中立領地
+                else if (((ClassPowerAndCity)this.Tag).ClassPower.NameTag == string.Empty)
+                {
+                    strFilename = "circle_yellow4.png";
+                }
+                else
+                {
+                    strFilename =  "circle_lime4.png";
+                }
+                worldMap.SpotMarkAnime(strFilename, ((ClassPowerAndCity)this.Tag).ClassSpot.NameTag);
+            }
+
             // 領地の情報を表示する
             DisplaySpotStatus(mainWindow);
 
@@ -1725,6 +1747,13 @@ namespace WPF_Successor_001_to_Vahren
                     mainWindow.canvasUI.Children.Remove(itemWindow);
                     break;
                 }
+            }
+
+            // ワールドマップ上での強調を解除する
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap != null)
+            {
+                worldMap.RemoveSpotMark(((ClassPowerAndCity)this.Tag).ClassSpot.NameTag);
             }
 
             // キャンバスから自身を取り除く
