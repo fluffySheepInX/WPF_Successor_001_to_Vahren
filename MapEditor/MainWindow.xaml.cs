@@ -97,11 +97,25 @@ namespace MapEditor
             {
                 var i1 = new MenuItem() { Header = "オブジェクトを配置する（複数可能" };
                 cm.Items.Add(i1);
+                i1.Click += CmMenu4_Click;
+                i1.Tag = "A" + col + "," + hei;
             }
             {
-                var i1 = new MenuItem() { Header = "ユニット、陣形、方角を指定する" };
+                var i1 = new MenuItem() { Header = "オブジェクトを削除する" };
+                cm.Items.Add(i1);
+                i1.Click += CmMenu6_Click;
+                i1.Tag = "A" + col + "," + hei;
+            }
+            {
+                var i1 = new MenuItem() { Header = "ユニット、陣形、方角を指定する(イベント戦で有効)" };
                 cm.Items.Add(i1);
                 i1.Click += CmMenu5_Click;
+                i1.Tag = "A" + col + "," + hei;
+            }
+            {
+                var i1 = new MenuItem() { Header = "ユニット、陣形、方角を削除する" };
+                cm.Items.Add(i1);
+                i1.Click += CmMenu7_Click;
                 i1.Tag = "A" + col + "," + hei;
             }
             border.ContextMenu = cm;
@@ -137,12 +151,19 @@ namespace MapEditor
             this.wrapCanvas.Children.Add(border);
         }
 
+        #region 退却位置とする
+        /// <summary>
+        /// 退却位置とする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CmMenu1_Click(object sender, RoutedEventArgs e)
         {
             if (MapData is null) return;
 
             var aaa = (MenuItem)sender;
             var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
             bbb = string.Join("", bbb.Skip(1).ToList());
             var ccc = bbb.Split(',');
             int col = int.Parse(ccc[0]);
@@ -150,12 +171,20 @@ namespace MapEditor
             MapData[col][hei].unit = "@ESC@";
             MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
         }
+        #endregion
+        #region 出撃位置とする
+        /// <summary>
+        /// 出撃位置とする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CmMenu2_Click(object sender, RoutedEventArgs e)
         {
             if (MapData is null) return;
 
             var aaa = (MenuItem)sender;
             var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
             bbb = string.Join("", bbb.Skip(1).ToList());
             var ccc = bbb.Split(',');
             int col = int.Parse(ccc[0]);
@@ -163,12 +192,20 @@ namespace MapEditor
             MapData[col][hei].unit = "@@";
             MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
         }
+        #endregion
+        #region 防衛位置とする
+        /// <summary>
+        /// 防衛位置とする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CmMenu3_Click(object sender, RoutedEventArgs e)
         {
             if (MapData is null) return;
 
             var aaa = (MenuItem)sender;
             var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
             bbb = string.Join("", bbb.Skip(1).ToList());
             var ccc = bbb.Split(',');
             int col = int.Parse(ccc[0]);
@@ -176,14 +213,124 @@ namespace MapEditor
             MapData[col][hei].unit = "@";
             MessageBox.Show(col + "," + hei + "に" + MapData[col][hei].unit + "を入れました。");
         }
+        #endregion
+        #region オブジェクトを配置する（複数可能
+        /// <summary>
+        /// オブジェクトを配置する（複数可能
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CmMenu4_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var dialog = new WinObj();
+            dialog.ShowDialog();
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].build = dialog.Obj;
+
+            int abc = (hei * MapData[col].Count) + col;
+            var re = (Canvas)((Border)this.wrapCanvas.Children[abc]).Child;
+            re.Children.Add(new TextBlock() { Name = "txtObj", Text = "obj" + System.Environment.NewLine, FontSize = FontSize + 10 });
+        }
+        #endregion
+        #region ユニット、陣形、方角を指定する(イベント戦で有効)
+        /// <summary>
+        /// ユニット、陣形、方角を指定する(イベント戦で有効)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CmMenu5_Click(object sender, RoutedEventArgs e)
         {
             if (MapData is null) return;
 
             var dialog = new WinUnit();
             dialog.ShowDialog();
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].direction = dialog.selectCmbHoukou.ToString();
+            MapData[col][hei].formation = dialog.selectCmbZinkei.ToString();
+            MapData[col][hei].unit = dialog.setUnitName;
+            MessageBox.Show(col + "," + hei + "に"
+                            + MapData[col][hei].direction
+                            + "&"
+                            + MapData[col][hei].formation
+                            + "&"
+                            + MapData[col][hei].unit
+                            + "を入れました。");
+            int abc = (hei * MapData[col].Count) + col;
+            var re = (Canvas)((Border)this.wrapCanvas.Children[abc]).Child;
+            re.Children.Add(new TextBlock() { Name = "txtUnit", Text = "unit" + System.Environment.NewLine, FontSize = FontSize + 10 });
+
+        }
+        #endregion
+
+        private void CmMenu6_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].build = new List<string>();
+
+            int abc = (hei * MapData[col].Count) + col;
+            var re = (Canvas)((Border)this.wrapCanvas.Children[abc]).Child;
+            {
+                var ri = (TextBlock)LogicalTreeHelper.FindLogicalNode(re, "txtObj");
+                if (ri != null)
+                {
+                    re.Children.Remove(ri);
+                }
+            }
+        }
+        private void CmMenu7_Click(object sender, RoutedEventArgs e)
+        {
+            if (MapData is null) return;
+
+            var aaa = (MenuItem)sender;
+            var bbb = Convert.ToString(aaa.Tag);
+            if (bbb is null) return;
+            bbb = string.Join("", bbb.Skip(1).ToList());
+            var ccc = bbb.Split(',');
+            int col = int.Parse(ccc[0]);
+            int hei = int.Parse(ccc[1]);
+            MapData[col][hei].unit = string.Empty;
+            MapData[col][hei].direction = string.Empty;
+            MapData[col][hei].formation = string.Empty;
+
+            int abc = (hei * MapData[col].Count) + col;
+            var re = (Canvas)((Border)this.wrapCanvas.Children[abc]).Child;
+            {
+                var ri = (TextBlock)LogicalTreeHelper.FindLogicalNode(re, "txtUnit");
+                if (ri != null)
+                {
+                    re.Children.Remove(ri);
+                }
+            }
         }
 
+        #region 素材のあるフォルダを開く
+        /// <summary>
+        /// 素材のあるフォルダを開く
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var a = new CommonOpenFileDialog();
@@ -225,6 +372,7 @@ namespace MapEditor
                 }
             }
         }
+        #endregion
 
         private void ButtonTip_Click(object sender, RoutedEventArgs e)
         {

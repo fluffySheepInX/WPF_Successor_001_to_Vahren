@@ -1,0 +1,36 @@
+﻿<Window x:Class="MapEditor.WinObj"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MapEditor"
+        mc:Ignorable="d"
+        Title="WinObj" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="16"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="16"/>
+            <RowDefinition />
+            <RowDefinition Height="16"/>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="grdMaptip" Grid.Column="2" Grid.Row="1" Background="AliceBlue">
+            <ScrollViewer x:Name="scMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <WrapPanel Name="wrapMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=ScrollViewer}}"
+                                 Height="Auto">
+                    <Button Content="素材のあるフォルダを開く" Click="Button_Click"/>
+                </WrapPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Button Grid.Column="1" Name="btnDecide" Content="決定する" HorizontalAlignment="Left" Margin="87,328,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175" Click="btnDecide_Click"/>
+        <ListBox Grid.Column="1" Grid.Row="1" BorderBrush="Red" BorderThickness="5" Name="listObj" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,68,10,121"/>
+        <Label Grid.Column="1" Content="リストの一番上のものが、一番背後に配置されます" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
