@@ -1188,21 +1188,35 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         //出撃先領地情報
-                        var aa = classGameStatus.AllListSpot
+                        var targetSpot = classGameStatus.AllListSpot
                                 .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
                                 .First();
 
+                        // 他の勢力に所属してた場合は、取り除く
+                        if (convSpots.ClassSpot.PowerNameTag != string.Empty)
+                        {
+                            convSpots.ClassPower.ListMember.Remove(convSpots.ClassSpot.NameTag);
+                        }
+
                         //spotの所属情報を書き換え
                         convSpots.ClassSpot.PowerNameTag = selectedItemClassSpot.PowerNameTag;
-                        aa.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
-                        var po = classGameStatus.ListPower
+                        targetSpot.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
+                        var newPower = classGameStatus.ListPower
                                 .Where(x => x.NameTag == convSpots.ClassSpot.PowerNameTag)
                                 .First();
-                        po.ListMember.Add(convSpots.ClassSpot.NameTag);
+                        newPower.ListMember.Add(convSpots.ClassSpot.NameTag);
+                        convSpots.ClassPower = newPower;
+
+                        // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
+                        var worldMap = classGameStatus.WorldMap;
+                        if (worldMap != null)
+                        {
+                            worldMap.ChangeFlag(newPower.FlagPath, convSpots.ClassSpot.NameTag);
+                        }
 
                         ////unitの所属情報を書き換え
                         //防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する
-                        aa.UnitGroup.Clear();
+                        targetSpot.UnitGroup.Clear();
                         foreach (var item in classGameStatus.AllListSpot.Where(x => x.NameTag == selectedItemClassSpot.NameTag))
                         {
                             foreach (var itemUnitGroup in item.UnitGroup)
@@ -1210,7 +1224,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 itemUnitGroup.Spot = convSpots.ClassSpot;
                                 itemUnitGroup.FlagDisplay = true;
                                 //unit移動
-                                aa.UnitGroup.Add(itemUnitGroup);
+                                targetSpot.UnitGroup.Add(itemUnitGroup);
                             }
                             //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
                             item.UnitGroup.Clear();
