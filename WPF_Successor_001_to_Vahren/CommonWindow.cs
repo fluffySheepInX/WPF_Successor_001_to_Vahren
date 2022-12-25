@@ -165,7 +165,7 @@ namespace WPF_Successor_001_to_Vahren
         public void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // ESCキーを押すと終了する。
-            if ((e.Key == Key.Escape) && (e.IsRepeat == false))
+            if (e.Key == Key.Escape)
             {
                 if (MessageBox.Show("ゲームを終了しますか？", "ローガントゥーガ", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {

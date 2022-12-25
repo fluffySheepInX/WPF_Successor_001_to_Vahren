@@ -207,22 +207,20 @@ namespace WPF_Successor_001_to_Vahren
         #region キー入力
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            // キーを押しっぱなしにしても無視する
-            if (e.IsRepeat)
-            {
-                return;
-            }
-
             int input_num = -1;
 
             // 数字キー
             if ((e.Key == Key.D0) || (e.Key == Key.NumPad0))
             {
-                // 選択肢が無い状態でも 0キーだけは常に受け付ける
-                this.ChoiceNumber = 0;
+                // キーを押しっぱなしにしても無視する
+                if (e.IsRepeat == false)
+                {
+                    // 選択肢が無い状態でも 0キーだけは常に受け付ける
+                    this.ChoiceNumber = 0;
 
-                // 戻り値をセットすると自動的に閉じる
-                DialogResult = true;
+                    // 戻り値をセットすると自動的に閉じる
+                    DialogResult = true;
+                }
             }
             else if ((e.Key == Key.D1) || (e.Key == Key.NumPad1))
             {
@@ -278,10 +276,14 @@ namespace WPF_Successor_001_to_Vahren
             // 選択肢が存在する番号だけ返す
             if ((input_num > 0) && (input_num < this.panelList.Children.Count))
             {
-                this.ChoiceNumber = input_num;
+                // キーを押しっぱなしにしても無視する
+                if (e.IsRepeat == false)
+                {
+                    this.ChoiceNumber = input_num;
 
-                // 戻り値をセットすると自動的に閉じる
-                DialogResult = true;
+                    // 戻り値をセットすると自動的に閉じる
+                    DialogResult = true;
+                }
             }
         }
         #endregion

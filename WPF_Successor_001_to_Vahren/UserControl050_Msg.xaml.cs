@@ -16,6 +16,11 @@ using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
 
 /*
+キー入力でクリックを代用することも可能です。
+Enter, Space, Z キーを押すとクリックします。
+Ctrl キーを押し続けると連続的にクリックします。
+
+
 文章中の特殊記号やタグの説明
 
 文章に @ や # が含まれてると、そこまで表示して待機します。

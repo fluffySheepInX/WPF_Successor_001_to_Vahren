@@ -337,7 +337,7 @@ namespace WPF_Successor_001_to_Vahren
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    worldMap.PowerMarkAnime("circle_yellow4.png", classPower.NameTag);
+                    worldMap.PowerMarkAnime("circle_Yellow.png", classPower.NameTag);
                 }
             }
         }

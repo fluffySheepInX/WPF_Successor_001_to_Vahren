@@ -31,6 +31,9 @@ namespace WPF_Successor_001_to_Vahren
         // 定数
         // ユニットのタイルサイズをここで調節できます
         private const int tile_width = 48, tile_height = 66, header_width = 54;
+        // ドロップ先の強調枠の太さを一括指定します
+        // 太さの違いで判定してるから、必ず drop_select > drop_target にすること。
+        private const int drop_target = 2, drop_select = 4;
 
         // 最初に呼び出した時
         private bool _isControl = false; // 操作可能かどうかの設定
@@ -69,16 +72,16 @@ namespace WPF_Successor_001_to_Vahren
                 // プレイヤー勢力なら色を変える
                 if (_isControl)
                 {
-                    strFilename = "circle_cyan4.png";
+                    strFilename = "circle_Aqua.png";
                 }
                 // 中立領地
                 else if (((ClassPowerAndCity)this.Tag).ClassPower.NameTag == string.Empty)
                 {
-                    strFilename = "circle_yellow4.png";
+                    strFilename = "circle_Yellow.png";
                 }
                 else
                 {
-                    strFilename =  "circle_lime4.png";
+                    strFilename =  "circle_Lime.png";
                 }
                 worldMap.SpotMarkAnime(strFilename, ((ClassPowerAndCity)this.Tag).ClassSpot.NameTag);
             }
@@ -988,8 +991,8 @@ namespace WPF_Successor_001_to_Vahren
                         Border border = new Border();
                         border.Name = "DropTarget" + this.Name + "_Unit_" + i.ToString() + "_" + j.ToString();
                         border.Background = Brushes.Transparent;
-                        border.BorderThickness = new Thickness(2);
-                        border.BorderBrush = Brushes.Aqua;
+                        border.BorderThickness = new Thickness(drop_target);
+                        border.BorderBrush = Brushes.Magenta;
                         border.Width = tile_width - 1;
                         border.Height = tile_height - 1;
                         this.canvasSpotUnit.Children.Add(border);
@@ -1004,8 +1007,8 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Right_" + i.ToString();
                     border.Background = Brushes.Transparent;
-                    border.BorderThickness = new Thickness(2);
-                    border.BorderBrush = Brushes.Aqua;
+                    border.BorderThickness = new Thickness(drop_target);
+                    border.BorderBrush = Brushes.Magenta;
                     border.Width = tile_width * (member_capacity - j) - 1;
                     border.Height = tile_height - 1;
                     this.canvasSpotUnit.Children.Add(border);
@@ -1019,8 +1022,8 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Top_" + i.ToString();
                     border.Background = Brushes.Transparent;
-                    border.BorderThickness = new Thickness(2);
-                    border.BorderBrush = Brushes.Aqua;
+                    border.BorderThickness = new Thickness(drop_target);
+                    border.BorderBrush = Brushes.Magenta;
                     border.Width = header_width + tile_width;
                     border.Height = tile_height / 3;
                     this.canvasSpotUnit.Children.Add(border);
@@ -1036,8 +1039,8 @@ namespace WPF_Successor_001_to_Vahren
                 Border border = new Border();
                 border.Name = "DropTarget" + this.Name + "_Bottom";
                 border.Background = Brushes.Transparent;
-                border.BorderThickness = new Thickness(2);
-                border.BorderBrush = Brushes.Aqua;
+                border.BorderThickness = new Thickness(drop_target);
+                border.BorderBrush = Brushes.Magenta;
                 border.Width = header_width + tile_width * member_capacity;
                 border.Height = tile_height * (spot_capacity - i);
                 this.canvasSpotUnit.Children.Add(border);
@@ -1069,8 +1072,8 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 border.Name = "DropTarget" + strTitle + "_Right_" + i.ToString();
                                 border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 border.Width = tile_width * (member_capacity - member_count) - 1;
                                 border.Height = tile_height - 1;
                                 itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1084,8 +1087,8 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 border.Name = "DropTarget" + strTitle + "_Top_" + i.ToString();
                                 border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 border.Width = header_width + tile_width;
                                 border.Height = tile_height / 3;
                                 itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1101,8 +1104,8 @@ namespace WPF_Successor_001_to_Vahren
                             Border border = new Border();
                             border.Name = "DropTarget" + strTitle + "_Bottom";
                             border.Background = Brushes.Transparent;
-                            border.BorderThickness = new Thickness(2);
-                            border.BorderBrush = Brushes.Aqua;
+                            border.BorderThickness = new Thickness(drop_target);
+                            border.BorderBrush = Brushes.Magenta;
                             border.Width = header_width + tile_width * member_capacity;
                             border.Height = tile_height * (spot_capacity - i);
                             itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1134,9 +1137,11 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
                                 border.Name = "DropTargetSpot_" + spot_id.ToString();
-                                border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                // ワールドマップ上で識別しやすいよう、背景を少し暗くする
+                                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
+                                border.Background = mySolidColorBrush;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 // 領地アイコンの大きさが不明なので、大きめの枠にする
                                 border.Width = 64;
                                 border.Height = 64;
@@ -1189,8 +1194,8 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Right_" + i.ToString();
                     border.Background = Brushes.Transparent;
-                    border.BorderThickness = new Thickness(2);
-                    border.BorderBrush = Brushes.Aqua;
+                    border.BorderThickness = new Thickness(drop_target);
+                    border.BorderBrush = Brushes.Magenta;
                     border.Width = tile_width * (member_capacity - member_count) - 1;
                     border.Height = tile_height - 1;
                     this.canvasSpotUnit.Children.Add(border);
@@ -1204,8 +1209,8 @@ namespace WPF_Successor_001_to_Vahren
                     Border border = new Border();
                     border.Name = "DropTarget" + this.Name + "_Top_" + i.ToString();
                     border.Background = Brushes.Transparent;
-                    border.BorderThickness = new Thickness(2);
-                    border.BorderBrush = Brushes.Aqua;
+                    border.BorderThickness = new Thickness(drop_target);
+                    border.BorderBrush = Brushes.Magenta;
                     border.Width = header_width + tile_width;
                     border.Height = tile_height / 3;
                     this.canvasSpotUnit.Children.Add(border);
@@ -1221,8 +1226,8 @@ namespace WPF_Successor_001_to_Vahren
                 Border border = new Border();
                 border.Name = "DropTarget" + this.Name + "_Bottom";
                 border.Background = Brushes.Transparent;
-                border.BorderThickness = new Thickness(2);
-                border.BorderBrush = Brushes.Aqua;
+                border.BorderThickness = new Thickness(drop_target);
+                border.BorderBrush = Brushes.Magenta;
                 border.Width = header_width + tile_width * member_capacity;
                 border.Height = tile_height * (spot_capacity - i);
                 this.canvasSpotUnit.Children.Add(border);
@@ -1253,8 +1258,8 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 border.Name = "DropTarget" + strTitle + "_Right_" + i.ToString();
                                 border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 border.Width = tile_width * (member_capacity - member_count) - 1;
                                 border.Height = tile_height - 1;
                                 itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1268,8 +1273,8 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 border.Name = "DropTarget" + strTitle + "_Top_" + i.ToString();
                                 border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 border.Width = header_width + tile_width;
                                 border.Height = tile_height / 3;
                                 itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1285,8 +1290,8 @@ namespace WPF_Successor_001_to_Vahren
                             Border border = new Border();
                             border.Name = "DropTarget" + strTitle + "_Bottom";
                             border.Background = Brushes.Transparent;
-                            border.BorderThickness = new Thickness(2);
-                            border.BorderBrush = Brushes.Aqua;
+                            border.BorderThickness = new Thickness(drop_target);
+                            border.BorderBrush = Brushes.Magenta;
                             border.Width = header_width + tile_width * member_capacity;
                             border.Height = tile_height * (spot_capacity - i);
                             itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1318,9 +1323,11 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
                                 border.Name = "DropTargetSpot_" + spot_id.ToString();
-                                border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                // ワールドマップ上で識別しやすいよう、背景を少し暗くする
+                                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
+                                border.Background = mySolidColorBrush;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 // 親コントロールが Grid なので、標準だと中央配置になる。左上を原点に変えておく。
                                 border.HorizontalAlignment = HorizontalAlignment.Left;
                                 border.VerticalAlignment = VerticalAlignment.Top;
@@ -1394,8 +1401,8 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 border.Name = "DropTarget" + strTitle + "_Top_" + i.ToString();
                                 border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 border.Width = header_width + tile_width;
                                 border.Height = tile_height / 3;
                                 itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1411,8 +1418,8 @@ namespace WPF_Successor_001_to_Vahren
                             Border border = new Border();
                             border.Name = "DropTarget" + strTitle + "_Bottom";
                             border.Background = Brushes.Transparent;
-                            border.BorderThickness = new Thickness(2);
-                            border.BorderBrush = Brushes.Aqua;
+                            border.BorderThickness = new Thickness(drop_target);
+                            border.BorderBrush = Brushes.Magenta;
                             border.Width = header_width + tile_width * member_capacity;
                             border.Height = tile_height * (spot_capacity - i);
                             itemWindow.canvasSpotUnit.Children.Add(border);
@@ -1444,9 +1451,11 @@ namespace WPF_Successor_001_to_Vahren
                                 Border border = new Border();
                                 // 領地リストのインデックスで識別する
                                 border.Name = "DropTargetSpot_" + spot_id.ToString();
-                                border.Background = Brushes.Transparent;
-                                border.BorderThickness = new Thickness(2);
-                                border.BorderBrush = Brushes.Aqua;
+                                // ワールドマップ上で識別しやすいよう、背景を少し暗くする
+                                SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(64, 0, 0, 0));
+                                border.Background = mySolidColorBrush;
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                                 // 親コントロールが Grid なので、標準だと中央配置になる。左上を原点に変えておく。
                                 border.HorizontalAlignment = HorizontalAlignment.Left;
                                 border.VerticalAlignment = VerticalAlignment.Top;
@@ -1485,7 +1494,7 @@ namespace WPF_Successor_001_to_Vahren
                     if (strTarget.StartsWith("DropTarget"))
                     {
                         // 枠が太くなっていれば、選択中の印
-                        if (border.BorderThickness.Left > 2)
+                        if (border.BorderThickness.Left > drop_target)
                         {
                             // 同じ領地にドロップできるのはユニットか部隊だけなので、全部隊は判定しない
                             strTarget = strTarget.Replace("DropTarget", String.Empty);
@@ -1535,7 +1544,7 @@ namespace WPF_Successor_001_to_Vahren
                                 if (strTarget.StartsWith("DropTarget"))
                                 {
                                     // 枠が太くなっていれば、選択中の印
-                                    if (border.BorderThickness.Left > 2)
+                                    if (border.BorderThickness.Left > drop_target)
                                     {
                                         strTarget = strTarget.Replace("DropTarget", String.Empty);
                                         if (troop_id >= 0)
@@ -1594,7 +1603,7 @@ namespace WPF_Successor_001_to_Vahren
                             if (strTarget.StartsWith("DropTarget"))
                             {
                                 // 枠が太くなっていれば、選択中の印
-                                if (border.BorderThickness.Left > 2)
+                                if (border.BorderThickness.Left > drop_target)
                                 {
                                     strTarget = strTarget.Replace("DropTarget", String.Empty);
                                     if (troop_id >= 0)
@@ -1625,6 +1634,11 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        /*
+        ドラッグ画像を IsHitTestVisible = false にすれば
+        InputHitTest でその下の物を検出できるので、そちらを使うことにしました。
+        他の用途で使うかもしれないので、実装例としてコードは残しておきます。
+
         // ドラッグ中にドロップ先を判定するための HitTest 用
         private DependencyObject? _hitResults = null;
         private int _hitCount = 0;
@@ -1639,23 +1653,26 @@ namespace WPF_Successor_001_to_Vahren
                 return HitTestResultBehavior.Stop;
             }
 
-            // 上位３個まで調べる
-            // Fade用Canvas、ドラッグ画像のImage、ドロップ先のBorder
-            if (_hitCount > 3)
+            // 上位２個まで調べる
+            // ドラッグ画像のImage、ドロップ先のBorder
+            if (_hitCount >= 2)
             {
                 return HitTestResultBehavior.Stop;
             }
 
             return HitTestResultBehavior.Continue;
         }
+        */
 
         // ユニットをドラッグ移動中に、移動先をホバー表示する
         private void HoverDropTarget(MainWindow mainWindow, Point posMouse)
         {
             // マウスポインタ―の下にあるなら、最初の枠だけ太くする
             Border? borderHit = null;
+/*
             _hitResults = null;
             _hitCount = 0;
+
             VisualTreeHelper.HitTest(mainWindow
                     , null
                     , new HitTestResultCallback(OnHitTestResultCallback)
@@ -1664,11 +1681,17 @@ namespace WPF_Successor_001_to_Vahren
             if (_hitResults != null)
             {
                 borderHit = (Border)_hitResults;
+*/
+            IInputElement? hitResult = mainWindow.InputHitTest(posMouse);
+            if ((hitResult != null) && (hitResult is Border))
+            {
+                borderHit = (Border)hitResult;
                 if (borderHit.Name.StartsWith("DropTarget"))
                 {
-                    if (borderHit.BorderThickness.Left == 2)
+                    if (borderHit.BorderThickness.Left == drop_target)
                     {
-                        borderHit.BorderThickness = new Thickness(5);
+                        borderHit.BorderThickness = new Thickness(drop_select);
+                        borderHit.BorderBrush = Brushes.Aqua;
                     }
                 }
             }
@@ -1678,9 +1701,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                 {
-                    if (border.BorderThickness.Left > 2)
+                    if (border.BorderThickness.Left > drop_target)
                     {
-                        border.BorderThickness = new Thickness(2);
+                        border.BorderThickness = new Thickness(drop_target);
+                        border.BorderBrush = Brushes.Magenta;
                     }
                 }
             }
@@ -1700,9 +1724,10 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                             {
-                                if (border.BorderThickness.Left > 2)
+                                if (border.BorderThickness.Left > drop_target)
                                 {
-                                    border.BorderThickness = new Thickness(2);
+                                    border.BorderThickness = new Thickness(drop_target);
+                                    border.BorderBrush = Brushes.Magenta;
                                 }
                             }
                         }
@@ -1720,9 +1745,10 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         if ((border != borderHit) && (border.Name.StartsWith("DropTarget")))
                         {
-                            if (border.BorderThickness.Left > 2)
+                            if (border.BorderThickness.Left > drop_target)
                             {
-                                border.BorderThickness = new Thickness(2);
+                                border.BorderThickness = new Thickness(drop_target);
+                                border.BorderBrush = Brushes.Magenta;
                             }
                         }
                     }
@@ -2006,6 +2032,7 @@ namespace WPF_Successor_001_to_Vahren
                 imgDrag.Width = tile_width;
                 imgDrag.Height = tile_width;
                 imgDrag.Name = "DragImage" + troop_id.ToString() + "_" + member_id.ToString();
+                imgDrag.IsHitTestVisible = false;
                 mainWindow.canvasUI.Children.Add(imgDrag);
 
                 // ドラッグ画像をウインドウよりも前面に移動させる
@@ -2121,6 +2148,7 @@ namespace WPF_Successor_001_to_Vahren
                 imgDrag.Width = tile_width;
                 imgDrag.Height = tile_width;
                 imgDrag.Name = "DragImage" + troop_id.ToString() + "_" + member_count.ToString();
+                imgDrag.IsHitTestVisible = false;
                 mainWindow.canvasUI.Children.Add(imgDrag);
 
                 // ドラッグ画像をウインドウよりも前面に移動させる
@@ -2297,6 +2325,7 @@ namespace WPF_Successor_001_to_Vahren
                 imgDrag.Width = tile_width;
                 imgDrag.Height = tile_width;
                 imgDrag.Name = "DragImage" + troop_count.ToString();
+                imgDrag.IsHitTestVisible = false;
                 mainWindow.canvasUI.Children.Add(imgDrag);
 
                 // ドラッグ画像をウインドウよりも前面に移動させる
