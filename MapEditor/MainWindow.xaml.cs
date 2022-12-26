@@ -33,7 +33,7 @@ namespace MapEditor
         public bool NameSelectionMapTipObj { get; set; } = false;
         public int TipSize { get; set; } = 64;
         public int BorSize { get; set; } = 4;
-
+        public List<string> fileTips { get; set; } = new List<string>();
         public MainWindow()
         {
             InitializeComponent();
@@ -368,6 +368,7 @@ namespace MapEditor
                         border.BorderThickness = new Thickness() { Left = BorSize, Top = BorSize, Right = BorSize, Bottom = BorSize };
                         border.Child = canvas;
                         wrapMaptip.Children.Add(border);
+                        fileTips.Add(name);
                     }
                 }
             }
@@ -742,7 +743,8 @@ namespace MapEditor
 
         private void btnPreMap_Click(object sender, RoutedEventArgs e)
         {
-
+            var aaa = new WinPreBattle(MapData, fileTips);
+            aaa.ShowDialog();
         }
     }
 }
