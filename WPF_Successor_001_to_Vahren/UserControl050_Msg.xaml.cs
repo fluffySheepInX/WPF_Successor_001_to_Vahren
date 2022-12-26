@@ -268,12 +268,11 @@ namespace WPF_Successor_001_to_Vahren
                     Top = this.gridMain.Margin.Top + Math.Truncate(this.gridMain.Height / 2)
                 };
                 animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.125));
-                animeMargin.Completed += anime_PositionBottom_Completed;
+                animeMargin.Completed += animePositionBottom_Completed;
                 this.gridMain.BeginAnimation(Grid.MarginProperty, animeMargin);
             }
         }
-
-        private void anime_PositionBottom_Completed(object? sender, EventArgs e)
+        private void animePositionBottom_Completed(object? sender, EventArgs e)
         {
             // ウィンドウを動かすアニメーションを消して、文章を表示する
             this.gridMain.BeginAnimation(Grid.OpacityProperty, null);

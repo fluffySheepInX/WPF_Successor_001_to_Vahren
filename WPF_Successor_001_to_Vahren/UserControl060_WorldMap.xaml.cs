@@ -743,34 +743,41 @@ namespace WPF_Successor_001_to_Vahren
             var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
             if (imgSpot != null)
             {
-                // 本体を透明にして、ダミー画像でアニメーション表示する
-                // 余計なイベントが発生しないはず
-                imgSpot.Opacity = 0;
-
-                Image imgDummy = new Image();
-                imgDummy.Name = "SpotDummy" + classPowerAndCity.ClassSpot.NameTag;
-                imgDummy.Source = imgSpot.Source;
-                imgDummy.HorizontalAlignment = HorizontalAlignment.Left;
-                imgDummy.VerticalAlignment = VerticalAlignment.Top;
-                imgDummy.Width = imgSpot.Width;
-                imgDummy.Height = imgSpot.Height;
-                imgDummy.Margin = new Thickness()
+                // 同じ箇所で既にダミー画像を表示してる場合は、新たに表示しない
+                var oldDummy = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "DummySpotIcon" + classPowerAndCity.ClassSpot.NameTag);
+                if (oldDummy == null)
                 {
-                    Left = classPowerAndCity.ClassSpot.X - imgDummy.Width / 2,
-                    Top = classPowerAndCity.ClassSpot.Y - imgDummy.Height / 2
-                };
-                this.canvasMap.Children.Add(imgDummy);
+                    // 本体を透明にして、ダミー画像でアニメーション表示する
+                    // 余計なイベントが発生しないはず
+                    imgSpot.Opacity = 0;
 
-                // 少し上に上がって、元の位置に戻るアニメーション
-                var animeIconPos = new ThicknessAnimation();
-                animeIconPos.To = new Thickness()
-                {
-                    Left = classPowerAndCity.ClassSpot.X - imgDummy.Width / 2,
-                    Top = classPowerAndCity.ClassSpot.Y - imgDummy.Height / 2 - 12
-                };
-                animeIconPos.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                animeIconPos.AutoReverse = true;
-                imgDummy.BeginAnimation(Image.MarginProperty, animeIconPos);
+                    Image imgDummy = new Image();
+                    imgDummy.Name = "DummySpotIcon" + classPowerAndCity.ClassSpot.NameTag;
+                    imgDummy.Source = imgSpot.Source;
+                    imgDummy.HorizontalAlignment = HorizontalAlignment.Left;
+                    imgDummy.VerticalAlignment = VerticalAlignment.Top;
+                    imgDummy.Width = imgSpot.Width;
+                    imgDummy.Height = imgSpot.Height;
+                    imgDummy.Margin = new Thickness()
+                    {
+                        Left = classPowerAndCity.ClassSpot.X - imgDummy.Width / 2,
+                        Top = classPowerAndCity.ClassSpot.Y - imgDummy.Height / 2
+                    };
+                    this.canvasMap.Children.Add(imgDummy);
+
+                    // 少し上に上がって、元の位置に戻るアニメーション
+                    var animeIconPos = new ThicknessAnimation();
+                    animeIconPos.To = new Thickness()
+                    {
+                        Left = classPowerAndCity.ClassSpot.X - imgDummy.Width / 2,
+                        Top = classPowerAndCity.ClassSpot.Y - imgDummy.Height / 2 - 12
+                    };
+                    animeIconPos.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+                    animeIconPos.AutoReverse = true;
+                    // アニメーションが終わったら自動的にダミー画像を消す
+                    animeIconPos.Completed += animeSpotMouseEnter_Completed;
+                    imgDummy.BeginAnimation(Image.MarginProperty, animeIconPos);
+                }
             }
 
             // 同じ勢力の全ての領地を強調する
@@ -836,17 +843,21 @@ namespace WPF_Successor_001_to_Vahren
                 // 領地名の色を戻す
                 txtNameSpot.Foreground = Brushes.White;
             }
+            /*
+            自動的に消す手法は、タイミング次第では別の場所のを消す可能性がある。
+            問題があるようならこちらに戻すので、元のコードを残しておく。
             var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotIcon" + classPowerAndCity.ClassSpot.NameTag);
             if (imgSpot != null)
             {
                 // 透明度を元に戻して、ダミー画像を消す
                 imgSpot.Opacity = 1;
-                var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotDummy" + classPowerAndCity.ClassSpot.NameTag);
+                var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "DummySpotIcon" + classPowerAndCity.ClassSpot.NameTag);
                 if (imgDummy != null)
                 {
                     this.canvasMap.Children.Remove(imgDummy);
                 }
             }
+            */
 
             // 勢力領の強調を解除する
             if (classPowerAndCity.ClassPower.ListMember.Count > 0)
@@ -899,9 +910,31 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     if (itemWindow.Name == "DetailSpot")
                     {
-                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        itemWindow.Remove();
                         break;
                     }
+                }
+            }
+        }
+        private void animeSpotMouseEnter_Completed(object? sender, EventArgs e)
+        {
+            // アニメーションが終わったダミー画像の名前を取得できない欠陥があることに注意
+            foreach (var imgDummy in this.canvasMap.Children.OfType<Image>())
+            {
+                if (imgDummy.Name.StartsWith("DummySpotIcon") == true)
+                {
+                    var imgSpot = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, imgDummy.Name.Substring(5));
+                    if (imgSpot != null)
+                    {
+                        // 透明度を元に戻す
+                        imgSpot.Opacity = 1;
+                    }
+
+                    // ダミー画像を消す
+                    imgDummy.BeginAnimation(Grid.MarginProperty, null);
+                    this.canvasMap.Children.Remove(imgDummy);
+
+                    break;
                 }
             }
         }

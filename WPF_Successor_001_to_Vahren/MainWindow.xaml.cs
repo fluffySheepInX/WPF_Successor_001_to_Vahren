@@ -2498,6 +2498,25 @@ namespace WPF_Successor_001_to_Vahren
             return imgFlag;
         }
 
+        // 以下の記事のコードをそのまま使ってます。
+        // 「WPF/C# コントロールの要素をキャプチャする」
+        // https://qiita.com/Sakurai-Shinya/items/81a9c413c3265f0e8587
+        // キャプチャしたい要素（一番親の要素）を引数に渡すとBitmapSourceで返すメソッド
+        public BitmapSource FrameworkElementToBitmapSource(FrameworkElement element)
+        {
+            element.UpdateLayout();
+            var width = element.ActualWidth;
+            var height = element.ActualHeight;
+            var dv = new DrawingVisual();
+            using (var dc = dv.RenderOpen())
+            {
+                dc.DrawRectangle(new BitmapCacheBrush(element), null, new Rect(0, 0, width, height));
+            }
+            var rtb = new RenderTargetBitmap((int)width, (int)height, 96d, 96d, PixelFormats.Pbgra32);
+            rtb.Render(dv);
+            return rtb;
+        }
+
         #region 各種構造体データ読み込みに必要なメソッド群
         /// <summary>
         /// 各種構造体データ読み込み
