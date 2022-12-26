@@ -220,5 +220,81 @@ namespace WPF_Successor_001_to_Vahren
             this.rectWindowRight.Fill = myImageBrush;
         }
 
+        // 詳細説明ウィンドウを取り除く
+        public void Remove()
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 消えるエフェクト用にダミー画像を用意する
+            Image imgDummy = new Image();
+            imgDummy.Name = "DummyDetailSpot";
+            imgDummy.Width = this.ActualWidth;
+            imgDummy.Height = this.ActualHeight;
+            imgDummy.Source = mainWindow.FrameworkElementToBitmapSource(this);
+            imgDummy.Stretch = Stretch.None;
+            Canvas.SetZIndex(imgDummy, Canvas.GetZIndex(this));
+            // 現在位置と透明度からアニメーションを開始する
+            imgDummy.Opacity = this.Opacity;
+            imgDummy.Margin = new Thickness()
+            {
+                Left = this.Margin.Left,
+                Top = this.Margin.Top
+            };
+            mainWindow.canvasUI.Children.Add(imgDummy);
+
+            // 本体を取り除く
+            this.BeginAnimation(Grid.MarginProperty, null);
+            mainWindow.canvasUI.Children.Remove(this);
+
+            // ダミー画像をアニメーションさせる
+            double offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+
+            // 移動距離に応じてアニメーション時間を変える
+            double move_length = this.Margin.Top - (mainWindow.canvasUI.Height - offsetTop - imgDummy.Height - 100);
+            double time_span = 0.25 * move_length / 100;
+
+            var animeOpacity = new DoubleAnimation();
+            animeOpacity.To = 0.1;
+            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(time_span));
+            imgDummy.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+
+            var animeMargin = new ThicknessAnimation();
+            animeMargin.To = new Thickness()
+            {
+                Left = imgDummy.Margin.Left,
+                Top = mainWindow.canvasUI.Height - offsetTop - imgDummy.Height - 100
+            };
+            animeMargin.Duration = new Duration(TimeSpan.FromSeconds(time_span));
+            animeMargin.Completed += animeRemoveDetail_Completed;
+            imgDummy.BeginAnimation(Grid.MarginProperty, animeMargin);
+        }
+        private void animeRemoveDetail_Completed(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DummyDetailSpot");
+            if (imgDummy == null)
+            {
+                return;
+            }
+
+            // ダミー画像を消す
+            imgDummy.BeginAnimation(Grid.OpacityProperty, null);
+            imgDummy.BeginAnimation(Grid.MarginProperty, null);
+            mainWindow.canvasUI.Children.Remove(imgDummy);
+        }
+
     }
 }
