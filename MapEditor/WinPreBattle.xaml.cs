@@ -148,8 +148,8 @@ namespace MapEditor
                         }
                     }
 
-                    ////建築物描写
-                    //ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, ClassGameStatus.ClassBattle.ListBuildingAlive);
+                    //建築物描写
+                    DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj);
                 }
 
                 this.canBase.Children.Add(
@@ -198,6 +198,30 @@ namespace MapEditor
 
             Canvas.SetZIndex(backCanvas, 98);
             return backCanvas;
+        }
+
+        public static void DisplayBuilding(Canvas canvas, int takasaMapTip, int yokoMapTip, List<(BitmapImage, int, int)> listTakaiObj)
+        {
+            foreach (var item in listTakaiObj.OrderBy(x => x.Item2).ThenByDescending(y => y.Item3))
+            {
+                ImageBrush image = new ImageBrush();
+                image.Stretch = Stretch.Fill;
+                image.ImageSource = item.Item1;
+
+                System.Windows.Shapes.Rectangle rectangle = new Rectangle();
+                rectangle.Name = "Bui" + item.Item2 + "a" + item.Item3;
+                rectangle.Fill = image;
+                rectangle.Stretch = Stretch.Fill;
+                rectangle.StrokeThickness = 0;
+                rectangle.Width = yokoMapTip;
+                rectangle.Height = item.Item1.PixelHeight;
+                rectangle.Margin = new Thickness()
+                {
+                    Left = (item.Item2 * (yokoMapTip / 2)) + (item.Item3 * (yokoMapTip / 2)),
+                    Top = ((canvas.Height / 2) + (item.Item2 * (takasaMapTip / 2)) + (item.Item3 * (-(takasaMapTip / 2)))) - (item.Item1.PixelHeight - takasaMapTip / 2)
+                };
+                canvas.Children.Add(rectangle);
+            }
         }
         /// <summary>
         /// ドラッグを開始する
