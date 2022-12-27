@@ -41,9 +41,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 foreach (var item in battle.value.Select((value, index) => (value, index)))
                 {
-                    if (item.value.Building != string.Empty)
+                    if (item.value.Building.Count != 0)
                     {
-                        bui.Add(new(item.value.Building, battle.index, item.index));
+                        foreach (var building in item.value.Building)
+                        {
+                            bui.Add(new(building, battle.index, item.index));
+                        }
                     }
                 }
             }

@@ -82,9 +82,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region Building
-        private string building = string.Empty;
+        private List<string> building = new List<string>();
 
-        public string Building
+        public List<string> Building
         {
             get { return building; }
             set { building = value; }

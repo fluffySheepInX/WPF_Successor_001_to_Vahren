@@ -63,9 +63,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 {
                     var ele =
-                        new Regex(GetPat("ele" + eleNumber), RegexOptions.IgnoreCase)
+                        new Regex(ClassStaticCommonMethod.GetPat("ele" + eleNumber), RegexOptions.IgnoreCase)
                         .Matches(value);
-                    var first = CheckMatchElement(ele);
+                    var first = ClassStaticCommonMethod.CheckMatchElement(ele);
                     if (first == null)
                     {
                         break;
@@ -81,9 +81,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             //name
             {
                 var name =
-                    new Regex(GetPat("name"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPat("name"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = CheckMatchElement(name);
+                var first = ClassStaticCommonMethod.CheckMatchElement(name);
                 if (first == null)
                 {
                     classMapBattle.Name = String.Empty;
@@ -96,9 +96,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             //tag name
             {
-                var nameTag = new Regex(GetPatTag("map"), RegexOptions.IgnoreCase)
+                var nameTag = new Regex(ClassStaticCommonMethod.GetPatTag("map"), RegexOptions.IgnoreCase)
                                 .Matches(value);
-                var first = CheckMatchElement(nameTag);
+                var first = ClassStaticCommonMethod.CheckMatchElement(nameTag);
                 if (first == null)
                 {
                     throw new Exception();
@@ -109,9 +109,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             //data
             {
                 var data =
-                    new Regex(GetPatComma("data"), RegexOptions.IgnoreCase)
+                    new Regex(ClassStaticCommonMethod.GetPatComma("data"), RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = CheckMatchElement(data);
+                var first = ClassStaticCommonMethod.CheckMatchElement(data);
                 if (first == null)
                 {
                     classMapBattle.MapData = new List<List<MapDetail>>();
@@ -126,6 +126,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         if (re[i] == "@")
                         {
+                            //改行コード時処理
                             classMapBattle.MapData.Add(new List<MapDetail>());
                             continue;
                         }
@@ -133,28 +134,48 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             MapDetail mapDetail = new MapDetail();
                             var sonomama = re[i].Replace(System.Environment.NewLine, string.Empty);
-
                             var splitA = sonomama.Split("*");
 
+                            //field(床画像
                             map.TryGetValue(splitA[0], out string? mapValue);
                             if (mapValue != null) mapDetail.Tip = mapValue;
-                            map.TryGetValue(splitA[1], out string? mapValue2);
-                            if (mapValue2 != null) mapDetail.Building = mapValue2;
-                            map.TryGetValue(splitA[2], out string? mapValue3);
-                            if (mapValue3 != null) mapDetail.Houkou = mapValue3;
-                            map.TryGetValue(splitA[3], out string? mapValue4);
-                            if (mapValue4 != null) mapDetail.Zinkei = mapValue4;
-                            if (splitA.Length == 5)
+
+                            //build(城壁や矢倉など
+                            var spBuild = splitA[1].Split("$");
+                            foreach (var item in spBuild)
                             {
-                                if (splitA[4] == "kougeki")
-                                {
-                                    mapDetail.KougekiButaiNoIti = true;
-                                }
-                                if (splitA[4] == "bouei")
-                                {
-                                    mapDetail.BoueiButaiNoIti = true;
-                                }
+                                map.TryGetValue(item, out string? mapValue2);
+                                if (mapValue2 != null) mapDetail.Building.Add(mapValue2);
                             }
+
+                            //flag(部隊チップの種別
+                            int num = -1;
+                            int temp = -1;
+                            if (int.TryParse(splitA[2], out temp) != true)
+                            {
+                                throw new Exception("");
+                            }
+                            num = temp;
+                            FlagBattleMapUnit sEnum = (FlagBattleMapUnit)Enum.ToObject(typeof(FlagBattleMapUnit), num);
+                            mapDetail.FlagBattleMapUnit = sEnum;
+
+                            //部隊
+                            mapDetail.Unit = splitA[3];
+                            if (mapDetail.Unit == "@@")
+                            {
+                                mapDetail.KougekiButaiNoIti = true;
+                            }
+                            if (mapDetail.Unit == "@")
+                            {
+                                mapDetail.BoueiButaiNoIti = true;
+                            }
+
+                            //方向
+                            mapDetail.Houkou = splitA[4];
+
+                            //陣形
+                            mapDetail.Zinkei = splitA[5];
+
                             classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
                         }
                     }
@@ -166,6 +187,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 classMapBattle.MapData.RemoveAt(classMapBattle.MapData.Count - 1);
             }
+
             return classMapBattle;
         }
 

@@ -177,13 +177,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                         continue;
                     }
 
-                    if (MapData[x + i][y + j].Building == string.Empty)
+                    if (MapData[x + i][y + j].Building[0] == string.Empty)
                     {
                         OpenOne(x + i, y + j, cost, parent);
                     }
                     else
                     {
-                        var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building).FirstOrDefault();
+                        var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building[0]).FirstOrDefault();
                         if (ob != null)
                         {
                             switch (ob.Type)

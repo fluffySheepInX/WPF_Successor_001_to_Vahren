@@ -113,11 +113,13 @@ namespace MapEditor
                             //map.TryGetValue(itemRow.value.field, out string? value);
                             //if (value == null) continue;
 
-                            //複数オブジェクトを将来、出すつもり
                             if (itemRow.value.build.Count != 0)
                             {
-                                var build = new BitmapImage(new Uri(itemRow.value.build[0]));
-                                listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                                foreach (var item in itemRow.value.build)
+                                {
+                                    var build = new BitmapImage(new Uri(item));
+                                    listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                                }
                             }
 
                             var bi = new BitmapImage(new Uri(itemRow.value.field));

@@ -177,13 +177,16 @@ namespace WPF_Successor_001_to_Vahren
                             //rotateTransform2.CenterY = 50;
                             //image.RelativeTransform = rotateTransform2;
 
-                            if (itemRow.value.Building != string.Empty)
+                            if (itemRow.value.Building.Count != 0)
                             {
-                                map.TryGetValue(itemRow.value.Building, out string? value2);
-                                if (value2 != null)
+                                foreach (var building in itemRow.value.Building)
                                 {
-                                    var build = new BitmapImage(new Uri(value2));
-                                    listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                                    map.TryGetValue(building, out string? value2);
+                                    if (value2 != null)
+                                    {
+                                        var build = new BitmapImage(new Uri(value2));
+                                        listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                                    }
                                 }
                             }
 
