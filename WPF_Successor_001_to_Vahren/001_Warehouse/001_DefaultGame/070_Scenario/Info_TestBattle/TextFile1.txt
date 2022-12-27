@@ -28,10 +28,10 @@ TestBattle ca2
 	player = "Sortie";
 }
 
-TestBattle testMap001
+TestBattle testMap002
 {
 	#戦闘マップ
-	map = "testMap001";
+	map = "testMap002";
 	#出撃
 	memberKougeki = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 	#防衛

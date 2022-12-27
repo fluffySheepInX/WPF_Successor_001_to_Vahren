@@ -163,7 +163,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region Str
-        private (string,int) str;
+        private (string, int) str;
         public (string, int) Str
         {
             get { return str; }
@@ -203,7 +203,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region GunDelay
-        private (string,int) gunDelay;
+        private (string, int) gunDelay;
         public (string, int) GunDelay
         {
             get { return gunDelay; }
@@ -256,6 +256,30 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return forceRay; }
             set { forceRay = value; }
+        }
+        #endregion
+        #region Rush
+        private int rush = -1;
+        public int Rush
+        {
+            get { return rush; }
+            set { rush = value; }
+        }
+        #endregion
+        #region RushInterval
+        private int rushInterval = -1;
+        public int RushInterval
+        {
+            get { return rushInterval; }
+            set { rushInterval = value; }
+        }
+        #endregion
+        #region RushRandomDegree
+        private int rushRandomDegree = -1;
+        public int RushRandomDegree
+        {
+            get { return rushRandomDegree; }
+            set { rushRandomDegree = value; }
         }
         #endregion
     }

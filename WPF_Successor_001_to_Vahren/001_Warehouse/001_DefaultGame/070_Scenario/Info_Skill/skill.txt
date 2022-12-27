@@ -43,12 +43,12 @@
 	//省略時は75%。発射した時の移動速度変化率。
 	//減速無しにする時はslow_per=100とします。
 	//停止にする時はslow_per=-1としてください（0だと未指定扱いで75%と同義と見なされる）
-	slow_per = "25";
+	slow_per = "100";
 
 	//省略時は1です。発射後に数値分の攻撃間隔だけ減速され続けます。
 	//speed=60のユニットでslow_time=1とすると約二秒間減速状態が続きます。
 	//減速時間無しにする時は-1とします（0だと未指定扱いで1と同義と見なされる）
-	slow_time = "3";
+	slow_time = "-1";
 
 	//効果音。soundフォルダのwavファイルを拡張子無しで指定。複数列挙するとランダムでどれかが再生される。
 	sound = "gun19, gun21, gun30";
@@ -89,7 +89,7 @@
 	range = "550";
 
 	//ダメージ減衰距離。省略時は0となり0だと減衰しません。
-	damage_range_adjust = "435";
+	damage_range_adjust = "0";
 
 	//0以外に指定するとこの距離以内なら発射しなくなります。
 	range_min = "145";
@@ -123,8 +123,20 @@
 	//rayの太さを指定
 	ray_strokeThickness = "3";
 
-	//onにすると全ユニットで射線が表示される。
+	//onにすると射線が表示される。
 	force_ray = "on";
+
+	//連射数
+	//未定義は-1
+	rush = "-1";
+	
+	//連射間隔。省略時は0。ここでは0は5と同義と見なされるので実質5です。
+	//同時に発射させたい時はrush_interval = -1 としてください。
+	rush_interval = "-1";
+
+	//指定角度範囲内でランダム方向に発射。
+	//未定義は-1
+	rush_random_degree = "-1";
 }
 
 NewFormatSkill gun01Test
@@ -137,8 +149,8 @@ NewFormatSkill gun01Test
 	help = "そのまんまニードル銃";
 	center = "on";
 	mp = "0";
-	slow_per = "25";
-	slow_time = "3";
+	slow_per = "100";
+	slow_time = "-1";
 	sound = "gun19, gun21, gun30";
 	image = "a_bullet";
 	direct = "on";
@@ -149,7 +161,7 @@ NewFormatSkill gun01Test
 	attr = "taiho";
 	str = "attack_dext * 120";
 	range = "50";
-	damage_range_adjust = "435";
+	damage_range_adjust = "0";
 	range_min = "145";
 	speed = "500";
 	gun_delay = "gunLaphroaig*1";
@@ -159,4 +171,44 @@ NewFormatSkill gun01Test
 	offset = "on";
 	ray = "185, 255, 255, 255";
 	force_ray = "on";
+}
+
+NewFormatSkill gunHotchkiss
+{
+	fkey = "gun*1";
+	sortkey = "1";
+	func = "missile";
+	icon = "f_attack.png, _num5.png, _num1.png, we_gun010.png";
+	name = "【機関銃・ホチキス式lv1】";
+	help = "ホチキス社による世界初の機関銃";
+	center = "on";
+	mp = "0";
+	slow_per = "100";
+	slow_time = "-1";
+	sound = "gun19, gun21, gun30";
+	image = "a_bullet";
+	direct = "on";
+	w = "12";
+	h = "12";
+	a = "200";
+	force_fire = "on";
+	attr = "taiho";
+	str = "attack_dext * 120";
+	range = "550";
+	damage_range_adjust = "0";
+	range_min = "145";
+	speed = "500";
+	gun_delay = "gunLaphroaig*1";
+	pair_next  = "b_kemuri_eff02";
+	next = "m_hit_eff01";
+	random_space = "10";
+	offset = "on";
+	ray = "185, 255, 255, 255";
+	ray_strokeThickness = "3";
+	force_ray = "on";
+
+	rush = "24";
+	rush_interval = "2";
+	rush_random_degree = "45";
+
 }

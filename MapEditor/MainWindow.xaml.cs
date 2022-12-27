@@ -743,6 +743,7 @@ namespace MapEditor
 
         private void btnPreMap_Click(object sender, RoutedEventArgs e)
         {
+            if (MapData is null) return;
             var aaa = new WinPreBattle(MapData, fileTips);
             aaa.ShowDialog();
         }

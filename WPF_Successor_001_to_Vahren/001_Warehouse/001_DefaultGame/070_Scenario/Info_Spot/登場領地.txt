@@ -26,7 +26,7 @@
 	member = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 
 	#戦闘マップ
-	map = "wefwefwefwefw";
+	map = "testMap002";
 
 	#都市のフレーバーテキスト
 	#タブと改行は取り除かれます。
@@ -47,7 +47,7 @@ NewFormatSpot spot0009
 	image = "099_SNOW2.png";
 	x = "2800";
 	y = "680";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 
 	capacity = "6";
 	member = "LineInfantryM14*2,DragoonFrancesca,HowitzerC11";
@@ -59,7 +59,7 @@ NewFormatSpot spot0010
 	image = "099_SNOW2.png";
 	x = "2650";
 	y = "680";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 
 	capacity = "8";
 	text = "長い文章を用意して、自動的に改行されるか確かめます。これくらいでどうかな？";
@@ -73,7 +73,7 @@ NewFormatSpot spot0002
 	image = "099_SNOW2.png";
 	x = "2750";
 	y = "550";
-	map = "ca";
+	map = "testMap002";
 
 	#滅亡等で中立になった時のユニット
 	wanderingMonster = "ghostFire*4,ghostFire*8,ghostFire*3,ghostFire*1";
@@ -87,7 +87,7 @@ NewFormatSpot spot0003
 	image = "099_WASTE6.png";
 	x = "2700";
 	y = "400";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 	member = "YaibaDagest";
 	capacity = "8";
 }
@@ -97,7 +97,7 @@ NewFormatSpot spot0007
 	image = "099_SNOW2.png";
 	x = "2600";
 	y = "300";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 	gain = "50";
 	castle = "5";
 	capacity = "10";
@@ -108,7 +108,7 @@ NewFormatSpot spot0008
 	image = "099_SNOW2.png";
 	x = "2700";
 	y = "250";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 	gain = "100";
 	castle = "10";
 	capacity = "12";
@@ -120,7 +120,7 @@ NewFormatSpot spot0004
 	image = "099_WASTE6.png";
 	x = "2650";
 	y = "450";
-	map = "ca3";
+	map = "testMap002";
 	#滅亡等で中立になった時のユニット
 	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
 	#中立時初期ユニット
@@ -133,7 +133,7 @@ NewFormatSpot spot0005
 	image = "099_WASTE6.png";
 	x = "2280";
 	y = "650";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 }
 NewFormatSpot spot0011
 {
@@ -141,7 +141,7 @@ NewFormatSpot spot0011
 	image = "099_SNOW2.png";
 	x = "2450";
 	y = "670";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 }
 
 NewFormatSpot spot0006
@@ -150,7 +150,7 @@ NewFormatSpot spot0006
 	image = "099_SNOW2.png";
 	x = "2180";
 	y = "730";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 	member = "FlammLavoie";
 }
 
@@ -164,7 +164,7 @@ ssss s001
 	monster = ghostFire
 
 	image = 099_SNOW2
-	map = s001
+	map = testMap002
 	x = 2100
 	y = 700
 }
@@ -175,7 +175,7 @@ NewFormatSpot spot0099
 	image = "099_SNOW2.png";
 	x = "0";
 	y = "0";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 }
 
 NewFormatSpot spot0098
@@ -184,6 +184,6 @@ NewFormatSpot spot0098
 	image = "099_SNOW2.png";
 	x = "100";
 	y = "100";
-	map = "wefwefwefwefw";
+	map = "testMap002";
 }
 

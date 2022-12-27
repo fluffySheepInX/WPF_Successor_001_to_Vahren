@@ -788,7 +788,51 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classSkill.ForceRay = first.Value.Replace(Environment.NewLine, "");
                 }
             }
-
+            //rush
+            {
+                var rush =
+                    new Regex(GetPat("rush"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(rush);
+                if (first == null)
+                {
+                    classSkill.Rush = -1;
+                }
+                else
+                {
+                    classSkill.Rush = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //rush_interval
+            {
+                var rush_interval =
+                    new Regex(GetPat("rush_interval"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(rush_interval);
+                if (first == null)
+                {
+                    classSkill.RushInterval = -1;
+                }
+                else
+                {
+                    classSkill.RushInterval = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //rush_random_degree
+            {
+                var rush_random_degree =
+                    new Regex(GetPat("rush_random_degree"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(rush_random_degree);
+                if (first == null)
+                {
+                    classSkill.RushRandomDegree = -1;
+                }
+                else
+                {
+                    classSkill.RushRandomDegree = int.Parse(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
 
             return classSkill;
         }
