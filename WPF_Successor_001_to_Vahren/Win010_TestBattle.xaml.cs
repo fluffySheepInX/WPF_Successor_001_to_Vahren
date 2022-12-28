@@ -883,7 +883,7 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Tick += (x, s) =>
             {
                 TimerAction60FPSAfterFadeInBattleStart();
-                MainWindow.KeepInterval(timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;
             timerAfterFadeIn.Start();
@@ -946,12 +946,12 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Tick -= (x, s) =>
             {
                 TimerAction60FPSAfterFadeInBattleStart();
-                MainWindow.KeepInterval(this.timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Tick += (x, s) =>
             {
                 ClassStaticBattle.TimerAction60FPSBattle(this, this.ClassGameStatus, null);
-                MainWindow.KeepInterval(this.timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Start();
 

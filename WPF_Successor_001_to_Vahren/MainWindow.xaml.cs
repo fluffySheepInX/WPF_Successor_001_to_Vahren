@@ -44,6 +44,11 @@ namespace WPF_Successor_001_to_Vahren
     /// </summary>
     public partial class MainWindow : CommonWindow
     {
+        #region Readonly
+        public readonly int startSpaceTop = 30;
+        public readonly int startSpaceLeft = 30;
+        #endregion
+
         #region Prop
 
         #region GameTitle
@@ -64,20 +69,6 @@ namespace WPF_Successor_001_to_Vahren
             set
             {
 
-            }
-        }
-        #endregion
-
-        #region NowSituation
-        public _010_Enum.Situation NowSituation
-        {
-            get
-            {
-                return _nowSituation;
-            }
-            set
-            {
-                _nowSituation = value;
             }
         }
         #endregion
@@ -118,14 +109,11 @@ namespace WPF_Successor_001_to_Vahren
         private int _numberScenarioSelection;
         private List<ClassScenarioInfo> _listClassScenarioInfo = new List<ClassScenarioInfo>();
         private int _difficultyLevel = 0;
-        private _010_Enum.Situation _nowSituation = _010_Enum.Situation.Title;
 
         private readonly string _pathConfigFile
             = System.IO.Path.Combine(Environment.CurrentDirectory, "configFile.xml");
 
         private ClassConfigGameTitle _classConfigGameTitle = new ClassConfigGameTitle();
-
-        private const double constantInterval = 16.6;
 
         #endregion
 
@@ -145,11 +133,16 @@ namespace WPF_Successor_001_to_Vahren
 
         #endregion
 
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
             ReadFileOrderDocument();
         }
+        #endregion
 
         #region Event
         private void MainWindow_Initialized(object sender, EventArgs e)
@@ -200,7 +193,7 @@ namespace WPF_Successor_001_to_Vahren
                 timer.Tick += (x, s) =>
                 {
                     TimerAction60FPS();
-                    KeepInterval(timer);
+                    ClassStaticCommonMethod.KeepInterval(timer);
                 };
                 this.Closing += (x, s) => { timer.Stop(); };
                 timer.Start();
@@ -217,22 +210,6 @@ namespace WPF_Successor_001_to_Vahren
                 MessageBox.Show("Error.Number is 2:" + Environment.NewLine + err.Message);
                 throw;
             }
-        }
-
-        public static void KeepInterval(DispatcherTimer timer)
-        {
-            var now = DateTime.Now;
-            var nowMilliseconds = now.TimeOfDay.TotalMilliseconds;
-            // 16.6から、例えば24.9/16.6の余りである8.3を引くことで、
-            // 次の実行が16.6から8.3となり結果的に1秒間60回実行が保たれる
-            var timerInterval = constantInterval -
-                                nowMilliseconds % constantInterval;
-            timer.Interval = TimeSpan.FromMilliseconds(timerInterval);
-        }
-
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            this.NowSituation = _010_Enum.Situation.GameStop;
         }
 
         /// <summary>
@@ -325,7 +302,7 @@ namespace WPF_Successor_001_to_Vahren
 
             this.FadeOut = true;
 
-            this.NowSituation = Situation.SelectGroup;
+            this.ClassGameStatus.NowSituation = Situation.SelectGroup;
             this.delegateMapRendered = SetMapStrategy;
 
             this.FadeIn = true;
@@ -908,7 +885,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             this.FadeOut = true;
 
-            this.NowSituation = Situation.PlayerTurn;
+            this.ClassGameStatus.NowSituation = Situation.PlayerTurn;
             this.delegateNewGame = NewGameWithButtonClick;
             this.ClassGameStatus.SelectionPowerAndCity = ((ClassPowerAndCity)((Button)sender).Tag);
             foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
@@ -951,7 +928,7 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Tick += (x, s) =>
             {
                 TimerAction60FPSAfterFadeInDecidePower();
-                KeepInterval(this.timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Start();
 
@@ -1838,7 +1815,7 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Tick += (x, s) =>
             {
                 TimerAction60FPSAfterFadeInBattleStart();
-                MainWindow.KeepInterval(timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;
             timerAfterFadeIn.Start();
@@ -1853,9 +1830,6 @@ namespace WPF_Successor_001_to_Vahren
             string path = System.IO.Path.Combine(strings.ToArray());
             return path;
         }
-
-        public readonly int startSpaceTop = 30;
-        public readonly int startSpaceLeft = 30;
 
         private void SetWindowTitle(int targetNumber)
         {
@@ -1898,6 +1872,7 @@ namespace WPF_Successor_001_to_Vahren
             // Play BGM
         }
 
+        #region Title関係のメソッド群
         private Brush GetTitleImage(int targetNumber)
         {
             ImageBrush imageBrush = new ImageBrush();
@@ -1906,7 +1881,6 @@ namespace WPF_Successor_001_to_Vahren
                 new BitmapImage(new Uri(fullPath, UriKind.Relative));
             return imageBrush;
         }
-
         private string GetPathTitleImage(int targetNumber)
         {
             List<string> strings = new List<string>();
@@ -2011,6 +1985,7 @@ namespace WPF_Successor_001_to_Vahren
 
             return result;
         }
+        #endregion
 
         /// <summary>
         /// シナリオ選択ボタンを押す画面
@@ -3076,7 +3051,6 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         #region Battle
-
         /// <summary>
         /// マップ生成後に実行
         /// </summary>
@@ -3132,12 +3106,12 @@ namespace WPF_Successor_001_to_Vahren
             this.timerAfterFadeIn.Tick -= (x, s) =>
             {
                 TimerAction60FPSAfterFadeInBattleStart();
-                MainWindow.KeepInterval(this.timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Tick += (x, s) =>
             {
                 ClassStaticBattle.TimerAction60FPSBattle(this, this.ClassGameStatus, SetMapStrategyFromBattle);
-                MainWindow.KeepInterval(this.timerAfterFadeIn);
+                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
             };
             this.timerAfterFadeIn.Start();
 
@@ -3214,6 +3188,7 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
+        #region イベント関係のメソッド群
         /// <summary>
         /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。
         /// </summary>
@@ -3229,6 +3204,10 @@ namespace WPF_Successor_001_to_Vahren
             Dispatcher.PushFrame(frame);
         }
 
+        /// <summary>
+        /// MSGやTALKイベントを実行
+        /// </summary>
+        /// <param name="systemFunctionLiteral"></param>
         public void DoWork(SystemFunctionLiteral systemFunctionLiteral)
         {
             if (Application.Current == null)
@@ -3289,6 +3268,10 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Children.Remove(frame);
         }
 
+        /// <summary>
+        /// MSGやTALKイベントを実行
+        /// </summary>
+        /// <param name="systemFunctionLiteral"></param>
         public void DoTextWindow(SystemFunctionLiteral systemFunctionLiteral)
         {
             if (Application.Current == null)
@@ -3363,28 +3346,11 @@ namespace WPF_Successor_001_to_Vahren
             condition.Reset();
         }
 
-        public string MoldingText(string strTarget, string strStatus)
-        {
-            // 改行ごとに分割 (Split) するため、改行コードを統一する。
-            string strTemp = strTarget.ReplaceLineEndings();
-            // Split で各行に分割した後、Trim で前後のスペースとタブを取り除く。
-            char[] charsToTrim = { ' ', '\t' };
-            string[] strLines = strTemp.Split(System.Environment.NewLine).Select(x => x.Trim(charsToTrim)).ToArray();
-            // 各行を連結して、一つに戻す。
-            strTemp = String.Join("", strLines);
-
-            if (strStatus.Contains("$"))
-            {
-                // ヴァーレントゥーガのテキスト用特殊記号「$」を改行に置換する。
-                strTemp = strTemp.Replace("$", System.Environment.NewLine);
-            }
-
-            return strTemp;
-        }
-
+        /// <summary>
+        /// イベント実行
+        /// </summary>
         public void ExecuteEvent()
         {
-            //イベント実行
             var ev = this.ClassGameStatus.ListEvent
                         .Where(x => x.Name == this.ListClassScenarioInfo[this.NumberScenarioSelection].World)
                         .FirstOrDefault();
@@ -3404,8 +3370,11 @@ namespace WPF_Successor_001_to_Vahren
                 this.ClassGameStatus.TextWindow = null;
             }
         }
+        #endregion
 
-        // 勢力メニューウィンドウ
+        /// <summary>
+        /// 勢力メニューウィンドウ
+        /// </summary>
         private void SetWindowStrategyMenu()
         {
             if (this.ClassGameStatus.WindowStrategyMenu == null)
@@ -3422,11 +3391,6 @@ namespace WPF_Successor_001_to_Vahren
             // ターン数も表示する
             this.ClassGameStatus.WindowStrategyMenu.DisplayTurn(this);
 
-        }
-
-        private SolidColorBrush ReturnBaseColor()
-        {
-            return new SolidColorBrush(Color.FromRgb(190, 178, 175));
         }
 
         #endregion

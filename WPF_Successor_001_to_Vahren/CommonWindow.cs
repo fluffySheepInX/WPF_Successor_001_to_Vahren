@@ -28,7 +28,6 @@ namespace WPF_Successor_001_to_Vahren
             set { _nowNumberGameTitle = value; }
         }
         #endregion
-
         public int _sizeClientWinWidth = 0;
         public int _sizeClientWinHeight = 0;
         #region CanvasMainWidth
@@ -368,6 +367,17 @@ namespace WPF_Successor_001_to_Vahren
                     Top = newTop,
                     Left = newLeft
                 };
+            }
+        }
+        public void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.ClassGameStatus.NowSituation = _010_Enum.Situation.GameStop;
+            foreach (var item in this.ClassGameStatus.TaskBattleMoveAsync)
+            {
+                if (item.Item1 != null)
+                {
+                    item.Item2.Cancel();
+                }
             }
         }
 

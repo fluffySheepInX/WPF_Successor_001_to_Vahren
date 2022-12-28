@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows;
-using WPF_Successor_001_to_Vahren._005_Class;
 using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
+using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._010_Enum;
 using WPF_Successor_001_to_Vahren._015_Lexer;
 using WPF_Successor_001_to_Vahren._025_Parser;
-using System.IO;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
@@ -2396,6 +2395,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         }
         #endregion
 
+        #region MoldingText
+        /// <summary>
+        /// テキスト浄化処理
+        /// </summary>
+        /// <param name="strTarget"></param>
+        /// <param name="strStatus"></param>
+        /// <returns></returns>
         public static string MoldingText(string strTarget, string strStatus)
         {
             // 改行ごとに分割 (Split) するため、改行コードを統一する。
@@ -2414,6 +2420,36 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             return strTemp;
         }
+        #endregion
 
+        #region ReturnBaseColor
+        /// <summary>
+        /// 基礎カラー返却
+        /// </summary>
+        /// <returns></returns>
+        public static SolidColorBrush ReturnBaseColor()
+        {
+            return new SolidColorBrush(Color.FromRgb(190, 178, 175));
+        }
+        #endregion
+
+        #region KeepInterval
+        /// <summary>
+        /// タイマーのずれを直すメソッド
+        /// </summary>
+        /// <param name="timer"></param>
+        public static void KeepInterval(DispatcherTimer timer)
+        {
+            double constantInterval = 16.6;
+
+            var now = DateTime.Now;
+            var nowMilliseconds = now.TimeOfDay.TotalMilliseconds;
+            // 16.6から、例えば24.9/16.6の余りである8.3を引くことで、
+            // 次の実行が16.6から8.3となり結果的に1秒間60回実行が保たれる
+            var timerInterval = constantInterval -
+                                nowMilliseconds % constantInterval;
+            timer.Interval = TimeSpan.FromMilliseconds(timerInterval);
+        }
+        #endregion
     }
 }

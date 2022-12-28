@@ -8,6 +8,21 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassGameStatus
     {
+        #region NowSituation
+        private _010_Enum.Situation _nowSituation = _010_Enum.Situation.Title;
+        public _010_Enum.Situation NowSituation
+        {
+            get
+            {
+                return _nowSituation;
+            }
+            set
+            {
+                _nowSituation = value;
+            }
+        }
+        #endregion
+
         #region IDCount
         private long iDCount = 0;
         public long IDCount

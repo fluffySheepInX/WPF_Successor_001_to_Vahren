@@ -529,7 +529,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            switch (mainWindow.NowSituation)
+            switch (mainWindow.ClassGameStatus.NowSituation)
             {
                 case _010_Enum.Situation.Title:
                     break;
@@ -593,7 +593,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 勢力選択画面
-            if (mainWindow.NowSituation == _010_Enum.Situation.SelectGroup)
+            if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
                 // カーソルを離した時のイベントを追加する
                 var cast = (UIElement)sender;
@@ -625,7 +625,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 勢力選択画面
-            if (mainWindow.NowSituation == _010_Enum.Situation.SelectGroup)
+            if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
                 // イベントを取り除く
                 var cast = (UIElement)sender;
@@ -951,7 +951,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // プレイヤーのターン中なら、領地ウィンドウを表示する
-            if (mainWindow.NowSituation == _010_Enum.Situation.PlayerTurn)
+            if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.PlayerTurn)
             {
                 var cast = (FrameworkElement)sender;
                 if (cast.Tag is not ClassPowerAndCity)
@@ -1037,7 +1037,7 @@ namespace WPF_Successor_001_to_Vahren
 
             }
             // 勢力を選択中なら、勢力詳細ウィンドウを表示する
-            else if (mainWindow.NowSituation == _010_Enum.Situation.SelectGroup)
+            else if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
                 mainWindow.DisplayPowerSelection(sender);
             }
@@ -1054,7 +1054,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            if (mainWindow.NowSituation == _010_Enum.Situation.SelectGroup)
+            if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
                 return; //勢力選択中は出撃しない。
             }
