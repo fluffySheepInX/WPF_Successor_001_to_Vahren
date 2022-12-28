@@ -386,6 +386,15 @@ namespace WPF_Successor_001_to_Vahren
                     item.Item2.Cancel();
                 }
             }
+
+            if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
+            {
+                this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
+            }
+            if (this.ClassGameStatus.TaskBattleSkillDef.Item1 != null)
+            {
+                this.ClassGameStatus.TaskBattleSkillDef.Item2.Cancel();
+            }
         }
 
         #region BattleEvent
