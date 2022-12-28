@@ -3136,49 +3136,67 @@ namespace WPF_Successor_001_to_Vahren
                 case BattleWhichIsThePlayer.Sortie:
                     //出撃ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
                     }
                     break;
                 case BattleWhichIsThePlayer.Def:
                     //出撃(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
                     }
                     break;
                 case BattleWhichIsThePlayer.None:
                     //出撃(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveDefAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
                     }
                     break;
                 default:

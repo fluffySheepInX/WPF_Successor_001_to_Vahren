@@ -379,6 +379,13 @@ namespace WPF_Successor_001_to_Vahren
                     item.Item2.Cancel();
                 }
             }
+            foreach (var item in this.ClassGameStatus.TaskBattleMoveDefAsync)
+            {
+                if (item.Item1 != null)
+                {
+                    item.Item2.Cancel();
+                }
+            }
         }
 
         #region BattleEvent

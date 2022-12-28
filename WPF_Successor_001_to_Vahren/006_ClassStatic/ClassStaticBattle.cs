@@ -1190,9 +1190,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             item.Item2.Cancel();
                         }
                     }
-                    if (classGameStatus.TaskBattleMoveDefAsync.Item1 != null)
+                    foreach (var item in classGameStatus.TaskBattleMoveDefAsync)
                     {
-                        classGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
+                        if (item.Item1 != null)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
 
                     //画面戻る
@@ -1311,9 +1314,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             item.Item2.Cancel();
                         }
                     }
-                    if (classGameStatus.TaskBattleMoveDefAsync.Item1 != null)
+                    foreach (var item in classGameStatus.TaskBattleMoveDefAsync)
                     {
-                        classGameStatus.TaskBattleMoveDefAsync.Item2.Cancel();
+                        if (item.Item1 != null)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
 
                     //画面戻る

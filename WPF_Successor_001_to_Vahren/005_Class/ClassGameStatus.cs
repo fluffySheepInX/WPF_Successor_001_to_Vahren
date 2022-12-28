@@ -191,8 +191,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region TaskBattleMoveDefAsync
-        private (Task, CancellationTokenSource) taskBattleMoveDefAsync;
-        public (Task, CancellationTokenSource) TaskBattleMoveDefAsync
+        private List<(Task, CancellationTokenSource)> taskBattleMoveDefAsync = new List<(Task, CancellationTokenSource)>();
+        public List<(Task, CancellationTokenSource)> TaskBattleMoveDefAsync
         {
             get { return taskBattleMoveDefAsync; }
             set { taskBattleMoveDefAsync = value; }
