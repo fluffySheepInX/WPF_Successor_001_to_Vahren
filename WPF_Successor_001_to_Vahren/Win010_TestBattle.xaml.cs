@@ -38,6 +38,8 @@ namespace WPF_Successor_001_to_Vahren
             this.ClassGameStatus = classGameStatus;
             this.ClassGameStatus.CommonWindow = this;
 
+            ReadFileOrderDocument();
+
             this.DataContext = new
             {
                 canvasMainWidth = this.CanvasMainWidth,
@@ -974,10 +976,13 @@ namespace WPF_Successor_001_to_Vahren
                 case BattleWhichIsThePlayer.Sortie:
                     //出撃ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛(AI)ユニット
                     {
@@ -990,10 +995,13 @@ namespace WPF_Successor_001_to_Vahren
                 case BattleWhichIsThePlayer.Def:
                     //出撃(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛ユニット
                     {
@@ -1006,10 +1014,13 @@ namespace WPF_Successor_001_to_Vahren
                 case BattleWhichIsThePlayer.None:
                     //出撃(AI)ユニット
                     {
-                        var tokenSource = new CancellationTokenSource();
-                        var token = tokenSource.Token;
-                        (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                        this.ClassGameStatus.TaskBattleMoveAsync = a;
+                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
+                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
                     }
                     //防衛(AI)ユニット
                     {

@@ -168,8 +168,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region TaskBattleMoveAsync
-        private (Task, CancellationTokenSource) taskBattleMoveAsync;
-        public (Task, CancellationTokenSource) TaskBattleMoveAsync
+        private List<(Task, CancellationTokenSource)> taskBattleMoveAsync = new List<(Task, CancellationTokenSource)>();
+        public List<(Task, CancellationTokenSource)> TaskBattleMoveAsync
         {
             get { return taskBattleMoveAsync; }
             set { taskBattleMoveAsync = value; }
@@ -181,6 +181,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return taskBattleMoveDefAsync; }
             set { taskBattleMoveDefAsync = value; }
+        }
+        #endregion
+
+        #region BattleThread
+        private int battleThread = 1;
+        public int BattleThread
+        {
+            get { return battleThread; }
+            set { battleThread = value; }
         }
         #endregion
 

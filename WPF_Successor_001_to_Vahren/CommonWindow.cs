@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,6 +75,46 @@ namespace WPF_Successor_001_to_Vahren
                 return _classConfigGameTitle;
             }
             set { _classConfigGameTitle = value; }
+        }
+        #endregion
+        #region Dir001_Warehouse
+        /// <summary>
+        /// ゲームデータを格納するフォルダ名
+        /// </summary>
+        public string Dir001_Warehouse
+        {
+            get
+            {
+                return System.IO.Path.Combine(Environment.CurrentDirectory, "001_Warehouse");
+            }
+        }
+        #endregion
+        #region FileOrderDocument
+        /// <summary>
+        /// 基礎的なゲームデータを設定するテキストファイル名
+        /// </summary>
+        public string FileOrderDocument
+        {
+            get
+            {
+                return System.IO.Path.Combine(Dir001_Warehouse, "OrderDocument.txt");
+            }
+        }
+        #endregion
+        #region IsEng
+        /// <summary>
+        /// 英語か否か
+        /// </summary>
+        public bool IsEng
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+
+            }
         }
         #endregion
 
@@ -498,6 +539,68 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         #endregion
+
+        public void ReadFileOrderDocument()
+        {
+            if (File.Exists(this.FileOrderDocument) == false)
+            {
+                //File無し
+                throw new NotImplementedException();
+            }
+
+            //あったので読み込む
+            string[] readAllLines;
+            readAllLines = File.ReadAllLines(this.FileOrderDocument);
+            readAllLines = readAllLines.Select(line => line.Trim()).ToArray();
+
+            foreach (var item in readAllLines)
+            {
+                //  空行
+                if (item.Length < 1) continue;
+                //  コメント行
+                if (item[0] == '#') continue;
+
+                var resultSplit = item.Split(',');
+                switch (resultSplit[0])
+                {
+                    case "DefaultGameTitle":
+                        {
+                            if (resultSplit.Length < 2)
+                            {
+                                //デフォゲーム無し
+                                throw new NotImplementedException();
+                            }
+                            string a = System.IO.Path.Combine(this.Dir001_Warehouse, resultSplit[1]);
+                            var b = System.IO.Directory.CreateDirectory(a);
+                            ClassConfigGameTitle.DirectoryGameTitle.Add(b);
+                            this.ClassGameStatus.CommonWindow = this;
+                        }
+                        break;
+                    case "Language":
+                        if (resultSplit[1] == "japan" ||
+                            resultSplit[1] == "Japan")
+                        {
+                            this.IsEng = false;
+                        }
+                        else
+                        {
+                            this.IsEng = true;
+                        }
+                        break;
+                    case "BattleThread":
+                        {
+                            int num = 1;
+                            int.TryParse(resultSplit[1], out num);
+                            this.ClassGameStatus.BattleThread = num;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                //識別子処理の終わり
+            }
+            //一行毎の読み込み終わり
+        }
 
         public string GetPathDirectoryGameTitleFullName()
         {

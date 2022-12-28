@@ -1183,9 +1183,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         classGameStatus.TaskBattleSkill.Item2.Cancel();
                     }
-                    if (classGameStatus.TaskBattleMoveAsync.Item1 != null)
+                    foreach (var item in classGameStatus.TaskBattleMoveAsync)
                     {
-                        classGameStatus.TaskBattleMoveAsync.Item2.Cancel();
+                        if (item.Item1 != null)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
                     if (classGameStatus.TaskBattleMoveDefAsync.Item1 != null)
                     {
@@ -1301,9 +1304,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         classGameStatus.TaskBattleSkill.Item2.Cancel();
                     }
-                    if (classGameStatus.TaskBattleMoveAsync.Item1 != null)
+                    foreach (var item in classGameStatus.TaskBattleMoveAsync)
                     {
-                        classGameStatus.TaskBattleMoveAsync.Item2.Cancel();
+                        if (item.Item1 != null)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
                     if (classGameStatus.TaskBattleMoveDefAsync.Item1 != null)
                     {

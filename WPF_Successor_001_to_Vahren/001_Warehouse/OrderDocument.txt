@@ -10,6 +10,7 @@
 
 DefaultGameTitle,001_DefaultGame
 Language,japan
+BattleThread,2
 
 #↑データここまで
 
