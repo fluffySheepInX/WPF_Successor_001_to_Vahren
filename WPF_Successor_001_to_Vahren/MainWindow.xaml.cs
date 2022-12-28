@@ -3401,7 +3401,7 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
-                textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[0].Value, "$"));
+                textWindow.SetText(ClassStaticCommonMethod.MoldingText(systemFunctionLiteral.Parameters[0].Value, "$"));
                 textWindow.PositionBottom();
                 textWindow.RemoveName();
                 textWindow.RemoveHelp();
@@ -3415,7 +3415,7 @@ namespace WPF_Successor_001_to_Vahren
                     this.canvasTop.Children.Add(this.ClassGameStatus.TextWindow);
                 }
                 var textWindow = (UserControl050_Msg)(this.ClassGameStatus.TextWindow);
-                textWindow.SetText(MoldingText(systemFunctionLiteral.Parameters[1].Value, "$"));
+                textWindow.SetText(ClassStaticCommonMethod.MoldingText(systemFunctionLiteral.Parameters[1].Value, "$"));
                 textWindow.PositionBottom();
 
                 // ユニットの識別名から肩書と名前を取得する

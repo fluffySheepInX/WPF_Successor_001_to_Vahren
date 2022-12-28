@@ -2396,7 +2396,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         }
         #endregion
 
-        private static string MoldingText(string strTarget, string strStatus)
+        public static string MoldingText(string strTarget, string strStatus)
         {
             // 改行ごとに分割 (Split) するため、改行コードを統一する。
             string strTemp = strTarget.ReplaceLineEndings();

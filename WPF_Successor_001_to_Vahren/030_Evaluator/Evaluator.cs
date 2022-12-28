@@ -11,6 +11,7 @@ using WPF_Successor_001_to_Vahren._020_AST;
 using System.Threading;
 using System.Windows.Automation;
 using WPF_Successor_001_to_Vahren._015_Lexer;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren._030_Evaluator
 {
@@ -206,7 +207,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     {
                         //MessageBox.Show(dialogLiteral.Parameters[0].Value.Replace("$", System.Environment.NewLine));
                         var dialog = new Win020_Dialog();
-                        dialog.SetText(mainWindow.MoldingText(dialogLiteral.Parameters[0].Value, "$"));
+                        dialog.SetText(ClassStaticCommonMethod.MoldingText(dialogLiteral.Parameters[0].Value, "$"));
                         dialog.ShowDialog();
                     }
                     return null;
@@ -220,7 +221,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         */
                         // choiceダイアログでは「$」を改行に置換しない
                         var dialog = new Win030_Choice();
-                        dialog.SetList(choiceLiteral.Parameters.Select(x => mainWindow.MoldingText(x.Value,"")).ToList());
+                        dialog.SetList(choiceLiteral.Parameters.Select(x => ClassStaticCommonMethod.MoldingText(x.Value,"")).ToList());
                         dialog.ShowDialog();
                         enviroment.Set(choiceLiteral.VaName, new IntegerObject(dialog.ChoiceNumber));
                     }
@@ -236,7 +237,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         }
                         */
                         var dialog = new Win025_Select();
-                        dialog.SetText(mainWindow.MoldingText(dialogSelectLiteral.Parameters[1].Value,"$"));
+                        dialog.SetText(ClassStaticCommonMethod.MoldingText(dialogSelectLiteral.Parameters[1].Value,"$"));
                         bool? result = dialog.ShowDialog();
                         if (result == true)
                         {
