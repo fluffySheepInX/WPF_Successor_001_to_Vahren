@@ -122,6 +122,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _spotCapacity = value; }
         }
         #endregion
+        #region WarCapacity
+        private int _warCapacity = 24;
+        public int WarCapacity
+        {
+            get { return _warCapacity; }
+            set { _warCapacity = value; }
+        }
+        #endregion
 
         #region MemberCapacity
         private int _memberCapacity = 8;

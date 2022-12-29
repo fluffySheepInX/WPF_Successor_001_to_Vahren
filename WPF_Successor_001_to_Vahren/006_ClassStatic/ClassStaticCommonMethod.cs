@@ -1364,6 +1364,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classScenario.SpotCapacity = Convert.ToInt32(first.Value);
                 }
             }
+            //war_capacity
+            {
+                var war_capacity =
+                    new Regex(GetPat("war_capacity"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(war_capacity);
+                if (first == null)
+                {
+                    classScenario.WarCapacity = 8;
+                }
+                else
+                {
+                    classScenario.WarCapacity = Convert.ToInt32(first.Value);
+                }
+            }
             //member_capacity
             {
                 var member_capacity =
