@@ -28,6 +28,13 @@ namespace WPF_Successor_001_to_Vahren
     {
         public ClassTestBattle classTestBattle = new ClassTestBattle();
 
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="classTestBattle"></param>
+        /// <param name="_classConfigGameTitle"></param>
+        /// <param name="classGameStatus"></param>
         public Win010_TestBattle(ClassTestBattle classTestBattle, ClassConfigGameTitle _classConfigGameTitle, ClassGameStatus classGameStatus)
         {
             InitializeComponent();
@@ -100,7 +107,21 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
+        #endregion
 
+        #region イベント
+        /// <summary>
+        /// CommonWindow_ContentRendered
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommonWindow_ContentRendered(object sender, EventArgs e)
+        {
+            SetBattleMap();
+        }
+        #endregion
+
+        #region メソッド
         /// <summary>
         /// 戦闘画面を作成する処理
         /// </summary>
@@ -882,175 +903,12 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             timerAfterFadeIn.Tick += (x, s) =>
             {
-                TimerAction60FPSAfterFadeInBattleStart();
+                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain);
                 ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;
             timerAfterFadeIn.Start();
         }
-
-
-        #region Battle
-        /// <summary>
-        /// マップ生成後に実行
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private async void TimerAction60FPSAfterFadeInBattleStart()
-        {
-            if (AfterFadeIn == false)
-            {
-                return;
-            }
-
-            //この位置でなければダメ？
-            AfterFadeIn = false;
-            timerAfterFadeIn.Stop();
-
-            Thread.Sleep(100);
-
-            //自軍へ視点移動
-            bool flag1 = true;
-
-            //移動し過ぎを防止
-            int counter = 500;
-
-            //プレイヤー側リーダーへ視点移動
-            //まだ未実装
-            while (flag1 == true)
-            {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
-                break;
-                await Task.Run(() =>
-                {
-                    Application.Current.Dispatcher.Invoke((Action)(() =>
-                    {
-                    }));
-                });
-                counter--;
-
-                if (counter <= 0)
-                {
-                    throw new Exception();
-                }
-            }
-
-            //イベントチェック
-
-
-            //開戦ダイアログ
-            MessageBox.Show("開戦します");
-
-            //開戦スレッド実行
-            this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            this.timerAfterFadeIn.Tick -= (x, s) =>
-            {
-                TimerAction60FPSAfterFadeInBattleStart();
-                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
-            };
-            this.timerAfterFadeIn.Tick += (x, s) =>
-            {
-                ClassStaticBattle.TimerAction60FPSBattle(this, this.ClassGameStatus, null);
-                ClassStaticCommonMethod.KeepInterval(this.timerAfterFadeIn);
-            };
-            this.timerAfterFadeIn.Start();
-
-            ////スキルスレッド開始
-            {
-                //出撃ユニット
-                {
-                    var tokenSource = new CancellationTokenSource();
-                    var token = tokenSource.Token;
-                    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
-                    this.ClassGameStatus.TaskBattleSkill = a;
-                }
-                //防衛ユニット
-                {
-                    var tokenSource = new CancellationTokenSource();
-                    var token = tokenSource.Token;
-                    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, this.canvasMain, this.ClassGameStatus)), tokenSource);
-                    this.ClassGameStatus.TaskBattleSkillDef = a;
-                }
-            }
-            ////移動スレッド開始
-            switch (ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    //出撃ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
-                        }
-                    }
-                    //防衛(AI)ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
-                        }
-                    }
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    //出撃(AI)ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
-                        }
-                    }
-                    //防衛ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, this.ClassGameStatus, this)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
-                        }
-                    }
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    //出撃(AI)ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveAsync.Add(a);
-                        }
-                    }
-                    //防衛(AI)ユニット
-                    {
-                        for (int i = 0; i < this.ClassGameStatus.BattleThread; i++)
-                        {
-                            var tokenSource = new CancellationTokenSource();
-                            var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, this.ClassGameStatus, this, this.canvasMain)), tokenSource);
-                            this.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-        }
         #endregion
-
-        private void CommonWindow_ContentRendered(object sender, EventArgs e)
-        {
-            SetBattleMap();
-        }
     }
 }
