@@ -28,8 +28,8 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 最初に呼び出した時
-        private bool _isControl = false; // 操作可能かどうかの設定
-        public void SetData()
+        private bool _isControl = false; // ボタンを操作可能かどうかの設定
+        public void SetData(bool bControl)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -48,15 +48,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // プレイヤーが操作可能かどうか
-            if (classCityAndUnit.ClassPowerAndCity.ClassPower.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
-            {
-                // 同じ勢力なら、操作できる
-                _isControl = true;
-            }
-            else
-            {
-                _isControl = false;
-            }
+            _isControl = bControl;
 
             // ユニットの情報を表示する
             DisplayUnitStatus(mainWindow);
@@ -516,8 +508,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 var thickness = new Thickness();
-                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
-                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
+                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
+                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
                 this.Margin = thickness;
             }
         }
@@ -583,7 +575,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name;
-            helpWindow.SetData("ウィンドウ内を右クリックするとウィンドウを閉じます。");
+            helpWindow.SetText("ウィンドウ内を右クリックするとウィンドウを閉じます。");
             mainWindow.canvasUI.Children.Add(helpWindow);
 
             // スキルのヒントが表示されてる時はヘルプを隠す
@@ -757,7 +749,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name + "_btnMercenary";
-            helpWindow.SetData("ユニットの雇用ウィンドウを表示します。");
+            helpWindow.SetText("ユニットの雇用ウィンドウを表示します。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void btnMercenary_MouseLeave(object sender, MouseEventArgs e)

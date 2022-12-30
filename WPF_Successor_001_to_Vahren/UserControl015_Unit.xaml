@@ -41,7 +41,7 @@
             <Image Canvas.Left="10" Canvas.Top="10" Height="32" Width="32" Name="imgUnit" />
 
             <Image Stretch="Fill" Canvas.Left="483" Canvas.Top="33" Height="32" Width="32" Name="imgFlag" />
-            <Button x:Name="btnClose" Width="35" Height="35" Canvas.Left="525" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
+            <Button Name="btnClose" Width="35" Height="35" Canvas.Left="525" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <StackPanel Canvas.Left="80" Canvas.Top="5" Width="400">
                 <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">

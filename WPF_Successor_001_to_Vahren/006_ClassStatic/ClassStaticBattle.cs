@@ -1426,26 +1426,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
                                 .First();
 
-                        // 他の勢力に所属してた場合は、取り除く
-                        if (convSpots.ClassSpot.PowerNameTag != string.Empty)
-                        {
-                            convSpots.ClassPower.ListMember.Remove(convSpots.ClassSpot.NameTag);
-                        }
-
-                        //spotの所属情報を書き換え
-                        convSpots.ClassSpot.PowerNameTag = selectedItemClassSpot.PowerNameTag;
-                        targetSpot.PowerNameTag = convSpots.ClassSpot.PowerNameTag;
-                        var newPower = classGameStatus.ListPower
-                                .Where(x => x.NameTag == convSpots.ClassSpot.PowerNameTag)
-                                .First();
-                        newPower.ListMember.Add(convSpots.ClassSpot.NameTag);
-                        convSpots.ClassPower = newPower;
-
-                        // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
+                        // ワールドマップ領地の所属勢力を変更する
                         var worldMap = classGameStatus.WorldMap;
                         if (worldMap != null)
                         {
-                            worldMap.ChangeFlag(newPower.FlagPath, convSpots.ClassSpot.NameTag);
+                            worldMap.ChangeSpotPower(convSpots.ClassSpot.NameTag, selectedItemClassSpot.PowerNameTag);
                         }
 
                         ////unitの所属情報を書き換え
