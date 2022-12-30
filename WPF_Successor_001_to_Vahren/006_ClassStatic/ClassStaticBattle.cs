@@ -173,6 +173,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         }
         #endregion
 
+        #region SetBattleMap関係
+
         public static void DisplayBuilding(Canvas canvas, int takasaMapTip, int yokoMapTip, List<(BitmapImage, int, int)> listTakaiObj, List<Rectangle> getMap)
         {
             foreach (var item in listTakaiObj.OrderBy(x => x.Item2).ThenByDescending(y => y.Item3))
@@ -277,6 +279,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
             }
         }
+        #region CreatePageBattle
+        /// <summary>
+        /// 戦闘画面で情報を表示する窓を作り出す処理
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="_sizeClientWinHeight"></param>
+        /// <param name="window"></param>
         public static void CreatePageBattle(Canvas canvas, int _sizeClientWinHeight, Window window)
         {
             Application.Current.Properties["window"] = window;
@@ -299,6 +308,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 canvas.Children.Add(frame);
             }
         }
+        #endregion
+
+        #region CreateCanvasBattle
+        /// <summary>
+        /// バトル用のキャンバス作成
+        /// </summary>
+        /// <param name="classMapBattle"></param>
+        /// <param name="takasaMapTip"></param>
+        /// <param name="yokoMapTip"></param>
+        /// <param name="_sizeClientWinHeight"></param>
+        /// <param name="canvasMainWidth"></param>
+        /// <param name="_sizeClientWinWidth"></param>
+        /// <param name="canvasMapBattle_MouseLeftButtonDown"></param>
+        /// <param name="windowMapBattle_MouseRightButtonDown"></param>
+        /// <returns></returns>
         public static Canvas CreateCanvasBattle(ClassMapBattle? classMapBattle, int takasaMapTip, int yokoMapTip,
                                             int _sizeClientWinHeight, int canvasMainWidth, int _sizeClientWinWidth,
                                             MouseButtonEventHandler canvasMapBattle_MouseLeftButtonDown,
@@ -340,6 +364,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             return canvas;
         }
+        #endregion
+
+        #endregion
 
         #region 移動関係
 
@@ -553,7 +580,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        #region アスターアルゴリズムで移動
+        #region アスターアルゴリズム関係
+
+        #region TaskBattleMoveAIAsync
         /// <summary>
         /// アスターアルゴリズムで移動
         /// </summary>
@@ -884,6 +913,33 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
             return targetClassAStar;
         }
+
+        #region HeuristicMethod
+        /// <summary>
+        /// エースターアルゴリズムで使用
+        /// </summary>
+        /// <param name="nowX"></param>
+        /// <param name="nowY"></param>
+        /// <param name="targetX"></param>
+        /// <param name="targetY"></param>
+        /// <returns></returns>
+        public static int HeuristicMethod(int nowX, int nowY, int targetX, int targetY)
+        {
+            var x = Math.Abs(nowX - targetX);
+            var y = Math.Abs(nowX - targetX);
+            if (x > y)
+            {
+                return x;
+            }
+            else
+            {
+                return y;
+            }
+        }
+        #endregion
+
+        #endregion
+
         #endregion
 
         #region スキル関係
@@ -892,7 +948,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                             ClassUnit classUnitDef,
                                                             ClassSkill classSkill,
                                                             ClassGameStatus classGameStatus,
-                                                            Canvas canvasMain)
+                                                            Canvas canvasMain, int dicKey)
         {
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
@@ -914,8 +970,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 ClassVec classVec = new ClassVec();
-                classVec.Target = classUnit.OrderPosiSkill;
-                classVec.Vec = classUnit.VecMoveSkill;
+                classUnit.OrderPosiSkill.TryGetValue(dicKey, out Point resultTryOrd);
+                classVec.Target = resultTryOrd;
+                classUnit.VecMoveSkill.TryGetValue(dicKey, out Point resultTryVec);
+                classVec.Vec = resultTryVec;
                 classVec.Speed = classSkill.Speed;
 
                 if (classVec.Hit(classUnit.NowPosiSkill))
@@ -987,24 +1045,26 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
                     //体力計算処理終了
 
-                    classUnit.OrderPosiSkill = new Point()
-                    {
-                        X = classUnit.NowPosiSkill.X,
-                        Y = classUnit.NowPosiSkill.Y
-                    };
+                    //classUnit.OrderPosiSkill[dicKey] = new Point()
+                    //{
+                    //    X = classUnit.NowPosiSkill.X,
+                    //    Y = classUnit.NowPosiSkill.Y
+                    //};
+                    classUnit.OrderPosiSkill.Remove(dicKey);
+                    classUnit.VecMoveSkill.Remove(dicKey);
 
                     return;
                 }
                 else
                 {
-                    if (classUnit.VecMoveSkill.X == 0 && classUnit.VecMoveSkill.Y == 0)
+                    if (classUnit.VecMoveSkill[dicKey].X == 0 && classUnit.VecMoveSkill[dicKey].Y == 0)
                     {
-                        classUnit.VecMoveSkill = new Point() { X = 0.5, Y = 0.5 };
+                        classUnit.VecMoveSkill[dicKey] = new Point() { X = 0.5, Y = 0.5 };
                     }
                     classUnit.NowPosiSkill = new Point()
                     {
-                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill.X * (classSkill.Speed / 100)),
-                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill.Y * (classSkill.Speed / 100))
+                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill[dicKey].X * (classSkill.Speed / 100)),
+                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill[dicKey].Y * (classSkill.Speed / 100))
                     };
                     await Task.Run(() =>
                     {
@@ -1056,6 +1116,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             if (classGameStatus.CommonWindow == null) return;
 
             string fP = classGameStatus.CommonWindow.GetPathDirectoryGameTitleFullName();
+            Random r1 = new System.Random();
 
             while (true)
             {
@@ -1102,20 +1163,24 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         }
                                     }
 
+                                    int singleAttackNumber = r1.Next();
+                                    itemGroupBy.OrderPosiSkill.Clear();
+
                                     itemGroupBy.NowPosiSkill = itemGroupBy.GetNowPosiCenter();
-                                    itemGroupBy.OrderPosiSkill = itemDefUnitList.GetNowPosiCenter();
+                                    itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
                                     var calc0 = ClassCalcVec.ReturnVecDistance(
                                                     from: itemGroupBy.NowPosiSkill,
-                                                    to: itemGroupBy.OrderPosiSkill
+                                                    to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
                                                     );
-                                    itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
+                                    itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
                                     itemGroupBy.FlagMovingSkill = true;
 
                                     //rush数だけ実行する
                                     int rushBase = 1;
                                     if (itemSkill.Rush != -1) rushBase = itemSkill.Rush;
 
-                                    for (int i = 0; i < rushBase; i++)
+                                    for (int i = 1; i < rushBase + 1; i++)
                                     {
                                         //Image出す
                                         {
@@ -1216,22 +1281,31 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             Random rand = new System.Random();
                                             int de = rand.Next(0, itemSkill.RushRandomDegree + 1);
                                             double rad = de * (Math.PI / 180);
-                                            var caRe = ConvertVecX(rad, itemGroupBy.OrderPosiSkill.X, itemGroupBy.OrderPosiSkill.Y);
-                                            itemGroupBy.OrderPosiSkill = new Point(caRe.Item1, caRe.Item2);
+
+                                            //[0]を基準にするのでOK
+                                            var caRe = ConvertVecX(rad, itemGroupBy.OrderPosiSkill[singleAttackNumber].X, itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
+
+                                            int ran = r1.Next();
+                                            itemGroupBy.OrderPosiSkill.Add(ran, new Point(caRe.Item1, caRe.Item2));
                                             calc0 = ClassCalcVec.ReturnVecDistance(
                                                             from: itemGroupBy.NowPosiSkill,
-                                                            to: itemGroupBy.OrderPosiSkill
+                                                            to: itemGroupBy.OrderPosiSkill[ran]
                                                             );
-                                            itemGroupBy.VecMoveSkill = ClassCalcVec.ReturnNormalize(calc0);
-                                        }
+                                            itemGroupBy.VecMoveSkill.Add(ran, ClassCalcVec.ReturnNormalize(calc0));
 
-                                        //スキル発動スレッド開始
-                                        var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain));
+                                            //スキル発動スレッド開始
+                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, ran));
+                                        }
+                                        else
+                                        {
+                                            //スキル発動スレッド開始
+                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
+                                        }
 
                                         //RushInterval分、間隔を保つ
                                         if (rushBase > 1)
                                         {
-                                            Thread.Sleep(itemSkill.RushInterval);
+                                            Thread.Sleep(itemSkill.RushInterval * 100);
                                         }
                                     }
 
@@ -1256,30 +1330,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
                     }
                 }
-            }
-        }
-        #endregion
-
-        #region HeuristicMethod
-        /// <summary>
-        /// エースターアルゴリズムで使用
-        /// </summary>
-        /// <param name="nowX"></param>
-        /// <param name="nowY"></param>
-        /// <param name="targetX"></param>
-        /// <param name="targetY"></param>
-        /// <returns></returns>
-        public static int HeuristicMethod(int nowX, int nowY, int targetX, int targetY)
-        {
-            var x = Math.Abs(nowX - targetX);
-            var y = Math.Abs(nowX - targetX);
-            if (x > y)
-            {
-                return x;
-            }
-            else
-            {
-                return y;
             }
         }
         #endregion
@@ -1554,13 +1604,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
                     commonWindow.ClassGameStatus.TaskBattleSkill = a;
                 }
-                //防衛ユニット
-                {
-                    var tokenSource = new CancellationTokenSource();
-                    var token = tokenSource.Token;
-                    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
-                    commonWindow.ClassGameStatus.TaskBattleSkillDef = a;
-                }
+                ////防衛ユニット
+                //{
+                //    var tokenSource = new CancellationTokenSource();
+                //    var token = tokenSource.Token;
+                //    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
+                //    commonWindow.ClassGameStatus.TaskBattleSkillDef = a;
+                //}
             }
             ////移動スレッド開始
             switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)

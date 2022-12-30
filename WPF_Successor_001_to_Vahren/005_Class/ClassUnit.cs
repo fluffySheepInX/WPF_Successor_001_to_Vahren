@@ -541,17 +541,17 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region OrderPosiSkill
-        private Point orderPosiSkill;
+        private Dictionary<int, Point> orderPosiSkill = new Dictionary<int, Point>();
 
-        public Point OrderPosiSkill
+        public Dictionary<int, Point> OrderPosiSkill
         {
             get { return orderPosiSkill; }
             set { orderPosiSkill = value; }
         }
         #endregion
         #region VecMoveSkill
-        private Point vecMoveSkill;
-        public Point VecMoveSkill
+        private Dictionary<int, Point> vecMoveSkill = new Dictionary<int, Point>();
+        public Dictionary<int, Point> VecMoveSkill
         {
             get { return vecMoveSkill; }
             set { vecMoveSkill = value; }
