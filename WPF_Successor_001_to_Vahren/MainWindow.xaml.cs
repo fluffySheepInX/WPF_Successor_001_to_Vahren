@@ -3018,8 +3018,8 @@ namespace WPF_Successor_001_to_Vahren
                         classVec.Y = ge.Y;
                         worldMap.Margin = new Thickness()
                         {
-                            Left = Math.Truncate(ge.X),
-                            Top = Math.Truncate(ge.Y)
+                            Left = ge.X,
+                            Top = ge.Y
                         };
                     }));
                 });

@@ -239,9 +239,8 @@ namespace WPF_Successor_001_to_Vahren
                 newTop = maxTop;
             }
 
-            // 座標を整数にする
-            this.Left = Math.Truncate(newLeft);
-            this.Top = Math.Truncate(newTop);
+            this.Left = newLeft;
+            this.Top = newTop;
         }
         #endregion
 

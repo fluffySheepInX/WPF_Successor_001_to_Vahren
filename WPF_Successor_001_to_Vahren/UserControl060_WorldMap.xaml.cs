@@ -118,8 +118,8 @@ namespace WPF_Successor_001_to_Vahren
                     gridButton.Width = mainWindow.ClassGameStatus.GridCityWidthAndHeight.X;
                     gridButton.Margin = new Thickness()
                     {
-                        Left = Math.Truncate(item.value.X - gridButton.Width / 2),
-                        Top = Math.Truncate(item.value.Y - gridButton.Height / 2)
+                        Left = item.value.X - gridButton.Width / 2,
+                        Top = item.value.Y - gridButton.Height / 2
                     };
                     gridButton.MouseLeftButtonDown += mapSpot_MouseLeftButtonDown;
                     gridButton.MouseRightButtonDown += mapSpot_MouseRightButtonDown;
@@ -217,7 +217,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 領地の旗を変更する（旗のファイル名が空なら消す）
-        public void ChangeFlag(string strFilename, string spotNameTag)
+        public void ChangeFlag(string spotNameTag, string strFilename)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -257,6 +257,79 @@ namespace WPF_Successor_001_to_Vahren
             };
             this.canvasMap.Children.Add(imgFlag);
             Panel.SetZIndex(imgFlag, 1);
+        }
+
+        // 領地の所属勢力を変更する
+        public void ChangeSpotPower(string spotNameTag, string powerNameTag)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 指定された領地を探す
+            if (spotNameTag == string.Empty)
+            {
+                return;
+            }
+            var gridButton = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotGrid" + spotNameTag);
+            if (gridButton == null)
+            {
+                return;
+            }
+            var classPowerAndCity = (ClassPowerAndCity)gridButton.Tag;
+            if (classPowerAndCity == null)
+            {
+                return;
+            }
+            if (classPowerAndCity is not ClassPowerAndCity)
+            {
+                return;
+            }
+            if (classPowerAndCity.ClassSpot.NameTag != spotNameTag)
+            {
+                return;
+            }
+
+            // 指定された勢力が空なら中立領地にする
+            if (powerNameTag == string.Empty)
+            {
+                // 他の勢力に所属してた場合は、取り除く
+                if (classPowerAndCity.ClassSpot.PowerNameTag != string.Empty)
+                {
+                    classPowerAndCity.ClassPower.ListMember.Remove(spotNameTag);
+                }
+                classPowerAndCity.ClassPower = new ClassPower();
+
+                // 旗を消す
+                this.ChangeFlag(spotNameTag, "");
+                return;
+            }
+
+            // 指定された勢力を探す
+            var newPower = mainWindow.ClassGameStatus.ListPower
+                        .Where(x => x.NameTag == powerNameTag)
+                        .FirstOrDefault();
+            if (newPower == null)
+            {
+                // 存在しない勢力なら何もしない
+                return;
+            }
+
+            // 他の勢力に所属してた場合は、取り除く
+            if (classPowerAndCity.ClassSpot.PowerNameTag != string.Empty)
+            {
+                classPowerAndCity.ClassPower.ListMember.Remove(spotNameTag);
+            }
+
+            // 領地の所属情報を書き換える
+            classPowerAndCity.ClassSpot.PowerNameTag = powerNameTag;
+            newPower.ListMember.Add(spotNameTag);
+            classPowerAndCity.ClassPower = newPower;
+
+            // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
+            this.ChangeFlag(spotNameTag, newPower.FlagPath);
         }
 
 
@@ -418,6 +491,56 @@ namespace WPF_Successor_001_to_Vahren
         }
 
 
+        // 領地を強調する
+        public void SpotMark(string strFilename, string spotNameTag)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            if (classSpot == null)
+            {
+                return;
+            }
+
+            // 領地が既に強調されてる場合は古い方を消す
+            var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "SpotMark" + classSpot.NameTag);
+            if (itemImage != null)
+            {
+                this.canvasMap.Children.Remove(itemImage);
+            }
+
+            // エフェクトの画像を読み込む
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("005_BackgroundImage");
+            strings.Add(strFilename);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 画像が存在しない場合はエフェクトも無い
+                return;
+            }
+
+            BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+            const int ring_size = 128;
+
+            Image imgRing = new Image();
+            imgRing.Name = "SpotMark" + classSpot.NameTag;
+            imgRing.Source = bitimg1;
+                // アスペクト比を保つので、横幅だけ指定する
+            imgRing.Width = ring_size;
+            imgRing.Margin = new Thickness()
+            {
+                Left = classSpot.X - ring_size / 2,
+                Top = classSpot.Y - ring_size / 2
+            };
+            this.canvasMap.Children.Add(imgRing);
+        }
+
         // 領地をアニメーション付きで強調する
         public void SpotMarkAnime(string strFilename, string spotNameTag)
         {
@@ -455,13 +578,6 @@ namespace WPF_Successor_001_to_Vahren
             BitmapImage bitimg1 = new BitmapImage(new Uri(path));
             const int ring_size = 96, ring_size2 = 152;
 
-            // 輪の大きさを時間経過で変化させる（1.5秒間隔でループする）
-            var animeRingSize = new DoubleAnimation();
-            animeRingSize.To = ring_size2;
-            animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
-            animeRingSize.AutoReverse = true;
-            animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
-
             Image imgRing = new Image();
             imgRing.Name = "SpotMark" + classSpot.NameTag;
             imgRing.Source = bitimg1;
@@ -474,7 +590,12 @@ namespace WPF_Successor_001_to_Vahren
             };
             this.canvasMap.Children.Add(imgRing);
 
-            // 円の大きさは共通アニメーションにする
+            // 輪の大きさを時間経過で変化させる（1.5秒間隔でループする）
+            var animeRingSize = new DoubleAnimation();
+            animeRingSize.To = ring_size2;
+            animeRingSize.Duration = new Duration(TimeSpan.FromSeconds(0.75));
+            animeRingSize.AutoReverse = true;
+            animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
             imgRing.BeginAnimation(Image.WidthProperty, animeRingSize);
 
             // 円の位置も変えないと中心がずれる
@@ -602,7 +723,7 @@ namespace WPF_Successor_001_to_Vahren
                 // ヘルプを作成する
                 var helpWindow = new UserControl030_Help();
                 helpWindow.Name = "Help_SelectPower";
-                helpWindow.SetData("旗のある領地を左クリックするとプレイ勢力を選択します。\n領地以外を左ドラッグするとワールドマップを動かせます。\n右クリックするとシナリオ選択画面に戻ります。");
+                helpWindow.SetText("旗のある領地を左クリックするとプレイ勢力を選択します。\n領地以外を左ドラッグするとワールドマップを動かせます。\n右クリックするとシナリオ選択画面に戻ります。");
                 mainWindow.canvasUI.Children.Add(helpWindow);
 
                 // 領地のヒントが表示されてる時はヘルプを隠す
@@ -690,7 +811,7 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 var thickness = new Thickness();
-                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
+                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
                 if (thickness.Left > this.Width / 4)
                 {
                     thickness.Left = this.Width / 4;
@@ -699,7 +820,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     thickness.Left = this.Width / 4 - this.Width;
                 }
-                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
+                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
                 if (thickness.Top > this.Height / 4)
                 {
                     thickness.Top = this.Height / 4;
@@ -969,7 +1090,70 @@ namespace WPF_Successor_001_to_Vahren
                     Top = posMouse.Y - 40
                 };
 
-                // 既に表示されてる領地ウインドウをチェックする
+                // 出撃ウィンドウが開いてる場合は出撃選択用領地ウィンドウを表示する
+                bool isFound = false;
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl065_Sortie>())
+                {
+                    if (itemWindow.Name.StartsWith(StringName.windowSortie))
+                    {
+                        // 出撃可能な領地かどうかを調べる
+                        List<ClassSpot>? listSpot = (List<ClassSpot>)itemWindow.Tag;
+                        if (listSpot == null)
+                        {
+                            return;
+                        }
+                        var spot = listSpot.Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag).FirstOrDefault();
+                        if (spot == null)
+                        {
+                            var dialog = new Win020_Dialog();
+                            dialog.SetText("この領地は出撃不可です。\n青枠の領地を選択してください。");
+                            dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                            dialog.ShowDialog();
+                            return;
+                        }
+
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (isFound)
+                {
+                    // 既に表示されてる領地ウィンドウをチェックする
+                    isFound = false;
+                    string strTitle = StringName.windowSpotSortie + classPowerAndCity.ClassSpot.NameTag;
+                    foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl012_SpotSortie>())
+                    {
+                        if (itemWindow.Name == strTitle)
+                        {
+                            // 領地ウインドウを既に開いてる場合は、新規に作らない
+                            itemWindow.Margin = posWindow;
+
+                            // 最前面に移動する
+                            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
+                            if ((listWindow != null) && (listWindow.Any()))
+                            {
+                                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                                Canvas.SetZIndex(itemWindow, maxZ + 1);
+                            }
+
+                            isFound = true;
+                            break;
+                        }
+                    }
+                    if (isFound == false)
+                    {
+                        // 新規に作成する
+                        var windowSpot = new UserControl012_SpotSortie();
+                        windowSpot.Tag = classPowerAndCity;
+                        windowSpot.Name = strTitle;
+                        windowSpot.Margin = posWindow;
+                        windowSpot.SetData();
+                        mainWindow.canvasUI.Children.Add(windowSpot);
+                    }
+                    return;
+                }
+
+                // 既に表示されてる領地ウィンドウをチェックする
                 int window_id, max_id = 0;
                 var id_list = new List<int>();
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
@@ -986,7 +1170,7 @@ namespace WPF_Successor_001_to_Vahren
                         var ri = (ClassPowerAndCity)itemWindow.Tag;
                         if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
                         {
-                            // 領地ウインドウを既に開いてる場合は、新規に作らない
+                            // 領地ウィンドウを既に開いてる場合は、新規に作らない
                             max_id = -1;
                             itemWindow.Margin = posWindow;
 
@@ -1006,7 +1190,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     if (max_id > id_list.Count)
                     {
-                        // ウインドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                        // ウィンドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
                         for (window_id = 1; window_id < max_id; window_id++)
                         {
                             if (id_list.Contains(window_id) == false)
@@ -1017,7 +1201,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                     else
                     {
-                        // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
+                        // 使用中のウィンドウ番号の最大値 + 1 にして、新規に作成する
                         window_id = max_id + 1;
                     }
                     var windowSpot = new UserControl010_Spot();
@@ -1026,12 +1210,6 @@ namespace WPF_Successor_001_to_Vahren
                     windowSpot.Margin = posWindow;
                     windowSpot.SetData();
                     mainWindow.canvasUI.Children.Add(windowSpot);
-
-                    // 透明から不透明になる
-                    var animeOpacity = new DoubleAnimation();
-                    animeOpacity.From = 0.1;
-                    animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    windowSpot.BeginAnimation(Rectangle.OpacityProperty, animeOpacity);
                 }
                 id_list.Clear();
 
@@ -1069,9 +1247,42 @@ namespace WPF_Successor_001_to_Vahren
             //自ターンチェック
             //CPUタイムに押されても平気なように
 
+            // 既に出撃ウィンドウが開いてる場合は、右クリックを無視する
+            // 自動的に閉じてもいいけど、他の場所をクリックした際の警告メッセージがややこしい
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl065_Sortie>())
+            {
+                // 出撃先が同じ場合は、ウィンドウ位置を中央に戻す
+                if (itemWindow.Name == StringName.windowSortie + classPowerAndCity.ClassSpot.NameTag)
+                {
+                    // 最前面に配置する
+                    var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
+                    if ((listWindow != null) && (listWindow.Any()))
+                    {
+                        int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                        Canvas.SetZIndex(itemWindow, maxZ + 1);
+                    }
+
+                    // 画面の中央に配置する
+                    itemWindow.Margin = new Thickness()
+                    {
+                        Left = mainWindow.canvasUI.Width / 2 - 300,
+                        Top = mainWindow.canvasUI.Height / 2 - 400
+                    };
+                    return;
+                }
+                else if (itemWindow.Name.StartsWith(StringName.windowSortie))
+                {
+                    return;
+                }
+            }
+
             //所属チェック
             if (classPowerAndCity.ClassPower.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
             {
+                var dialog2 = new Win020_Dialog();
+                dialog2.SetText("自勢力の領地には攻め込めません。");
+                dialog2.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog2.ShowDialog();
                 return; //自国には攻め込まない。
             }
 
@@ -1103,12 +1314,19 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     continue;
                 }
-                classSpots.Add(ge);
+                // 領地に部隊が存在するか確かめる（簡易チェックなので、行動済みかどうかまでは調べない）
+                if (ge.UnitGroup.Count > 0)
+                {
+                    classSpots.Add(ge);
+                }
             }
             if (classSpots.Count == 0)
             {
-                //自国と隣接してないので出撃できない。
-                return;
+                var dialog2 = new Win020_Dialog();
+                dialog2.SetText("味方領が隣接してない領地には攻め込めません。");
+                dialog2.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog2.ShowDialog();
+                return; //自国と隣接してないので出撃できない。
             }
 
             // ダイアログを表示する
@@ -1121,6 +1339,16 @@ namespace WPF_Successor_001_to_Vahren
             // 現在のマップ表示位置を記録しておく
             mainWindow.ClassGameStatus.Camera = new Point(this.Margin.Left, this.Margin.Top);
 
+/*
+            // 出撃ウィンドウを表示する
+            var windowSortie = new UserControl065_Sortie();
+            windowSortie.Tag = classSpots; // 出撃可能な隣接領のリスト
+            windowSortie.Name = StringName.windowSortie + classPowerAndCity.ClassSpot.NameTag; // 出撃先の識別名
+            windowSortie.SetData();
+            mainWindow.canvasUI.Children.Add(windowSortie);
+*/
+
+
             Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
             Frame frame = new Frame();
             frame.Source = uri;
@@ -1130,6 +1358,7 @@ namespace WPF_Successor_001_to_Vahren
             Application.Current.Properties["window"] = mainWindow;
             Application.Current.Properties["spots"] = classSpots;
             Application.Current.Properties["selectSpots"] = classPowerAndCity;
+
         }
 
     }

@@ -76,8 +76,6 @@ namespace WPF_Successor_001_to_Vahren
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // ウインドウの大きさを取得する
-                // 自動サイズを整数にするため、UseLayoutRounding="true" にすること！
-                // （整数にするのが無理な場合は、ここで小数点以下を切り上げればいい）
                 double actual_height = this.ActualHeight;
 
                 // マウスの位置によってウインドウの位置を変える

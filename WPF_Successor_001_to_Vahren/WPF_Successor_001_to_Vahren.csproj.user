@@ -4,13 +4,16 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>debug battle</ActiveDebugProfile>
+    <ActiveDebugProfile>WPF_Successor_001_to_Vahren</ActiveDebugProfile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="UserControl010_Spot.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl011_SpotHint.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControl012_SpotSortie.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl015_Unit.xaml.cs">
@@ -46,6 +49,9 @@
     <Compile Update="UserControl060_WorldMap.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl065_Sortie.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Win010_TestBattle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -64,6 +70,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl011_SpotHint.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl012_SpotSortie.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl015_Unit.xaml">
@@ -97,6 +106,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl060_WorldMap.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl065_Sortie.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">

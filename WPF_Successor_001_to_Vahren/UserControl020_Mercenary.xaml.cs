@@ -392,8 +392,8 @@ namespace WPF_Successor_001_to_Vahren
                 Point pt = e.GetPosition(el);
 
                 var thickness = new Thickness();
-                thickness.Left = Math.Truncate(this.Margin.Left + (pt.X - _startPoint.X));
-                thickness.Top = Math.Truncate(this.Margin.Top + (pt.Y - _startPoint.Y));
+                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
+                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
                 this.Margin = thickness;
             }
         }
@@ -425,7 +425,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name;
-            helpWindow.SetData("雇用したユニットは\n１：雇用者の部隊、２：加入可能な他の部隊、３：新隊長となる\nの順で配備されます。");
+            helpWindow.SetText("雇用したユニットは\n１：雇用者の部隊、２：加入可能な他の部隊、３：新隊長となる\nの順で配備されます。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
@@ -604,6 +604,9 @@ namespace WPF_Successor_001_to_Vahren
         // 右ボタンを押して、同じ要素上で離した時だけ反応させる
         private void btnUnit_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
+            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
+            e.Handled = true;
+
             // マウスのキャプチャを開始する
             UIElement el = (UIElement)sender;
             if (el != null)
@@ -615,9 +618,6 @@ namespace WPF_Successor_001_to_Vahren
         // ボタンを右クリックすると部隊の空の分まで雇う
         private void btnUnit_MouseRightButtonUp(object sender, MouseEventArgs e)
         {
-            // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
-            e.Handled = true;
-
             // 右ボタンを押した時にイベント・ハンドラーが追加されるので、必ず押してるはず
             UIElement el = (UIElement)sender;
             el.ReleaseMouseCapture();
@@ -796,7 +796,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name + "_btnUnit";
-            helpWindow.SetData("左クリックすると一人雇います。\n右クリックすると一部隊単位でまとめて雇えます。");
+            helpWindow.SetText("左クリックすると一人雇います。\n右クリックすると一部隊単位でまとめて雇えます。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void btnUnit_MouseLeave(object sender, MouseEventArgs e)
