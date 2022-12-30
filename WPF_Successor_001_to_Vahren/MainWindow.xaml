@@ -17,7 +17,7 @@
         Top="0"
         Left="0"
         >
-    <Canvas x:Name="canvasTop" Opacity="1" SizeChanged="canvasTop_SizeChanged">
+    <Canvas x:Name="canvasTop" UseLayoutRounding="True" SizeChanged="canvasTop_SizeChanged">
         <Canvas x:Name="canvasUIRightBottom"
                 Panel.ZIndex="97"
                 Width="{Binding canvasMainWidth}"

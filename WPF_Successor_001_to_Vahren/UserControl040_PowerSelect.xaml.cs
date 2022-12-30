@@ -257,8 +257,8 @@ namespace WPF_Successor_001_to_Vahren
 
             if (spot_count > 0)
             {
-                target_X = Math.Truncate(target_X / spot_count);
-                target_Y = Math.Truncate(target_Y / spot_count);
+                target_X = target_X / spot_count;
+                target_Y = target_Y / spot_count;
 
                 // 目標にする座標をウインドウ中央にする
                 /*
@@ -300,8 +300,8 @@ namespace WPF_Successor_001_to_Vahren
                             classVec.Y = ge.Y;
                             worldMap.Margin = new Thickness()
                             {
-                                Left = Math.Truncate(ge.X),
-                                Top = Math.Truncate(ge.Y)
+                                Left = ge.X,
+                                Top = ge.Y
                             };
                         }));
                     });

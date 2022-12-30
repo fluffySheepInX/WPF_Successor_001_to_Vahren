@@ -369,27 +369,13 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //兵が存在する都市かチェック
-            if (convSpots.ClassSpot.ListMember.Count == 0 && convSpots.ClassSpot.ListMonster.Count == 0)
+            if (convSpots.ClassSpot.UnitGroup.Count == 0)
             {
-                // 他の勢力に所属してた場合は、取り除く
-                if (convSpots.ClassSpot.PowerNameTag != string.Empty)
-                {
-                    convSpots.ClassPower.ListMember.Remove(convSpots.ClassSpot.NameTag);
-                }
-
-                //spotの所属情報を書き換え
-                convSpots.ClassSpot.PowerNameTag = selectedItem.PowerNameTag;
-                var newPower = mainWindow.ClassGameStatus.ListPower
-                            .Where(x => x.NameTag == selectedItem.PowerNameTag)
-                            .First();
-                newPower.ListMember.Add(convSpots.ClassSpot.NameTag);
-                convSpots.ClassPower = newPower;
-
-                // 領地に古い旗アイコンがあれば消して、新しい旗アイコンを置く
+                // ワールドマップ領地の所属勢力を変更する
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    worldMap.ChangeFlag(newPower.FlagPath, convSpots.ClassSpot.NameTag);
+                    worldMap.ChangeSpotPower(convSpots.ClassSpot.NameTag, selectedItem.PowerNameTag);
                 }
 
                 //unitの所属情報を書き換え

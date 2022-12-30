@@ -26,7 +26,8 @@ namespace WPF_Successor_001_to_Vahren
             InitializeComponent();
         }
 
-        public void SetData(string txtInput)
+        // ヘルプの文章を指定する
+        public void SetText(string txtInput)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)

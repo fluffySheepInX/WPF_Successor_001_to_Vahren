@@ -338,7 +338,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_btnTurnEnd";
-            helpWindow.SetData("ターンを終了します。");
+            helpWindow.SetText("ターンを終了します。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void btnTurnEnd_MouseLeave(object sender, MouseEventArgs e)
@@ -418,7 +418,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu";
-            helpWindow.SetData("※敵領地を右クリックすると出撃ウィンドウが出ます。\n（戦争する時は敵領地を右クリックしてください）");
+            helpWindow.SetText("※敵領地を右クリックすると出撃ウィンドウが出ます。\n（戦争する時は敵領地を右クリックしてください）");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
@@ -497,7 +497,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_TotalCost";
-            helpWindow.SetData("全ユニットの維持費の合計値です。");
+            helpWindow.SetText("全ユニットの維持費の合計値です。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void TotalCost_MouseLeave(object sender, MouseEventArgs e)
@@ -576,7 +576,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_TotalFinance";
-            helpWindow.SetData("全ユニットの財政力の合計値です。");
+            helpWindow.SetText("全ユニットの財政力の合計値です。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void TotalFinance_MouseLeave(object sender, MouseEventArgs e)
@@ -655,7 +655,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_TrainingAverage";
-            helpWindow.SetData("訓練限界値は勢力の全人材ユニットの平均レベルです。\nこれより低い一般兵のレベルが訓練で上昇します。");
+            helpWindow.SetText("訓練限界値は勢力の全人材ユニットの平均レベルです。\nこれより低い一般兵のレベルが訓練で上昇します。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void TrainingAverage_MouseLeave(object sender, MouseEventArgs e)
@@ -734,7 +734,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_TrainingUp";
-            helpWindow.SetData("訓練によるターン毎のレベル上昇値です。");
+            helpWindow.SetText("訓練によるターン毎のレベル上昇値です。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void TrainingUp_MouseLeave(object sender, MouseEventArgs e)
@@ -813,7 +813,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_StrategyMenu_BaseLevel";
-            helpWindow.SetData("雇用兵士の底上げレベルです。");
+            helpWindow.SetText("雇用兵士の底上げレベルです。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void BaseLevel_MouseLeave(object sender, MouseEventArgs e)

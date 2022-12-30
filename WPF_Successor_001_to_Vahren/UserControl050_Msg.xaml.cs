@@ -95,7 +95,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             this.gridMain.Margin = new Thickness()
             {
-                Left = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2),
+                Left = this.Width / 2 - this.gridMain.Width / 2,
                 Top = this.Height - this.gridMain.Height - offsetTop
             };
             */
@@ -240,14 +240,14 @@ namespace WPF_Successor_001_to_Vahren
             {
                 offsetTop = 0;
             }
-            double newLeft = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2);
+            double newLeft = this.Width / 2 - this.gridMain.Width / 2;
             double newTop = this.Height - this.gridMain.Height - offsetTop;
             // 違う場所にあった場合だけ、アニメーションしながら出現させる
             if ((this.gridMain.Margin.Left != newLeft) || (this.gridMain.Margin.Top != newTop))
             {
                 this.gridMain.Margin = new Thickness()
                 {
-                    Left = Math.Truncate(this.Width / 2 - this.gridMain.Width / 2),
+                    Left = this.Width / 2 - this.gridMain.Width / 2,
                     Top = this.Height - this.gridMain.Height - offsetTop
                 };
 
@@ -265,7 +265,7 @@ namespace WPF_Successor_001_to_Vahren
                 animeMargin.From = new Thickness()
                 {
                     Left = this.gridMain.Margin.Left,
-                    Top = this.gridMain.Margin.Top + Math.Truncate(this.gridMain.Height / 2)
+                    Top = this.gridMain.Margin.Top + this.gridMain.Height / 2
                 };
                 animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.125));
                 animeMargin.Completed += animePositionBottom_Completed;
