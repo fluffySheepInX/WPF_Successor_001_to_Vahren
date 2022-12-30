@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl012_SpotSortie"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             MinWidth="502" MinHeight="692">
+    <Grid UseLayoutRounding="True"
+            MouseLeftButtonDown="win_MouseLeftButtonDown"
+            MouseRightButtonDown="btnClose_Click"
+            MouseEnter="win_MouseEnter" >
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Canvas Margin="16" Width="470" Height="660">
+            <Border Width="425" Height="44" BorderBrush="White" BorderThickness="2" />
+            <Image Canvas.Left="6" Canvas.Top="6" Width="32" Height="32" Name="imgFlag" />
+            <TextBlock Canvas.Left="45" Canvas.Top="5" FontSize="23" Foreground="White" Text="領地の名前" Name="txtNameSpot" />
+
+            <Button Name="btnClose" Width="35" Height="35" Canvas.Left="435" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
+<!--
+            <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="55">
+                <Button Name="btnSortieAll" Width="150" Height="35" Margin="0,0,5,0" FontSize="20" Content="全て出撃"
+                        BorderThickness="2" Focusable="False"
+                        Click="btnSortieAll_Click"
+                        PreviewMouseLeftButtonDown="Raise_ZOrder"
+                        MouseRightButtonDown="Disable_MouseEvent"
+                        MouseEnter="btnSortieAll_MouseEnter" />
+                <Button Name="btnCancelAll" Width="150" Height="35" Margin="0,0,5,0" FontSize="20" Content="全てキャンセル"
+                        BorderThickness="2" Focusable="False"
+                        Click="btnCancelAll_Click"
+                        PreviewMouseLeftButtonDown="Raise_ZOrder"
+                        MouseRightButtonDown="Disable_MouseEvent"
+                        MouseEnter="btnCancelAll_MouseEnter" />
+            </StackPanel>
+-->
+            <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="95">
+                <TextBlock FontSize="20" Foreground="Aqua" Text="経済 1000" Name="txtGain" />
+                <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="城壁 150" Name="txtCastle" />
+                <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="戦力 1234567" Name="txtForce" />
+                <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="部隊 16/16" Name="txtTroopCount" />
+            </StackPanel>
+
+            <ScrollViewer Width="460" Height="528" Canvas.Left="5" Canvas.Top="127" Background="#282828" Focusable="False"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Visible"
+                    MouseRightButtonDown="Disable_MouseEvent" >
+                <Canvas Name="canvasSpotUnit" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            </ScrollViewer>
+        </Canvas>
+
+    </Grid>
+</UserControl>
