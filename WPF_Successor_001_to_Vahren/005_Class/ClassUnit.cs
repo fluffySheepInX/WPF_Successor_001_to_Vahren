@@ -64,6 +64,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region IsDone
+        private bool _isDone = false;
+        public bool IsDone
+        {
+            get { return _isDone; }
+            set { _isDone = value; }
+        }
+        #endregion
+
         #region NameTag
         private string _nameTag = string.Empty;
         public string NameTag
