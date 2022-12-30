@@ -783,7 +783,7 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             timerAfterFadeIn.Tick += (x, s) =>
             {
-                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain);
+                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain, null);
                 ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;

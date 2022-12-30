@@ -1817,7 +1817,7 @@ namespace WPF_Successor_001_to_Vahren
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             timerAfterFadeIn.Tick += (x, s) =>
             {
-                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain);
+                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain, SetMapStrategyFromBattle);
                 ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
             };
             AfterFadeIn = true;
@@ -2322,7 +2322,7 @@ namespace WPF_Successor_001_to_Vahren
         /// <summary>
         /// 戦闘終了後の処理
         /// </summary>
-        private void SetMapStrategyFromBattle()
+        public void SetMapStrategyFromBattle()
         {
             this.canvasMain.Children.Clear();
 
