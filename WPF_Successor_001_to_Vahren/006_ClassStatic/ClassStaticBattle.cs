@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -171,6 +172,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return files;
         }
         #endregion
+
         public static void DisplayBuilding(Canvas canvas, int takasaMapTip, int yokoMapTip, List<(BitmapImage, int, int)> listTakaiObj, List<Rectangle> getMap)
         {
             foreach (var item in listTakaiObj.OrderBy(x => x.Item2).ThenByDescending(y => y.Item3))
@@ -204,6 +206,139 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 canvas.Children.Add(rectangle);
                 getMap.Add(rectangle);
             }
+        }
+        public static void CreatePathIntoCanvas(Canvas canvas, int takasaMapTip, int yokoMapTip, Dictionary<string, string> map,
+                                                            ClassGameStatus classGameStatus,
+                                                           out List<(BitmapImage, int, int)> listTakaiObj)
+        {
+            //out 初期代入
+            listTakaiObj = new List<(BitmapImage, int, int)>();
+
+            if (classGameStatus.ClassBattle.ClassMapBattle is null) return;
+
+            foreach (var itemCol in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                    .Select((value, index) => (value, index)))
+            {
+                foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
+                {
+                    map.TryGetValue(itemRow.value.Tip, out string? value);
+                    if (value == null) continue;
+
+                    if (itemRow.value.Building.Count != 0)
+                    {
+                        foreach (var building in itemRow.value.Building)
+                        {
+                            map.TryGetValue(building, out string? value2);
+                            if (value2 != null)
+                            {
+                                var build = new BitmapImage(new Uri(value2));
+                                listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
+                            }
+                        }
+                    }
+
+                    var bi = new BitmapImage(new Uri(value));
+                    ImageBrush image = new ImageBrush();
+                    image.Stretch = Stretch.Fill;
+                    image.ImageSource = bi;
+                    System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                    path.Fill = image;
+                    ClassBattleMapPath classBattleMapPath = new ClassBattleMapPath();
+                    classBattleMapPath.Col = itemCol.index;
+                    classBattleMapPath.Row = itemRow.index;
+                    if (itemRow.value.BoueiButaiNoIti == true)
+                    {
+                        classBattleMapPath.KougekiOrBouei = "Bouei";
+                        path.Tag = classBattleMapPath;
+                    }
+                    if (itemRow.value.KougekiButaiNoIti == true)
+                    {
+                        classBattleMapPath.KougekiOrBouei = "Kougeki";
+                        path.Tag = classBattleMapPath;
+                    }
+                    path.Name = "a" + itemCol.index + "a" + itemRow.index;
+                    path.Stretch = Stretch.Fill;
+                    path.StrokeThickness = 0;
+                    path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
+                                            + " L " + yokoMapTip / 2 + "," + takasaMapTip
+                                            + " L " + yokoMapTip + "," + takasaMapTip / 2
+                                            + " L " + yokoMapTip / 2 + ",0 Z");
+                    path.Margin = new Thickness()
+                    {
+                        Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
+                        Top =
+                            ((canvas.Height / 2) // マップ半分の高さ
+                            + (itemCol.index * (takasaMapTip / 2))
+                            + (itemRow.index * (-(takasaMapTip / 2)))) // マイナスになる 
+                            - takasaMapTip / 2
+                    };
+                    canvas.Children.Add(path);
+                    itemRow.value.MapPath = path;
+                }
+            }
+        }
+        public static void CreatePageBattle(Canvas canvas, int _sizeClientWinHeight, Window window)
+        {
+            Application.Current.Properties["window"] = window;
+            {
+                Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
+                Frame frame = new Frame();
+                frame.Source = uri;
+                frame.Margin = new Thickness(0, _sizeClientWinHeight - 310 - 60, 0, 0);
+                frame.Name = StringName.windowBattleCommand;
+                Canvas.SetZIndex(frame, 99);
+                canvas.Children.Add(frame);
+            }
+            {
+                Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
+                Frame frame = new Frame();
+                frame.Source = uri;
+                frame.Margin = new Thickness(0, _sizeClientWinHeight - 120, 0, 0);
+                frame.Name = StringName.windowBattleCommand;
+                Canvas.SetZIndex(frame, 99);
+                canvas.Children.Add(frame);
+            }
+        }
+        public static Canvas CreateCanvasBattle(ClassMapBattle? classMapBattle, int takasaMapTip, int yokoMapTip,
+                                            int _sizeClientWinHeight, int canvasMainWidth, int _sizeClientWinWidth,
+                                            MouseButtonEventHandler canvasMapBattle_MouseLeftButtonDown,
+                                            MouseButtonEventHandler windowMapBattle_MouseRightButtonDown
+                                            )
+        {
+            Canvas canvas = new Canvas();
+            canvas.Name = StringName.windowMapBattle;
+            canvas.Background = Brushes.Black;
+            canvas.MouseLeftButtonDown += canvasMapBattle_MouseLeftButtonDown;
+            canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
+
+            if (classMapBattle is null)
+            {
+                int BaseNum = 600;
+                canvas.Width = BaseNum
+                                + (BaseNum / 2);
+                canvas.Height = BaseNum;
+                canvas.Margin = new Thickness()
+                {
+                    Left = BaseNum / 2,
+                    Top = (_sizeClientWinHeight / 2) - (canvas.Height / 2)
+                };
+            }
+            else
+            {
+                canvas.Width = classMapBattle.MapData[0].Count * yokoMapTip;
+                canvas.Height = classMapBattle.MapData.Count * takasaMapTip;
+                canvas.Margin = new Thickness()
+                {
+                    Left = ((
+                            (canvasMainWidth / 2) - (_sizeClientWinWidth / 2)
+                            ))
+                                +
+                            (_sizeClientWinWidth / 2) - ((classMapBattle.MapData[0].Count * 32) / 2),
+                    Top = (_sizeClientWinHeight / 2) - (canvas.Height / 2)
+                };
+            }
+
+            return canvas;
         }
 
         #region 移動関係
