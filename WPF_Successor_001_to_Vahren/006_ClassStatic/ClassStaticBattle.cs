@@ -1535,7 +1535,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="commonWindow"></param>
         /// <param name="canvasMain"></param>
         /// <exception cref="Exception"></exception>
-        public static async void TimerAction60FPSAfterFadeInBattleStart(CommonWindow commonWindow, Canvas canvasMain)
+        public static async void TimerAction60FPSAfterFadeInBattleStart(CommonWindow commonWindow, Canvas canvasMain, DelegateMapRenderedFromBattle actionMapRenderedFromBattle)
         {
             if (commonWindow.AfterFadeIn == false)
             {
@@ -1585,12 +1585,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             commonWindow.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             commonWindow.timerAfterFadeIn.Tick -= (x, s) =>
             {
-                TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvasMain);
+                TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvasMain, actionMapRenderedFromBattle);
                 ClassStaticCommonMethod.KeepInterval(commonWindow.timerAfterFadeIn);
             };
             commonWindow.timerAfterFadeIn.Tick += (x, s) =>
             {
-                ClassStaticBattle.TimerAction60FPSBattle(commonWindow, commonWindow.ClassGameStatus, null);
+                ClassStaticBattle.TimerAction60FPSBattle(commonWindow, commonWindow.ClassGameStatus, actionMapRenderedFromBattle);
                 ClassStaticCommonMethod.KeepInterval(commonWindow.timerAfterFadeIn);
             };
             commonWindow.timerAfterFadeIn.Start();
