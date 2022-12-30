@@ -563,6 +563,7 @@ namespace WPF_Successor_001_to_Vahren
             // 元データから新しくユニットを作る
             ClassUnit newUnit = baseUnit.DeepCopy();
             newUnit.ID = mainWindow.ClassGameStatus.IDCount;
+            newUnit.IsDone = true;
             mainWindow.ClassGameStatus.SetIDCount();
             if (targetTroop == null)
             {
@@ -718,6 +719,7 @@ namespace WPF_Successor_001_to_Vahren
             // 元データから新しくユニットを作る
             ClassUnit newUnit = baseUnit.DeepCopy();
             newUnit.ID = mainWindow.ClassGameStatus.IDCount;
+            newUnit.IsDone = true;
             mainWindow.ClassGameStatus.SetIDCount();
             if (targetTroop == null)
             {
@@ -745,6 +747,7 @@ namespace WPF_Successor_001_to_Vahren
                 // 元データから新しくユニットを作る
                 newUnit = baseUnit.DeepCopy();
                 newUnit.ID = mainWindow.ClassGameStatus.IDCount;
+                newUnit.IsDone = true;
                 mainWindow.ClassGameStatus.SetIDCount();
 
                 // 部隊の末尾に追加する（新規部隊は既に作成済み）
