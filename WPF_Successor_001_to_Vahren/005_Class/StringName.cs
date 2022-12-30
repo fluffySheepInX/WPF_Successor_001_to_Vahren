@@ -29,6 +29,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public static readonly string buttonClassPowerAndCity = "buttonClassPowerAndCity";
         public static readonly string windowGameResult = "windowGameResult";
 
+        // 出撃選択用領地ウィンドウ（UserControl012_SpotSortie）の Name の接頭語
+        public static readonly string windowSpotSortie = "WindowSpotSortie";
+
+        // メンバーにできるユニットのヘルプ（UserControl031_HelpMember）の Name
+        public static readonly string windowMember = "HelpMember";
+
+        // 出撃ウィンドウ（UserControl065_Sortie）の Name の接頭語
+        public static readonly string windowSortie = "WindowSortie";
 
         //縦
         public static readonly string stackPanelResidentVertical = "stackPanelResidentVertical";
