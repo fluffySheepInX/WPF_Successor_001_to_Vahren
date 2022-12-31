@@ -377,9 +377,18 @@ namespace WPF_Successor_001_to_Vahren
                     txtLevel.Name = "txtLevel" + i.ToString() + "_" + j.ToString();
                     txtLevel.Height = tile_height - tile_width;
                     txtLevel.FontSize = 16;
-                    txtLevel.Foreground = Brushes.White;
                     txtLevel.TextAlignment = TextAlignment.Center;
-                    txtLevel.Text = "lv" + itemUnit.Level;
+                    if (itemUnit.IsDone == false)
+                    {
+                        txtLevel.Text = "lv" + itemUnit.Level.ToString();
+                        txtLevel.Foreground = Brushes.White;
+                    }
+                    else
+                    {
+                        // 行動済みなら、レベルの横に「E」が付いて、文字色が黄色になる
+                        txtLevel.Text = "lv" + itemUnit.Level.ToString() + "E";
+                        txtLevel.Foreground = Brushes.Yellow;
+                    }
                     panelUnit.Children.Add(txtLevel);
 
                     this.canvasSpotUnit.Children.Add(panelUnit);
