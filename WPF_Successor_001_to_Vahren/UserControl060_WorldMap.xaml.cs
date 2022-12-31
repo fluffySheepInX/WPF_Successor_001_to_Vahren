@@ -1159,9 +1159,9 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
-                    if (strTitle.StartsWith("WindowSpot"))
+                    if (strTitle.StartsWith(StringName.windowSpot))
                     {
-                        window_id = Int32.Parse(strTitle.Replace("WindowSpot", string.Empty));
+                        window_id = Int32.Parse(strTitle.Substring(StringName.windowSpot.Length));
                         id_list.Add(window_id);
                         if (max_id < window_id)
                         {
@@ -1206,7 +1206,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                     var windowSpot = new UserControl010_Spot();
                     windowSpot.Tag = classPowerAndCity;
-                    windowSpot.Name = "WindowSpot" + window_id.ToString();
+                    windowSpot.Name = StringName.windowSpot + window_id.ToString();
                     windowSpot.Margin = posWindow;
                     windowSpot.SetData();
                     mainWindow.canvasUI.Children.Add(windowSpot);

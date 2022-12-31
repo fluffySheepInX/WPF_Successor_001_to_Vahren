@@ -71,7 +71,7 @@ namespace WPF_Successor_001_to_Vahren
                 if (Child is UserControl010_Spot)
                 {
                     var itemWindow = (UserControl010_Spot)Child;
-                    if (itemWindow.Name.StartsWith("WindowSpot"))
+                    if (itemWindow.Name.StartsWith(StringName.windowSpot))
                     {
                         mainWindow.canvasUI.Children.Remove(itemWindow);
                     }
@@ -80,7 +80,7 @@ namespace WPF_Successor_001_to_Vahren
                 else if (Child is UserControl015_Unit)
                 {
                     var itemWindow = (UserControl015_Unit)Child;
-                    if (itemWindow.Name.StartsWith("WindowUnit"))
+                    if (itemWindow.Name.StartsWith(StringName.windowUnit))
                     {
                         mainWindow.canvasUI.Children.Remove(itemWindow);
                     }
@@ -145,8 +145,8 @@ namespace WPF_Successor_001_to_Vahren
             // 画面の中央に配置する
             this.Margin = new Thickness()
             {
-                Left = mainWindow.canvasUI.Width / 2 - 300,
-                Top = mainWindow.canvasUI.Height / 2 - 400
+                Left = mainWindow.canvasUI.Width / 2 - this.MinWidth / 2,
+                Top = mainWindow.canvasUI.Height / 2 - this.MinHeight / 2
             };
 
             // 出現時のアニメーション
@@ -408,7 +408,7 @@ namespace WPF_Successor_001_to_Vahren
                 else if (Child is UserControl015_Unit)
                 {
                     var itemWindow = (UserControl015_Unit)Child;
-                    if (itemWindow.Name.StartsWith("WindowUnit"))
+                    if (itemWindow.Name.StartsWith(StringName.windowUnit))
                     {
                         mainWindow.canvasUI.Children.Remove(itemWindow);
                     }
@@ -702,14 +702,28 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // 確認メッセージを表示する
+            var dialog = new Win025_Select();
+            dialog.SetText(classSpot.Name + "に攻め込みます。\nよろしいですか？");
+            bool? result = dialog.ShowDialog();
+            if (result == false)
+            {
+                return;
+            }
+
             // 空の領地なら戦闘無しに占領する
             if (classSpot.UnitGroup.Count == 0)
             {
             
             
+                // メッセージと同時に占領エフェクトを表示する？待ち時間を調節すればいい。
+                var dialog2 = new Win020_Dialog();
+                dialog2.SetText("戦場の領地に守備兵がいないので戦闘を省略します。");
+                dialog2.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog2.ShowDialog();
             
-                MessageBox.Show(classSpot.Name + "は空です");
             
+                return;
             }
 
             MessageBox.Show(classSpot.Name + "には部隊が存在します");

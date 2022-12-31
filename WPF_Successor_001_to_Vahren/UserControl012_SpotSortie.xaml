@@ -42,22 +42,20 @@
             <TextBlock Canvas.Left="45" Canvas.Top="5" FontSize="23" Foreground="White" Text="領地の名前" Name="txtNameSpot" />
 
             <Button Name="btnClose" Width="35" Height="35" Canvas.Left="435" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
-<!--
-            <StackPanel Orientation="Horizontal" Canvas.Left="5" Canvas.Top="55">
-                <Button Name="btnSortieAll" Width="150" Height="35" Margin="0,0,5,0" FontSize="20" Content="全て出撃"
-                        BorderThickness="2" Focusable="False"
-                        Click="btnSortieAll_Click"
-                        PreviewMouseLeftButtonDown="Raise_ZOrder"
-                        MouseRightButtonDown="Disable_MouseEvent"
-                        MouseEnter="btnSortieAll_MouseEnter" />
-                <Button Name="btnCancelAll" Width="150" Height="35" Margin="0,0,5,0" FontSize="20" Content="全てキャンセル"
-                        BorderThickness="2" Focusable="False"
-                        Click="btnCancelAll_Click"
-                        PreviewMouseLeftButtonDown="Raise_ZOrder"
-                        MouseRightButtonDown="Disable_MouseEvent"
-                        MouseEnter="btnCancelAll_MouseEnter" />
-            </StackPanel>
--->
+
+            <Button Name="btnSelectAll" Canvas.Left="10" Canvas.Top="55" Width="160" Height="35" FontSize="20" Content="全て出撃登録"
+                    BorderThickness="2" Focusable="False"
+                    Click="btnSelectAll_Click"
+                    PreviewMouseLeftButtonDown="Raise_ZOrder"
+                    MouseRightButtonDown="Disable_MouseEvent"
+                    MouseEnter="btnSelectAll_MouseEnter" />
+            <Button Name="btnCancelAll" Canvas.Left="300" Canvas.Top="55" Width="160" Height="35" FontSize="20" Content="全てキャンセル"
+                    BorderThickness="2" Focusable="False"
+                    Click="btnCancelAll_Click"
+                    PreviewMouseLeftButtonDown="Raise_ZOrder"
+                    MouseRightButtonDown="Disable_MouseEvent"
+                    MouseEnter="btnCancelAll_MouseEnter" />
+
             <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="95">
                 <TextBlock FontSize="20" Foreground="Aqua" Text="経済 1000" Name="txtGain" />
                 <TextBlock FontSize="20" Margin="15,0,0,0" Foreground="Aqua" Text="城壁 150" Name="txtCastle" />

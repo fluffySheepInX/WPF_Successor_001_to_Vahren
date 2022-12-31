@@ -512,7 +512,7 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
-                    if (strTitle.StartsWith("WindowSpot"))
+                    if (strTitle.StartsWith(StringName.windowSpot))
                     {
                         if (dstSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
                         {
@@ -709,7 +709,7 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
-                    if (strTitle.StartsWith("WindowSpot"))
+                    if (strTitle.StartsWith(StringName.windowSpot))
                     {
                         if (dstSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
                         {
@@ -876,7 +876,7 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
                 {
                     string strTitle = itemWindow.Name;
-                    if (strTitle.StartsWith("WindowSpot"))
+                    if (strTitle.StartsWith(StringName.windowSpot))
                     {
                         if (dstSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
                         {
@@ -1075,7 +1075,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
+                if ((strTitle.StartsWith(StringName.windowSpot)) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -1262,7 +1262,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
+                if ((strTitle.StartsWith(StringName.windowSpot)) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -1406,7 +1406,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
+                if ((strTitle.StartsWith(StringName.windowSpot)) && (strTitle != this.Name))
                 {
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
                     // 同じ勢力の領地ウインドウだけ対象にする
@@ -1551,7 +1551,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
+                if ((strTitle.StartsWith(StringName.windowSpot)) && (strTitle != this.Name))
                 {
                     var classPowerAndCity = (ClassPowerAndCity)this.Tag;
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
@@ -1737,7 +1737,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) && (strTitle != this.Name))
+                if ((strTitle.StartsWith(StringName.windowSpot)) && (strTitle != this.Name))
                 {
                     var classPowerAndCity = (ClassPowerAndCity)this.Tag;
                     var targetPowerAndCity = (ClassPowerAndCity)itemWindow.Tag;
@@ -2549,9 +2549,9 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl015_Unit>())
             {
                 string strTitle = itemWindow.Name;
-                if (strTitle.StartsWith("WindowUnit"))
+                if (strTitle.StartsWith(StringName.windowUnit))
                 {
-                    window_id = Int32.Parse(strTitle.Replace("WindowUnit", String.Empty));
+                    window_id = Int32.Parse(strTitle.Substring(StringName.windowUnit.Length));
                     id_list.Add(window_id);
                     if (max_id < window_id)
                     {
@@ -2606,12 +2606,12 @@ namespace WPF_Successor_001_to_Vahren
                     // 使用中のウインドウ番号の最大値 + 1 にして、新規に作成する
                     window_id = max_id + 1;
                 }
-                var windowUnit = new UserControl015_Unit();
-                windowUnit.Tag = classCityAndUnit;
-                windowUnit.Name = "WindowUnit" + window_id.ToString();
-                windowUnit.Margin = new Thickness()
+                var itemWindow = new UserControl015_Unit();
+                itemWindow.Tag = classCityAndUnit;
+                itemWindow.Name = StringName.windowUnit + window_id.ToString();
+                itemWindow.Margin = new Thickness()
                 {
-                    Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth - ((window_id - 1) % dZ) * dX - ((window_id - 1) / dZ) * dX2,
+                    Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth - ((window_id - 1) % dZ) * dX - ((window_id - 1) / dZ) * dX2,
                     Top = offsetTop + ((window_id - 1) % dZ) * dY
                 };
                 // プレイヤーがボタンを操作可能かどうか
@@ -2620,8 +2620,8 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     bControl = true;
                 }
-                windowUnit.SetData(bControl);
-                mainWindow.canvasUI.Children.Add(windowUnit);
+                itemWindow.SetData(bControl);
+                mainWindow.canvasUI.Children.Add(itemWindow);
 
                 // ヒントを閉じた場合は右上から移動させる
                 if (bCloseHint)
@@ -2629,18 +2629,18 @@ namespace WPF_Successor_001_to_Vahren
                     var animeMargin = new ThicknessAnimation();
                     animeMargin.From = new Thickness()
                     {
-                        Left = mainWindow.canvasUI.Width - offsetLeft - windowUnit.MinWidth,
+                        Left = mainWindow.canvasUI.Width - offsetLeft - itemWindow.MinWidth,
                         Top = offsetTop
                     };
                     animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    windowUnit.BeginAnimation(Grid.MarginProperty, animeMargin);
+                    itemWindow.BeginAnimation(Grid.MarginProperty, animeMargin);
                 }
                 else
                 {
                     var animeOpacity = new DoubleAnimation();
                     animeOpacity.From = 0.1;
                     animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                    windowUnit.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+                    itemWindow.BeginAnimation(Grid.OpacityProperty, animeOpacity);
                 }
             }
             id_list.Clear();
@@ -2671,7 +2671,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
             {
                 string strTitle = itemWindow.Name;
-                if ((strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")))
+                if ((strTitle.StartsWith(StringName.windowSpot)) || (strTitle.StartsWith(StringName.windowUnit)))
                 {
                     // 新規に作らない
                     itemWindow.Tag = classCityAndUnit;
