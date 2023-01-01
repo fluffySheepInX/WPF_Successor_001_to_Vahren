@@ -587,7 +587,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if (strTitle.StartsWith("WindowSpot"))
+                if (strTitle.StartsWith(StringName.windowSpot))
                 {
                     if (targetSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
                     {
@@ -760,7 +760,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
             {
                 string strTitle = itemWindow.Name;
-                if (strTitle.StartsWith("WindowSpot"))
+                if (strTitle.StartsWith(StringName.windowSpot))
                 {
                     if (targetSpot.NameTag == ((ClassPowerAndCity)itemWindow.Tag).ClassSpot.NameTag)
                     {

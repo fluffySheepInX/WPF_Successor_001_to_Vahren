@@ -660,7 +660,7 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl020_Mercenary>())
             {
                 string strTitle = itemWindow.Name;
-                if ( (strTitle.StartsWith("WindowSpot")) || (strTitle.StartsWith("WindowUnit")) )
+                if ( (strTitle.StartsWith(StringName.windowSpot)) || (strTitle.StartsWith(StringName.windowUnit)) )
                 {
                     // 新規に作らない
                     itemWindow.Tag = classCityAndUnit;
