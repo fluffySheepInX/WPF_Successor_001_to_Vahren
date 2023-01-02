@@ -560,6 +560,9 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    srcUnit.IsDone = true;
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -585,6 +588,9 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    srcUnit.IsDone = true;
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -616,6 +622,9 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    srcUnit.IsDone = true;
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -646,6 +655,9 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    srcUnit.IsDone = true;
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -662,6 +674,7 @@ namespace WPF_Successor_001_to_Vahren
                 // 新規部隊を末尾に追加してユニットを追加する
                 var listUnit = new List<ClassUnit>();
                 listUnit.Add(srcUnit);
+                srcUnit.IsDone = true; // 行動済みにする
                 dstSpot.UnitGroup.Add(new ClassHorizontalUnit()
                 {
                     Spot = dstSpot,
@@ -746,6 +759,12 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
                 {
                     dstTroop.ListClassUnit.Add(srcUnit);
+
+                    // 異なる領地に移動したら行動済みにする
+                    if ((windowSpot != null) && (windowSpot != this))
+                    {
+                        srcUnit.IsDone = true;
+                    }
                 }
 
                 // 元の部隊から全てのユニットを取り除く
@@ -798,6 +817,12 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
+                    {
+                        srcUnit.IsDone = true;
+                    }
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -821,6 +846,12 @@ namespace WPF_Successor_001_to_Vahren
                 this.UpdateSpotUnit(mainWindow);
                 if ((windowSpot != null) && (windowSpot != this))
                 {
+                    // 異なる領地に移動したら行動済みにする
+                    foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
+                    {
+                        srcUnit.IsDone = true;
+                    }
+
                     // ウインドウが異なる場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
@@ -836,6 +867,12 @@ namespace WPF_Successor_001_to_Vahren
                 // 移動先領地の末尾に部隊を追加する
                 dstSpot.UnitGroup.Add(srcTroop);
                 srcTroop.Spot = dstSpot;
+
+                // 行動済みにする
+                foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
+                {
+                    srcUnit.IsDone = true;
+                }
 
                 // 移動元領地から部隊を取り除く
                 srcSpot.UnitGroup.RemoveAt(troop_id);
@@ -854,17 +891,19 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 複数の部隊をドロップする処理
-        private bool DropTarget_Whole(MainWindow mainWindow, string strTarget)
+        // 戻り値 : 0 = 移動せず, マイナス = 全て移動, 1~ 限られた数だけ移動
+        private int DropTarget_Whole(MainWindow mainWindow, string strTarget)
         {
             string[] strPart = strTarget.Split('_');
             ClassSpot srcSpot = ((ClassPowerAndCity)this.Tag).ClassSpot;
             ClassSpot? dstSpot = null;
             UserControl010_Spot? windowSpot = null;
+            int moved_result = 0;
 
             if (strPart[0] == this.Name)
             {
                 // 同じ領地ウインドウの上にはドロップできないはず
-                return false;
+                return 0;
             }
             else if (strPart[0] == "Spot")
             {
@@ -892,13 +931,13 @@ namespace WPF_Successor_001_to_Vahren
                 windowSpot = (UserControl010_Spot)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, strPart[0]);
                 if (windowSpot == null)
                 {
-                    return false;
+                    return 0;
                 }
                 dstSpot = ((ClassPowerAndCity)windowSpot.Tag).ClassSpot;
             }
             if (dstSpot == null)
             {
-                return false;
+                return 0;
             }
 
             // 移動先の空きが部隊数よりも少ない場合は、入るだけ移動させる
@@ -906,9 +945,11 @@ namespace WPF_Successor_001_to_Vahren
             int dst_troop_count = dstSpot.UnitGroup.Count;
             int spot_capacity = dstSpot.Capacity;
             int move_count = src_troop_count;
+            moved_result = move_count * -1;
             if (move_count > spot_capacity - dst_troop_count)
             {
                 move_count = spot_capacity - dst_troop_count;
+                moved_result = move_count;
             }
 
             // 部隊を間に追加
@@ -926,6 +967,12 @@ namespace WPF_Successor_001_to_Vahren
                     dstSpot.UnitGroup.Insert(dst_troop_id + i, srcTroop);
                     srcTroop.Spot = dstSpot;
 
+                    // 行動済みにする
+                    foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
+                    {
+                        srcUnit.IsDone = true;
+                    }
+
                     // 移動元領地から先頭の部隊を取り除く
                     srcSpot.UnitGroup.RemoveAt(0);
                 }
@@ -937,7 +984,7 @@ namespace WPF_Successor_001_to_Vahren
                     // ウインドウが存在する場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
-                return true;
+                return moved_result;
             }
 
             // 部隊を別領地の末尾に移動（領地ウインドウと領地アイコンで同じ処理）
@@ -953,6 +1000,12 @@ namespace WPF_Successor_001_to_Vahren
                     dstSpot.UnitGroup.Add(srcTroop);
                     srcTroop.Spot = dstSpot;
 
+                    // 行動済みにする
+                    foreach (ClassUnit srcUnit in srcTroop.ListClassUnit)
+                    {
+                        srcUnit.IsDone = true;
+                    }
+
                     // 移動元領地から部隊を取り除く
                     srcSpot.UnitGroup.RemoveAt(0);
                 }
@@ -964,10 +1017,10 @@ namespace WPF_Successor_001_to_Vahren
                     // ウインドウが存在する場合は、移動先も更新する
                     windowSpot.UpdateSpotUnit(mainWindow);
                 }
-                return true;
+                return moved_result;
             }
 
-            return false;
+            return 0;
         }
 
         // ユニットをドラッグ移動する際に、移動先を作る
@@ -1505,8 +1558,10 @@ namespace WPF_Successor_001_to_Vahren
         // ユニットをドラッグ移動した後に、移動先を取り除く
         // 部隊（隊長）をドラッグする場合は、member_id を 0 にすること
         // 全部隊（全部ボタン）をドラッグする場合は、troop_id を -1 にすること
-        private void RemoveDropTarget(MainWindow mainWindow, int troop_id, int member_id)
+        private int RemoveDropTarget(MainWindow mainWindow, int troop_id, int member_id)
         {
+            int moved_result = 0;
+
             // 領地ウインドウのユニット欄に追加した枠を消去する
             for (int i = this.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1)
             {
@@ -1595,7 +1650,8 @@ namespace WPF_Successor_001_to_Vahren
                                         else
                                         {
                                             // 全部隊
-                                            if (DropTarget_Whole(mainWindow, strTarget))
+                                            moved_result = DropTarget_Whole(mainWindow, strTarget);
+                                            if (moved_result != 0)
                                             {
                                                 // 領地を更新した場合は枠も消えるので、ループから抜ける
                                                 break;
@@ -1646,7 +1702,7 @@ namespace WPF_Successor_001_to_Vahren
                                     else
                                     {
                                         // 全部隊
-                                        DropTarget_Whole(mainWindow, strTarget);
+                                        moved_result = DropTarget_Whole(mainWindow, strTarget);
                                     }
                                 }
                                 // 枠を取り除く
@@ -1656,6 +1712,8 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
             }
+
+            return moved_result;
         }
 
         /*
@@ -2414,7 +2472,7 @@ namespace WPF_Successor_001_to_Vahren
                     string unit_name = ((Image)sender).Name;
                     string unit_id = unit_name.Replace("DragImage", String.Empty);
                     int troop_count = Int32.Parse(unit_id);
-                    RemoveDropTarget(mainWindow, -1, 0);
+                    int moved_result = RemoveDropTarget(mainWindow, -1, 0);
 
                     // ドラッグ画像を取り除く
                     mainWindow.canvasUI.Children.Remove(el);
@@ -2429,6 +2487,15 @@ namespace WPF_Successor_001_to_Vahren
                         {
                             break;
                         }
+                    }
+
+                    // 全部隊を移動できなかった場合は、何部隊が移動したかを通知する
+                    if (moved_result > 0)
+                    {
+                        var dialog = new Win020_Dialog();
+                        dialog.SetText(moved_result.ToString() + "部隊を移動しました。");
+                        dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                        dialog.ShowDialog();
                     }
                 }
             }

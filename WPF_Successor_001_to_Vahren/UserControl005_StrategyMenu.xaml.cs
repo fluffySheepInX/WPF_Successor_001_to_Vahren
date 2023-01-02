@@ -174,6 +174,8 @@ namespace WPF_Successor_001_to_Vahren
             int total_gain = 0;
             int unit_count = 0;
             int total_cost = 0, total_finance = 0;
+            int talent_count = 0;
+            int total_level = 0;
             string powerNameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
             var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
@@ -184,6 +186,7 @@ namespace WPF_Successor_001_to_Vahren
                     unit_count += itemTroop.ListClassUnit.Count;
                     foreach (var itemUnit in itemTroop.ListClassUnit)
                     {
+                        // 維持費と財政値
                         if (itemUnit.Cost > 0)
                         {
                             total_cost += itemUnit.Cost;
@@ -196,6 +199,13 @@ namespace WPF_Successor_001_to_Vahren
                         if (itemUnit.Finance > 0)
                         {
                             total_finance += itemUnit.Finance;
+                        }
+
+                        // 人材のレベルを合計する
+                        if (itemUnit.Talent == "on")
+                        {
+                            total_level += itemUnit.Level;
+                            talent_count++;
                         }
                     }
                 }
@@ -218,12 +228,22 @@ namespace WPF_Successor_001_to_Vahren
                 this.txtTotalFinance.Text = total_finance.ToString();
             }
             //訓練限界
+            if (talent_count > 0)
             {
-                this.txtTrainingAverage.Text = "?";
+                // 勢力の訓練限界値の人材平均レベルパーセンテージが設定されてる場合は、平均値に掛けること。
+                // 今はまだ設定が実装されてないので、平均値のままにしておく。
+                int average_level = total_level / talent_count;
+                this.txtTrainingAverage.Text = average_level.ToString();
+            }
+            else
+            {
+                this.txtTrainingAverage.Text = "0";
             }
             //訓練上昇
             {
-                this.txtTrainingUp.Text = "?";
+                // 勢力の訓練上昇値（１ターンの訓練でレベルアップする数量）が設定されてる場合は、標準値と違う。
+                // 今はまだ設定が実装されてないので、標準値のままにしておく。
+                this.txtTrainingUp.Text = "2";
             }
             //兵レベル
             {
@@ -308,6 +328,91 @@ namespace WPF_Successor_001_to_Vahren
             // AI呼び出し
 
             // AI呼び出し後に下を行う
+
+            // ターン開始時に全ての勢力を同時に訓練する方がいいかも？
+            // ヴァーレントゥーガは勢力ごとの手順が終わる際に訓練上昇するので、
+            // 後手が訓練前に攻め込む際に、先手は訓練が終わってるから、先手が有利になる。
+            foreach (var itemPower in mainWindow.ClassGameStatus.ListPower)
+            {
+                // まずは勢力の人材の平均レベルを計算する
+                int total_level = 0, average_level = 0;
+                int talent_count = 0;
+                string powerNameTag = itemPower.NameTag;
+                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+                foreach (var itemSpot in listSpot)
+                {
+                    // その領地の部隊
+                    foreach (var itemTroop in itemSpot.UnitGroup)
+                    {
+                        // その部隊のユニット
+                        foreach (var itemUnit in itemTroop.ListClassUnit)
+                        {
+                            // 人材のレベルを合計する
+                            if (itemUnit.Talent == "on")
+                            {
+                                talent_count++;
+                                total_level += itemUnit.Level;
+                            }
+                        }
+                    }
+                }
+                if (talent_count > 0)
+                {
+                    average_level = total_level / talent_count;
+                }
+
+                // 行動済みでない一般兵のレベルを上昇させる
+                foreach (var itemSpot in listSpot)
+                {
+                    // その領地の部隊
+                    foreach (var itemTroop in itemSpot.UnitGroup)
+                    {
+                        // リーダースキルで上昇量が多いことを考慮して、隊長のスキルを調べる？
+                        // 今はまだ訓練スキルが無いので、そのままにする。
+
+                        // その部隊のユニット
+                        foreach (var itemUnit in itemTroop.ListClassUnit)
+                        {
+                            if (itemUnit.IsDone == false)
+                            {
+                                // 未行動の一般兵で、レベルが低いなら
+                                if ((itemUnit.Talent != "on") && (itemUnit.Level < average_level))
+                                {
+                                    itemUnit.Level += 2; // 標準で 2レベル上昇させる
+                                }
+                            }
+                            else
+                            {
+                                itemUnit.IsDone = false; // 未行動に戻す
+                            }
+                        }
+                    }
+                }
+            }
+
+            /*
+            訓練でレベルを上昇させる時に未行動にすればいいかも？
+
+            // ターン開始時のイベント前に残存勢力の全てのユニットを未行動に戻す
+            // 中立領地を除外するのに、勢力が設定されてない領地を抜き出せばいい？
+            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag != string.Empty);
+            foreach (var itemSpot in listSpot)
+            {
+                // その領地の部隊
+                foreach (var itemTroop in itemSpot.UnitGroup)
+                {
+                    // その部隊のユニット
+                    foreach (var itemUnit in itemTroop.ListClassUnit)
+                    {
+                        if (itemUnit.IsDone)
+                        {
+                            itemUnit.IsDone = false;
+                        }
+                    }
+                }
+            }
+            */
+
             //ターン開始時処理
             mainWindow.ExecuteEvent();
             this.Visibility = Visibility.Visible;

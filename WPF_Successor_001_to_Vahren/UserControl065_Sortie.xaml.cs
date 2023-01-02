@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -696,39 +697,159 @@ namespace WPF_Successor_001_to_Vahren
 
             // 出撃先は Name から取得する
             string spotNameTag = this.Name.Substring(StringName.windowSortie.Length);
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
-            if (classSpot == null)
+            var targetSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            if (targetSpot == null)
+            {
+                return;
+            }
+
+            // 隣接領地は Tag から取得する
+            List<ClassSpot>? listSpot = (List<ClassSpot>)this.Tag;
+            if (listSpot == null)
             {
                 return;
             }
 
             // 確認メッセージを表示する
             var dialog = new Win025_Select();
-            dialog.SetText(classSpot.Name + "に攻め込みます。\nよろしいですか？");
+            dialog.SetText(targetSpot.Name + "に攻め込みます。\nよろしいですか？");
             bool? result = dialog.ShowDialog();
             if (result == false)
             {
                 return;
             }
 
-            // 空の領地なら戦闘無しに占領する
-            if (classSpot.UnitGroup.Count == 0)
+            // 開いてる出撃選択用領地ウィンドウを全て閉じる
+            for (int i = mainWindow.canvasUI.Children.Count - 1; i >= 0; i += -1)
             {
-            
-            
+                UIElement Child = mainWindow.canvasUI.Children[i];
+                // 出撃選択用領地ウィンドウを閉じる
+                if (Child is UserControl012_SpotSortie)
+                {
+                    var itemWindow = (UserControl012_SpotSortie)Child;
+                    if (itemWindow.Name.StartsWith(StringName.windowSpotSortie))
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                    }
+                }
+                // ユニット情報ウィンドウを閉じる
+                else if (Child is UserControl015_Unit)
+                {
+                    var itemWindow = (UserControl015_Unit)Child;
+                    if (itemWindow.Name.StartsWith(StringName.windowUnit))
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                    }
+                }
+            }
+
+            // ワールドマップ上での強調を解除する
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap != null)
+            {
+                worldMap.RemoveSpotMark(spotNameTag);
+                foreach (var itemSpot in listSpot)
+                {
+                    worldMap.RemoveSpotMark(itemSpot.NameTag);
+                }
+            }
+
+            // 出撃ウィンドウを閉じる
+            mainWindow.canvasUI.Children.Remove(this);
+
+            // 出撃選択を解除して、行動済みにする
+            foreach (var itemTroop in mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+            {
+                itemTroop.FlagDisplay = true;
+                foreach (var itemUnit in itemTroop.ListClassUnit)
+                {
+                    itemUnit.IsDone = true;
+                }
+            }
+
+            // 空の領地なら戦闘無しに占領する
+            if (targetSpot.UnitGroup.Count == 0)
+            {
                 // メッセージと同時に占領エフェクトを表示する？待ち時間を調節すればいい。
                 var dialog2 = new Win020_Dialog();
                 dialog2.SetText("戦場の領地に守備兵がいないので戦闘を省略します。");
                 dialog2.SetTime(1.2); // 待ち時間を1.2秒に短縮する
                 dialog2.ShowDialog();
-            
-            
-                return;
+
+                // ワールドマップ領地の所属勢力を変更する
+                if (worldMap != null)
+                {
+                    worldMap.ChangeSpotPower(spotNameTag, listSpot[0].PowerNameTag);
+                }
+
+                // 出撃先の領地は空なので、守備隊をどうするかは考慮しなくていい。
+                // 出撃先に入る数だけ、部隊を移動させる
+                int spot_capacity = targetSpot.Capacity;
+                foreach (var itemTroop in mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                {
+                    if (spot_capacity > 0)
+                    {
+                        // 出撃元から取り除く
+                        var srcSpot = itemTroop.Spot;
+                        if (srcSpot != null)
+                        {
+                            srcSpot.UnitGroup.Remove(itemTroop);
+                        }
+
+                        // 出撃先に追加する
+                        targetSpot.UnitGroup.Add(itemTroop);
+                        itemTroop.Spot = targetSpot;
+
+                        // 空きを減らす
+                        spot_capacity--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
+
+                // 勢力メニューを更新する
+                if (mainWindow.ClassGameStatus.WindowStrategyMenu != null)
+                {
+                    mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+                }
+
             }
+            // 守備隊が存在する場合は、戦闘になる
+            else
+            {
+                //MessageBox.Show(targetSpot.Name + "には部隊が存在します");
 
-            MessageBox.Show(classSpot.Name + "には部隊が存在します");
+                var extractMap = mainWindow
+                                    .ClassGameStatus
+                                    .ListClassMapBattle
+                                    .Where(x => x.TagName == targetSpot.Map)
+                                    .FirstOrDefault();
+                if (extractMap != null)
+                {
+                    mainWindow.ClassGameStatus.ClassBattle.ClassMapBattle = extractMap;
 
+                    ClassStaticBattle.AddBuilding(mainWindow.ClassGameStatus);
 
+                }
+
+                // 防衛ユニット設定
+                foreach (var itemTroop in targetSpot.UnitGroup)
+                {
+                    mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Add(itemTroop);
+                }
+
+                mainWindow.FadeOut = true;
+
+                mainWindow.delegateBattleMap = mainWindow.SetBattleMap;
+
+                mainWindow.FadeIn = true;
+            }
         }
 
         // 出撃ボタンにカーソルを乗せた時

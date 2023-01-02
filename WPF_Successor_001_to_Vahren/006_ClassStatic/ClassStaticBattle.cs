@@ -1395,8 +1395,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     //部隊所属領地変更
                     {
-                        //出撃先領地
-                        var spots = Application.Current.Properties["selectSpots"];
+                        // 出撃先領地と防衛側勢力
+                        var spots = Application.Current.Properties["defensePowerAndCity"];
                         if (spots == null)
                         {
                             return;
@@ -1407,46 +1407,60 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             return;
                         }
+                        var targetSpot = convSpots.ClassSpot;
+                        var defensePower = convSpots.ClassPower;
 
-                        //出撃元領地
-                        var selectedItem = Application.Current.Properties["selectedItem"];
-                        if (selectedItem == null)
-                        {
-                            return;
-                        }
-
-                        var selectedItemClassSpot = selectedItem as ClassSpot;
-                        if (selectedItemClassSpot == null)
-                        {
-                            return;
-                        }
-
-                        //出撃先領地情報
-                        var targetSpot = classGameStatus.AllListSpot
-                                .Where(x => x.NameTag == convSpots.ClassSpot.NameTag)
-                                .First();
+                        // 出撃元領地は部隊ごとに異なるけど、勢力は同じなはず。（共同軍や傭兵はどうなる？）
+                        // とりあえず、先頭の部隊の所属を参照する
+                        string powerNameTag = classGameStatus.ClassBattle.SortieUnitGroup[0].Spot.PowerNameTag;
 
                         // ワールドマップ領地の所属勢力を変更する
                         var worldMap = classGameStatus.WorldMap;
                         if (worldMap != null)
                         {
-                            worldMap.ChangeSpotPower(convSpots.ClassSpot.NameTag, selectedItemClassSpot.PowerNameTag);
+                            worldMap.ChangeSpotPower(targetSpot.NameTag, powerNameTag);
                         }
 
-                        ////unitの所属情報を書き換え
-                        //防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する
-                        targetSpot.UnitGroup.Clear();
-                        foreach (var item in classGameStatus.AllListSpot.Where(x => x.NameTag == selectedItemClassSpot.NameTag))
+                        // 中立領地なら退却先が無いので一般兵は全て消える。
+                        if (defensePower.NameTag == string.Empty)
                         {
-                            foreach (var itemUnitGroup in item.UnitGroup)
+                            // 本来は人材かチェックして放浪させないといけない。
+                            targetSpot.UnitGroup.Clear();
+                        }
+                        // 勢力に所属してる場合がややこしい
+                        else
+                        {
+                            // 防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する。
+                            // 戦闘で生き残った一般兵と人材だけ。死亡した一般兵は消える。
+                            // とりあえず、全て消してるけど、後で修正すること！
+                            targetSpot.UnitGroup.Clear();
+                        }
+
+                        // 出撃先の領地を空にした後で、攻撃側の部隊を入れること！
+                        // 出撃先に入る数だけ、部隊を移動させる
+                        int spot_capacity = targetSpot.Capacity;
+                        foreach (var itemTroop in classGameStatus.ClassBattle.SortieUnitGroup)
+                        {
+                            if (spot_capacity > 0)
                             {
-                                itemUnitGroup.Spot = convSpots.ClassSpot;
-                                itemUnitGroup.FlagDisplay = true;
-                                //unit移動
-                                targetSpot.UnitGroup.Add(itemUnitGroup);
+                                // 出撃元から取り除く
+                                var srcSpot = itemTroop.Spot;
+                                if (srcSpot != null)
+                                {
+                                    srcSpot.UnitGroup.Remove(itemTroop);
+                                }
+
+                                // 出撃先に追加する
+                                targetSpot.UnitGroup.Add(itemTroop);
+                                itemTroop.Spot = targetSpot;
+
+                                // 空きを減らす
+                                spot_capacity--;
                             }
-                            //これでは出撃してないユニットも全部消えてしまうので、後で対応、対応したらこのコメント消す
-                            item.UnitGroup.Clear();
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
 

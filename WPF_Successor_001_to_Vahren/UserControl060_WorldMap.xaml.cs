@@ -1339,16 +1339,17 @@ namespace WPF_Successor_001_to_Vahren
             // 現在のマップ表示位置を記録しておく
             mainWindow.ClassGameStatus.Camera = new Point(this.Margin.Left, this.Margin.Top);
 
-/*
             // 出撃ウィンドウを表示する
             var windowSortie = new UserControl065_Sortie();
             windowSortie.Tag = classSpots; // 出撃可能な隣接領のリスト
             windowSortie.Name = StringName.windowSortie + classPowerAndCity.ClassSpot.NameTag; // 出撃先の識別名
             windowSortie.SetData();
             mainWindow.canvasUI.Children.Add(windowSortie);
-*/
 
+            // 戦闘後に防衛側の情報を参照できるよう記録しておく
+            Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
 
+/*
             Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
             Frame frame = new Frame();
             frame.Source = uri;
@@ -1357,7 +1358,7 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.canvasMain.Children.Add(frame);
             Application.Current.Properties["window"] = mainWindow;
             Application.Current.Properties["spots"] = classSpots;
-            Application.Current.Properties["selectSpots"] = classPowerAndCity;
+*/
 
         }
 
