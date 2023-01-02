@@ -356,7 +356,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var spots = Application.Current.Properties["selectSpots"];
+            var spots = Application.Current.Properties["defensePowerAndCity"];
             if (spots == null)
             {
                 return;
@@ -434,9 +434,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Add(item);
             }
-
-            //出兵元情報を格納
-            Application.Current.Properties["selectedItem"] = selectedItem;
 
             mainWindow.FadeOut = true;
 

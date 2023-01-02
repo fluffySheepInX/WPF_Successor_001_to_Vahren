@@ -678,7 +678,138 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            var classPowerAndCity = (ClassPowerAndCity)this.Tag;
+            var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
 
+            // 領地の部隊が登録されてるか調べる
+            int found_count = 0;
+            int troop_count = listTroop.Count;
+            foreach (var itemTroop in listTroop)
+            {
+                // 出撃登録されてるなら
+                if (itemTroop.FlagDisplay == false)
+                {
+                    found_count++;
+                }
+
+                /*
+                //TODO 行動済
+                // 動作実験しにくいので行動済みでも出撃できるようにコメントアウトしてます。
+                // 最終的にはコメント解除して制限してください。
+
+                // 行動済みの部隊は除外する
+                foreach (var itemUnit in itemTroop.ListClassUnit)
+                {
+                    if (itemUnit.IsDone)
+                    {
+                        troop_count--;
+                        break;
+                    }
+                }
+
+                */
+            }
+            if (found_count >= troop_count)
+            {
+                // 既に全て出撃登録されてるなら終わる
+                return;
+            }
+
+            // 現在登録されてる出撃部隊数をチェックする
+            int war_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
+            int sortie_troop_count = mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Count;
+            if (sortie_troop_count >= war_capacity)
+            {
+                var dialog = new Win020_Dialog();
+                dialog.SetText("最大出撃数は" + war_capacity.ToString() + "です。");
+                dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog.ShowDialog();
+                return; // 最大数に達してたら終わる
+            }
+
+            // 部隊数が多い場合は、入るだけ登録する
+            int move_count = troop_count - found_count; // 新たに出撃登録する部隊数
+            int moved_result = move_count * -1;
+            if (move_count > war_capacity - sortie_troop_count)
+            {
+                move_count = war_capacity - sortie_troop_count;
+                moved_result = move_count;
+            }
+
+            // 部隊を出撃登録する
+            int troop_id = -1;
+            foreach (var itemTroop in listTroop)
+            {
+                troop_id++;
+                if (itemTroop.FlagDisplay == false)
+                {
+                    // 出撃登録済みなら次へ
+                    continue;
+                }
+
+                /*
+                //TODO 行動済
+                // 動作実験しにくいので行動済みでも出撃できるようにコメントアウトしてます。
+                // 最終的にはコメント解除して制限してください。
+
+                // 行動済みの部隊は除外する
+                bool IsDoneAny = false;
+                foreach (var itemUnit in itemTroop.ListClassUnit)
+                {
+                    if (itemUnit.IsDone)
+                    {
+                        IsDoneAny = true;
+                        break;
+                    }
+                }
+                if (IsDoneAny)
+                {
+                    continue;
+                }
+
+                */
+
+                // 部隊を出撃登録する
+                add_troop(mainWindow, listTroop, troop_id);
+
+                // 部隊を強調する枠を付ける
+                int member_count = itemTroop.ListClassUnit.Count;
+                Border border = new Border();
+                border.Name = "SortieSelect" + troop_id.ToString();
+                border.BorderThickness = new Thickness(sortie_select_width);
+                border.BorderBrush = Brushes.Aqua;
+                border.Width = tile_width * member_count;
+                border.Height = tile_width + sortie_select_width; // ユニット画像の所まで
+                this.canvasSpotUnit.Children.Add(border);
+                Canvas.SetLeft(border, header_width);
+                Canvas.SetTop(border, tile_height * troop_id);
+
+                // 最大数まで登録したら終わる
+                move_count--;
+                if (move_count <= 0)
+                {
+                    break;
+                }
+            }
+
+            // 出撃ウィンドウを更新する
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl065_Sortie>())
+            {
+                if (itemWindow.Name.StartsWith(StringName.windowSortie))
+                {
+                    itemWindow.UpdateSortieUnit(mainWindow);
+                    break;
+                }
+            }
+
+            // 全部隊を出撃登録できなかった場合は、何部隊が出撃するかを通知する
+            if (moved_result > 0)
+            {
+                var dialog = new Win020_Dialog();
+                dialog.SetText(moved_result.ToString() + "部隊だけ出撃しました。");
+                dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog.ShowDialog();
+            }
         }
 
         // 全てキャンセルする
@@ -691,7 +822,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 領地の部隊が登録されてるか調べる
-            int found_number = 0;
+            int found_count = 0;
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             foreach (var itemTroop in listTroop)
@@ -702,11 +833,11 @@ namespace WPF_Successor_001_to_Vahren
                     // リストから取り除く
                     mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Remove(itemTroop);
                     itemTroop.FlagDisplay = true;
-                    found_number++;
+                    found_count++;
                 }
             }
 
-            if (found_number > 0)
+            if (found_count > 0)
             {
                 // 部隊の強調枠を全て取り除く
                 for (int i = this.canvasSpotUnit.Children.Count - 1; i >= 0; i += -1)
