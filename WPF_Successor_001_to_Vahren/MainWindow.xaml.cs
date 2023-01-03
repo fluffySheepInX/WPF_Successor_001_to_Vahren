@@ -45,8 +45,10 @@ namespace WPF_Successor_001_to_Vahren
     public partial class MainWindow : CommonWindow
     {
         #region Readonly
-        public readonly int startSpaceTop = 30;
-        public readonly int startSpaceLeft = 30;
+        // context構造体で指定できるようにすること（仕様はヴァーレントゥーガと同じ）
+        public readonly int title_menu_right = 200;
+        public readonly int title_menu_top = 50;
+        public readonly int title_menu_space = 50;
         #endregion
 
         #region Prop
@@ -218,9 +220,9 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void titleButton_click(Object sender, EventArgs e)
+        private void titleMenu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var target = (Button)sender;
+            var target = (Border)sender;
             int a = Convert.ToInt32(target.Tag);
             //MessageBox.Show(a.ToString());
             this.DifficultyLevel = a;
@@ -230,6 +232,56 @@ namespace WPF_Successor_001_to_Vahren
             this.delegateMainWindowContentRendered = SetWindowMainMenu;
 
             this.FadeIn = true;
+        }
+        private void titleMenu_MouseEnter(object sender, MouseEventArgs e)
+        {
+            // ボタンをハイライトする
+            var target = (Border)sender;
+            int a = Convert.ToInt32(target.Tag);
+
+            // ボタンの強調枠の透明度を変える
+            var borderButton = (Border)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, "TitleMenuBorder" + a.ToString());
+            if (borderButton != null)
+            {
+                borderButton.Opacity = 0.33; // 明るくなる程度をここで調節する
+            }
+
+            // ボタンの画像を少し上にあげる
+            var gridButton = (Grid)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, "TitleMenuGrid" + a.ToString());
+            if (gridButton != null)
+            {
+                var animeMargin = new ThicknessAnimation();
+                animeMargin.From = new Thickness()
+                {
+                    Left = target.Margin.Left,
+                    Top = target.Margin.Top
+                };
+                animeMargin.To = new Thickness()
+                {
+                    Left = target.Margin.Left,
+                    Top = target.Margin.Top - 7
+                };
+                animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.14));
+                animeMargin.AutoReverse = true;
+                gridButton.BeginAnimation(Grid.MarginProperty, animeMargin);
+            }
+
+            // マウスカーソルが離れた時のイベントを追加する
+            target.MouseLeave += titleMenu_MouseLeave;
+        }
+        private void titleMenu_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var target = (Border)sender;
+            int a = Convert.ToInt32(target.Tag);
+
+            // ボタンの強調枠を透明に戻す
+            var borderButton = (Border)LogicalTreeHelper.FindLogicalNode(this.canvasUIRightTop, "TitleMenuBorder" + a.ToString());
+            if (borderButton != null)
+            {
+                borderButton.Opacity = 0;
+            }
+
+            target.MouseLeave -= titleMenu_MouseLeave;
         }
 
         /// <summary>
@@ -1844,32 +1896,80 @@ namespace WPF_Successor_001_to_Vahren
             // Display Background
             this.canvasMain.Background = GetTitleImage(targetNumber);
 
+            // タイトル画面のメニューボタンの座標位置です。
+            int marginTop, marginLeft;
+            if ((title_menu_right >= -100) && (title_menu_right <= -1))
+            {
+                // 負の値（-1～-100）だと右端からの比率位置になります。（-50だと50％で画面中央になる）
+                marginLeft = this.CanvasMainWidth * (100 + title_menu_right) / 100;
+            }
+            else
+            {
+                // 正の値だと右端からの位置になります。（200だと右端から200ドット左になる）
+                marginLeft = this.CanvasMainWidth - this.title_menu_right;
+            }
+            if ((title_menu_top >= -100) && (title_menu_top <= -1))
+            {
+                // 負の値（-1～-100）だと上端からの比率位置になります。（-70だと70％で画面中央下になる）
+                marginTop = this.CanvasMainHeight * title_menu_top / -100;
+            }
+            else
+            {
+                // 正の値だと上端から位置になります。（50だと上端から50ドット下になる）
+                marginTop = this.title_menu_top;
+            }
+
             // Display Button
             var displayButton = GetPathTitleButtonImage(targetNumber);
             foreach (var item in displayButton.Select((value, index) => (value, index)))
             {
                 {
-                    Grid grid = new Grid();
+                    // ボタンの画像と強調枠を独立して配置する
+                    // 入力に影響しないよう、HitTestを無効にしておく
                     BitmapImage bitimg1 = new BitmapImage(new Uri(item.value));
-                    Image img = new Image();
-                    img.Stretch = Stretch.Fill;
-                    img.Source = bitimg1;
-                    grid.Children.Add(img);
-
-                    Button button = new Button();
-                    button.Width = 160;
-                    button.Height = 40;
-                    button.Tag = item.index;
-                    button.Click += titleButton_click;
-                    button.Content = grid;
-
-                    button.Margin = new Thickness()
+                    Image imgButton = new Image();
+                    imgButton.Source = bitimg1;
+                    imgButton.Width = bitimg1.PixelWidth;
+                    imgButton.Height = bitimg1.PixelHeight;
+                    // ボタン画像が四角形じゃない場合のために、マスク画像を用意しておく
+                    ImageBrush brushButton = new ImageBrush();
+                    brushButton.ImageSource = bitimg1;
+                    // 強調枠の背景を白色にして重ねることで、ハイライトにする
+                    Border borderButton = new Border();
+                    borderButton.Name = "TitleMenuBorder" + item.index.ToString();
+                    borderButton.Width = imgButton.Width;
+                    borderButton.Height = imgButton.Height;
+                    borderButton.Background = Brushes.White;
+                    borderButton.Opacity = 0;
+                    borderButton.OpacityMask = brushButton;
+                    // グリッドで二つ同時に動かせるようにする
+                    Grid gridButton = new Grid();
+                    gridButton.Name = "TitleMenuGrid" + item.index.ToString();
+                    gridButton.IsHitTestVisible = false;
+                    gridButton.Children.Add(imgButton);
+                    gridButton.Children.Add(borderButton);
+                    gridButton.Margin = new Thickness()
                     {
-                        Top = (50 * item.index) + this.startSpaceTop,
-                        Left = this.CanvasMainWidth - button.Width - startSpaceLeft,
+                        Top = (this.title_menu_space * item.index) + marginTop,
+                        Left = marginLeft
                     };
+                    this.canvasUIRightTop.Children.Add(gridButton);
 
-                    this.canvasUIRightTop.Children.Add(button);
+                    // マウスボタンを押した時に反応するので、Button ではなく透明な Border コントロールにする
+                    Border borderMenu = new Border();
+                    borderMenu.Width = imgButton.Width;
+                    borderMenu.Height = imgButton.Height;
+                    borderMenu.Tag = item.index;
+                    // マウスカーソルがボタンの上に来ると強調する
+                    borderMenu.Background = Brushes.Transparent;
+                    borderMenu.MouseEnter += titleMenu_MouseEnter;
+                    borderMenu.MouseLeftButtonDown += titleMenu_MouseLeftButtonDown;
+                    borderMenu.Margin = new Thickness()
+                    {
+                        Top = (this.title_menu_space * item.index) + marginTop,
+                        Left = marginLeft
+                    };
+                    this.canvasUIRightTop.Children.Add(borderMenu);
                 }
             }
             // Play BGM
