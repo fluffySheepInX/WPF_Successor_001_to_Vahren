@@ -309,8 +309,9 @@ namespace WPF_Successor_001_to_Vahren
                 // 選択肢が無くてもエラーにしない
                 Button btnItem = new Button();
                 btnItem.Content = "選択肢を設定してください";
-                btnItem.Height = button_height;
                 btnItem.FontSize = 20;
+                btnItem.Height = button_height;
+                btnItem.Width = (btnItem.FontSize) * 12 + 30 + 4;
                 btnItem.Focusable = false;
                 btnItem.Tag = 0;
                 btnItem.Click += btnItem_Click;
@@ -325,20 +326,13 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // ボタンの背景
-            ImageBrush? myImageBrush = null;
+            // ボタンの幅を文字数によって変える
+            int max_length = 1;
+            foreach (var strLine in ChoiceList)
             {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
+                if (max_length < strLine.Length)
                 {
-                    // 画像が存在する時だけ、ボタンの背景にする
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
+                    max_length = strLine.Length;
                 }
             }
 
@@ -348,21 +342,18 @@ namespace WPF_Successor_001_to_Vahren
             {
                 Button btnItem = new Button();
                 btnItem.Content = ChoiceList[i];
-                btnItem.Height = button_height;
-                btnItem.Margin = new Thickness(10,10,10,10);
-                btnItem.Padding = new Thickness(15,0,15,0);
                 btnItem.FontSize = 20;
-                btnItem.BorderThickness = new Thickness(2,2,2,2);
-                if (myImageBrush != null)
-                {
-                    btnItem.Background = myImageBrush;
-                    btnItem.Foreground = Brushes.White;
-                    btnItem.BorderBrush = Brushes.Silver;
-                }
+                btnItem.Height = button_height;
+                // 文字列の左右に 15 pixel ずつ隙間を空ける。枠が 2 pixel ずつ。
+                btnItem.Width = (btnItem.FontSize) * max_length + 30 + 4;
+                btnItem.Margin = new Thickness(10,10,10,10);
                 btnItem.Focusable = false;
                 btnItem.Tag = i;
                 btnItem.Click += btnItem_Click;
                 this.panelList.Children.Add(btnItem);
+
+                // ボタンの背景
+                mainWindow.SetButtonImage(btnItem, "wnd5.png");
             }
 
             // 一度に表示するのは 6個まで

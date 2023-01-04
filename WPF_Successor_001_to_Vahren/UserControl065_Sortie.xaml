@@ -41,8 +41,7 @@
 
             <Button Name="btnClose" Width="35" Height="35" Canvas.Left="385" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-            <Button Name="btnSortie" Canvas.Left="10" Canvas.Top="40" Width="80" Height="35" FontSize="20" Content="出撃"
-                    BorderThickness="2" Focusable="False"
+            <Button Name="btnSortie" Canvas.Left="10" Canvas.Top="40" Width="80" Height="35" FontSize="20" Focusable="False" Content="出撃"
                     Click="btnSortie_Click"
                     PreviewMouseLeftButtonDown="Raise_ZOrder"
                     MouseRightButtonDown="Disable_MouseEvent"

@@ -64,24 +64,8 @@ namespace WPF_Successor_001_to_Vahren
             // ボタンの背景
             if (_isControl)
             {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
-                {
-                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    ImageBrush myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
-                    this.btnSelectAll.Background = myImageBrush;
-                    this.btnSelectAll.Foreground = Brushes.White;
-                    this.btnSelectAll.BorderBrush = Brushes.Silver;
-                    this.btnCancelAll.Background = myImageBrush;
-                    this.btnCancelAll.Foreground = Brushes.White;
-                    this.btnCancelAll.BorderBrush = Brushes.Silver;
-                }
+                mainWindow.SetButtonImage(this.btnSelectAll, "wnd5.png");
+                mainWindow.SetButtonImage(this.btnCancelAll, "wnd5.png");
             }
 
             // ウインドウ枠

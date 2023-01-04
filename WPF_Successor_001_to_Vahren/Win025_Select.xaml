@@ -55,9 +55,9 @@
                     Text="ダイアログの文章&#10;改行もできる"/>
             <StackPanel Grid.Row="1" Margin="0,5,0,10" Height="35" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Name="btnOK" Margin="10,0" Width="120" FontSize="20" Content="決定"
-                        BorderThickness="2" Focusable="False" Click="btnOK_Click" />
+                        Focusable="False" Click="btnOK_Click" />
                 <Button Name="btnCancel" Margin="10,0" Width="120" FontSize="20" Content="取消"
-                        BorderThickness="2" Focusable="False" Click="btnCancel_Click" />
+                        Focusable="False" Click="btnCancel_Click" />
             </StackPanel>
         </Grid>
     </Grid>

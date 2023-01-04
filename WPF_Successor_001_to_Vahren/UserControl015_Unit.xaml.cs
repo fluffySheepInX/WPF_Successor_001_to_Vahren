@@ -56,27 +56,9 @@ namespace WPF_Successor_001_to_Vahren
             // ボタンの背景
             if (_isControl)
             {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
-                {
-                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    ImageBrush myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
-                    this.btnDismiss.Background = myImageBrush;
-                    this.btnDismiss.Foreground = Brushes.White;
-                    this.btnDismiss.BorderBrush = Brushes.Silver;
-                    this.btnMercenary.Background = myImageBrush;
-                    this.btnMercenary.Foreground = Brushes.White;
-                    this.btnMercenary.BorderBrush = Brushes.Silver;
-                    this.btnItem.Background = myImageBrush;
-                    this.btnItem.Foreground = Brushes.White;
-                    this.btnItem.BorderBrush = Brushes.Silver;
-                }
+                mainWindow.SetButtonImage(this.btnDismiss, "wnd5.png");
+                mainWindow.SetButtonImage(this.btnMercenary, "wnd5.png");
+                mainWindow.SetButtonImage(this.btnItem, "wnd5.png");
             }
 
             // ウインドウ枠
@@ -677,8 +659,8 @@ namespace WPF_Successor_001_to_Vahren
                     };
                     itemWindow.DisplayMercenary(mainWindow);
 
-                    // 雇用ウインドウをこのウインドウよりも前面に移動させる
-                    Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) + 1);
+                    // 雇用ウインドウをこのウインドウと同じ順位にする
+                    Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this));
 
                     isFound = true;
                     break;
@@ -687,27 +669,30 @@ namespace WPF_Successor_001_to_Vahren
             if (isFound == false)
             {
                 // 新規に作成する
-                var windowMercenary = new UserControl020_Mercenary();
-                windowMercenary.Tag = classCityAndUnit;
-                windowMercenary.Name = this.Name + "Mercenary";
+                var itemWindow = new UserControl020_Mercenary();
+                itemWindow.Tag = classCityAndUnit;
+                itemWindow.Name = this.Name + "Mercenary";
                 if (this.Margin.Left + this.ActualWidth / 2 > mainWindow.CanvasMainWidth / 2)
                 {
                     // 画面の右側なら、左横に表示する
-                    offsetLeft = this.Margin.Left - windowMercenary.MinWidth;
+                    offsetLeft = this.Margin.Left - itemWindow.MinWidth;
                 }
-                windowMercenary.Margin = new Thickness()
+                itemWindow.Margin = new Thickness()
                 {
                     Left = offsetLeft,
                     Top = this.Margin.Top
                 };
-                windowMercenary.SetData();
-                mainWindow.canvasUI.Children.Add(windowMercenary);
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+
+                // 雇用ウインドウをこのウインドウの後面にする
+                Canvas.SetZIndex(itemWindow, Canvas.GetZIndex(this) - 1);
 
                 // 親ウインドウから出てくるように見せる
                 double offsetFrom = this.Margin.Left;
                 if (offsetLeft > offsetFrom)
                 {
-                    offsetFrom = offsetLeft - windowMercenary.MinWidth;
+                    offsetFrom = offsetLeft - itemWindow.MinWidth;
                 }
                 var animeMargin = new ThicknessAnimation();
                 animeMargin.From = new Thickness()
@@ -716,11 +701,11 @@ namespace WPF_Successor_001_to_Vahren
                     Top = this.Margin.Top
                 };
                 animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
-                windowMercenary.BeginAnimation(Grid.MarginProperty, animeMargin);
+                itemWindow.BeginAnimation(Grid.MarginProperty, animeMargin);
                 var animeOpacity = new DoubleAnimation();
                 animeOpacity.From = 0.1;
                 animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
-                windowMercenary.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+                itemWindow.BeginAnimation(Grid.OpacityProperty, animeOpacity);
             }
         }
 

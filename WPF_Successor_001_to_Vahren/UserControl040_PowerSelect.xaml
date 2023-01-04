@@ -40,28 +40,26 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                <Button x:Name="btnWatch" Width="110" Height="35" Margin="10,0,0,0" FontSize="20" Content="観戦する"
-                        BorderThickness="2" Focusable="False" />
-                <Button x:Name="btnTalent" Width="205" Height="35" Margin="15,0,0,0" FontSize="20" Content="中立人材でプレイする"
-                        BorderThickness="2" Focusable="False" />
+                <Button x:Name="btnWatch" Width="110" Height="35" Margin="10,0,0,0" FontSize="20" Focusable="False" Content="観戦する" />
+                <Button x:Name="btnTalent" Width="205" Height="35" Margin="15,0,0,0" FontSize="20" Focusable="False" Content="中立人材でプレイする" />
             </StackPanel>
             <ScrollViewer Grid.Row="1" Name="scrollList" Height="100" Focusable="False"
                     VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
                 <StackPanel Name="panelList">
 
 <!--
-                    <Button Height="50" HorizontalContentAlignment="Left" Background="Transparent" BorderBrush="#c8c8ff" >
+                    <Border Height="50" Background="Transparent" BorderThickness="1" BorderBrush="#c8c8ff" >
                         <StackPanel Orientation="Horizontal">
                             <Image HorizontalAlignment="Left" Height="32" Width="32" Margin="4,0,0,0" Source="./001_Warehouse/001_DefaultGame/030_FlagImage/flag1.png" />
-                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" Text="勢力の名前１" />
+                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" VerticalAlignment="Center" Text="勢力の名前１" />
                         </StackPanel>
-                    </Button>
-                    <Button Height="50" HorizontalContentAlignment="Left" Background="Transparent" BorderBrush="#c8c8ff" >
+                    </Border>
+                    <Border Height="50" Background="Transparent" BorderThickness="1" BorderBrush="#c8c8ff" >
                         <StackPanel Orientation="Horizontal">
                             <Image HorizontalAlignment="Left" Height="32" Width="32" Margin="4,0,0,0" Source="./001_Warehouse/001_DefaultGame/030_FlagImage/flag2.png" />
-                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" Text="勢力の名前２" />
+                            <TextBlock Margin="10,0,0,0" FontSize="20" Foreground="White" VerticalAlignment="Center" Text="勢力の名前２" />
                         </StackPanel>
-                    </Button>
+                    </Border>
 -->
 
                 </StackPanel>

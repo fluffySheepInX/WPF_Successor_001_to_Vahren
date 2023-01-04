@@ -307,6 +307,14 @@ namespace WPF_Successor_001_to_Vahren
         // ターン終了ボタンをクリックした時
         private void btnTurnEnd_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new Win025_Select();
+            dialog.SetText("プレイヤーのターンを終了します。");
+            bool? result = dialog.ShowDialog();
+            if (result == false)
+            {
+                return;
+            }
+
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
