@@ -39,14 +39,6 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // 最前面に配置する
-            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
-            if ((listWindow != null) && (listWindow.Any()))
-            {
-                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                Canvas.SetZIndex(this, maxZ + 1);
-            }
-
             // ユニットの情報を表示する
             DisplayMercenary(mainWindow);
 
@@ -172,7 +164,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // ボタンの背景
-            ImageBrush? myImageBrush = null;
+            BitmapImage? myBackImage = null;
             {
                 List<string> strings = new List<string>();
                 strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
@@ -182,9 +174,7 @@ namespace WPF_Successor_001_to_Vahren
                 if (System.IO.File.Exists(path))
                 {
                     // 画像が存在する時だけ、ボタンの背景にする
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
+                    myBackImage = new BitmapImage(new Uri(path));
                 }
             }
 
@@ -256,16 +246,39 @@ namespace WPF_Successor_001_to_Vahren
                 Button btnUnit = new Button();
                 btnUnit.Name = "btnUnit" + item_count.ToString();
                 btnUnit.Tag = itemBaseUnit;
-                btnUnit.BorderThickness = new Thickness(2, 2, 2, 2);
-                if (myImageBrush != null)
-                {
-                    btnUnit.Background = myImageBrush;
-                    btnUnit.BorderBrush = Brushes.Silver;
-                }
                 btnUnit.Width = btn_width;
                 btnUnit.Height = btn_height;
                 btnUnit.Focusable = false;
-                btnUnit.Content = imgUnit;
+
+                if (myBackImage != null)
+                {
+                    // 背景画像をボタンに合わせて拡大縮小する
+                    Image imgBack = new Image();
+                    imgBack.Source = myBackImage;
+                    imgBack.Stretch = Stretch.Fill;
+
+                    Grid gridButton = new Grid();
+                    gridButton.Children.Add(imgBack);
+
+                    // 背景画像の上にユニット画像を重ねる
+                    gridButton.Children.Add(imgUnit);
+
+                    Border borderButton = new Border();
+                    borderButton.Margin = new Thickness(-2);
+                    borderButton.BorderThickness = new Thickness(2);
+                    borderButton.BorderBrush = Brushes.Transparent;
+                    // マウスカーソルがボタンの上に来ると強調する
+                    borderButton.Background = Brushes.Transparent;
+                    borderButton.MouseEnter += borderButtonImage_MouseEnter;
+                    gridButton.Children.Add(borderButton);
+
+                    btnUnit.Content = gridButton;
+                }
+                else
+                {
+                    // 背景画像が無い場合は普通のボタンで表示する
+                    btnUnit.Content = imgUnit;
+                }
                 btnUnit.Click += btnUnit_Click;
                 btnUnit.MouseRightButtonDown += btnUnit_MouseRightButtonDown;
                 btnUnit.MouseEnter += btnUnit_MouseEnter;
@@ -773,6 +786,24 @@ namespace WPF_Successor_001_to_Vahren
             // 勢力メニューを更新する
             mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
         }
+
+        // ボタンの背景画像を白っぽくする
+        private void borderButtonImage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += borderButtonImage_MouseLeave;
+        }
+        private void borderButtonImage_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            cast.Background = Brushes.Transparent;
+            // イベントを取り除く
+            cast.MouseLeave -= borderButtonImage_MouseLeave;
+        }
+
 
         // ボタンにカーソルを乗せた時
         private void btnUnit_MouseEnter(object sender, MouseEventArgs e)

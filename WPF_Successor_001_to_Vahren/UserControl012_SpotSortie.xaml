@@ -43,14 +43,12 @@
 
             <Button Name="btnClose" Width="35" Height="35" Canvas.Left="435" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-            <Button Name="btnSelectAll" Canvas.Left="10" Canvas.Top="55" Width="140" Height="35" FontSize="20" Content="全て出撃"
-                    BorderThickness="2" Focusable="False"
+            <Button Name="btnSelectAll" Canvas.Left="10" Canvas.Top="55" Width="140" Height="35" FontSize="20" Focusable="False" Content="全て出撃"
                     Click="btnSelectAll_Click"
                     PreviewMouseLeftButtonDown="Raise_ZOrder"
                     MouseRightButtonDown="Disable_MouseEvent"
                     MouseEnter="btnSelectAll_MouseEnter" />
-            <Button Name="btnCancelAll" Canvas.Left="300" Canvas.Top="55" Width="160" Height="35" FontSize="20" Content="全てキャンセル"
-                    BorderThickness="2" Focusable="False"
+            <Button Name="btnCancelAll" Canvas.Left="300" Canvas.Top="55" Width="160" Height="35" FontSize="20" Focusable="False" Content="全てキャンセル"
                     Click="btnCancelAll_Click"
                     PreviewMouseLeftButtonDown="Raise_ZOrder"
                     MouseRightButtonDown="Disable_MouseEvent"

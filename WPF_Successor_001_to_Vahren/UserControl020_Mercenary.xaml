@@ -59,7 +59,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
+                        <Button Grid.RowSpan="2" Height="54" Width="54">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene001.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="戦列歩兵M14式" />
@@ -75,7 +75,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
+                        <Button Grid.RowSpan="2" Height="54" Width="54">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene002.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="榴弾砲C11式" />
@@ -91,7 +91,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.RowSpan="2" Height="54" Width="54" BorderThickness="2">
+                        <Button Grid.RowSpan="2" Height="54" Width="54">
                             <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
                         </Button>
                         <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="フランチェスカ竜騎兵" />

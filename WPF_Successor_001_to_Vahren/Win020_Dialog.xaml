@@ -64,7 +64,7 @@
                     TextWrapping="Wrap" LineHeight="30" MaxWidth="500" Name="txtMain"
                     Text="ダイアログの文章&#10;改行もできる"/>
             <Button Grid.Row="1" Name="btnOK" Margin="10,5,10,10" Width="120" Height="35" FontSize="20" Content="確認"
-                    BorderThickness="2" Focusable="False" Click="btnOK_Click" />
+                    Focusable="False" Click="btnOK_Click" />
         </Grid>
     </Grid>
 </Window>

@@ -2502,6 +2502,122 @@ namespace WPF_Successor_001_to_Vahren
             return rtb;
         }
 
+        // ボタンの背景を画像にして、カーソルを乗せると色が変わるようにする
+        public void SetButtonImage(Button btnTarget, string strImageName)
+        {
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            strings.Add(strImageName);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 指定された画像が存在しない場合は終わる
+                return;
+            }
+
+            // 背景画像をボタンに合わせて拡大縮小する
+            BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+            Image imgBack = new Image();
+            imgBack.Source = bitimg1;
+            imgBack.Stretch = Stretch.Fill;
+
+            Grid gridButton = new Grid();
+            gridButton.Children.Add(imgBack);
+
+            // ボタンに文字列が設定されてる場合
+            if (btnTarget.Content is string)
+            {
+                TextBlock txtCaption = new TextBlock();
+                txtCaption.FontSize = btnTarget.FontSize;
+                txtCaption.Text = (string)btnTarget.Content;
+                txtCaption.Foreground = Brushes.White;
+                txtCaption.HorizontalAlignment = HorizontalAlignment.Center;
+                txtCaption.VerticalAlignment = VerticalAlignment.Center;
+                gridButton.Children.Add(txtCaption);
+            }
+
+            // ボタンの外枠と内枠は 1 pixel ずつにしておくこと（合計 2 pixel）
+            Border borderButton = new Border();
+            borderButton.Margin = new Thickness(-2);
+            borderButton.BorderThickness = new Thickness(2);
+            borderButton.BorderBrush = Brushes.Transparent;
+            // マウスカーソルがボタンの上に来ると強調する
+            borderButton.Background = Brushes.Transparent;
+            borderButton.MouseEnter += borderButtonImage_MouseEnter;
+            gridButton.Children.Add(borderButton);
+
+            btnTarget.Content = gridButton;
+        }
+        /*
+        // 枠を標準の青色に変わる奴にするかどうか。固定色を指定する場合はこちら。
+        // 他の通常ボタンとの兼ね合いで、ボタンと認識しやすいように標準枠を残した方がいいかも？
+        public void SetButtonImage(Button btnTarget, string strImageName)
+        {
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
+            strings.Add("006_WindowImage");
+            strings.Add(strImageName);
+            string path = System.IO.Path.Combine(strings.ToArray());
+            if (System.IO.File.Exists(path) == false)
+            {
+                // 指定された画像が存在しない場合は終わる
+                return;
+            }
+
+            // 背景画像をボタンに合わせて拡大縮小する
+            BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+            Image imgBack = new Image();
+            imgBack.Source = bitimg1;
+            imgBack.Stretch = Stretch.Fill;
+            imgBack.Margin = new Thickness(2);
+            Grid gridButton = new Grid();
+            gridButton.Children.Add(imgBack);
+
+            // ボタンに文字列が設定されてる場合
+            if (btnTarget.Content is string)
+            {
+                TextBlock txtCaption = new TextBlock();
+                txtCaption.FontSize = btnTarget.FontSize;
+                txtCaption.Text = (string)btnTarget.Content;
+                txtCaption.Foreground = Brushes.White;
+                txtCaption.HorizontalAlignment = HorizontalAlignment.Center;
+                txtCaption.VerticalAlignment = VerticalAlignment.Center;
+                gridButton.Children.Add(txtCaption);
+            }
+
+            // 枠の色を設定する
+            Border borderButton = new Border();
+            borderButton.BorderThickness = new Thickness(2);
+            borderButton.BorderBrush = Brushes.Silver;
+            // マウスカーソルがボタンの上に来ると強調する
+            borderButton.Background = Brushes.Transparent;
+            borderButton.MouseEnter += borderButtonImage_MouseEnter;
+            //borderButton.MouseLeftButtonDown += borderButtonImage_MouseLeftButtonDown;
+            gridButton.Children.Add(borderButton);
+            btnTarget.Content = gridButton;
+
+            // 元のボタンの外枠と内枠を無くす
+            btnTarget.BorderThickness = new Thickness(0);
+            btnTarget.Padding = new Thickness(0);
+        }
+        */
+        private void borderButtonImage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += borderButtonImage_MouseLeave;
+        }
+        private void borderButtonImage_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            cast.Background = Brushes.Transparent;
+            // イベントを取り除く
+            cast.MouseLeave -= borderButtonImage_MouseLeave;
+        }
+
         #region 各種構造体データ読み込みに必要なメソッド群
         /// <summary>
         /// 各種構造体データ読み込み

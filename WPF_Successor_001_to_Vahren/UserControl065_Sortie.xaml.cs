@@ -122,23 +122,7 @@ namespace WPF_Successor_001_to_Vahren
             this.txtNumber.Text = "0/" + war_capacity.ToString();
 
             // ボタンの背景
-            {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
-                {
-                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    ImageBrush myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
-                    this.btnSortie.Background = myImageBrush;
-                    this.btnSortie.Foreground = Brushes.White;
-                    this.btnSortie.BorderBrush = Brushes.Silver;
-                }
-            }
+            mainWindow.SetButtonImage(this.btnSortie, "wnd5.png");
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);

@@ -43,26 +43,8 @@ namespace WPF_Successor_001_to_Vahren
             DisplayPowerList(mainWindow);
 
             // ボタンの背景
-            {
-                List<string> strings = new List<string>();
-                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                strings.Add("006_WindowImage");
-                strings.Add("wnd5.png");
-                string path = System.IO.Path.Combine(strings.ToArray());
-                if (System.IO.File.Exists(path))
-                {
-                    // 画像が存在する時だけ、ボタンの枠と文字色を背景に合わせる
-                    BitmapImage theImage = new BitmapImage(new Uri(path));
-                    ImageBrush myImageBrush = new ImageBrush(theImage);
-                    myImageBrush.Stretch = Stretch.Fill;
-                    this.btnWatch.Background = myImageBrush;
-                    this.btnWatch.Foreground = Brushes.White;
-                    this.btnWatch.BorderBrush = Brushes.Silver;
-                    this.btnTalent.Background = myImageBrush;
-                    this.btnTalent.Foreground = Brushes.White;
-                    this.btnTalent.BorderBrush = Brushes.Silver;
-                }
-            }
+            mainWindow.SetButtonImage(this.btnWatch, "wnd5.png");
+            mainWindow.SetButtonImage(this.btnTalent, "wnd5.png");
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);
@@ -167,6 +149,7 @@ namespace WPF_Successor_001_to_Vahren
 
             foreach (var itemPower in mainWindow.ClassGameStatus.ListPower)
             {
+
                 StackPanel panelItem = new StackPanel();
                 panelItem.Orientation = Orientation.Horizontal;
 
@@ -187,19 +170,21 @@ namespace WPF_Successor_001_to_Vahren
                 txtName.Text = itemPower.Name;
                 txtName.Foreground = Brushes.White;
                 txtName.Margin = new Thickness { Left = 10 };
+                txtName.VerticalAlignment = VerticalAlignment.Center;
                 panelItem.Children.Add(txtName);
 
-                Button buttonItem = new Button();
-                buttonItem.Content = panelItem;
-                buttonItem.Height = item_height;
-                buttonItem.Tag = itemPower;
-                buttonItem.Background = Brushes.Transparent;
-                buttonItem.BorderBrush = mySolidColorBrush;
-                buttonItem.HorizontalContentAlignment = HorizontalAlignment.Left;
-                buttonItem.Focusable = false;
-                buttonItem.PreviewMouseLeftButtonDown += btnPowerSelect_MouseLeftButtonDown;
-                buttonItem.MouseEnter += btnPowerSelect_MouseEnter;
-                this.panelList.Children.Add(buttonItem);
+                // マウスボタンを押した時に反応するので、Button ではなく透明な Border コントロールにする
+                Border borderMenu = new Border();
+                borderMenu.Height = item_height;
+                borderMenu.Tag = itemPower;
+                borderMenu.Child = panelItem;
+                borderMenu.BorderThickness = new Thickness(1);
+                borderMenu.BorderBrush = new SolidColorBrush(Color.FromRgb(200, 200, 255)); // 微妙に白色じゃない
+                // マウスカーソルがボタンの上に来ると強調する
+                borderMenu.Background = Brushes.Transparent;
+                borderMenu.MouseEnter += btnPowerSelect_MouseEnter;
+                borderMenu.MouseLeftButtonDown += btnPowerSelect_MouseLeftButtonDown;
+                this.panelList.Children.Add(borderMenu);
                 item_count += 1;
             }
 
@@ -229,7 +214,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var cast = (Button)sender;
+            var cast = (Border)sender;
             if (cast.Tag is not ClassPower)
             {
                 return;
@@ -260,15 +245,6 @@ namespace WPF_Successor_001_to_Vahren
                 target_X = target_X / spot_count;
                 target_Y = target_Y / spot_count;
 
-                // 目標にする座標をウインドウ中央にする
-                /*
-                worldMap.Margin = new Thickness()
-                {
-                    Top = mainWindow.CanvasMainHeight / 2 - target_Y,
-                    Left = mainWindow.CanvasMainWidth / 2 - target_X
-                };
-                */
-
                 ClassVec classVec = new ClassVec();
                 // 現在の Margin
                 classVec.X = worldMap.Margin.Left;
@@ -279,6 +255,11 @@ namespace WPF_Successor_001_to_Vahren
                     mainWindow.CanvasMainWidth / 2 - target_X,
                     mainWindow.CanvasMainHeight / 2 - target_Y
                 );
+                // 既に目標に到達してるなら終わる
+                if ((classVec.Target.X == classVec.X) && (classVec.Target.Y == classVec.Y))
+                {
+                    return;
+                }
                 classVec.Speed = 20;
                 classVec.Set();
 
@@ -306,10 +287,14 @@ namespace WPF_Successor_001_to_Vahren
                         }));
                     });
                 }
-            }
 
-            // ルーティングを処理済みとしてマークする
-            e.Handled = true;
+                // 目標にする座標をウインドウ中央にする（移動時に微妙にずれても、最後にここで修正する）
+                worldMap.Margin = new Thickness()
+                {
+                    Top = mainWindow.CanvasMainHeight / 2 - target_Y,
+                    Left = mainWindow.CanvasMainWidth / 2 - target_X
+                };
+            }
         }
 
         // 勢力一覧ウィンドウのボタンにマウスを乗せた時
@@ -321,11 +306,13 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var cast = (Button)sender;
+            var cast = (Border)sender;
             if (cast.Tag is not ClassPower)
             {
                 return;
             }
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
 
             // マウスを離した時のイベントを追加する
             cast.MouseLeave += btnPowerSelect_MouseLeave;
@@ -349,11 +336,12 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var cast = (Button)sender;
+            var cast = (Border)sender;
             if (cast.Tag is not ClassPower)
             {
                 return;
             }
+            cast.Background = Brushes.Transparent;
 
             // イベントを取り除く
             cast.MouseLeave -= btnPowerSelect_MouseLeave;

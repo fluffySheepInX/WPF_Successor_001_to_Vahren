@@ -53,11 +53,11 @@
                 <StackPanel Name="panelList">
 <!--
                     <Button Name="btnItem0" Margin="10" Padding="15,0" Height="45" FontSize="20" Content="はい"
-                            BorderThickness="2" Focusable="False" Click="btnItem_Click" />
+                            Focusable="False" Click="btnItem_Click" />
                     <Button Name="btnItem1" Margin="10" Padding="15,0" Height="45" FontSize="20" Content="いいえ"
-                            BorderThickness="2" Focusable="False" Click="btnItem_Click" />
+                            Focusable="False" Click="btnItem_Click" />
                     <Button Name="btnItem2" Margin="10" Padding="15,0" Height="45" FontSize="20" Content="どちらでもない"
-                            BorderThickness="2" Focusable="False" Click="btnItem_Click" />
+                            Focusable="False" Click="btnItem_Click" />
 -->
                 </StackPanel>
             </ScrollViewer>
