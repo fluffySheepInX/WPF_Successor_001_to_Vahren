@@ -51,7 +51,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 出撃先は Name から取得する
             string spotNameTag = this.Name.Substring(StringName.windowSortie.Length);
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var classSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (classSpot == null)
             {
                 return;
@@ -363,7 +363,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 出撃先は Name から取得する
             string spotNameTag = this.Name.Substring(StringName.windowSortie.Length);
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var classSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (classSpot == null)
             {
                 return;
@@ -681,7 +681,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 出撃先は Name から取得する
             string spotNameTag = this.Name.Substring(StringName.windowSortie.Length);
-            var targetSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var targetSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (targetSpot == null)
             {
                 return;

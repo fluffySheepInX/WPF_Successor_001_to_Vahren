@@ -76,7 +76,7 @@ namespace WPF_Successor_001_to_Vahren
                 List<ClassSpot> spotList = new List<ClassSpot>();
                 foreach (var item in mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].DisplayListSpot)
                 {
-                    foreach (var item2 in mainWindow.ClassGameStatus.AllListSpot)
+                    foreach (var item2 in mainWindow.ClassGameStatus.NowListSpot)
                     {
                         if (item == item2.NameTag)
                         {
@@ -166,19 +166,19 @@ namespace WPF_Successor_001_to_Vahren
                     // その都市固有の情報を見る為に、勢力の持つスポットと、シナリオで登場するスポットを比較
                     string flag_path = string.Empty;
                     bool ch = false;
-                    for (int i = 0; i < mainWindow.ClassGameStatus.ListPower.Count; i++)
+                    for (int i = 0; i < mainWindow.ClassGameStatus.NowListPower.Count; i++)
                     {
-                        foreach (var item3 in mainWindow.ClassGameStatus.ListPower[i].ListMember)
+                        foreach (var item3 in mainWindow.ClassGameStatus.NowListPower[i].ListMember)
                         {
                             if (item3 == item.value.NameTag)
                             {
                                 // その都市固有の情報を見る為にも、勢力情報と都市情報を入れる
-                                var classPowerAndCity = new ClassPowerAndCity(mainWindow.ClassGameStatus.ListPower[i], item.value);
+                                var classPowerAndCity = new ClassPowerAndCity(mainWindow.ClassGameStatus.NowListPower[i], item.value);
                                 gridButton.Tag = classPowerAndCity;
                                 //ついでに、スポットの属する勢力名を設定
-                                item.value.PowerNameTag = mainWindow.ClassGameStatus.ListPower[i].NameTag;
+                                item.value.PowerNameTag = mainWindow.ClassGameStatus.NowListPower[i].NameTag;
                                 // 旗画像のパスを取得する
-                                flag_path = mainWindow.ClassGameStatus.ListPower[i].FlagPath;
+                                flag_path = mainWindow.ClassGameStatus.NowListPower[i].FlagPath;
                                 ch = true;
                                 break;
                             }
@@ -241,7 +241,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var classSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (classSpot == null)
             {
                 return;
@@ -308,7 +308,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 指定された勢力を探す
-            var newPower = mainWindow.ClassGameStatus.ListPower
+            var newPower = mainWindow.ClassGameStatus.NowListPower
                         .Where(x => x.NameTag == powerNameTag)
                         .FirstOrDefault();
             if (newPower == null)
@@ -357,7 +357,7 @@ namespace WPF_Successor_001_to_Vahren
             BitmapImage bitimg1 = new BitmapImage(new Uri(path));
             const int ring_size = 128;
 
-            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
                 // 領地が既に強調されてる場合はとばす
@@ -412,7 +412,7 @@ namespace WPF_Successor_001_to_Vahren
             animeRingSize.AutoReverse = true;
             animeRingSize.RepeatBehavior = RepeatBehavior.Forever;
 
-            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
                 // 領地が既に強調されてる場合はとばす
@@ -460,7 +460,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
                 var itemImage = (Image)LogicalTreeHelper.FindLogicalNode(this.canvasMap, "PowerMark" + itemSpot.NameTag);
@@ -500,7 +500,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var classSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (classSpot == null)
             {
                 return;
@@ -550,7 +550,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            var classSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            var classSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
             if (classSpot == null)
             {
                 return;
@@ -1305,7 +1305,7 @@ namespace WPF_Successor_001_to_Vahren
             List<ClassSpot> classSpots = new List<ClassSpot>();
             foreach (var item in NameRinsetuSpot)
             {
-                var ge = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
+                var ge = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == item).FirstOrDefault();
                 if (ge == null)
                 {
                     continue;

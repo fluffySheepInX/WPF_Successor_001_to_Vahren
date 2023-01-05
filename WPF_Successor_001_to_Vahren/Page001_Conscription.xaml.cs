@@ -148,7 +148,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             // 駐在部隊トップバー
             {
-                var count = mainWindow.ClassGameStatus.AllListSpot
+                var count = mainWindow.ClassGameStatus.NowListSpot
                     .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
                     .First()
                     .UnitGroup
@@ -164,7 +164,7 @@ namespace WPF_Successor_001_to_Vahren
                 StackPanel stackPanel = new StackPanel();
                 stackPanel.Orientation = Orientation.Vertical;
                 stackPanel.Name = StringName.stackPanelResidentVertical;
-                var tar = mainWindow.ClassGameStatus.AllListSpot
+                var tar = mainWindow.ClassGameStatus.NowListSpot
                     .Where(x => x.NameTag == targetPowerAndCity.ClassSpot.NameTag)
                     .First();
                 foreach (var item in tar.UnitGroup.Where(x => x.Spot.NameTag == targetPowerAndCity.ClassSpot.NameTag))

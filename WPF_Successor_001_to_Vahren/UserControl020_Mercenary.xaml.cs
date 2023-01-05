@@ -201,10 +201,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // 元にするクラスのデータを取得する
-                ClassUnit? itemBaseUnit = mainWindow.ClassGameStatus
-                    .ListUnit
-                    .Where(x => x.NameTag == itemNameTag)
-                    .FirstOrDefault();
+                ClassUnit? itemBaseUnit = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemNameTag).FirstOrDefault();
                 if (itemBaseUnit == null)
                 {
                     continue;
@@ -578,6 +575,7 @@ namespace WPF_Successor_001_to_Vahren
             newUnit.ID = mainWindow.ClassGameStatus.IDCount;
             newUnit.IsDone = true;
             mainWindow.ClassGameStatus.SetIDCount();
+            mainWindow.ClassGameStatus.NowListUnit.Add(newUnit); // 検索用
             if (targetTroop == null)
             {
                 // 新規に部隊を作って隊長にする
@@ -734,6 +732,7 @@ namespace WPF_Successor_001_to_Vahren
             newUnit.ID = mainWindow.ClassGameStatus.IDCount;
             newUnit.IsDone = true;
             mainWindow.ClassGameStatus.SetIDCount();
+            mainWindow.ClassGameStatus.NowListUnit.Add(newUnit); // 検索用
             if (targetTroop == null)
             {
                 // 新規に部隊を作って隊長にする
@@ -762,6 +761,7 @@ namespace WPF_Successor_001_to_Vahren
                 newUnit.ID = mainWindow.ClassGameStatus.IDCount;
                 newUnit.IsDone = true;
                 mainWindow.ClassGameStatus.SetIDCount();
+                mainWindow.ClassGameStatus.NowListUnit.Add(newUnit); // 検索用
 
                 // 部隊の末尾に追加する（新規部隊は既に作成済み）
                 targetTroop.ListClassUnit.Add(newUnit);

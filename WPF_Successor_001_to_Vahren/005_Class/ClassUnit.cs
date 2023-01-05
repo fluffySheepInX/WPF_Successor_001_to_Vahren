@@ -18,12 +18,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             ClassUnit cu = ShallowCopy();
             if (cu.Formation != null)
             {
-
                 var fo = new ClassFormation();
                 fo.Formation = cu.Formation.Formation;
                 fo.Id = cu.Formation.Id;
                 cu.Formation = fo;
             }
+            // 配列など参照型のデータを新規作成して元の値をコピーする
+            cu.SkillName = new List<string>(cu.SkillName);
+            cu.Skill = new List<ClassSkill>(cu.Skill);
             return cu;
         }
         #region Formation

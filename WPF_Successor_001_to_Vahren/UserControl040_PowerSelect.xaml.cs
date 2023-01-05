@@ -229,7 +229,7 @@ namespace WPF_Successor_001_to_Vahren
             double target_X = 0, target_Y = 0;
             int spot_count = 0;
             var classPower = (ClassPower)cast.Tag;
-            foreach (var item in classPower.ListInitMember)
+            foreach (var item in classPower.ListMember)
             {
                 var spot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item).FirstOrDefault();
                 if (spot != null)

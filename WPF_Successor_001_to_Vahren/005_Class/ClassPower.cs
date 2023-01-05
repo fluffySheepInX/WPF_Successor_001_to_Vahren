@@ -8,6 +8,20 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassPower
     {
+        public ClassPower ShallowCopy()
+        {
+            return (ClassPower)MemberwiseClone();
+        }
+        public ClassPower DeepCopy()
+        {
+            ClassPower cp = ShallowCopy();
+            // 配列など参照型のデータを新規作成して元の値をコピーする
+            cp.ListHome = new List<string>(cp.ListHome);
+            cp.ListMember = new List<string>(cp.ListMember);
+            cp.ListCommonConscription = new List<string>(cp.ListCommonConscription);
+            return cp;
+        }
+
         #region Index
         private int _index;
         public int Index
@@ -109,37 +123,16 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _text = value; }
         }
         #endregion
-        #region ListInitMember
-        /// <summary>
-        /// 開始時の領地。
-        /// </summary>
-        private List<string> _listInitMember = new List<string>();
-        public List<string> ListInitMember
-        {
-            get { return _listInitMember; }
-            set { _listInitMember = value; }
-        }
-        #endregion
         #region ListMember
         /// <summary>
-        /// 現在の領地。
+        /// ClassGameStatus.ListPowerでは開始時の領地。
+        /// ClassGameStatus.NowListPowerでは現在の領地。
         /// </summary>
         private List<string> _listMember = new List<string>();
         public List<string> ListMember
         {
             get { return _listMember; }
             set { _listMember = value; }
-        }
-        #endregion
-        #region ListNowMember
-        /// <summary>
-        /// 現在の領地。
-        /// </summary>
-        private List<string> listNowMember = new List<string>();
-        public List<string> ListNowMember
-        {
-            get { return listNowMember; }
-            set { listNowMember = value; }
         }
         #endregion
         #region Image

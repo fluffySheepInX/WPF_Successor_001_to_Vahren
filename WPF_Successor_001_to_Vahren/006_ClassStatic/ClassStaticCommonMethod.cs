@@ -971,7 +971,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.InitGain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.Gain = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //Castle
@@ -982,7 +982,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.InitCastle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.Castle = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //Capacity
@@ -993,7 +993,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(match_result);
                 if (first != null)
                 {
-                    classSpot.InitCapacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                    classSpot.Capacity = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
             //member
@@ -1607,7 +1607,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 {
                     throw new Exception();
                 }
-                classPower.ListInitMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
                 classPower.ListMember = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
             }
             {

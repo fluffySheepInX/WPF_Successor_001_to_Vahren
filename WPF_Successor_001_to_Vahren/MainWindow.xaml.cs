@@ -349,9 +349,6 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
-            // シナリオ開始時にデータを初期化する
-            InitializeGameData();
-
             this.FadeOut = true;
 
             this.ClassGameStatus.NowSituation = Situation.SelectGroup;
@@ -790,8 +787,7 @@ namespace WPF_Successor_001_to_Vahren
                     gridSelectionPower.VerticalAlignment = VerticalAlignment.Top;
                     gridSelectionPower.HorizontalAlignment = HorizontalAlignment.Left;
 
-                    //勢力選択画面なのでListInitMemberでOK
-                    foreach (var item in classPowerAndCity.ClassPower.ListInitMember)
+                    foreach (var item in classPowerAndCity.ClassPower.ListMember)
                     {
                         var ext = this.ClassGameStatus.AllListSpot.Where(x => x.NameTag == item);
                         foreach (var itemSpot in ext)
@@ -940,7 +936,7 @@ namespace WPF_Successor_001_to_Vahren
             this.ClassGameStatus.NowSituation = Situation.PlayerTurn;
             this.delegateNewGame = NewGameWithButtonClick;
             this.ClassGameStatus.SelectionPowerAndCity = ((ClassPowerAndCity)((Button)sender).Tag);
-            foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
+            foreach (var itemSpot in this.ClassGameStatus.NowListSpot)
             {
                 // 中立領地にモンスターをランダム配置する（初期メンバーが指定されてる場合は除外する）
                 if ((itemSpot.PowerNameTag == string.Empty) && (itemSpot.UnitGroup.Count() == 0))
@@ -960,6 +956,7 @@ namespace WPF_Successor_001_to_Vahren
                             var deep = info.DeepCopy();
                             deep.ID = this.ClassGameStatus.IDCount;
                             this.ClassGameStatus.SetIDCount();
+                            this.ClassGameStatus.NowListUnit.Add(deep); // 検索用
                             classUnit.Add(deep);
                         }
 
@@ -2270,24 +2267,30 @@ namespace WPF_Successor_001_to_Vahren
             //シナリオで設定されてる標準の駐留数
             int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
 
-            // 後から追加するかもしれないので、全ての領地を初期化する
-            foreach (var item in this.ClassGameStatus.AllListSpot)
+            // 元データからシナリオ用にデータをコピーする
+            // （ゲーム中に値を変更しても元データに影響しないようにする為です。）
+            this.ClassGameStatus.NowListSpot.Clear();
+            foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
             {
-                // とりあえず、初期値をそのまま使う
-                // 将来的には、シナリオによって初期値が違う場合も考慮すること
-                item.Gain = item.InitGain;
-                item.Castle = item.InitCastle;
-
+                var deep = itemSpot.DeepCopy();
                 // 領地の駐留数が指定されてなければ、シナリオの規定値を使う
-                if (item.InitCapacity < 1)
+                if (deep.Capacity <= 0)
                 {
-                    item.Capacity = default_capacity;
+                    deep.Capacity = default_capacity;
                 }
-                else
-                {
-                    item.Capacity = item.InitCapacity;
-                }
+                this.ClassGameStatus.NowListSpot.Add(deep);
             }
+
+            // ゲーム中に勢力の所有する領地が変わっても、初期領地（元データ）には影響しません。
+            this.ClassGameStatus.NowListPower.Clear();
+            foreach (var itemPower in this.ClassGameStatus.ListPower)
+            {
+                var deep = itemPower.DeepCopy();
+                this.ClassGameStatus.NowListPower.Add(deep);
+            }
+
+            // ユニット・データのコピーは領地に配置する際に行う
+            this.ClassGameStatus.NowListUnit.Clear();
 
         }
 
@@ -2380,6 +2383,9 @@ namespace WPF_Successor_001_to_Vahren
         {
             this.canvasMain.Children.Clear();
 
+            // シナリオ開始時にデータを初期化する
+            InitializeGameData();
+
             // ワールドマップを構築する
             if (this.ClassGameStatus.WorldMap == null)
             {
@@ -2389,7 +2395,7 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Children.Add(this.ClassGameStatus.WorldMap);
 
             // 領地に初期メンバーを配置する（中立領地のランダムモンスターは勢力選択後）
-            foreach (var itemSpot in this.ClassGameStatus.AllListSpot)
+            foreach (var itemSpot in this.ClassGameStatus.NowListSpot)
             {
                 itemSpot.UnitGroup = new List<ClassHorizontalUnit>();
 
@@ -2408,6 +2414,7 @@ namespace WPF_Successor_001_to_Vahren
                         var deep = info.DeepCopy();
                         deep.ID = this.ClassGameStatus.IDCount;
                         this.ClassGameStatus.SetIDCount();
+                        this.ClassGameStatus.NowListUnit.Add(deep); // 検索用
                         classUnit.Add(deep);
                     }
 
@@ -3271,7 +3278,7 @@ namespace WPF_Successor_001_to_Vahren
             //ステータス設定
             //※毎ターンチェックする
             this.ClassGameStatus.NowTurn = 1;
-            this.ClassGameStatus.NowCountPower = this.ClassGameStatus.ListPower.Count;
+            this.ClassGameStatus.NowCountPower = this.ClassGameStatus.NowListPower.Count;
             this.ClassGameStatus.NowCountSelectionPowerSpot = this.ClassGameStatus.SelectionPowerAndCity.ClassPower.ListMember.Count;
 
             //ストラテジーメニュー表示
@@ -3400,9 +3407,7 @@ namespace WPF_Successor_001_to_Vahren
 
                 // ユニットの識別名から肩書と名前を取得する
                 string unitNameTag = systemFunctionLiteral.Parameters[0].Value;
-                var classUnit = this.ClassGameStatus.ListUnit
-                    .Where(x => x.NameTag == unitNameTag)
-                    .FirstOrDefault();
+                var classUnit = this.ClassGameStatus.NowListUnit.Where(x => x.NameTag == unitNameTag).FirstOrDefault();
                 if (classUnit != null)
                 {
                     // データが存在する時だけ表示する
