@@ -379,7 +379,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 //unitの所属情報を書き換え
-                foreach (var item in mainWindow.ClassGameStatus.AllListSpot.Where(x => x.NameTag == selectedItem.NameTag))
+                foreach (var item in mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == selectedItem.NameTag))
                 {
                     foreach (var itemUnitGroup in item.UnitGroup)
                     {

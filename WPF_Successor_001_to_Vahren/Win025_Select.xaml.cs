@@ -416,7 +416,7 @@ namespace WPF_Successor_001_to_Vahren
             // ユニットの識別名を指定した場合
             if (strNameTag != string.Empty)
             {
-                var classUnit = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == strNameTag).FirstOrDefault();
+                var classUnit = mainWindow.ClassGameStatus.NowListUnit.Where(x => x.NameTag == strNameTag).FirstOrDefault();
                 if (classUnit != null)
                 {
                     strFaceFile = classUnit.Face;

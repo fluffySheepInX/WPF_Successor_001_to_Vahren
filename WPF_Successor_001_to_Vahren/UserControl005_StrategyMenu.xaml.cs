@@ -146,7 +146,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             //顔グラ
             {
-                var ima = mainWindow.ClassGameStatus.ListUnit
+                var ima = mainWindow.ClassGameStatus.NowListUnit
                     .Where(x => x.NameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.MasterTag)
                     .FirstOrDefault();
                 if (ima != null)
@@ -177,7 +177,7 @@ namespace WPF_Successor_001_to_Vahren
             int talent_count = 0;
             int total_level = 0;
             string powerNameTag = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
-            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
             foreach (var itemSpot in listSpot)
             {
                 total_gain += itemSpot.Gain;
@@ -340,13 +340,13 @@ namespace WPF_Successor_001_to_Vahren
             // ターン開始時に全ての勢力を同時に訓練する方がいいかも？
             // ヴァーレントゥーガは勢力ごとの手順が終わる際に訓練上昇するので、
             // 後手が訓練前に攻め込む際に、先手は訓練が終わってるから、先手が有利になる。
-            foreach (var itemPower in mainWindow.ClassGameStatus.ListPower)
+            foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
             {
                 // まずは勢力の人材の平均レベルを計算する
                 int total_level = 0, average_level = 0;
                 int talent_count = 0;
                 string powerNameTag = itemPower.NameTag;
-                var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag == powerNameTag);
+                var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
                 foreach (var itemSpot in listSpot)
                 {
                     // その領地の部隊
@@ -403,7 +403,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // ターン開始時のイベント前に残存勢力の全てのユニットを未行動に戻す
             // 中立領地を除外するのに、勢力が設定されてない領地を抜き出せばいい？
-            var listSpot = mainWindow.ClassGameStatus.AllListSpot.Where(x => x.PowerNameTag != string.Empty);
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag != string.Empty);
             foreach (var itemSpot in listSpot)
             {
                 // その領地の部隊

@@ -488,7 +488,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 領地リストのインデックスから ClassSpot を取得する
                 int spot_id = Int32.Parse(strPart[1]);
-                dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
+                dstSpot = mainWindow.ClassGameStatus.NowListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
@@ -698,7 +698,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 領地リストのインデックスから ClassSpot を取得する
                 int spot_id = Int32.Parse(strPart[1]);
-                dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
+                dstSpot = mainWindow.ClassGameStatus.NowListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
@@ -891,7 +891,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 // 領地リストのインデックスから ClassSpot を取得する
                 int spot_id = Int32.Parse(strPart[1]);
-                dstSpot = mainWindow.ClassGameStatus.AllListSpot[spot_id];
+                dstSpot = mainWindow.ClassGameStatus.NowListSpot[spot_id];
 
                 // 領地ウインドウが開いてるかどうか調べる
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
@@ -1180,7 +1180,7 @@ namespace WPF_Successor_001_to_Vahren
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    var listSpot = mainWindow.ClassGameStatus.AllListSpot;
+                    var listSpot = mainWindow.ClassGameStatus.NowListSpot;
                     int spot_count = listSpot.Count;
                     for (int spot_id = 0; spot_id < spot_count; spot_id++)
                     {
@@ -1366,7 +1366,7 @@ namespace WPF_Successor_001_to_Vahren
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    var listSpot = mainWindow.ClassGameStatus.AllListSpot;
+                    var listSpot = mainWindow.ClassGameStatus.NowListSpot;
                     int spot_count = listSpot.Count;
                     for (int spot_id = 0; spot_id < spot_count; spot_id++)
                     {
@@ -1494,7 +1494,7 @@ namespace WPF_Successor_001_to_Vahren
                 var worldMap = mainWindow.ClassGameStatus.WorldMap;
                 if (worldMap != null)
                 {
-                    var listSpot = mainWindow.ClassGameStatus.AllListSpot;
+                    var listSpot = mainWindow.ClassGameStatus.NowListSpot;
                     int spot_count = listSpot.Count;
                     for (int spot_id = 0; spot_id < spot_count; spot_id++)
                     {
