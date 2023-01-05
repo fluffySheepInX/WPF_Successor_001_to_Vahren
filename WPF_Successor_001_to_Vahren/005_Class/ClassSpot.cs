@@ -5,6 +5,21 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassSpot
     {
+        public ClassSpot ShallowCopy()
+        {
+            return (ClassSpot)MemberwiseClone();
+        }
+        public ClassSpot DeepCopy()
+        {
+            ClassSpot cs = ShallowCopy();
+            // 配列など参照型のデータを新規作成して元の値をコピーする
+            cs.ListMember = new List<(string, int)>(cs.ListMember);
+            cs.ListWanderingMonster = new List<(string, int)>(cs.ListWanderingMonster);
+            cs.ListMonster = new List<(string, int)>(cs.ListMonster);
+            cs.UnitGroup = new List<ClassHorizontalUnit>(cs.UnitGroup);
+            return cs;
+        }
+
         #region Index
         private int _index;
         public int Index
@@ -79,49 +94,31 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         // 経済値
         #region Gain
-        private int _gain;
+        private int _gain = 0;
         public int Gain
         {
             get { return _gain; }
             set { _gain = value; }
         }
-        private int _initgain = 0;
-        public int InitGain
-        {
-            get { return _initgain; }
-            set { _initgain = value; }
-        }
         #endregion
 
         // 城壁値
         #region Castle
-        private int _castle;
+        private int _castle = 0;
         public int Castle
         {
             get { return _castle; }
             set { _castle = value; }
         }
-        private int _initcastle = 0;
-        public int InitCastle
-        {
-            get { return _initcastle; }
-            set { _initcastle = value; }
-        }
         #endregion
 
         // 部隊駐留数
         #region Capacity
-        private int _capacity;
+        private int _capacity = 0;
         public int Capacity
         {
             get { return _capacity; }
             set { _capacity = value; }
-        }
-        private int _initcapacity = 0;
-        public int InitCapacity
-        {
-            get { return _initcapacity; }
-            set { _initcapacity = value; }
         }
         #endregion
 

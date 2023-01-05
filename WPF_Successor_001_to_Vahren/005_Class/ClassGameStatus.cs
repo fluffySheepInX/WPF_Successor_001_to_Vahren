@@ -84,6 +84,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         #endregion
 
+        // ファイルから読み込んだオリジナルのデータ
         #region ListSpot
         private List<ClassSpot> _listSpot = new List<ClassSpot>();
         public List<ClassSpot> AllListSpot
@@ -130,6 +131,32 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _listObject; }
             set { _listObject = value; }
+        }
+        #endregion
+
+        // 元データからシナリオ用にコピーして使うデータ
+        #region NowListSpot
+        private List<ClassSpot> _nowlistSpot = new List<ClassSpot>();
+        public List<ClassSpot> NowListSpot
+        {
+            get { return _nowlistSpot; }
+            set { _nowlistSpot = value; }
+        }
+        #endregion
+        #region NowListPower
+        private List<ClassPower> _nowlistPower = new List<ClassPower>();
+        public List<ClassPower> NowListPower
+        {
+            get { return _nowlistPower; }
+            set { _nowlistPower = value; }
+        }
+        #endregion
+        #region NowListUnit
+        private List<ClassUnit> _nowlistUnit = new List<ClassUnit>();
+        public List<ClassUnit> NowListUnit
+        {
+            get { return _nowlistUnit; }
+            set { _nowlistUnit = value; }
         }
         #endregion
 
