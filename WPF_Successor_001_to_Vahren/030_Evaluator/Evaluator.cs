@@ -139,10 +139,10 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         var intRe = re.Item1 as IntegerObject;
                         if (intRe == null) return null;
 
-                        var getPo = mainWindow.ClassGameStatus.ListPower.Where(x => x.Index == intRe.Value).FirstOrDefault();
+                        var getPo = mainWindow.ClassGameStatus.NowListPower.Where(x => x.Index == intRe.Value).FirstOrDefault();
                         if (getPo == null) return null;
                         enviroment.Set(systemFunctionLiteral.Parameters[1].Value,
-                                        new IntegerObject(getPo.ListNowMember.Count));
+                                        new IntegerObject(getPo.ListMember.Count));
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.YET)
                     {
@@ -174,7 +174,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         int powerIndex = intRe.Value;
                         if (powerIndex == -1) return this.False;
 
-                        var ev = this.ClassGameStatus.ListPower
+                        var ev = this.ClassGameStatus.NowListPower
                                     .Where(x => x.Index == powerIndex)
                                     .FirstOrDefault();
                         if (ev == null)
