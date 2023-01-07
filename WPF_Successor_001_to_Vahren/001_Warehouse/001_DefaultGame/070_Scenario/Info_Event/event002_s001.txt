@@ -11,7 +11,7 @@
 	msg("──アレクサンド歴1850年、2月13日。");
 	msg("砂と埃の大地を、武装した一団が馬で駆けていった。");
 	msg("早足だ、急いでいるのだろう。");
-	msg("しばらくすると、軍のものらしきキャンプ場に一団はなだれ込んだ。");
+	msg("しばらくすると、軍属らしきキャンプ場に一団はなだれ込んだ。");
 	msg("一団の中で最も地位が高いらしい者が、キャンプ場の奥にある士官事務局に入っていった。");
 	talk(AbelIrijhorn,"「戻ったか、ロイル。報告を頼む」");
 	talk(VictodyRoyle,"「良い報告ですよ、提督。$
@@ -23,24 +23,33 @@
 	talk(VictodyRoyle,"「私なら攻めますが」");
 	talk(AbelIrijhorn,"「ならば攻めるしかあるまい。しかし──、気が重い」");
 	talk(VictodyRoyle,"「狗だから、ですか？」");
-	talk(AbelIrijhorn,"「そうだ。用の終わった狗は煮て始末される。戦争が終われば私は始末される。$
-						全く、どうしたものかな」");
-	talk(VictodyRoyle,"「まあ、リラックス、リラックス。$
-						私がどうにか考えておきますよ。ところで」");
+	talk(AbelIrijhorn,"「そうだ。用の終わった狗は煮て始末される。$
+						戦争が終われば私は始末される。$
+						全く──、どうしたものかなあ」");
+	talk(VictodyRoyle,"「ふ、ふふ──、$
+						まあ、リラックスして下さいよ。$
+						私がどうにか考えておきますから」");
+	talk(AbelIrijhorn,"「お前がそう言うなら──、多少は骨を休めることが出来そうだな」");
+	talk(VictodyRoyle,"「はは。ところで」");
 	talk(AbelIrijhorn,"「何だ？」");
 	talk(VictodyRoyle,"「帝国の使者から支援物資の優先順位について聞かれている件です。$
 						そろそろ返事をせねば」");
-	talk(AbelIrijhorn,"「ふむ」");
+	talk(AbelIrijhorn,"「ふむ（完璧に忘れていた）」");
 	let worldevent_one = -1;
-	choice(worldevent_one,"武器・弾薬","食料","有刺鉄線、及び工具");
+	choice(worldevent_one,"武器・弾薬","兵糧","有刺鉄線、及び工具");
 	if (worldevent_one == 0) {
 		talk(AbelIrijhorn,"「武器と弾薬を最優先で」");
+		talk(VictodyRoyle,"「攻撃こそ最大の防御なり、と言ったところですか」");
+		talk(AbelIrijhorn,"「違う。この状況では──、$
+							防御は愚者の攻撃であると考えているだけだ」");
 	}
 	if (worldevent_one == 1) {
-		talk(AbelIrijhorn,"「食料を最優先で」");
+		talk(AbelIrijhorn,"「兵糧を最優先で」");
+		talk(VictodyRoyle,"「軍の維持、士気の向上、全く有り難い話です」");
 	}
 	if (worldevent_one == 2) {
 		talk(AbelIrijhorn,"「有刺鉄線、及び工具を最優先で」");
+		talk(VictodyRoyle,"「有ると無いでは死者の数がぐっと違いますからねえ」");
 	}
 
 	msg("──────$────");
