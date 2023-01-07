@@ -26,6 +26,16 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             // 配列など参照型のデータを新規作成して元の値をコピーする
             cu.SkillName = new List<string>(cu.SkillName);
             cu.Skill = new List<ClassSkill>(cu.Skill);
+            if (cu.OrderPosiSkill != null)
+            {
+                var ops = new Dictionary<int, Point>(cu.OrderPosiSkill);
+                cu.OrderPosiSkill = ops;
+            }
+            if (cu.VecMoveSkill != null)
+            {
+                var vms = new Dictionary<int, Point>(cu.VecMoveSkill);
+                cu.VecMoveSkill = vms;
+            }
             return cu;
         }
         #region Formation
