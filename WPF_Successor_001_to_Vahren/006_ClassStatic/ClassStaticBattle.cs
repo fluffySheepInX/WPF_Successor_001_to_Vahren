@@ -628,15 +628,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     listPath = re1.Children.OfType<Path>().ToList();
                 }));
             });
-            int counter = 1;
+            int counter = 180;
             while (true)
             {
-                if (cancelToken.IsCancellationRequested)
-                {
-                    return;
-                }
+                if (cancelToken.IsCancellationRequested) return;
 
-                //Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 100000)));
                 Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
 
                 try
@@ -659,13 +655,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
-                                            var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < itemGroupBy.NowPosiCenter.X
-                                                                            && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (itemGroupBy.NowPosiCenter.X - yokoMapTip))
-                                                                        .Where(y => y.Margin.Top < (itemGroupBy.NowPosiCenter.Y)
-                                                                                && y.Margin.Top > ((itemGroupBy.NowPosiCenter.Y - TakasaMapTip)))
+                                            var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoMapTip)) >= itemGroupBy.NowPosiCenter.X
+                                                                            && (x.Margin.Left) <= (itemGroupBy.NowPosiCenter.X));
+
+                                            if (initMapTip.Count() <= 0) return;
+
+                                            var initMapTipA = initMapTip.Where(y => (y.Margin.Top + (ClassStaticBattle.TakasaMapTip)) >= (itemGroupBy.NowPosiCenter.Y)
+                                                                                && (y.Margin.Top) <= ((itemGroupBy.NowPosiCenter.Y)))
                                                                         .FirstOrDefault();
 
-                                            if (initMapTip == null) return;
+                                            if (initMapTipA == null) return;
 
                                             foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
                                                                     .Select((value, index) => (value, index)))
@@ -674,7 +673,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                                     .Select((value, index) => (value, index)))
                                                 {
                                                     if (itemC.value.MapPath == null) continue;
-                                                    if (itemC.value.MapPath.Name == initMapTip.Name)
+                                                    if (itemC.value.MapPath.Name == initMapTipA.Name)
                                                     {
                                                         rowT = itemR.index;
                                                         colT = itemC.index;
@@ -718,13 +717,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
-                                            var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) < minElem.Key.NowPosiCenter.X
-                                                                            && (x.Margin.Left + (ClassStaticBattle.yokoUnit / 2)) > (minElem.Key.NowPosiCenter.X - yokoMapTip))
-                                                                        .Where(y => y.Margin.Top < (minElem.Key.NowPosiCenter.Y)
-                                                                                && y.Margin.Top > ((minElem.Key.NowPosiCenter.Y - TakasaMapTip)))
+                                            var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoMapTip)) >= minElem.Key.NowPosiCenter.X
+                                                                            && (x.Margin.Left) <= (minElem.Key.NowPosiCenter.X));
+
+                                            if (initMapTip.Count() <= 0) return;
+
+                                            var initMapTipA = initMapTip.Where(y => (y.Margin.Top + (ClassStaticBattle.TakasaMapTip)) >= (minElem.Key.NowPosiCenter.Y)
+                                                                                && (y.Margin.Top) <= ((minElem.Key.NowPosiCenter.Y)))
                                                                         .FirstOrDefault();
 
-                                            if (initMapTip == null) throw new Exception();
+                                            if (initMapTipA == null) return;
 
                                             foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
                                                                     .Select((value, index) => (value, index)))
@@ -733,7 +735,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                                     .Select((value, index) => (value, index)))
                                                 {
                                                     if (itemC.value.MapPath == null) continue;
-                                                    if (itemC.value.MapPath.Name == initMapTip.Name)
+                                                    if (itemC.value.MapPath.Name == initMapTipA.Name)
                                                     {
                                                         rowE = itemR.index;
                                                         colE = itemC.index;
@@ -845,7 +847,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 //移動スレッド開始
                                 var calc0 = ClassCalcVec.ReturnVecDistance(
                                     from: new Point(itemGroupBy.NowPosiLeft.X, itemGroupBy.NowPosiLeft.Y),
-                                    to: itemGroupBy.OrderPosiLeft
+                                    to: itemGroupBy.OrderPosiCenter
                                     );
                                 itemGroupBy.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                                 itemGroupBy.FlagMoving = true;

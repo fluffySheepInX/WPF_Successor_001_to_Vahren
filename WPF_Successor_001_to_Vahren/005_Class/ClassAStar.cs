@@ -177,7 +177,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                         continue;
                     }
 
-                    if (MapData[x + i][y + j].Building[0] == string.Empty)
+                    if (MapData[x + i][y + j].Building.Count == 0)
                     {
                         OpenOne(x + i, y + j, cost, parent);
                     }
