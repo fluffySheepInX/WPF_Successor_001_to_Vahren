@@ -5,35 +5,35 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
       mc:Ignorable="d" 
-      d:DesignHeight="250" d:DesignWidth="320"
+      d:DesignHeight="250" d:DesignWidth="340"
       Loaded="Page_Loaded">
-    <Border BorderBrush="Black" BorderThickness="4" Height="250" Width="320">
+    <Border BorderBrush="Black" BorderThickness="4" Height="250" Width="340">
         <Canvas>
             <Canvas.Background>
                 <SolidColorBrush Color="Gray" Opacity="0.25" />
             </Canvas.Background>
             <StackPanel Height="40" HorizontalAlignment="Stretch" Margin="0,0,0,0" Orientation="Horizontal">
-                <Button Content="自動" Width="60"/>
-                <Button Content="後退" Width="60"/>
-                <Button Content="手動" Width="60"/>
-                <Button Content="固定" Width="60"/>
-                <Button Content="撤退" Width="60"/>
+                <Button Content="自動" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="後退" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="手動" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="固定" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="撤退" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
             </StackPanel>
             <StackPanel Height="40" HorizontalAlignment="Stretch" Margin="0,40,0,0" Orientation="Horizontal">
-                <Button Content="横列" Width="60"/>
-                <Button Content="密集" Width="60"/>
-                <Button Content="正方" Width="60"/>
-                <Button Content="陣形" Width="60"/>
+                <Button Content="横列" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="密集" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="正方" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="陣形" Width="60" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
             </StackPanel>
             <StackPanel Height="40" HorizontalAlignment="Stretch" Margin="0,80,0,0" Orientation="Horizontal">
-                <Button Content="標準" Width="30"/>
-                <Button Content="必殺" Width="30"/>
-                <Button Content="禁止" Width="30"/>
-                <Button Content="近接" Width="30"/>
-                <Button Content="遠" Width="30"/>
-                <Button Content="魔" Width="30"/>
-                <Button Content="治" Width="30"/>
-                <Button Content="召喚" Width="30"/>
+                <Button Content="標準" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="必殺" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="禁止" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="近接" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="遠" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="魔" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="治" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
+                <Button Content="召喚" Width="40" Background="skyblue" Foreground="#130e2b" BorderThickness="5" BorderBrush="#130e2b"/>
             </StackPanel>
             <StackPanel x:Name="stkSkill" Height="40" HorizontalAlignment="Stretch" Margin="0,120,0,0" Orientation="Horizontal">
 

@@ -11,7 +11,7 @@
     <Border x:Name="borPage026" BorderBrush="Black" BorderThickness="4" Height="60" Width="100">
         <Canvas>
             <Canvas.Background>
-                <SolidColorBrush Color="Gray" Opacity="0.25" />
+                <SolidColorBrush Color="#130e2b" Opacity="0.5" />
             </Canvas.Background>
             <ComboBox x:Name="cmbSelect" Height="52" Width="80" Margin="0,0,0,0"></ComboBox>
             <StackPanel x:Name="stackUnit" Height="52" Margin="80,0,0,0" Orientation="Horizontal"></StackPanel>
