@@ -8,6 +8,6 @@
     <Canvas x:Name="canvasMap" UseLayoutRounding="True"
             MouseLeftButtonDown="map_MouseLeftButtonDown"
             MouseRightButtonDown="map_MouseRightButtonDown"
-            MouseEnter="map_MouseEnter" >
+            MouseEnter="map_MouseEnter" PreviewMouseWheel="canvasMap_PreviewMouseWheel" >
     </Canvas>
 </UserControl>

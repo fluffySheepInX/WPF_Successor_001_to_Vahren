@@ -531,7 +531,7 @@ namespace WPF_Successor_001_to_Vahren
             Image imgRing = new Image();
             imgRing.Name = "SpotMark" + classSpot.NameTag;
             imgRing.Source = bitimg1;
-                // アスペクト比を保つので、横幅だけ指定する
+            // アスペクト比を保つので、横幅だけ指定する
             imgRing.Width = ring_size;
             imgRing.Margin = new Thickness()
             {
@@ -913,7 +913,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 else
                 {
-                    strFilename =  "circle_Lime.png";
+                    strFilename = "circle_Lime.png";
                 }
                 PowerMark(strFilename, powerNameTag);
             }
@@ -1349,18 +1349,53 @@ namespace WPF_Successor_001_to_Vahren
             // 戦闘後に防衛側の情報を参照できるよう記録しておく
             Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
 
-/*
-            Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
-            Frame frame = new Frame();
-            frame.Source = uri;
-            frame.Margin = new Thickness(0, 0, 0, 0);
-            frame.Name = StringName.windowSortieMenu;
-            mainWindow.canvasMain.Children.Add(frame);
-            Application.Current.Properties["window"] = mainWindow;
-            Application.Current.Properties["spots"] = classSpots;
-*/
+            /*
+                        Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
+                        Frame frame = new Frame();
+                        frame.Source = uri;
+                        frame.Margin = new Thickness(0, 0, 0, 0);
+                        frame.Name = StringName.windowSortieMenu;
+                        mainWindow.canvasMain.Children.Add(frame);
+                        Application.Current.Properties["window"] = mainWindow;
+                        Application.Current.Properties["spots"] = classSpots;
+            */
 
         }
 
+        /// <summary>
+        /// マウスホイール時処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void canvasMap_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.GetKeyStates(Key.LeftCtrl) != KeyStates.Down
+                && Keyboard.GetKeyStates(Key.RightCtrl) != KeyStates.Down)
+            {
+                return;
+            }
+
+            ScaleTransform? scaleTransform = null;
+            if (this.canvasMap.RenderTransform == null)
+            {
+                scaleTransform = new ScaleTransform();
+            }
+            else
+            {
+                var tran = this.canvasMap.RenderTransform as ScaleTransform;
+                if (tran != null)
+                {
+                    scaleTransform = tran;
+                }
+                else
+                {
+                    scaleTransform = new ScaleTransform();
+                }
+            }
+            scaleTransform.ScaleX = scaleTransform.ScaleX + ((e.Delta > 0) ? 0.1 : -0.1);
+            scaleTransform.ScaleY = scaleTransform.ScaleY + ((e.Delta > 0) ? 0.1 : -0.1);
+            this.canvasMap.RenderTransform = scaleTransform; ;
+
+        }
     }
 }
