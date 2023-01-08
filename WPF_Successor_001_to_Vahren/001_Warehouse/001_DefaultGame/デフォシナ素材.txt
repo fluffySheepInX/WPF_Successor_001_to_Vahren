@@ -9,3 +9,7 @@ musket.png
 taiho.png
 は陽輝満月氏の作品であり、ご厚意によりフリー素材です。
 
+015_BattleMapCellImageの
+m_grass.png
+m_grass2.png
+は陽輝満月氏の作品であり、ご厚意によりgithubで配布許可を貰っています。
