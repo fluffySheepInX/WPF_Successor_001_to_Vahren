@@ -46,5 +46,6 @@
         YET,
         ISALIVE,
         DISPLAYGAMERESULT,
+        ISPLAYER,
     }
 }

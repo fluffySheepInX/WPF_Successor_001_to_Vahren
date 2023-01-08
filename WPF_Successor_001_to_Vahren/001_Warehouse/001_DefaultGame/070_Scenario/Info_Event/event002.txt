@@ -18,20 +18,25 @@
 
 	//指定したイベントが実行済かどうかを変数bに格納します。
 	let b = yet(world_first_sc_one);
-	if (b) {
+
+	//指定した勢力（タグ名）がプレイヤー勢力かチェックします
+	let isP = isPlayer(sc_a_p_b);
+
+	//イベント
+	if (b && isP) {
 		event(world_first_sc_one);
 		return -1;
 	}
 
 	//テスト用
 	let c = yet(world_first_sc_b);
-	if (c) {
+	if (c && isPlayer(sc_a_p_b)) {
 		event(world_first_sc_b);
 		return -1;
 	}
 	
 	//クリア判定
-	if ((npp == 3) && (isAlive(pp))){
+	if ((npp == 3) && (isAlive(sc_a_p_b)) && (isPlayer(sc_a_p_b))){
 		dialog("――ローガントゥーガ・デモ――$０１．東アイディオール株式会社　ＥＮＤ");
 		displayGameResult();
 		return -1;

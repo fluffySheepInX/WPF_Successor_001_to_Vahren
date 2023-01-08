@@ -12,5 +12,6 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         BOOLEAN,
         NULL,
         RETURN_VALUE,
+        STRING,
     }
 }

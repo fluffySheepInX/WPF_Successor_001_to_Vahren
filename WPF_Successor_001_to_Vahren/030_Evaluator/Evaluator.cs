@@ -167,11 +167,12 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.ISALIVE)
                     {
-                        var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
-                        var intRe = re.Item1 as IntegerObject;
-                        if (intRe == null) return null;
+                        if (int.TryParse(systemFunctionLiteral.Parameters[0].Value, out int tryRe) == false)
+                        {
+                            return this.False;
+                        }
 
-                        int powerIndex = intRe.Value;
+                        int powerIndex = tryRe;
                         if (powerIndex == -1) return this.False;
 
                         var ev = this.ClassGameStatus.NowListPower
@@ -188,6 +189,20 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                         else
                         {
                             return this.True;
+                        }
+                    }
+                    else if (systemFunctionLiteral.Token.Type == TokenType.ISPLAYER)
+                    {
+                        string powerIndex = systemFunctionLiteral.Parameters[0].Value;
+                        if (powerIndex == string.Empty) return this.False;
+
+                        if (powerIndex == this.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+                        {
+                            return this.True;
+                        }
+                        else
+                        {
+                            return this.False;
                         }
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.DISPLAYGAMERESULT)

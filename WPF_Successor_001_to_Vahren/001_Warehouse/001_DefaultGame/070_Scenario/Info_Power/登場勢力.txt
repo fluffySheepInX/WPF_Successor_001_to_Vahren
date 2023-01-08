@@ -1,4 +1,4 @@
-﻿NewFormatPower sc1_p1
+﻿NewFormatPower sc_a_p_a
 {
 	#カラキエール・エレイル(elel)の揺り籠
 	name = "館エレイル帝国";
@@ -25,7 +25,7 @@
 	member = "spot0006,spot0005,spot0011";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
 }
-NewFormatPower sc1_p2
+NewFormatPower sc_a_p_b
 {
 	name = "東アイディオール株式会社";
 	money = "20000";
@@ -46,7 +46,7 @@ NewFormatPower sc1_p2
 	member = "spot0001,spot0009,spot0010";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
 }
-NewFormatPower sc1_p3
+NewFormatPower sc_a_p_c
 {
 	name = "ヤイバ王国もとい山賊同盟";
 	money = "10000";
