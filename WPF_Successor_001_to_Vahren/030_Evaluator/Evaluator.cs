@@ -167,12 +167,11 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
                     }
                     else if (systemFunctionLiteral.Token.Type == TokenType.ISALIVE)
                     {
-                        if (int.TryParse(systemFunctionLiteral.Parameters[0].Value, out int tryRe) == false)
-                        {
-                            return this.False;
-                        }
+                        var re = enviroment.Get(systemFunctionLiteral.Parameters[0].Value);
+                        var intRe = re.Item1 as IntegerObject;
+                        if (intRe == null) return null;
 
-                        int powerIndex = tryRe;
+                        int powerIndex = intRe.Value;
                         if (powerIndex == -1) return this.False;
 
                         var ev = this.ClassGameStatus.NowListPower
