@@ -563,7 +563,7 @@ namespace WPF_Successor_001_to_Vahren
 
         /// <summary>
         /// 勢力選択画面での勢力情報表示
-        /// 決定ボタン押下時「ButtonSelectionPowerDecide_click」
+        /// 決定ボタン押下時「ButtonSelectionPowerDecide_Click」
         /// </summary>
         /// <param name="sender"></param>
         public void DisplayPowerSelection(object sender)
@@ -726,7 +726,7 @@ namespace WPF_Successor_001_to_Vahren
                             Left = 15,
                             Top = hei + groupHeight + face + head
                         };
-                        button.Click += ButtonSelectionPowerDecide_click;
+                        button.Click += ButtonSelectionPowerDecide_Click;
                         button.Tag = classPowerAndCity;
                         gridSelectionPower.Children.Add(button);
                     }
@@ -929,7 +929,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonSelectionPowerDecide_click(object sender, EventArgs e)
+        public void ButtonSelectionPowerDecide_Click(object sender, EventArgs e)
         {
             this.FadeOut = true;
 
@@ -964,13 +964,6 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
             }
-
-            //var ri = (Button)LogicalTreeHelper.FindLogicalNode(this.canvasMain, StringName.buttonClassPowerAndCity);
-            //if (ri == null)
-            //{
-            //    throw new Exception();
-            //}
-            //ri.Tag = new ClassPowerAndCity(this.ClassGameStatus.SelectionPowerAndCity.ClassPower, this.ClassGameStatus.SelectionPowerAndCity.ClassSpot);
 
             this.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             this.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
@@ -1074,15 +1067,15 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         private void ListSelectionPowerMini()
         {
-            var windowSelect = new UserControl040_PowerSelect();
-            windowSelect.Name = StringName.windowSelectionPowerMini;
-            windowSelect.Margin = new Thickness()
+            var itemWindow = new UserControl040_PowerSelect();
+            itemWindow.Name = StringName.windowSelectionPowerMini;
+            itemWindow.Margin = new Thickness()
             {
-                Left = this.CanvasMainWidth - windowSelect.MinWidth,
+                Left = this.CanvasMainWidth - itemWindow.MinWidth,
                 Top = 0
             };
-            windowSelect.SetData();
-            this.canvasUIRightTop.Children.Add(windowSelect);
+            itemWindow.SetData();
+            this.canvasUIRightTop.Children.Add(itemWindow);
         }
 
         /// <summary>

@@ -13,6 +13,9 @@
     <Compile Update="UserControl011_SpotHint.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl012_SpotSortie.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl015_Unit.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -32,6 +35,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl040_PowerSelect.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserControl041_PowerStart.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="UserControl045_Skill.xaml.cs">
@@ -69,6 +75,9 @@
     <Page Update="UserControl011_SpotHint.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserControl012_SpotSortie.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControl015_Unit.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -88,6 +97,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl040_PowerSelect.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl041_PowerStart.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl045_Skill.xaml">

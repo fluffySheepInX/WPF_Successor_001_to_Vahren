@@ -810,7 +810,17 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 Point pt = e.GetPosition(el);
 
+                // マップの縮尺に応じてドラッグ距離を変える
+                double scale = 1;
+                var tran = this.canvasMap.RenderTransform as ScaleTransform;
+                if (tran != null){
+                    scale = tran.ScaleX;
+                }
+
+                // マップ位置の制限がうまくいかない？
                 var thickness = new Thickness();
+                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X) * scale;
+                /*
                 thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
                 if (thickness.Left > this.Width / 4)
                 {
@@ -820,6 +830,9 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     thickness.Left = this.Width / 4 - this.Width;
                 }
+                */
+                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y) * scale;
+                /*
                 thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
                 if (thickness.Top > this.Height / 4)
                 {
@@ -829,6 +842,7 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     thickness.Top = this.Height / 4 - this.Height;
                 }
+                */
                 this.Margin = thickness;
             }
         }
@@ -1060,6 +1074,216 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+
+        // 領地ウィンドウの表示
+        private void DisplaySpotInfo(MainWindow mainWindow, object sender)
+        {
+            var cast = (FrameworkElement)sender;
+            if (cast.Tag is not ClassPowerAndCity)
+            {
+                return;
+            }
+            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+
+            // ウインドウの左上が領地の場所になるように配置する
+            // （領地のクリック範囲が広いので、マウスカーソルを基準にする）
+            Point posMouse = Mouse.GetPosition(mainWindow.canvasUI);
+            Thickness posWindow = new Thickness()
+            {
+                Left = posMouse.X - 40,
+                Top = posMouse.Y - 40
+            };
+
+            // 出撃ウィンドウが開いてる場合は出撃選択用領地ウィンドウを表示する
+            bool isFound = false;
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl065_Sortie>())
+            {
+                if (itemWindow.Name.StartsWith(StringName.windowSortie))
+                {
+                    // 出撃可能な領地かどうかを調べる
+                    List<ClassSpot>? listSpot = (List<ClassSpot>)itemWindow.Tag;
+                    if (listSpot == null)
+                    {
+                        return;
+                    }
+                    var spot = listSpot.Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag).FirstOrDefault();
+                    if (spot == null)
+                    {
+                        var dialog = new Win020_Dialog();
+                        dialog.SetText("この領地は出撃不可です。\n青枠の領地を選択してください。");
+                        dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                        dialog.ShowDialog();
+                        return;
+                    }
+
+                    isFound = true;
+                    break;
+                }
+            }
+            if (isFound)
+            {
+                // 既に表示されてる領地ウィンドウをチェックする
+                isFound = false;
+                string strTitle = StringName.windowSpotSortie + classPowerAndCity.ClassSpot.NameTag;
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl012_SpotSortie>())
+                {
+                    if (itemWindow.Name == strTitle)
+                    {
+                        // 領地ウインドウを既に開いてる場合は、新規に作らない
+                        itemWindow.Margin = posWindow;
+
+                        // 最前面に移動する
+                        var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
+                        if ((listWindow != null) && (listWindow.Any()))
+                        {
+                            int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                            Canvas.SetZIndex(itemWindow, maxZ + 1);
+                        }
+
+                        isFound = true;
+                        break;
+                    }
+                }
+                if (isFound == false)
+                {
+                    // 新規に作成する
+                    var itemWindow = new UserControl012_SpotSortie();
+                    itemWindow.Tag = classPowerAndCity;
+                    itemWindow.Name = strTitle;
+                    itemWindow.Margin = posWindow;
+                    itemWindow.SetData();
+                    mainWindow.canvasUI.Children.Add(itemWindow);
+                }
+                return;
+            }
+
+            // 既に表示されてる領地ウィンドウをチェックする
+            int window_id, max_id = 0;
+            var id_list = new List<int>();
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
+            {
+                string strTitle = itemWindow.Name;
+                if (strTitle.StartsWith(StringName.windowSpot))
+                {
+                    window_id = Int32.Parse(strTitle.Substring(StringName.windowSpot.Length));
+                    id_list.Add(window_id);
+                    if (max_id < window_id)
+                    {
+                        max_id = window_id;
+                    }
+                    var ri = (ClassPowerAndCity)itemWindow.Tag;
+                    if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
+                    {
+                        // 領地ウィンドウを既に開いてる場合は、新規に作らない
+                        max_id = -1;
+                        itemWindow.Margin = posWindow;
+
+                        // 最前面に移動する
+                        var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
+                        if ((listWindow != null) && (listWindow.Any()))
+                        {
+                            int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                            Canvas.SetZIndex(itemWindow, maxZ + 1);
+                        }
+
+                        break;
+                    }
+                }
+            }
+            if (max_id >= 0)
+            {
+                if (max_id > id_list.Count)
+                {
+                    // ウィンドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
+                    for (window_id = 1; window_id < max_id; window_id++)
+                    {
+                        if (id_list.Contains(window_id) == false)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // 使用中のウィンドウ番号の最大値 + 1 にして、新規に作成する
+                    window_id = max_id + 1;
+                }
+                var itemWindow = new UserControl010_Spot();
+                itemWindow.Tag = classPowerAndCity;
+                itemWindow.Name = StringName.windowSpot + window_id.ToString();
+                itemWindow.Margin = posWindow;
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+            }
+            id_list.Clear();
+        }
+
+        // 勢力プレイ開始ウィンドウの表示
+        private void DisplayPowerStart(MainWindow mainWindow, object sender)
+        {
+            var cast = (FrameworkElement)sender;
+            if (cast.Tag is not ClassPowerAndCity)
+            {
+                return;
+            }
+            var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
+
+            // 勢力名をウィンドウの Name に追加する
+            string strTitle = StringName.windowSelectionPower + classPowerAndCity.ClassPower.NameTag;
+
+            // 既に表示されてる場合、他の勢力なら閉じる、同じ勢力なら画面中央に移す
+            bool isFound = false;
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl041_PowerStart>())
+            {
+                // 同じ勢力のウィンドウなら
+                if (itemWindow.Name == strTitle)
+                {
+                    // 画面の中央に戻す
+                    itemWindow.Margin = new Thickness()
+                    {
+                        Left = mainWindow.canvasUI.Width / 2 - itemWindow.Width / 2,
+                        Top = mainWindow.canvasUI.Height / 2 - itemWindow.Height / 2
+                    };
+                    isFound = true;
+                    break;
+                }
+                // 他の勢力なら閉じる
+                else
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+            if (isFound == false)
+            {
+                // 新規に作成する
+                var itemWindow = new UserControl041_PowerStart();
+                itemWindow.Tag = classPowerAndCity;
+                itemWindow.Name = strTitle;
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+
+                // マスターが存在するなら、所在地の座標をセットする
+                var spotMaster = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.ListMember.Contains(new(classPowerAndCity.ClassPower.MasterTag, 1))).FirstOrDefault();
+                if (spotMaster != null)
+                {
+                    mainWindow.ClassGameStatus.SelectionCityPoint = new Point
+                        (
+                        spotMaster.X,
+                        spotMaster.Y
+                        );
+                }
+                else
+                {
+                    mainWindow.ClassGameStatus.SelectionCityPoint = new Point
+                        (
+                        classPowerAndCity.ClassSpot.X,
+                        classPowerAndCity.ClassSpot.Y
+                        );
+                }
+            }
+        }
+
         private void mapSpot_MouseLeftButtonDown(object sender, MouseEventArgs e)
         {
             // ルーティングを処理済みとしてマークする（親コントロールのイベントが発生しなくなる）
@@ -1074,149 +1298,12 @@ namespace WPF_Successor_001_to_Vahren
             // プレイヤーのターン中なら、領地ウィンドウを表示する
             if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.PlayerTurn)
             {
-                var cast = (FrameworkElement)sender;
-                if (cast.Tag is not ClassPowerAndCity)
-                {
-                    return;
-                }
-                var classPowerAndCity = (ClassPowerAndCity)cast.Tag;
-
-                // ウインドウの左上が領地の場所になるように配置する
-                // （領地のクリック範囲が広いので、マウスカーソルを基準にする）
-                Point posMouse = Mouse.GetPosition(mainWindow.canvasUI);
-                Thickness posWindow = new Thickness()
-                {
-                    Left = posMouse.X - 40,
-                    Top = posMouse.Y - 40
-                };
-
-                // 出撃ウィンドウが開いてる場合は出撃選択用領地ウィンドウを表示する
-                bool isFound = false;
-                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl065_Sortie>())
-                {
-                    if (itemWindow.Name.StartsWith(StringName.windowSortie))
-                    {
-                        // 出撃可能な領地かどうかを調べる
-                        List<ClassSpot>? listSpot = (List<ClassSpot>)itemWindow.Tag;
-                        if (listSpot == null)
-                        {
-                            return;
-                        }
-                        var spot = listSpot.Where(x => x.NameTag == classPowerAndCity.ClassSpot.NameTag).FirstOrDefault();
-                        if (spot == null)
-                        {
-                            var dialog = new Win020_Dialog();
-                            dialog.SetText("この領地は出撃不可です。\n青枠の領地を選択してください。");
-                            dialog.SetTime(1.2); // 待ち時間を1.2秒に短縮する
-                            dialog.ShowDialog();
-                            return;
-                        }
-
-                        isFound = true;
-                        break;
-                    }
-                }
-                if (isFound)
-                {
-                    // 既に表示されてる領地ウィンドウをチェックする
-                    isFound = false;
-                    string strTitle = StringName.windowSpotSortie + classPowerAndCity.ClassSpot.NameTag;
-                    foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl012_SpotSortie>())
-                    {
-                        if (itemWindow.Name == strTitle)
-                        {
-                            // 領地ウインドウを既に開いてる場合は、新規に作らない
-                            itemWindow.Margin = posWindow;
-
-                            // 最前面に移動する
-                            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
-                            if ((listWindow != null) && (listWindow.Any()))
-                            {
-                                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                                Canvas.SetZIndex(itemWindow, maxZ + 1);
-                            }
-
-                            isFound = true;
-                            break;
-                        }
-                    }
-                    if (isFound == false)
-                    {
-                        // 新規に作成する
-                        var windowSpot = new UserControl012_SpotSortie();
-                        windowSpot.Tag = classPowerAndCity;
-                        windowSpot.Name = strTitle;
-                        windowSpot.Margin = posWindow;
-                        windowSpot.SetData();
-                        mainWindow.canvasUI.Children.Add(windowSpot);
-                    }
-                    return;
-                }
-
-                // 既に表示されてる領地ウィンドウをチェックする
-                int window_id, max_id = 0;
-                var id_list = new List<int>();
-                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl010_Spot>())
-                {
-                    string strTitle = itemWindow.Name;
-                    if (strTitle.StartsWith(StringName.windowSpot))
-                    {
-                        window_id = Int32.Parse(strTitle.Substring(StringName.windowSpot.Length));
-                        id_list.Add(window_id);
-                        if (max_id < window_id)
-                        {
-                            max_id = window_id;
-                        }
-                        var ri = (ClassPowerAndCity)itemWindow.Tag;
-                        if (ri.ClassSpot.NameTag == classPowerAndCity.ClassSpot.NameTag)
-                        {
-                            // 領地ウィンドウを既に開いてる場合は、新規に作らない
-                            max_id = -1;
-                            itemWindow.Margin = posWindow;
-
-                            // 最前面に移動する
-                            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != itemWindow);
-                            if ((listWindow != null) && (listWindow.Any()))
-                            {
-                                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
-                                Canvas.SetZIndex(itemWindow, maxZ + 1);
-                            }
-
-                            break;
-                        }
-                    }
-                }
-                if (max_id >= 0)
-                {
-                    if (max_id > id_list.Count)
-                    {
-                        // ウィンドウ個数よりも最大値が大きいなら、未使用の番号を使って作成する
-                        for (window_id = 1; window_id < max_id; window_id++)
-                        {
-                            if (id_list.Contains(window_id) == false)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // 使用中のウィンドウ番号の最大値 + 1 にして、新規に作成する
-                        window_id = max_id + 1;
-                    }
-                    var windowSpot = new UserControl010_Spot();
-                    windowSpot.Tag = classPowerAndCity;
-                    windowSpot.Name = StringName.windowSpot + window_id.ToString();
-                    windowSpot.Margin = posWindow;
-                    windowSpot.SetData();
-                    mainWindow.canvasUI.Children.Add(windowSpot);
-                }
-                id_list.Clear();
-
+                DisplaySpotInfo(mainWindow, sender);
             }
-            // 勢力を選択中なら、勢力詳細ウィンドウを表示する
+            // 勢力を選択中なら、勢力プレイ開始ウィンドウを表示する
             else if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
+                //DisplayPowerStart(mainWindow, sender);
                 mainWindow.DisplayPowerSelection(sender);
             }
         }
@@ -1350,14 +1437,14 @@ namespace WPF_Successor_001_to_Vahren
             Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
 
             /*
-                        Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
-                        Frame frame = new Frame();
-                        frame.Source = uri;
-                        frame.Margin = new Thickness(0, 0, 0, 0);
-                        frame.Name = StringName.windowSortieMenu;
-                        mainWindow.canvasMain.Children.Add(frame);
-                        Application.Current.Properties["window"] = mainWindow;
-                        Application.Current.Properties["spots"] = classSpots;
+            Uri uri = new Uri("/Page010_SortieMenu.xaml", UriKind.Relative);
+            Frame frame = new Frame();
+            frame.Source = uri;
+            frame.Margin = new Thickness(0, 0, 0, 0);
+            frame.Name = StringName.windowSortieMenu;
+            mainWindow.canvasMain.Children.Add(frame);
+            Application.Current.Properties["window"] = mainWindow;
+            Application.Current.Properties["spots"] = classSpots;
             */
 
         }
@@ -1367,10 +1454,10 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void canvasMap_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void map_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (Keyboard.GetKeyStates(Key.LeftCtrl) != KeyStates.Down
-                && Keyboard.GetKeyStates(Key.RightCtrl) != KeyStates.Down)
+            // キーを押しっぱなしにしてる時、GetKeyStates だと取得できない事があるから IsKeyDown を使う
+            if ((Keyboard.IsKeyDown(Key.LeftCtrl) == false) && (Keyboard.IsKeyDown(Key.RightCtrl) == false))
             {
                 return;
             }
@@ -1392,10 +1479,20 @@ namespace WPF_Successor_001_to_Vahren
                     scaleTransform = new ScaleTransform();
                 }
             }
-            scaleTransform.ScaleX = scaleTransform.ScaleX + ((e.Delta > 0) ? 0.1 : -0.1);
-            scaleTransform.ScaleY = scaleTransform.ScaleY + ((e.Delta > 0) ? 0.1 : -0.1);
+            // 倍率を制限する（大きいとドラッグでバグることがあるけど、原因はよく分からず）
+            double scale = scaleTransform.ScaleX + ((e.Delta > 0) ? 0.1 : -0.1);
+            if (scale > 2.0)
+            {
+                scale = 2.0; // 最大 200%
+            }
+            if (scale < 0.5)
+            {
+                scale = 0.5; // 最小 50%
+            }
+            scaleTransform.ScaleX = scale;
+            scaleTransform.ScaleY = scale;
             this.canvasMap.RenderTransform = scaleTransform; ;
-
         }
+
     }
 }
