@@ -16,7 +16,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             cs.ListMember = new List<(string, int)>(cs.ListMember);
             cs.ListWanderingMonster = new List<(string, int)>(cs.ListWanderingMonster);
             cs.ListMonster = new List<(string, int)>(cs.ListMonster);
-            cs.UnitGroup = new List<ClassHorizontalUnit>(cs.UnitGroup);
+            // 部隊（ユニット）データの初期値は存在しないから初期化するだけ
+            cs.UnitGroup = new List<ClassHorizontalUnit>();
             return cs;
         }
 
