@@ -138,7 +138,7 @@ NewFormatUnit JothianRoarcy
 	enemy = "teiou";
 
 	formation = "1";
-	skill = "gunLaphroaig";
+	skill = "gunHotchkiss";
 
 	level = "3";
 	level_max = "100";

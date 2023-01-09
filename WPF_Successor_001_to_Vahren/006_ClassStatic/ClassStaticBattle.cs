@@ -978,7 +978,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 classVec.Vec = resultTryVec;
                 classVec.Speed = classSkill.Speed;
 
-                if (classVec.Hit(classUnit.NowPosiSkill))
+                if (classVec.Hit(classUnit.NowPosiSkill[dicKey]))
                 {
                     classUnit.FlagMovingSkill = false;
                     await Task.Run(() =>
@@ -987,12 +987,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                             if (re1 == null) return;
-                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
-                            if (re2 == null) return;
-                            re1.Children.Remove(re2);
-                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString());
-                            if (re3 == null) return;
-                            re1.Children.Remove(re3);
+                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
+                            if (re2 != null) re1.Children.Remove(re2);
+                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
+                            if (re3 != null) re1.Children.Remove(re3);
                         }));
                     });
 
@@ -1054,19 +1052,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //};
                     classUnit.OrderPosiSkill.Remove(dicKey);
                     classUnit.VecMoveSkill.Remove(dicKey);
+                    classUnit.NowPosiSkill.Remove(dicKey);
 
                     return;
                 }
                 else
                 {
+                    //ベクトルが何故か0になったらちょっと増やす
                     if (classUnit.VecMoveSkill[dicKey].X == 0 && classUnit.VecMoveSkill[dicKey].Y == 0)
                     {
                         classUnit.VecMoveSkill[dicKey] = new Point() { X = 0.5, Y = 0.5 };
                     }
-                    classUnit.NowPosiSkill = new Point()
+                    //移動量増やす
+                    classUnit.NowPosiSkill[dicKey] = new Point()
                     {
-                        X = classUnit.NowPosiSkill.X + (classUnit.VecMoveSkill[dicKey].X * (classSkill.Speed / 100)),
-                        Y = classUnit.NowPosiSkill.Y + (classUnit.VecMoveSkill[dicKey].Y * (classSkill.Speed / 100))
+                        X = classUnit.NowPosiSkill[dicKey].X + (classUnit.VecMoveSkill[dicKey].X * (classSkill.Speed / 100)),
+                        Y = classUnit.NowPosiSkill[dicKey].Y + (classUnit.VecMoveSkill[dicKey].Y * (classSkill.Speed / 100))
                     };
                     await Task.Run(() =>
                     {
@@ -1076,13 +1077,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                                 if (re1 == null) return;
-                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString());
+                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
                                 if (re2 == null) return;
-                                re2.Margin = new Thickness(classUnit.NowPosiSkill.X, classUnit.NowPosiSkill.Y, 0, 0);
-                                var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString());
+                                re2.Margin = new Thickness(classUnit.NowPosiSkill[dicKey].X, classUnit.NowPosiSkill[dicKey].Y, 0, 0);
+                                var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
                                 if (re3 == null) return;
-                                re3.X2 = classUnit.NowPosiSkill.X + (classSkill.W / 2);
-                                re3.Y2 = classUnit.NowPosiSkill.Y + (classSkill.H / 2);
+                                re3.X2 = classUnit.NowPosiSkill[dicKey].X + (classSkill.W / 2);
+                                re3.Y2 = classUnit.NowPosiSkill[dicKey].Y + (classSkill.H / 2);
                             }));
                         }
                         catch (Exception)
@@ -1168,11 +1169,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     int singleAttackNumber = r1.Next();
                                     itemGroupBy.OrderPosiSkill.Clear();
 
-                                    itemGroupBy.NowPosiSkill = itemGroupBy.GetNowPosiCenter();
+                                    itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
                                     itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
 
                                     var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                    from: itemGroupBy.NowPosiSkill,
+                                                    from: itemGroupBy.NowPosiSkill[singleAttackNumber],
                                                     to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
                                                     );
                                     itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
@@ -1180,31 +1181,47 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                     //rush数だけ実行する
                                     int rushBase = 1;
-                                    if (itemSkill.Rush != -1) rushBase = itemSkill.Rush;
+                                    if (itemSkill.Rush > 1) rushBase = itemSkill.Rush;
 
-                                    for (int i = 1; i < rushBase + 1; i++)
+                                    for (int iii = 0; iii < rushBase; iii++)
                                     {
+                                        //rush_random_degree分、ずらす
+                                        if (itemSkill.RushRandomDegree > 1)
+                                        {
+                                            Random rand = new System.Random();
+                                            int degree = rand.Next(0, itemSkill.RushRandomDegree + 1);
+                                            //ラジアン ⇒ 度*180/π を掛ける
+                                            double rad = degree * (Math.PI / 180);
+
+                                            //[0]を基準にするのでOK
+                                            var caRe = ConvertVecX(rad, itemGroupBy.OrderPosiSkill[singleAttackNumber].X, itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
+
+                                            itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
+                                            calc0 = ClassCalcVec.ReturnVecDistance(
+                                                            from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                            to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                            );
+                                            itemGroupBy.VecMoveSkill[singleAttackNumber] = ClassCalcVec.ReturnNormalize(calc0);
+                                        }
+
                                         //Image出す
                                         {
                                             Application.Current.Dispatcher.Invoke((Action)(() =>
                                             {
+                                                //後始末
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID);
-                                                if (re2 != null)
+                                                if (re1 != null)
                                                 {
-                                                    re1.Children.Remove(re2);
+                                                    var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID + singleAttackNumber);
+                                                    if (re2 != null) re1.Children.Remove(re2);
+                                                    var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
+                                                    if (re3 != null) re1.Children.Remove(re3);
                                                 }
-                                                var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID);
-                                                if (re3 != null)
-                                                {
-                                                    re1.Children.Remove(re3);
-                                                }
-
                                                 //スキル画像
                                                 {
                                                     //二点間の角度を求める
-                                                    var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiLeft.Y - itemGroupBy.NowPosiSkill.Y),
-                                                                                (float)(itemDefUnitList.NowPosiLeft.X - itemGroupBy.NowPosiSkill.X));
+                                                    var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
+                                                                                (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
                                                     var degree = radian * (180 / Math.PI);
 
                                                     List<string> strings = new List<string>();
@@ -1237,10 +1254,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                     canvas.Opacity = (double)itemSkill.A / 255;
                                                     canvas.Margin = new Thickness()
                                                     {
-                                                        Left = itemGroupBy.NowPosiSkill.X,
-                                                        Top = itemGroupBy.NowPosiSkill.Y
+                                                        Left = itemGroupBy.NowPosiSkill[singleAttackNumber].X,
+                                                        Top = itemGroupBy.NowPosiSkill[singleAttackNumber].Y
                                                     };
-                                                    canvas.Name = "skillEffect" + itemGroupBy.ID;
+                                                    canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
 
                                                     RotateTransform rotateTransform2 =
                                                         new RotateTransform(degree + 90);
@@ -1261,11 +1278,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                     line.Fill = solidColorBrush;
                                                     line.Stroke = solidColorBrush;
                                                     line.StrokeThickness = 3;
-                                                    line.Name = "skillEffectRay" + itemGroupBy.ID;
-                                                    line.X1 = itemGroupBy.NowPosiSkill.X;
-                                                    line.X2 = itemGroupBy.NowPosiSkill.X + (itemSkill.W / 2);
-                                                    line.Y1 = itemGroupBy.NowPosiSkill.Y;
-                                                    line.Y2 = itemGroupBy.NowPosiSkill.Y + (itemSkill.H / 2);
+                                                    line.Name = "skillEffectRay" + itemGroupBy.ID + singleAttackNumber;
+                                                    line.X1 = itemGroupBy.NowPosiSkill[singleAttackNumber].X;
+                                                    line.X2 = itemGroupBy.NowPosiSkill[singleAttackNumber].X + (itemSkill.W / 2);
+                                                    line.Y1 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y;
+                                                    line.Y2 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y + (itemSkill.H / 2);
                                                     line.HorizontalAlignment = HorizontalAlignment.Left;
                                                     line.VerticalAlignment = VerticalAlignment.Top;
                                                     re1.Children.Add(line);
@@ -1273,41 +1290,25 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             }));
                                         }
 
-                                        //rush_random_degree分、ずらす
-
-                                        //rush分、OrderPosiSkillとVecMoveSkillを用意してやる必要がある
-                                        //後でやる
-
-                                        if (itemSkill.RushRandomDegree != -1)
-                                        {
-                                            Random rand = new System.Random();
-                                            int de = rand.Next(0, itemSkill.RushRandomDegree + 1);
-                                            double rad = de * (Math.PI / 180);
-
-                                            //[0]を基準にするのでOK
-                                            var caRe = ConvertVecX(rad, itemGroupBy.OrderPosiSkill[singleAttackNumber].X, itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
-
-                                            int ran = r1.Next();
-                                            itemGroupBy.OrderPosiSkill.Add(ran, new Point(caRe.Item1, caRe.Item2));
-                                            calc0 = ClassCalcVec.ReturnVecDistance(
-                                                            from: itemGroupBy.NowPosiSkill,
-                                                            to: itemGroupBy.OrderPosiSkill[ran]
-                                                            );
-                                            itemGroupBy.VecMoveSkill.Add(ran, ClassCalcVec.ReturnNormalize(calc0));
-
-                                            //スキル発動スレッド開始
-                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, ran));
-                                        }
-                                        else
-                                        {
-                                            //スキル発動スレッド開始
-                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
-                                        }
+                                        //スキル発動スレッド開始
+                                        var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
 
                                         //RushInterval分、間隔を保つ
                                         if (rushBase > 1)
                                         {
                                             Thread.Sleep(itemSkill.RushInterval * 100);
+
+                                            //次ラッシュの準備
+                                            singleAttackNumber = r1.Next();
+                                            itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
+                                            itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
+                                            calc0 = ClassCalcVec.ReturnVecDistance(
+                                                            from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                            to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                            );
+                                            itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
+                                            itemGroupBy.FlagMovingSkill = true;
                                         }
                                     }
 

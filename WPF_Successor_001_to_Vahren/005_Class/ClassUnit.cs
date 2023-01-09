@@ -36,6 +36,11 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                 var vms = new Dictionary<int, Point>(cu.VecMoveSkill);
                 cu.VecMoveSkill = vms;
             }
+            if (cu.NowPosiSkill != null)
+            {
+                var nps = new Dictionary<int, Point>(cu.NowPosiSkill);
+                cu.NowPosiSkill = nps;
+            }
             return cu;
         }
         #region Formation
@@ -553,9 +558,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region NowPosi
-        private Point nowPosiSkill;
+        private Dictionary<int, Point> nowPosiSkill = new Dictionary<int, Point>();
 
-        public Point NowPosiSkill
+        public Dictionary<int, Point> NowPosiSkill
         {
             get { return nowPosiSkill; }
             set { nowPosiSkill = value; }
