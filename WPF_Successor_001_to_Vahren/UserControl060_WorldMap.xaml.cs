@@ -723,7 +723,13 @@ namespace WPF_Successor_001_to_Vahren
                 // ヘルプを作成する
                 var helpWindow = new UserControl030_Help();
                 helpWindow.Name = "Help_SelectPower";
-                helpWindow.SetText("旗のある領地を左クリックするとプレイ勢力を選択します。\n領地以外を左ドラッグするとワールドマップを動かせます。\n右クリックするとシナリオ選択画面に戻ります。");
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("ヒント：");
+                sb.AppendLine("１．旗のある領地を左クリックするとプレイ勢力を選択します。");
+                sb.AppendLine("２．領地以外を左ドラッグするとワールドマップを動かせます。");
+                sb.AppendLine("３．右クリックするとシナリオ選択画面に戻ります。");
+                sb.Append("４．Ctrl+ホイールでワールドマップの表示倍率を変更出来ます。");
+                helpWindow.SetText(sb.ToString());
                 mainWindow.canvasUI.Children.Add(helpWindow);
 
                 // 領地のヒントが表示されてる時はヘルプを隠す
