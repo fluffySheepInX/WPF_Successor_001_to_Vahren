@@ -832,6 +832,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 canvas.Height = TakasaMapTip;
                                                 canvas.Width = yokoMapTip;
                                                 var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
+                                                if (aaaaa == null) return;
                                                 canvas.Margin = new Thickness()
                                                 {
                                                     Left = aaaaa.Margin.Left,
@@ -946,7 +947,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
         #region スキル関係
 
-        public static async Task TaskBattleSkillExecuteAsync(ClassUnit classUnit,
+        public static void TaskBattleSkillExecuteAsync(ClassUnit classUnit,
                                                             ClassUnit classUnitDef,
                                                             ClassSkill classSkill,
                                                             ClassGameStatus classGameStatus,
@@ -981,18 +982,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 if (classVec.Hit(classUnit.NowPosiSkill[dicKey]))
                 {
                     classUnit.FlagMovingSkill = false;
-                    await Task.Run(() =>
+
+                    Application.Current.Dispatcher.Invoke((Action)(() =>
                     {
-                        Application.Current.Dispatcher.Invoke((Action)(() =>
-                        {
-                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                            if (re1 == null) return;
-                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
-                            if (re2 != null) re1.Children.Remove(re2);
-                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
-                            if (re3 != null) re1.Children.Remove(re3);
-                        }));
-                    });
+                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                        if (re1 == null) return;
+                        var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
+                        if (re2 != null) re1.Children.Remove(re2);
+                        var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
+                        if (re3 != null) re1.Children.Remove(re3);
+                    }));
 
                     //体力計算処理
                     foreach (var item in listTarget)
@@ -1008,48 +1007,46 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             if (itemRe.Hp <= 0)
                             {
                                 item.ListClassUnit.Remove(itemRe);
-                                await Task.Run(() =>
+
+                                if (Application.Current == null)
                                 {
-                                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    Environment.Exit(1);
+                                }
+
+                                Application.Current.Dispatcher.Invoke((Action)(() =>
+                                {
+                                    //通常ユニット破壊
                                     {
-                                        //通常ユニット破壊
+                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                        if (re1 != null)
                                         {
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                            if (re1 != null)
+                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                            if (re2 != null)
                                             {
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                                if (re2 != null)
-                                                {
-                                                    re1.Children.Remove(re2);
-                                                }
+                                                re1.Children.Remove(re2);
                                             }
                                         }
-                                        //建築物破壊
-                                        if (itemRe is ClassUnitBuilding building)
+                                    }
+                                    //建築物破壊
+                                    if (itemRe is ClassUnitBuilding building)
+                                    {
+                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                        if (re1 != null)
                                         {
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                            if (re1 != null)
+                                            var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
+                                            if (re2 != null)
                                             {
-                                                var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                                if (re2 != null)
-                                                {
-                                                    re1.Children.Remove(re2);
-                                                    classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
-                                                }
+                                                re1.Children.Remove(re2);
+                                                classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
                                             }
                                         }
-                                    }));
-                                });
+                                    }
+                                }));
                             }
                         }
                     }
                     //体力計算処理終了
 
-                    //classUnit.OrderPosiSkill[dicKey] = new Point()
-                    //{
-                    //    X = classUnit.NowPosiSkill.X,
-                    //    Y = classUnit.NowPosiSkill.Y
-                    //};
                     classUnit.OrderPosiSkill.Remove(dicKey);
                     classUnit.VecMoveSkill.Remove(dicKey);
                     classUnit.NowPosiSkill.Remove(dicKey);
@@ -1069,29 +1066,23 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         X = classUnit.NowPosiSkill[dicKey].X + (classUnit.VecMoveSkill[dicKey].X * (classSkill.Speed / 100)),
                         Y = classUnit.NowPosiSkill[dicKey].Y + (classUnit.VecMoveSkill[dicKey].Y * (classSkill.Speed / 100))
                     };
-                    await Task.Run(() =>
+
+                    if (Application.Current == null)
                     {
-                        try
-                        {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
-                            {
-                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                if (re1 == null) return;
-                                var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
-                                if (re2 == null) return;
-                                re2.Margin = new Thickness(classUnit.NowPosiSkill[dicKey].X, classUnit.NowPosiSkill[dicKey].Y, 0, 0);
-                                var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
-                                if (re3 == null) return;
-                                re3.X2 = classUnit.NowPosiSkill[dicKey].X + (classSkill.W / 2);
-                                re3.Y2 = classUnit.NowPosiSkill[dicKey].Y + (classSkill.H / 2);
-                            }));
-                        }
-                        catch (Exception)
-                        {
-                            //攻撃中にゲームを落とすとエラーになるので暫定的に
-                            //throw;
-                        }
-                    });
+                        Environment.Exit(1);
+                    }
+                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                    {
+                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                        if (re1 == null) return;
+                        var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + classUnit.ID.ToString() + dicKey);
+                        if (re2 == null) return;
+                        re2.Margin = new Thickness(classUnit.NowPosiSkill[dicKey].X, classUnit.NowPosiSkill[dicKey].Y, 0, 0);
+                        var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + classUnit.ID.ToString() + dicKey);
+                        if (re3 == null) return;
+                        re3.X2 = classUnit.NowPosiSkill[dicKey].X + (classSkill.W / 2);
+                        re3.Y2 = classUnit.NowPosiSkill[dicKey].Y + (classSkill.H / 2);
+                    }));
                 }
             }
         }
@@ -1206,6 +1197,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                         //Image出す
                                         {
+                                            if (Application.Current == null)
+                                            {
+                                                Environment.Exit(1);
+                                            }
+
                                             Application.Current.Dispatcher.Invoke((Action)(() =>
                                             {
                                                 //後始末
@@ -1217,6 +1213,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                     var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
                                                     if (re3 != null) re1.Children.Remove(re3);
                                                 }
+                                                else if (re1 == null)
+                                                {
+                                                    return;
+                                                }
+
                                                 //スキル画像
                                                 {
                                                     //二点間の角度を求める
@@ -1597,8 +1598,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             };
             commonWindow.timerAfterFadeIn.Start();
 
-            ////スキルスレッド開始
+            Application.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;
+
+            for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
             {
+                ////スキルスレッド開始
                 //出撃ユニット
                 {
                     var tokenSource = new CancellationTokenSource();
@@ -1618,19 +1622,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
             {
                 case BattleWhichIsThePlayer.Sortie:
-                    //出撃ユニット
+                    for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
                     {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //出撃ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
                             (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
-                    }
-                    //防衛(AI)ユニット
-                    {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //防衛(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
@@ -1640,19 +1641,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
                     break;
                 case BattleWhichIsThePlayer.Def:
-                    //出撃(AI)ユニット
+                    for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
                     {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //出撃(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
                             (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
-                    }
-                    //防衛ユニット
-                    {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //防衛ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
@@ -1662,19 +1660,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
                     break;
                 case BattleWhichIsThePlayer.None:
-                    //出撃(AI)ユニット
+                    for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
                     {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //出撃(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
                             (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
-                    }
-                    //防衛(AI)ユニット
-                    {
-                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        //防衛(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
@@ -1686,9 +1681,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 default:
                     break;
             }
-
         }
         #endregion
+
+        /// <summary>
+        /// 発動するところを見たことが無い
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            Environment.Exit(1);
+        }
 
         #endregion
     }
