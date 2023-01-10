@@ -12,11 +12,11 @@
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="grdCanvas" Grid.Column="0" Background="Gray" PreviewMouseWheel="grdCanvas_PreviewMouseWheel">
+        <Grid x:Name="grdCanvas" Grid.Column="0" Background="Gray">
             <ScrollViewer 
                           x:Name="scCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-                <Grid x:Name="gridMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid x:Name="gridMaptip" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseWheel="grdCanvas_MouseWheel">
                     <UniformGrid Name="wrapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     ></UniformGrid>
                 </Grid>
@@ -43,14 +43,14 @@
                     </Border>
                     <Border Height="70" HorizontalAlignment="Stretch" Background="#454545" BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top">
                         <Canvas Height="70" Background="Azure">
-                            <Label Content="マスの大きさ" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                            <Label Content="Ctrl+ホイールでも変更可能です" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="18"/>
-                            <Label Content="反応しない時もあります。気にせず何度か回して下さい" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="41"/>
+                            <Label Content="倍率" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Label Content="マスの上でCtrl+ホイールでも変更可能です" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="34"/>
+                            <!--<Label Content="反応しない時もあります。気にせず何度か回して下さい" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Top="41"/>-->
                             <!--<TextBox x:Name="txtTipHeight" Width="53" Canvas.Left="95" Canvas.Top="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>-->
-                            <StackPanel HorizontalAlignment="Center" Height="39" VerticalAlignment="Top" Width="91" Canvas.Left="160" Canvas.Top="5">
+                            <StackPanel HorizontalAlignment="Left" Height="39" VerticalAlignment="Center" Width="231" Canvas.Top="21">
                                 <Slider x:Name="slTipSize" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
-                                    TickFrequency="1" LargeChange="1" Minimum="0" Maximum="10"
-                                    Width="91" HorizontalAlignment="Left" ValueChanged="slTipSize_ValueChanged" Value="5"/>
+                                    TickFrequency="1" LargeChange="1" Minimum="1" Maximum="19"
+                                    Width="231" HorizontalAlignment="Left" ValueChanged="slTipSize_ValueChanged" Value="10"/>
                                 <TextBlock x:Name="ASlider" Text="{Binding Value, ElementName=slTipSize}" HorizontalAlignment="Center" Height="14"/>
                             </StackPanel>
                         </Canvas>

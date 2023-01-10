@@ -34,6 +34,7 @@ namespace MapEditor
         public int TipSize { get; set; } = 64;
         public int BorSize { get; set; } = 4;
         public List<string> fileTips { get; set; } = new List<string>();
+        public int Scale { get; set; } = 10;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,12 +44,12 @@ namespace MapEditor
         {
             this.txtMapHeight.Text = "50";
             this.txtMapWidth.Text = "50";
-            this.TipSize = (int)(slTipSize.Value * 12.8);
+            this.TipSize = (int)(this.slTipSize.Value * 6.4);
             int size = TipSize;
 
             ////スクロールバーの幅はパブリックとして公開されていない？
             //double a = (this.grdCanvas.ActualWidth - 17) / double.Parse(this.txtMapWidth.Text);
-            this.slTipSize.Value = 5;
+            this.slTipSize.Value = Scale;
 
             wrapCanvas.Rows = int.Parse(this.txtMapHeight.Text);
             wrapCanvas.Columns = int.Parse(this.txtMapWidth.Text);
@@ -525,9 +526,56 @@ namespace MapEditor
 
         private void slTipSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int size = (int)(e.NewValue * 12.8);
+            //int size = (int)(e.NewValue * 12.8);
 
-            SizeChangeTip(size);
+            //SizeChangeTip(size);
+
+            ScaleTransform? scaleTransform = null;
+            if (this.gridMaptip.RenderTransform == null)
+            {
+                scaleTransform = new ScaleTransform();
+            }
+            else
+            {
+                var tran = this.gridMaptip.RenderTransform as ScaleTransform;
+                if (tran != null)
+                {
+                    scaleTransform = tran;
+                }
+                else
+                {
+                    scaleTransform = new ScaleTransform();
+                }
+            }
+
+            double scale = 0;
+            if (this.Scale > e.NewValue)
+            {
+                this.Scale = this.Scale - 1;
+                scale = scaleTransform.ScaleX - 0.1;
+            }
+            else if (this.Scale == e.NewValue)
+            {
+                return;
+            }
+            else
+            {
+                this.Scale = this.Scale + 1;
+                scale = scaleTransform.ScaleX + 0.1;
+            }
+
+            // 倍率を制限する（大きいとドラッグでバグることがあるけど、原因はよく分からず）
+            if (scale > 2.0)
+            {
+                scale = 2.0; // 最大 200%
+            }
+            if (scale < 0.1)
+            {
+                scale = 0.1; // 最小 50%
+            }
+            scaleTransform.ScaleX = scale;
+            scaleTransform.ScaleY = scale;
+            this.gridMaptip.RenderTransform = scaleTransform; ;
         }
 
         private void SizeChangeTip(int size)
@@ -733,12 +781,7 @@ namespace MapEditor
 
         private void grdCanvas_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down
-                || Keyboard.GetKeyStates(Key.RightCtrl) == KeyStates.Down)
-            {
-                slTipSize.Value = slTipSize.Value + ((e.Delta > 0) ? 1 : -1);
-                SizeChangeTip((int)(slTipSize.Value * 12.8));
-            }
+
         }
 
         private void btnPreMap_Click(object sender, RoutedEventArgs e)
@@ -746,6 +789,24 @@ namespace MapEditor
             if (MapData is null) return;
             var aaa = new WinPreBattle(MapData, fileTips);
             aaa.ShowDialog();
+        }
+
+        private void grdCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // キーを押しっぱなしにしてる時、GetKeyStates だと取得できない事があるから IsKeyDown を使う
+            if ((Keyboard.IsKeyDown(Key.LeftCtrl) == false) && (Keyboard.IsKeyDown(Key.RightCtrl) == false))
+            {
+                return;
+            }
+
+            if (e.Delta > 0)
+            {
+                this.slTipSize.Value = this.slTipSize.Value + 1;
+            }
+            else
+            {
+                this.slTipSize.Value = this.slTipSize.Value - 1;
+            }
         }
     }
 }
