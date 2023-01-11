@@ -245,16 +245,23 @@ namespace WPF_Successor_001_to_Vahren
                 target_X = target_X / spot_count;
                 target_Y = target_Y / spot_count;
 
-                ClassVec classVec = new ClassVec();
-                // 現在の Margin
-                classVec.X = worldMap.Margin.Left;
-                classVec.Y = worldMap.Margin.Top;
+                // ワールドマップの表示倍率
+                var tran = worldMap.canvasMap.RenderTransform as ScaleTransform;
+                if (tran != null){
+                    double scale = tran.ScaleX;
+                    target_X *= scale;
+                    target_Y *= scale;
+                }
 
-                // 目標にする領地の座標をウインドウ中央にするための Margin
-                classVec.Target = new Point(
-                    mainWindow.CanvasMainWidth / 2 - target_X,
-                    mainWindow.CanvasMainHeight / 2 - target_Y
-                );
+                ClassVec classVec = new ClassVec();
+                // 現在の値
+                classVec.X = Canvas.GetLeft(worldMap);
+                classVec.Y = Canvas.GetTop(worldMap);
+
+                // 目標にする領地の座標をウインドウ中央にするための値
+                target_X = Math.Floor(mainWindow.CanvasMainWidth / 2 - target_X);
+                target_Y = Math.Floor(mainWindow.CanvasMainHeight / 2 - target_Y);
+                classVec.Target = new Point(target_X, target_Y);
                 // 既に目標に到達してるなら終わる
                 if ((classVec.Target.X == classVec.X) && (classVec.Target.Y == classVec.Y))
                 {
@@ -279,21 +286,15 @@ namespace WPF_Successor_001_to_Vahren
                             var ge = classVec.Get(new Point(classVec.X, classVec.Y));
                             classVec.X = ge.X;
                             classVec.Y = ge.Y;
-                            worldMap.Margin = new Thickness()
-                            {
-                                Left = ge.X,
-                                Top = ge.Y
-                            };
+                            Canvas.SetLeft(worldMap, Math.Floor(ge.X));
+                            Canvas.SetTop(worldMap, Math.Floor(ge.Y));
                         }));
                     });
                 }
 
                 // 目標にする座標をウインドウ中央にする（移動時に微妙にずれても、最後にここで修正する）
-                worldMap.Margin = new Thickness()
-                {
-                    Top = mainWindow.CanvasMainHeight / 2 - target_Y,
-                    Left = mainWindow.CanvasMainWidth / 2 - target_X
-                };
+                Canvas.SetLeft(worldMap, target_X);
+                Canvas.SetTop(worldMap, target_Y);
             }
         }
 
