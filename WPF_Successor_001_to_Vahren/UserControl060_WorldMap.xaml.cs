@@ -44,8 +44,8 @@ namespace WPF_Successor_001_to_Vahren
             double posLeft = - mainWindow.CanvasMainWidth / 2;
             double posTop = - mainWindow.CanvasMainHeight / 2;
             // Margin を使うと、大きく拡大した時に、正しく表示されなくなる。
-            // +-4000 を超えたぐらいから、位置がずれてくる。WPF ぼバグなのかも？
-            // それで、Canvas.SetLeft を使用してます。
+            // +-4000 を超えたぐらいから、位置がずれてくる。WPF のバグなのかも？
+            // それで、Canvas.SetLeft と SetTop を使用してます。
             Canvas.SetLeft(this, posLeft);
             Canvas.SetTop(this, posTop);
             mainWindow.ClassGameStatus.Camera = new Point(posLeft, posTop);

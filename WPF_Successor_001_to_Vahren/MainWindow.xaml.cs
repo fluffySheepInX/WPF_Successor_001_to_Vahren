@@ -3213,7 +3213,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             ClassVec classVec = new ClassVec();
-            // 現在の Margin
+            // 現在の値
             classVec.X = Canvas.GetLeft(worldMap);
             classVec.Y = Canvas.GetTop(worldMap);
 
