@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -370,7 +371,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
         #region 移動関係
 
-        public static async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit, CancellationToken token, ClassGameStatus classGameStatus, Window window)
+        public static async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit,
+                                                            CancellationToken token,
+                                                            ClassGameStatus classGameStatus,
+                                                            Window window)
         {
             try
             {
@@ -414,23 +418,61 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         double afterNowPosiX = classUnit.NowPosiLeft.X + (classUnit.VecMove.X * classUnit.Speed);
                         double afterNowPosiY = classUnit.NowPosiLeft.Y + (classUnit.VecMove.Y * classUnit.Speed);
 
-                        await Task.Run(() =>
+                        if (Application.Current == null)
                         {
-                            Application.Current.Dispatcher.Invoke((Action)(() =>
-                            {
-                                try
-                                {
-                                    bool ch = true;
-                                    var targetTip = ClassStaticBattle.GetRecObj(classGameStatus.ClassBattle.ListBuildingAlive, afterNowPosiX, afterNowPosiY);
-                                    ch = ClassStaticBattle.CheckRecObj(ch, targetTip, classGameStatus);
+                            Environment.Exit(1);
+                        }
 
-                                    if (ch == true)
+                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                        {
+                            try
+                            {
+                                bool ch = true;
+                                var targetTip = ClassStaticBattle.GetRecObj(classGameStatus.ClassBattle.ListBuildingAlive, afterNowPosiX, afterNowPosiY);
+                                ch = ClassStaticBattle.CheckRecObj(ch, targetTip, classGameStatus);
+
+                                if (ch == true)
+                                {
+                                    //移動後に建築物無し
+                                    classUnit.NowPosiLeft = new Point()
+                                    {
+                                        X = afterNowPosiX,
+                                        Y = afterNowPosiY
+                                    };
+
+                                    var ca1 = (Canvas)window.Content;
+                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(ca1, StringName.windowMapBattle);
+                                    if (re1 != null)
+                                    {
+                                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                        if (re2 != null)
+                                        {
+                                            re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    ////移動後に建築物有り
+                                    //移動後の位置を再計算（一度バックする）
+                                    afterNowPosiX = classUnit.NowPosiLeft.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
+                                    afterNowPosiY = classUnit.NowPosiLeft.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
+                                    //afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(32));
+                                    //afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(16));
+                                    //行列変換
+                                    var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y);
+
+                                    bool ch2 = true;
+                                    var targetTip2 = ClassStaticBattle.GetRecObj(classGameStatus.ClassBattle.ListBuildingAlive, resultConv.Item1, resultConv.Item2);
+                                    ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, classGameStatus);
+
+                                    if (ch2 == true)
                                     {
                                         //移動後に建築物無し
                                         classUnit.NowPosiLeft = new Point()
                                         {
-                                            X = afterNowPosiX,
-                                            Y = afterNowPosiY
+                                            X = resultConv.Item1,
+                                            Y = resultConv.Item2
                                         };
 
                                         var ca1 = (Canvas)window.Content;
@@ -443,78 +485,41 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
                                             }
                                         }
+
+                                        //再計算する
+                                        var calc0 = ClassCalcVec.ReturnVecDistance(
+                                            from: new Point(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y),
+                                            to: classUnit.OrderPosiLeft
+                                            );
+                                        classUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                                     }
                                     else
                                     {
-                                        ////移動後に建築物有り
-                                        //移動後の位置を再計算（一度バックする）
-                                        afterNowPosiX = classUnit.NowPosiLeft.X + (classUnit.VecMove.X * -(classUnit.Speed * 5));
-                                        afterNowPosiY = classUnit.NowPosiLeft.Y + (classUnit.VecMove.Y * -(classUnit.Speed * 5));
-                                        //afterNowPosiX = classUnit.NowPosi.X + (classUnit.VecMove.X * -(32));
-                                        //afterNowPosiY = classUnit.NowPosi.Y + (classUnit.VecMove.Y * -(16));
-                                        //行列変換
-                                        var resultConv = ClassStaticBattle.ConvertVec90(afterNowPosiX, afterNowPosiY, classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y);
-
-                                        bool ch2 = true;
-                                        var targetTip2 = ClassStaticBattle.GetRecObj(classGameStatus.ClassBattle.ListBuildingAlive, resultConv.Item1, resultConv.Item2);
-                                        ch2 = ClassStaticBattle.CheckRecObj(ch2, targetTip2, classGameStatus);
-
-                                        if (ch2 == true)
+                                        ////バックして90度変換した後に建築物有り
+                                        //止まる
+                                        var ca1 = (Canvas)window.Content;
+                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(ca1, StringName.windowMapBattle);
+                                        if (re1 != null)
                                         {
-                                            //移動後に建築物無し
-                                            classUnit.NowPosiLeft = new Point()
+                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
+                                            if (re2 != null)
                                             {
-                                                X = resultConv.Item1,
-                                                Y = resultConv.Item2
-                                            };
-
-                                            var ca1 = (Canvas)window.Content;
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(ca1, StringName.windowMapBattle);
-                                            if (re1 != null)
-                                            {
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                                if (re2 != null)
-                                                {
-                                                    re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
-                                                }
+                                                re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
                                             }
-
-                                            //再計算する
-                                            var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                from: new Point(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y),
-                                                to: classUnit.OrderPosiLeft
-                                                );
-                                            classUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                                         }
-                                        else
-                                        {
-                                            ////バックして90度変換した後に建築物有り
-                                            //止まる
-                                            var ca1 = (Canvas)window.Content;
-                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(ca1, StringName.windowMapBattle);
-                                            if (re1 != null)
-                                            {
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + classUnit.ID.ToString());
-                                                if (re2 != null)
-                                                {
-                                                    re2.Margin = new Thickness(classUnit.NowPosiLeft.X, classUnit.NowPosiLeft.Y, 0, 0);
-                                                }
-                                            }
-                                            classUnit.OrderPosiLeft = classUnit.NowPosiLeft;
-                                            classUnit.FlagMoving = false;
-                                            return;
-                                        }
+                                        classUnit.OrderPosiLeft = classUnit.NowPosiLeft;
+                                        classUnit.FlagMoving = false;
+                                        return;
                                     }
                                 }
-                                catch (Exception)
-                                {
-                                    //移動中にゲームを落とすとエラーになるので暫定的に
-                                    throw;
-                                }
-                            }));
-                            //Application.Current.Dispatcher.Invoke終了
-                        });
-                        //await Task.Run終了
+                            }
+                            catch (Exception)
+                            {
+                                //移動中にゲームを落とすとエラーになるので暫定的に
+                                throw;
+                            }
+                        }));
+                        //Application.Current.Dispatcher.Invoke終了
                     }
                 }
             }
@@ -580,16 +585,128 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        #region アスターアルゴリズム関係
-
-        #region TaskBattleMoveAIAsync
         /// <summary>
-        /// アスターアルゴリズムで移動
+        /// 格納されたルート情報を基に移動する
         /// </summary>
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
-        public static async void TaskBattleMoveAIAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window, Canvas canvasMain)
+        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken,
+                                                    ClassGameStatus classGameStatus,
+                                                    Window window)
+        {
+            // チェック
+            if (classGameStatus.ClassBattle == null) return;
+            if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
+
+            Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
+
+            // 移動する陣営決定
+            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
+            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            List<ClassUnit> list = new List<ClassUnit>();
+            foreach (var itemH in listTarget)
+            {
+                list.AddRange(itemH.ListClassUnit);
+            }
+
+            while (true)
+            {
+                if (cancelToken.IsCancellationRequested) return;
+
+                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+
+                try
+                {
+                    foreach (var item in classGameStatus.AiRoot)
+                    {
+                        try
+                        {
+                            foreach (var moveUnit in list.Where(x => x.ID == item.Key && x.FlagMoving == false))
+                            {
+                                foreach (var itemNext in item.Value)
+                                {
+                                    while (true)
+                                    {
+                                        if (moveUnit.FlagMoving == true)
+                                        {
+                                            if (cancelToken.IsCancellationRequested) return;
+
+                                            Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    //移動スレッド開始
+                                    var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemNext.X][(int)itemNext.Y].MapPath;
+                                    if (aaaaa == null) return;
+                                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    {
+                                        moveUnit.OrderPosiLeft = new Point(aaaaa.Margin.Left, aaaaa.Margin.Top);
+                                    }));
+                                    var calc0 = ClassCalcVec.ReturnVecDistance(
+                                        from: new Point(moveUnit.NowPosiLeft.X, moveUnit.NowPosiLeft.Y),
+                                        to: moveUnit.OrderPosiLeft
+                                    );
+                                    moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                                    moveUnit.FlagMoving = true;
+                                    if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
+                                    {
+                                        if (value.Item1 != null)
+                                        {
+                                            value.Item2.Cancel();
+                                            t.Remove(moveUnit.ID);
+                                        }
+                                    }
+                                    var tokenSource = new CancellationTokenSource();
+                                    var token = tokenSource.Token;
+                                    (Task, CancellationTokenSource) aaa =
+                                        new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                    t.Add(moveUnit.ID, aaa);
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+        }
+
+        #region アスターアルゴリズム関係
+
+        #region TaskBattleMoveAIAsync
+        /// <summary>
+        /// アスターアルゴリズムでルート情報を格納
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <param name="classGameStatus"></param>
+        /// <param name="window"></param>
+        public static async void TaskBattleMoveAStar(CancellationToken cancelToken,
+                                                        ClassGameStatus classGameStatus,
+                                                        Window window,
+                                                        Canvas canvasMain)
         {
             // チェック
             if (classGameStatus.ClassBattle == null) return;
@@ -640,15 +757,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 try
                 {
-                    foreach (var itemTarget in listTarget.Where(x=>x.FlagBuilding == false))
+                    foreach (var itemTarget in listTarget.Where(x => x.FlagBuilding == false))
                     {
                         try
                         {
                             foreach (var itemListClassUnit in itemTarget.ListClassUnit.Where(x => x.FlagMoving == false))
                             {
-                                var listRoot = new List<Point>();
                                 if (counter >= 180)
                                 {
+                                    var listRoot = new List<Point>();
+
                                     counter = 1;
                                     ////アスターアルゴリズムで移動経路取得
                                     //まず現在のマップチップを取得
@@ -850,28 +968,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         }
                                     }
                                     #endregion
-                                }
 
-                                //移動スレッド開始
-                                var calc0 = ClassCalcVec.ReturnVecDistance(
-                                    from: new Point(itemListClassUnit.NowPosiLeft.X, itemListClassUnit.NowPosiLeft.Y),
-                                    to: itemListClassUnit.OrderPosiCenter
-                                    );
-                                itemListClassUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                                itemListClassUnit.FlagMoving = true;
-                                if (t.TryGetValue(itemListClassUnit.ID, out (Task, CancellationTokenSource) value))
-                                {
-                                    if (value.Item1 != null)
+                                    if (listRoot.Count != 0)
                                     {
-                                        value.Item2.Cancel();
-                                        t.Remove(itemListClassUnit.ID);
+                                        classGameStatus.AiRoot.Add(itemListClassUnit.ID, listRoot);
                                     }
                                 }
-                                var tokenSource = new CancellationTokenSource();
-                                var token = tokenSource.Token;
-                                (Task, CancellationTokenSource) aaa =
-                                    new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(itemListClassUnit, token, classGameStatus, window)), tokenSource);
-                                t.Add(itemListClassUnit.ID, aaa);
                             }
                         }
                         catch (Exception)
@@ -1642,7 +1744,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }
@@ -1654,7 +1762,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
                         //防衛ユニット
@@ -1662,6 +1770,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
                             (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }
@@ -1673,14 +1787,20 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
                         //防衛(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                        }
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }

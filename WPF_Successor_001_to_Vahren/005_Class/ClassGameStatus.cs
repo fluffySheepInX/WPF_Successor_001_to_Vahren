@@ -226,6 +226,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region AiRoot
+        private Dictionary<long, List<Point>> aiRoot = new Dictionary<long, List<Point>>();
+        public Dictionary<long,List<Point>> AiRoot
+        {
+            get { return aiRoot; }
+            set { aiRoot = value; }
+        }
+        #endregion
+
         #region BattleThread
         private int battleThread = 1;
         public int BattleThread
