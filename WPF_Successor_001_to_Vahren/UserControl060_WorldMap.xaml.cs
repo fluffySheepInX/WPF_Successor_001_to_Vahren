@@ -41,12 +41,14 @@ namespace WPF_Successor_001_to_Vahren
             this.Width = mainWindow.CanvasMainWidth * 2;
             this.Height = mainWindow.CanvasMainHeight * 2;
             // 最初はマップの中央を画面の中央にする
-            this.Margin = new Thickness()
-            {
-                Left = -(mainWindow.CanvasMainWidth / 2),
-                Top = -(mainWindow.CanvasMainHeight / 2)
-            };
-            mainWindow.ClassGameStatus.Camera = new Point(this.Margin.Left, this.Margin.Top);
+            double posLeft = - mainWindow.CanvasMainWidth / 2;
+            double posTop = - mainWindow.CanvasMainHeight / 2;
+            // Margin を使うと、大きく拡大した時に、正しく表示されなくなる。
+            // +-4000 を超えたぐらいから、位置がずれてくる。WPF ぼバグなのかも？
+            // それで、Canvas.SetLeft を使用してます。
+            Canvas.SetLeft(this, posLeft);
+            Canvas.SetTop(this, posTop);
+            mainWindow.ClassGameStatus.Camera = new Point(posLeft, posTop);
 
             this.canvasMap.Children.Clear();
 
@@ -824,9 +826,10 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // マップ位置の制限がうまくいかない？
-                var thickness = new Thickness();
-                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X) * scale;
+                Canvas.SetLeft(this, Math.Floor(Canvas.GetLeft(this) + (pt.X - _startPoint.X) * scale));
+                Canvas.SetTop(this, Math.Floor(Canvas.GetTop(this) + (pt.Y - _startPoint.Y) * scale));
                 /*
+                var thickness = new Thickness();
                 thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
                 if (thickness.Left > this.Width / 4)
                 {
@@ -836,9 +839,6 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     thickness.Left = this.Width / 4 - this.Width;
                 }
-                */
-                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y) * scale;
-                /*
                 thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
                 if (thickness.Top > this.Height / 4)
                 {
@@ -848,8 +848,8 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     thickness.Top = this.Height / 4 - this.Height;
                 }
-                */
                 this.Margin = thickness;
+                */
             }
         }
         #endregion
@@ -1430,7 +1430,7 @@ namespace WPF_Successor_001_to_Vahren
             dialog.ShowDialog();
 
             // 現在のマップ表示位置を記録しておく
-            mainWindow.ClassGameStatus.Camera = new Point(this.Margin.Left, this.Margin.Top);
+            mainWindow.ClassGameStatus.Camera = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
 
             // 出撃ウィンドウを表示する
             var windowSortie = new UserControl065_Sortie();

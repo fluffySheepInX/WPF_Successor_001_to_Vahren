@@ -2436,11 +2436,8 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Children.Add(worldMap);
 
             // 戦闘前のマップ位置にする
-            worldMap.Margin = new Thickness()
-            {
-                Left = this.ClassGameStatus.Camera.X,
-                Top = this.ClassGameStatus.Camera.Y
-            };
+            Canvas.SetLeft(worldMap, this.ClassGameStatus.Camera.X);
+            Canvas.SetTop(worldMap, this.ClassGameStatus.Camera.Y);
 
             //メッセージ
             MessageBox.Show("戦闘が終了しました。");
@@ -3203,16 +3200,27 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            // 目標にする領地の座標
+            double target_X = this.ClassGameStatus.SelectionCityPoint.X;
+            double target_Y = this.ClassGameStatus.SelectionCityPoint.Y;
+
+            // ワールドマップの表示倍率
+            var tran = worldMap.canvasMap.RenderTransform as ScaleTransform;
+            if (tran != null){
+                double scale = tran.ScaleX;
+                target_X *= scale;
+                target_Y *= scale;
+            }
+
             ClassVec classVec = new ClassVec();
             // 現在の Margin
-            classVec.X = worldMap.Margin.Left;
-            classVec.Y = worldMap.Margin.Top;
+            classVec.X = Canvas.GetLeft(worldMap);
+            classVec.Y = Canvas.GetTop(worldMap);
 
-            // 目標にする領地の座標をウインドウ中央にするための Margin
-            classVec.Target = new Point(
-                this.CanvasMainWidth / 2 - this.ClassGameStatus.SelectionCityPoint.X,
-                this.CanvasMainHeight / 2 - this.ClassGameStatus.SelectionCityPoint.Y
-            );
+            // 目標にする領地の座標をウインドウ中央にするための値
+            target_X = Math.Floor(this.CanvasMainWidth / 2 - target_X);
+            target_Y = Math.Floor(this.CanvasMainHeight / 2 - target_Y);
+            classVec.Target = new Point(target_X, target_Y);
             classVec.Speed = 10;
             classVec.Set();
 
@@ -3232,11 +3240,8 @@ namespace WPF_Successor_001_to_Vahren
                         var ge = classVec.Get(new Point(classVec.X, classVec.Y));
                         classVec.X = ge.X;
                         classVec.Y = ge.Y;
-                        worldMap.Margin = new Thickness()
-                        {
-                            Left = ge.X,
-                            Top = ge.Y
-                        };
+                        Canvas.SetLeft(worldMap, Math.Floor(ge.X));
+                        Canvas.SetTop(worldMap, Math.Floor(ge.Y));
                     }));
                 });
             }
