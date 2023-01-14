@@ -153,11 +153,11 @@ namespace WPF_Successor_001_to_Vahren
         enum DpiAwarenessContext
         {
             Context_Undefined = 0,
-            Context_Unaware =  - 1,
-            Context_SystemAware =  - 2,
-            Context_PerMonitorAware =  - 3,
-            Context_PerMonitorAwareV2 =  - 4,
-            Context_UnawareGdiScaled = - 5
+            Context_Unaware = -1,
+            Context_SystemAware = -2,
+            Context_PerMonitorAware = -3,
+            Context_PerMonitorAwareV2 = -4,
+            Context_UnawareGdiScaled = -5
         }
 
         private void MainWindow_Initialized(object sender, EventArgs e)
@@ -181,6 +181,7 @@ namespace WPF_Successor_001_to_Vahren
                 // ツールチップが表示されるまでの時間を最小にする。
                 ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(0));
 
+                #region 拡大倍率
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
                 rect = System.Windows.Forms.Screen.GetBounds(new System.Drawing.Point(0, 0));
                 int h1 = rect.Height;
@@ -188,12 +189,16 @@ namespace WPF_Successor_001_to_Vahren
                 rect = System.Windows.Forms.Screen.GetBounds(new System.Drawing.Point(0, 0));
                 int h2 = rect.Height;
 
-                //拡大倍率
                 double ratio = (double)h2 / h1;
                 if (ratio != 1)
                 {
-                    MessageBox.Show("拡大倍率が100%ではありません。システムの拡大縮小率を100%にすることで、レイアウトの崩れが直ります。");
+                    MessageBox.Show("拡大倍率が100%ではありません。" 
+                                    + System.Environment.NewLine 
+                                    + "システムの拡大縮小率を100%にすることで、" 
+                                    + System.Environment.NewLine 
+                                    + "レイアウトの崩れが直ります。");
                 }
+                #endregion
             }
             catch (Exception err)
             {
@@ -3233,7 +3238,8 @@ namespace WPF_Successor_001_to_Vahren
 
             // ワールドマップの表示倍率
             var tran = worldMap.canvasMap.RenderTransform as ScaleTransform;
-            if (tran != null){
+            if (tran != null)
+            {
                 double scale = tran.ScaleX;
                 target_X *= scale;
                 target_Y *= scale;
