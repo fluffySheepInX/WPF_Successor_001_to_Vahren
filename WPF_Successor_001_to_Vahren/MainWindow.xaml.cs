@@ -6,6 +6,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -147,6 +148,18 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
 
         #region Event
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int SetProcessDpiAwarenessContext(DpiAwarenessContext value);
+        enum DpiAwarenessContext
+        {
+            Context_Undefined = 0,
+            Context_Unaware =  - 1,
+            Context_SystemAware =  - 2,
+            Context_PerMonitorAware =  - 3,
+            Context_PerMonitorAwareV2 =  - 4,
+            Context_UnawareGdiScaled = - 5
+        }
+
         private void MainWindow_Initialized(object sender, EventArgs e)
         {
             try
@@ -167,6 +180,20 @@ namespace WPF_Successor_001_to_Vahren
                 // コントロールのプロパティの標準値を指定する
                 // ツールチップが表示されるまでの時間を最小にする。
                 ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(0));
+
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+                rect = System.Windows.Forms.Screen.GetBounds(new System.Drawing.Point(0, 0));
+                int h1 = rect.Height;
+                SetProcessDpiAwarenessContext(DpiAwarenessContext.Context_PerMonitorAware);
+                rect = System.Windows.Forms.Screen.GetBounds(new System.Drawing.Point(0, 0));
+                int h2 = rect.Height;
+
+                //拡大倍率
+                double ratio = (double)h2 / h1;
+                if (ratio != 1)
+                {
+                    MessageBox.Show("拡大倍率が100%ではありません。システムの拡大縮小率を100%にすることで、レイアウトの崩れが直ります。");
+                }
             }
             catch (Exception err)
             {

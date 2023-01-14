@@ -5,6 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <PublishSingleFile>true</PublishSingleFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
