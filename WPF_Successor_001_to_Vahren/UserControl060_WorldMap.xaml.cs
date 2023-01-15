@@ -1462,6 +1462,12 @@ namespace WPF_Successor_001_to_Vahren
         /// <param name="e"></param>
         private void map_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
             // キーを押しっぱなしにしてる時、GetKeyStates だと取得できない事があるから IsKeyDown を使う
             if ((Keyboard.IsKeyDown(Key.LeftCtrl) == false) && (Keyboard.IsKeyDown(Key.RightCtrl) == false))
             {
@@ -1495,9 +1501,23 @@ namespace WPF_Successor_001_to_Vahren
             {
                 scale = 0.5; // 最小 50%
             }
+            double scalePrev = scaleTransform.ScaleX; // 以前の倍率
             scaleTransform.ScaleX = scale;
             scaleTransform.ScaleY = scale;
-            this.canvasMap.RenderTransform = scaleTransform; ;
+            this.canvasMap.RenderTransform = scaleTransform;
+            if ((scalePrev != scale) && (scalePrev != 0))
+            {
+                // 元の中心座標とオフセット
+                double offsetLeft = Canvas.GetLeft(this);
+                double offsetTop = Canvas.GetTop(this);
+                double centerX = (mainWindow.CanvasMainWidth / 2 - offsetLeft) / scalePrev;
+                double centerY = (mainWindow.CanvasMainHeight / 2 - offsetTop) / scalePrev;
+                // 中心座標を同じに保つための、新しいオフセット
+                offsetLeft = Math.Floor(mainWindow.CanvasMainWidth / 2 - centerX * scale);
+                offsetTop = Math.Floor(mainWindow.CanvasMainHeight / 2 - centerY * scale);
+                Canvas.SetLeft(this, offsetLeft);
+                Canvas.SetTop(this, offsetTop);
+            }
         }
 
     }
