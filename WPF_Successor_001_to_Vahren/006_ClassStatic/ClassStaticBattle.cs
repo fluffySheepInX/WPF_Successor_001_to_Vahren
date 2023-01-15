@@ -371,7 +371,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
         #region 移動関係
 
-        public static async Task TaskBattleMoveExecuteAsync(ClassUnit classUnit,
+        public static void TaskBattleMoveExecuteAsync(ClassUnit classUnit,
                                                             CancellationToken token,
                                                             ClassGameStatus classGameStatus,
                                                             Window window)
@@ -655,6 +655,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     //移動スレッド開始
                                     var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemNext.X][(int)itemNext.Y].MapPath;
                                     if (aaaaa == null) return;
+                                    if (Application.Current == null)
+                                    {
+                                        Environment.Exit(1);
+                                    }
                                     Application.Current.Dispatcher.Invoke((Action)(() =>
                                     {
                                         moveUnit.OrderPosiLeft = new Point(aaaaa.Margin.Left, aaaaa.Margin.Top);
@@ -1060,7 +1064,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                             ClassUnit classUnitDef,
                                                             ClassSkill classSkill,
                                                             ClassGameStatus classGameStatus,
-                                                            Canvas canvasMain, int dicKey)
+                                                            Canvas canvasMain,
+                                                            int dicKey)
         {
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
@@ -1087,10 +1092,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 classUnit.VecMoveSkill.TryGetValue(dicKey, out Point resultTryVec);
                 classVec.Vec = resultTryVec;
                 classVec.Speed = classSkill.Speed;
-
-                if (classVec.Hit(classUnit.NowPosiSkill[dicKey]))
+                if (classUnit.NowPosiSkill.TryGetValue(dicKey, out Point point) == false)
+                {
+                    return;
+                }
+                if (classVec.Hit(point) == true)
                 {
                     classUnit.FlagMovingSkill = false;
+
+                    if (Application.Current == null)
+                    {
+                        Environment.Exit(1);
+                    }
 
                     Application.Current.Dispatcher.Invoke((Action)(() =>
                     {
@@ -1103,56 +1116,69 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }));
 
                     //体力計算処理
-                    foreach (var item in listTarget)
+                    try
                     {
-                        var re = item.ListClassUnit.Where(x => x.NowPosiCenter.X <= classVec.Target.X + classSkill.RandomSpace
-                                                    && x.NowPosiCenter.X >= classVec.Target.X - classSkill.RandomSpace
-                                                    && x.NowPosiCenter.Y <= classVec.Target.Y + classSkill.RandomSpace
-                                                    && x.NowPosiCenter.Y >= classVec.Target.Y - classSkill.RandomSpace);
-
-                        foreach (var itemRe in re)
+                        foreach (var item in listTarget)
                         {
-                            itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
-                            if (itemRe.Hp <= 0)
+                            var re = item.ListClassUnit.Where(x => x.NowPosiCenter.X <= classVec.Target.X + classSkill.RandomSpace
+                                                        && x.NowPosiCenter.X >= classVec.Target.X - classSkill.RandomSpace
+                                                        && x.NowPosiCenter.Y <= classVec.Target.Y + classSkill.RandomSpace
+                                                        && x.NowPosiCenter.Y >= classVec.Target.Y - classSkill.RandomSpace);
+                            try
                             {
-                                item.ListClassUnit.Remove(itemRe);
-
-                                if (Application.Current == null)
+                                foreach (var itemRe in re)
                                 {
-                                    Environment.Exit(1);
+                                    itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
+                                    if (itemRe.Hp <= 0)
+                                    {
+                                        item.ListClassUnit.Remove(itemRe);
+
+                                        if (Application.Current == null)
+                                        {
+                                            Environment.Exit(1);
+                                        }
+
+                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        {
+                                            //通常ユニット破壊
+                                            {
+                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                                if (re1 != null)
+                                                {
+                                                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                                    if (re2 != null)
+                                                    {
+                                                        re1.Children.Remove(re2);
+                                                    }
+                                                }
+                                            }
+                                            //建築物破壊
+                                            if (itemRe is ClassUnitBuilding building)
+                                            {
+                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                                if (re1 != null)
+                                                {
+                                                    var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
+                                                    if (re2 != null)
+                                                    {
+                                                        re1.Children.Remove(re2);
+                                                        classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
+                                                    }
+                                                }
+                                            }
+                                        }));
+                                    }
                                 }
-
-                                Application.Current.Dispatcher.Invoke((Action)(() =>
-                                {
-                                    //通常ユニット破壊
-                                    {
-                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                        if (re1 != null)
-                                        {
-                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                            if (re2 != null)
-                                            {
-                                                re1.Children.Remove(re2);
-                                            }
-                                        }
-                                    }
-                                    //建築物破壊
-                                    if (itemRe is ClassUnitBuilding building)
-                                    {
-                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                        if (re1 != null)
-                                        {
-                                            var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                            if (re2 != null)
-                                            {
-                                                re1.Children.Remove(re2);
-                                                classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
-                                            }
-                                        }
-                                    }
-                                }));
+                            }
+                            catch (Exception)
+                            {
+                                throw;
                             }
                         }
+                    }
+                    catch (Exception)
+                    {
+                        return;
                     }
                     //体力計算処理終了
 
@@ -1180,6 +1206,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         Environment.Exit(1);
                     }
+
                     Application.Current.Dispatcher.Invoke((Action)(() =>
                     {
                         var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
@@ -1294,7 +1321,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             double rad = degree * (Math.PI / 180);
 
                                             //[0]を基準にするのでOK
-                                            var caRe = ConvertVecX(rad, itemGroupBy.OrderPosiSkill[singleAttackNumber].X, itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
+                                            var caRe = ConvertVecX(rad,
+                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
+                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
 
                                             itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
                                             calc0 = ClassCalcVec.ReturnVecDistance(
