@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
 using WPF_Successor_001_to_Vahren._020_AST;
@@ -152,7 +154,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             {
                 this.ListClassAStar.Add(getClassAStar);
                 Pool.Add(getClassAStar.Row + "/" + getClassAStar.Col, getClassAStar);
-
             }
             else
             {
@@ -162,8 +163,23 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             return getClassAStar;
         }
 
-        public void OpenAround(ClassAStar parent, List<List<MapDetail>> MapData, ClassGameStatus classGameStatus)
+        public void OpenAround(ClassAStar parent, List<List<MapDetail>> MapData, ClassGameStatus classGameStatus, Canvas canvasMain = null)
         {
+            List<ClassHorizontalUnit> listClassHorizontalUnits = new List<ClassHorizontalUnit>();
+            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    listClassHorizontalUnits = classGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    listClassHorizontalUnits = classGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
             var x = parent.Row;
             var y = parent.Col;
             var cost = parent.Cost;
@@ -177,30 +193,85 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                         continue;
                     }
 
+                    // GATE系の壊せるオブジェクトが存在するかチェック
+                    ClassUnitBuilding? classUnitBuilding = null;
+                    foreach (var item in listClassHorizontalUnits.Where(x => x.FlagBuilding == true))
+                    {
+                        foreach (var itemListClassUnit in item.ListClassUnit)
+                        {
+                            if (itemListClassUnit is not ClassUnitBuilding building)
+                            {
+                                continue;
+                            }
+
+                            if (building.X == x + i && building.Y == y + j)
+                            {
+                                classUnitBuilding = building;
+                                break;
+                            }
+                        }
+                        if (classUnitBuilding != null)
+                        {
+                            break;
+                        }
+                    }
+                    //オブジェクトがあったらコンティニュー
+                    if (classUnitBuilding != null)
+                    {
+                        switch (classUnitBuilding.Type)
+                        {
+                            case MapTipObjectType.WALL2:
+                                break;
+                            case MapTipObjectType.GATE:
+                                Application.Current.Dispatcher.Invoke((Action)(() =>
+                                {
+                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+
+                                    Canvas canvas = new Canvas();
+                                    canvas.Background = Brushes.DarkRed;
+                                    canvas.Height = 32;
+                                    canvas.Width = 32;
+                                    var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[x + i][y + j].MapPath;
+                                    canvas.Margin = new Thickness()
+                                    {
+                                        Left = aaaaa.Margin.Left,
+                                        Top = aaaaa.Margin.Top
+                                    };
+                                    re1.Children.Add(canvas);
+                                }));
+                                //OpenOne(x + i, y + j, cost, parent);
+                                break;
+                            default:
+                                break;
+                        }
+                        continue;
+                    }
+
+
                     if (MapData[x + i][y + j].Building.Count == 0)
                     {
                         OpenOne(x + i, y + j, cost, parent);
+                        continue;
+                    }
+
+                    // WALL2系の壊せないオブジェクトが存在するかチェック
+                    var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building[0]).FirstOrDefault();
+                    if (ob != null)
+                    {
+                        switch (ob.Type)
+                        {
+                            case MapTipObjectType.WALL2:
+                                break;
+                            case MapTipObjectType.GATE:
+                                OpenOne(x + i, y + j, cost, parent);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     else
                     {
-                        var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building[0]).FirstOrDefault();
-                        if (ob != null)
-                        {
-                            switch (ob.Type)
-                            {
-                                case MapTipObjectType.WALL2:
-                                    break;
-                                case MapTipObjectType.GATE:
-                                    OpenOne(x + i, y + j, cost, parent);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        OpenOne(x + i, y + j, cost, parent);
                     }
                 }
             }

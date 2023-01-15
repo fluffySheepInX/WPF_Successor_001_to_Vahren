@@ -71,6 +71,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     Defense = re.CastleDefense
                     ,
                     MagDef = re.CastleMagdef
+                    ,
+                    Type = MapTipObjectType.GATE
                 });
             }
             classHorizontalUnit.ListClassUnit = uni;
@@ -777,11 +779,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     int rowT = -1;
                                     int colT = -1;
 
-                                    if (Application.Current == null)
-                                    {
-                                        Environment.Exit(1);
-                                    }
-
+                                    if (Application.Current == null) Environment.Exit(1);
                                     Application.Current.Dispatcher.Invoke((Action)(() =>
                                     {
                                         var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoMapTip)) >= itemListClassUnit.NowPosiCenter.X
@@ -842,38 +840,36 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     //最寄りの敵のマップチップを取得
                                     int rowE = -1;
                                     int colE = -1;
-                                    await Task.Run(() =>
+                                    if (Application.Current == null) Environment.Exit(1);
+                                    Application.Current.Dispatcher.Invoke((Action)(() =>
                                     {
-                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoMapTip)) >= minElem.Key.NowPosiCenter.X
+                                                                        && (x.Margin.Left) <= (minElem.Key.NowPosiCenter.X));
+
+                                        if (initMapTip.Count() <= 0) return;
+
+                                        var initMapTipA = initMapTip.Where(y => (y.Margin.Top + (ClassStaticBattle.TakasaMapTip)) >= (minElem.Key.NowPosiCenter.Y)
+                                                                            && (y.Margin.Top) <= ((minElem.Key.NowPosiCenter.Y)))
+                                                                    .FirstOrDefault();
+
+                                        if (initMapTipA == null) return;
+
+                                        foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
+                                                                .Select((value, index) => (value, index)))
                                         {
-                                            var initMapTip = listPath.Where(x => (x.Margin.Left + (ClassStaticBattle.yokoMapTip)) >= minElem.Key.NowPosiCenter.X
-                                                                            && (x.Margin.Left) <= (minElem.Key.NowPosiCenter.X));
-
-                                            if (initMapTip.Count() <= 0) return;
-
-                                            var initMapTipA = initMapTip.Where(y => (y.Margin.Top + (ClassStaticBattle.TakasaMapTip)) >= (minElem.Key.NowPosiCenter.Y)
-                                                                                && (y.Margin.Top) <= ((minElem.Key.NowPosiCenter.Y)))
-                                                                        .FirstOrDefault();
-
-                                            if (initMapTipA == null) return;
-
-                                            foreach (var itemR in classGameStatus.ClassBattle.ClassMapBattle.MapData
-                                                                    .Select((value, index) => (value, index)))
+                                            foreach (var itemC in itemR.value
+                                                                .Select((value, index) => (value, index)))
                                             {
-                                                foreach (var itemC in itemR.value
-                                                                    .Select((value, index) => (value, index)))
+                                                if (itemC.value.MapPath == null) continue;
+                                                if (itemC.value.MapPath.Name == initMapTipA.Name)
                                                 {
-                                                    if (itemC.value.MapPath == null) continue;
-                                                    if (itemC.value.MapPath.Name == initMapTipA.Name)
-                                                    {
-                                                        rowE = itemR.index;
-                                                        colE = itemC.index;
-                                                        break;
-                                                    }
+                                                    rowE = itemR.index;
+                                                    colE = itemC.index;
+                                                    break;
                                                 }
                                             }
-                                        }));
-                                    });
+                                        }
+                                    }));
                                     if (rowE == -1) continue;
                                     if (colE == -1) continue;
 
@@ -903,10 +899,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         if (startAstar == null)
                                         {
-                                            continue;
+                                            listRoot.Clear();
+                                            break;
                                         }
                                         classAStarManager.RemoveClassAStar(startAstar);
-                                        classAStarManager.OpenAround(startAstar, classGameStatus.ClassBattle.ClassMapBattle.MapData, classGameStatus);
+                                        classAStarManager.OpenAround(startAstar, classGameStatus.ClassBattle.ClassMapBattle.MapData, classGameStatus, canvasMain);
 
                                         if (classAStarManager.ListClassAStar != null)
                                         {
@@ -980,7 +977,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             //コレクションに変更があった時
                             throw;
@@ -1131,40 +1128,33 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
                                     if (itemRe.Hp <= 0)
                                     {
-                                        item.ListClassUnit.Remove(itemRe);
-
-                                        if (Application.Current == null)
-                                        {
-                                            Environment.Exit(1);
-                                        }
+                                        if (Application.Current == null) Environment.Exit(1);
 
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
-                                            //通常ユニット破壊
-                                            {
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                if (re1 != null)
-                                                {
-                                                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                                    if (re2 != null)
-                                                    {
-                                                        re1.Children.Remove(re2);
-                                                    }
-                                                }
-                                            }
-                                            //建築物破壊
                                             if (itemRe is ClassUnitBuilding building)
                                             {
+                                                //建築物破壊
+                                                item.ListClassUnit.Remove(building);
+
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                if (re1 != null)
-                                                {
-                                                    var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                                    if (re2 != null)
-                                                    {
-                                                        re1.Children.Remove(re2);
-                                                        classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
-                                                    }
-                                                }
+                                                if (re1 == null) Environment.Exit(1);
+                                                var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
+                                                if (re2 == null) throw new Exception();
+
+                                                re1.Children.Remove(re2);
+                                                classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
+                                            }
+                                            else
+                                            {
+                                                //通常ユニット破壊
+                                                item.ListClassUnit.Remove(itemRe);
+
+                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                                if (re1 == null) Environment.Exit(1);
+                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                                if (re2 == null) throw new Exception();
+                                                re1.Children.Remove(re2);
                                             }
                                         }));
                                     }
