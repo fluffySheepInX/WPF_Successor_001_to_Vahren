@@ -811,6 +811,12 @@ namespace WPF_Successor_001_to_Vahren
             // ドラック中
             if (_isDrag == true)
             {
+                var mainWindow = (MainWindow)Application.Current.MainWindow;
+                if (mainWindow == null)
+                {
+                    return;
+                }
+
                 UIElement? el = sender as UIElement;
                 if (el == null)
                 {
@@ -825,31 +831,27 @@ namespace WPF_Successor_001_to_Vahren
                     scale = tran.ScaleX;
                 }
 
-                // マップ位置の制限がうまくいかない？
-                Canvas.SetLeft(this, Math.Floor(Canvas.GetLeft(this) + (pt.X - _startPoint.X) * scale));
-                Canvas.SetTop(this, Math.Floor(Canvas.GetTop(this) + (pt.Y - _startPoint.Y) * scale));
-                /*
-                var thickness = new Thickness();
-                thickness.Left = this.Margin.Left + (pt.X - _startPoint.X);
-                if (thickness.Left > this.Width / 4)
+                // マップを動かせる範囲を制限する（画面の半分まで）
+                double offsetLeft = Canvas.GetLeft(this) + (pt.X - _startPoint.X) * scale;
+                double offsetTop = Canvas.GetTop(this) + (pt.Y - _startPoint.Y) * scale;
+                if (offsetLeft > mainWindow.CanvasMainWidth / 2)
                 {
-                    thickness.Left = this.Width / 4;
+                    offsetLeft = mainWindow.CanvasMainWidth / 2;
                 }
-                if (thickness.Left < this.Width / 4 - this.Width)
+                if (offsetLeft < mainWindow.CanvasMainWidth / 2 - this.Width * scale)
                 {
-                    thickness.Left = this.Width / 4 - this.Width;
+                    offsetLeft = mainWindow.CanvasMainWidth / 2 - this.Width * scale;
                 }
-                thickness.Top = this.Margin.Top + (pt.Y - _startPoint.Y);
-                if (thickness.Top > this.Height / 4)
+                if (offsetTop > mainWindow.CanvasMainHeight / 2)
                 {
-                    thickness.Top = this.Height / 4;
+                    offsetTop = mainWindow.CanvasMainHeight / 2;
                 }
-                if (thickness.Top < this.Height / 4 - this.Height)
+                if (offsetTop < mainWindow.CanvasMainHeight / 2 - this.Height * scale)
                 {
-                    thickness.Top = this.Height / 4 - this.Height;
+                    offsetTop = mainWindow.CanvasMainHeight / 2 - this.Height * scale;
                 }
-                this.Margin = thickness;
-                */
+                Canvas.SetLeft(this, Math.Floor(offsetLeft));
+                Canvas.SetTop(this, Math.Floor(offsetTop));
             }
         }
         #endregion
