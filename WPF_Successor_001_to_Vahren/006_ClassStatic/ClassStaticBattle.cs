@@ -113,11 +113,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             return (resultX + x, resultY + y);
         }
-        public static (double, double) ConvertVecX(double rad, double x, double y)
+        public static (double, double) ConvertVecX(double rad, double x, double y, double charX, double charY)
         {
-            double x2 = (x * Math.Cos(rad)) - (y * Math.Sin(rad));
-            double y2 = (x * Math.Sin(rad)) + (y * Math.Cos(rad));
-            return (x2, y2);
+            //キャラクタを基に回転させないと、バグる
+
+            double x2 = 0;
+            double y2 = 0;
+            x2 = ((x - charX) * Math.Cos(rad)) - ((y - charY) * Math.Sin(rad));
+            y2 = ((x - charX) * Math.Sin(rad)) + ((y - charY) * Math.Cos(rad));
+            return (x2 + charX, y2 + charY);
         }
 
         #region GetRecObj
@@ -709,7 +713,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
-        public static async void TaskBattleMoveAStar(CancellationToken cancelToken,
+        public static void TaskBattleMoveAStar(CancellationToken cancelToken,
                                                         ClassGameStatus classGameStatus,
                                                         Window window,
                                                         Canvas canvasMain)
@@ -972,7 +976,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                     if (listRoot.Count != 0)
                                     {
-                                        classGameStatus.AiRoot.Add(itemListClassUnit.ID, listRoot);
+                                        if (classGameStatus.AiRoot.TryAdd(itemListClassUnit.ID, listRoot) == false)
+                                        {
+                                            classGameStatus.AiRoot[itemListClassUnit.ID] = listRoot;
+                                        }
                                     }
                                 }
                             }
@@ -980,6 +987,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         catch (Exception ex)
                         {
                             //コレクションに変更があった時
+                            MessageBox.Show(ex.Message);
                             throw;
                         }
                     }
@@ -1153,8 +1161,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                                                 if (re1 == null) Environment.Exit(1);
                                                 var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                                if (re2 == null) throw new Exception();
-                                                re1.Children.Remove(re2);
+                                                if (re2 != null) re1.Children.Remove(re2);
+
                                             }
                                         }));
                                     }
@@ -1186,6 +1194,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         classUnit.VecMoveSkill[dicKey] = new Point() { X = 0.5, Y = 0.5 };
                     }
                     //移動量増やす
+                    if (classUnit.NowPosiSkill.TryGetValue(dicKey, out point) == false)
+                    {
+                        return;
+                    }
+
                     classUnit.NowPosiSkill[dicKey] = new Point()
                     {
                         X = classUnit.NowPosiSkill[dicKey].X + (classUnit.VecMoveSkill[dicKey].X * (classSkill.Speed / 100)),
@@ -1306,14 +1319,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         if (itemSkill.RushRandomDegree > 1)
                                         {
                                             Random rand = new System.Random();
-                                            int degree = rand.Next(0, itemSkill.RushRandomDegree + 1);
-                                            //ラジアン ⇒ 度*180/π を掛ける
+                                            int degree = rand.Next(-itemSkill.RushRandomDegree, itemSkill.RushRandomDegree + 1);
+                                            //ラジアン ⇒ 度*π/180 を掛ける
                                             double rad = degree * (Math.PI / 180);
 
                                             //[0]を基準にするのでOK
                                             var caRe = ConvertVecX(rad,
                                                                     itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
-                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].Y);
+                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].Y,
+                                                                    itemGroupBy.NowPosiCenter.X,
+                                                                    itemGroupBy.NowPosiCenter.Y);
 
                                             itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
                                             calc0 = ClassCalcVec.ReturnVecDistance(
@@ -1388,8 +1403,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                     };
                                                     canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
 
-                                                    RotateTransform rotateTransform2 =
-                                                        new RotateTransform(degree + 90);
+                                                    RotateTransform rotateTransform2;
+                                                    if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                    {
+                                                        rotateTransform2 =
+                                                            new RotateTransform(degree - 90);
+                                                    }
+                                                    else
+                                                    {
+                                                        rotateTransform2 =
+                                                            new RotateTransform(degree - 135);
+                                                    }
                                                     canvas.RenderTransform = rotateTransform2;
                                                     canvas.RenderTransformOrigin = new Point(0.5, 0.5);
 

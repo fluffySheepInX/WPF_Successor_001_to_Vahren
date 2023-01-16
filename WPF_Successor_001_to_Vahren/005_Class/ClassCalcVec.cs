@@ -20,6 +20,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public static Point ReturnNormalize(Point target)
         {
             var result = target;
+            //x二乗とy二乗を足した数の平方根を返す
             var calc = Math.Sqrt(target.X * target.X + target.Y * target.Y);
             if (calc > 0)
             {
