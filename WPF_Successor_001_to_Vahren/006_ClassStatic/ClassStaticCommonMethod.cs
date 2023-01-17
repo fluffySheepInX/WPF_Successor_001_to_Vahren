@@ -1820,17 +1820,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 classUnit.Race = first.Value.Replace(Environment.NewLine, "");
             }
-            //{
-            //    var @class =
-            //        new Regex(GetPat("class"), RegexOptions.IgnoreCase)
-            //        .Matches(value);
-            //    var first = CheckMatchElement(@class);
-            //    if (first == null)
-            //    {
-            //        throw new Exception();
-            //    }
-            //    classUnit.Class = first.Value.Replace(Environment.NewLine, "");
-            //}
+            {
+                var unitClass =
+                    new Regex(GetPat("class"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(unitClass);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classUnit.Class = first.Value.Replace(Environment.NewLine, "");
+            }
             {
                 var image =
                     new Regex(GetPat("image"), RegexOptions.IgnoreCase)
