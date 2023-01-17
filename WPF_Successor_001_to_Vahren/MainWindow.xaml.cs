@@ -98,6 +98,17 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
+        #region ClassContext
+        private ClassContext classContext = new ClassContext();
+
+        public ClassContext ClassContext
+        {
+            get { return classContext; }
+            set { classContext = value; }
+        }
+
+        #endregion
+
         #region NumberScenarioSelection
         public int NumberScenarioSelection
         {
@@ -144,6 +155,10 @@ namespace WPF_Successor_001_to_Vahren
         {
             InitializeComponent();
             ReadFileOrderDocument();
+
+            //context読み込み
+            //コンストラクタでNowNumberGameTitleは設定されている筈
+            SetClassContext(this.NowNumberGameTitle);
         }
         #endregion
 
@@ -165,6 +180,7 @@ namespace WPF_Successor_001_to_Vahren
             try
             {
                 MessageBox.Show("ゲームエンジンとしてこういうことが出来ますよというプレゼンであり、" + System.Environment.NewLine + "デフォシナではないことご了承下さい");
+
                 // 初期状態でフルスクリーンにする。F11キーを押すとウインドウ表示になる。
                 this.WindowStyle = WindowStyle.None;
                 this.WindowState = WindowState.Maximized;
@@ -3077,6 +3093,109 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+
+        private void SetClassContext(int gameTitleNumber)
+        {
+            // get target path.
+            List<string> strings = new List<string>();
+            strings.Add(this.ClassConfigGameTitle.DirectoryGameTitle[gameTitleNumber].FullName);
+            strings.Add("050_Config");
+            string path = System.IO.Path.Combine(strings.ToArray());
+
+            // get file.
+            var files = System.IO.Directory.EnumerateFiles(
+                path,
+                "*",
+                System.IO.SearchOption.AllDirectories
+                );
+
+            //check
+            {
+                if (files.Count() != 1)
+                {
+                    // ファイルがない！
+                    // ファイルがありすぎる！
+                    throw new Exception();
+                }
+
+                if (this.ClassContext == null)
+                {
+                    this.ClassContext = new ClassContext();
+                }
+            }
+
+            foreach ( var file in files ) 
+            {
+                string readAllLines;
+                readAllLines = File.ReadAllText(file);
+
+                if (readAllLines.Length == 0)
+                {
+                    continue;
+                }
+
+                // 大文字かっこは許しまへんで
+                {
+                    var ch = readAllLines.Length - readAllLines.Replace("{", "").Replace("}", "").Length;
+                    if (ch % 2 != 0 || readAllLines.Length - ch == 0)
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                // Context
+                //{
+                //    string targetString = "NewFormatSpot";
+                //    // 大文字かっこも入るが、上でチェックしている
+                //    // \sは空行や改行など
+                //    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                //    var scenarioMatches = new Regex(@"spot[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                //    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                //    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                //    if (listMatches == null)
+                //    {
+                //        // データがない！
+                //        throw new Exception();
+                //    }
+                //    if (listMatches.Count < 1)
+                //    {
+                //        // データがないので次
+                //    }
+                //    else
+                //    {
+                //        foreach (var getData in listMatches)
+                //        {
+                //            //enumを使うべき？
+                //            int kind = 0;
+                //            {
+                //                //このコードだとNewFormatSpotTest等が通るのでよくない
+                //                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                //                if (String.Compare(join, targetString, true) == 0)
+                //                {
+                //                    kind = 0;
+                //                }
+                //                else
+                //                {
+                //                    kind = 1;
+                //                }
+                //            }
+
+                //            if (kind == 0)
+                //            {
+                //                ClassGameStatus.AllListSpot.Add(ClassStaticCommonMethod.GetClassSpotNewFormat(getData.Value, ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName));
+                //            }
+                //            else
+                //            {
+                //                ClassGameStatus.AllListSpot.Add(ClassStaticCommonMethod.GetClassSpot(getData.Value, ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName));
+                //            }
+                //        }
+                //    }
+                //}
+                // Context 終わり
+            }
+        }
         #endregion
 
         #region Timer

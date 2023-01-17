@@ -879,6 +879,62 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             classGameStatus.ListEvent.Add(classEvent);
         }
 
+        public static ClassContext GetClassContextNewFormat(string value)
+        {
+            ClassContext classContext = new ClassContext();
+
+            // コメント行を取り除く
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("#") == true)
+                    {
+                        var data = line[i].Split("#");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
+
+            //title_name
+            {
+                var title_name =
+                    new Regex(GetPat("title_name"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(title_name);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classContext.TitleName = first.Value.Replace(Environment.NewLine, "");
+            }
+            //title_menu_space
+            {
+                var title_menu_space =
+                    new Regex(GetPat("title_menu_space"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(title_menu_space);
+                if (first != null)
+                {
+                    classContext.TitleMenuSpace = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //gain_per
+            {
+                var gain_per =
+                    new Regex(GetPat("gain_per"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(gain_per);
+                if (first != null)
+                {
+                    classContext.GainPer = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+
+            return classContext;
+        }
+
         public static ClassSpot GetClassSpotNewFormat(string value, string fullname)
         {
             ClassSpot classSpot = new ClassSpot();
