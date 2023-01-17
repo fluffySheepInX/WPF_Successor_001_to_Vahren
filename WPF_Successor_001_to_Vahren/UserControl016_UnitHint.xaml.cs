@@ -271,7 +271,16 @@ namespace WPF_Successor_001_to_Vahren
             // レベルとクラス
             {
                 //this.txtClass.Text = this.Name; // ウインドウ番号を表示する実験用
-                this.txtLevelClass.Text = "Lv" + targetUnit.Level.ToString() + " " + targetUnit.Class;
+                var originalClass = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == targetUnit.Class).FirstOrDefault();
+                if (originalClass == null)
+                {
+                    // クラス識別子からクラス情報を取得できなかった場合はそのまま表示する
+                    this.txtLevelClass.Text = "Lv" + targetUnit.Level.ToString() + " " + targetUnit.Class;
+                }
+                else
+                {
+                    this.txtLevelClass.Text = "Lv" + targetUnit.Level.ToString() + " " + originalClass.Name;
+                }
             }
 
             // 経験値

@@ -28,7 +28,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // 項目サイズをここで調節できます
-        private const int item_height = 60, space_height = 5, btn_width = 54, btn_height = 54;
+        private const int item_height = 60, space_height = 10, btn_width = 54, btn_height = 54;
 
         // 最初に呼び出した時
         public void SetData()
@@ -222,7 +222,14 @@ namespace WPF_Successor_001_to_Vahren
                 gridItem.RowDefinitions.Add(rowDef1);
                 gridItem.RowDefinitions.Add(rowDef2);
                 gridItem.Height = item_height;
-                gridItem.Margin = new Thickness(5, space_height, 0, space_height);
+                if (item_count == 0)
+                {
+                    gridItem.Margin = new Thickness(5, 0, 0, 0);
+                }
+                else
+                {
+                    gridItem.Margin = new Thickness(5, space_height, 0, 0);
+                }
                 gridItem.Name = itemNameTag;
 
                 // ユニット画像
@@ -331,7 +338,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 item_count = 7;
             }
-            double new_height = (item_height + space_height * 2) * item_count;
+            double new_height = item_height * item_count + space_height * (item_count - 1);
             this.scrollList.Height = new_height;
 
         }

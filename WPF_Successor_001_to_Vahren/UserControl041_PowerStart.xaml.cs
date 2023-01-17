@@ -29,7 +29,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // 項目サイズをここで調節できます
-        private const int item_height = 60, space_height = 5, btn_width = 54, btn_height = 54;
+        private const int item_height = 60, space_height = 10, btn_width = 54, btn_height = 54;
 
         public void SetData()
         {
@@ -168,7 +168,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // タイトル
-            this.txtTitleTalent.Text = classPowerAndCity.ClassPower.Name + "の人材";
+            this.txtTitle.Text = classPowerAndCity.ClassPower.Name + "の人材";
 
             // ボタンの背景
             BitmapImage? myBackImage = null;
@@ -185,7 +185,23 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-/*
+            // ユニット画像のディレクトリ
+            string pathChipImage;
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("040_ChipImage");
+                pathChipImage = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
+            }
+
+            // 顔絵画像のディレクトリ
+            string pathFaceImage;
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("010_FaceImage");
+                pathFaceImage = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
+            }
 
             // 雇用可能なユニットのリストを初期化する
             this.panelList.Children.Clear();
@@ -213,10 +229,13 @@ namespace WPF_Successor_001_to_Vahren
                     Grid gridItem = new Grid();
                     ColumnDefinition colDef1 = new ColumnDefinition();
                     ColumnDefinition colDef2 = new ColumnDefinition();
+                    ColumnDefinition colDef3 = new ColumnDefinition();
                     colDef1.Width = new GridLength(btn_width);
                     colDef2.Width = new GridLength(1.0, GridUnitType.Star);
+                    colDef3.Width = new GridLength(0, GridUnitType.Auto);
                     gridItem.ColumnDefinitions.Add(colDef1);
                     gridItem.ColumnDefinitions.Add(colDef2);
+                    gridItem.ColumnDefinitions.Add(colDef3);
                     RowDefinition rowDef1 = new RowDefinition();
                     RowDefinition rowDef2 = new RowDefinition();
                     rowDef1.Height = new GridLength(1.0, GridUnitType.Star);
@@ -224,15 +243,18 @@ namespace WPF_Successor_001_to_Vahren
                     gridItem.RowDefinitions.Add(rowDef1);
                     gridItem.RowDefinitions.Add(rowDef2);
                     gridItem.Height = item_height;
-                    gridItem.Margin = new Thickness(5, space_height, 0, space_height);
+                    if (item_count == 0)
+                    {
+                        gridItem.Margin = new Thickness(5, 0, 5, 0);
+                    }
+                    else
+                    {
+                        gridItem.Margin = new Thickness(5, space_height, 5, 0);
+                    }
+                    //gridItem.Background = Brushes.Gray; // 実験用
 
                     // ユニット画像
-                    List<string> strings = new List<string>();
-                    strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
-                    strings.Add("040_ChipImage");
-                    strings.Add(itemUnit.Image);
-                    string path = System.IO.Path.Combine(strings.ToArray());
-                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(pathChipImage + itemUnit.Image));
 
                     // 画像は本来のピクセルサイズで表示する
                     Image imgUnit = new Image();
@@ -248,14 +270,114 @@ namespace WPF_Successor_001_to_Vahren
                     btnUnit.Height = btn_height;
                     btnUnit.Focusable = false;
 
+                    if (myBackImage != null)
+                    {
+                        // 背景画像をボタンに合わせて拡大縮小する
+                        Image imgBack = new Image();
+                        imgBack.Source = myBackImage;
+                        imgBack.Stretch = Stretch.Fill;
 
-                    
-                    
-                    
+                        Grid gridButton = new Grid();
+                        gridButton.Children.Add(imgBack);
+
+                        // 背景画像の上にユニット画像を重ねる
+                        gridButton.Children.Add(imgUnit);
+
+                        Border borderButton = new Border();
+                        borderButton.Margin = new Thickness(-2);
+                        borderButton.BorderThickness = new Thickness(2);
+                        borderButton.BorderBrush = Brushes.Transparent;
+                        // マウスカーソルがボタンの上に来ると強調する
+                        borderButton.Background = Brushes.Transparent;
+                        borderButton.MouseEnter += borderButtonImage_MouseEnter;
+                        gridButton.Children.Add(borderButton);
+
+                        btnUnit.Content = gridButton;
+                    }
+                    else
+                    {
+                        // 背景画像が無い場合は普通のボタンで表示する
+                        btnUnit.Content = imgUnit;
+                    }
+                    // btnUnit.Click += btnUnit_Click;
+                    // btnUnit.MouseEnter += btnUnit_MouseEnter;
+                    Grid.SetRowSpan(btnUnit, 2);
+                    gridItem.Children.Add(btnUnit);
+
+                    // 名前
+                    TextBlock txtName = new TextBlock();
+                    txtName.Tag = itemUnit;
+                    txtName.FontSize = 20;
+                    txtName.Foreground = Brushes.White;
+                    txtName.HorizontalAlignment = HorizontalAlignment.Center;
+                    txtName.Text = itemUnit.Name + "（" + itemUnit.Race + "）";
+                    Grid.SetColumn(txtName, 1);
+                    gridItem.Children.Add(txtName);
+
+                    // クラス
+                    TextBlock txtClass = new TextBlock();
+                    txtClass.Tag = itemUnit;
+                    txtClass.FontSize = 20;
+                    txtClass.Foreground = Brushes.Yellow;
+                    txtClass.HorizontalAlignment = HorizontalAlignment.Center;
+                    var originalClass = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemUnit.Class).FirstOrDefault();
+                    if (originalClass == null)
+                    {
+                        // クラス識別子からクラス情報を取得できなかった場合はそのまま表示する
+                        txtClass.Text = "Lv" + itemUnit.Level.ToString() + " " + itemUnit.Class;
+                    }
+                    else
+                    {
+                        txtClass.Text = "Lv" + itemUnit.Level.ToString() + " " + originalClass.Name;
+                    }
+                    Grid.SetColumn(txtClass, 1);
+                    Grid.SetRow(txtClass, 1);
+                    gridItem.Children.Add(txtClass);
+
+                    // 顔絵が存在する時だけ
+                    if ((itemUnit.Face != string.Empty) && (System.IO.File.Exists(pathFaceImage + itemUnit.Face)))
+                    {
+                        BitmapImage bitimg2 = new BitmapImage(new Uri(pathFaceImage + itemUnit.Face));
+                        Image imgFace = new Image();
+                        imgFace.Width = item_height;
+                        imgFace.Height = item_height;
+                        imgFace.Source = bitimg2;
+
+                        // 顔絵のマスク画像が存在する場合
+                        string pathMask = pathFaceImage + "face_mask1.png";
+                        if (System.IO.File.Exists(pathMask))
+                        {
+                            BitmapImage bitimg3 = new BitmapImage(new Uri(pathMask));
+                            ImageBrush imgMask = new ImageBrush(bitimg3);
+                            imgFace.OpacityMask = imgMask;
+                        }
+
+                        Grid.SetColumn(imgFace, 2);
+                        Grid.SetRowSpan(imgFace, 2);
+                        gridItem.Children.Add(imgFace);
+
+                        // 顔絵の枠画像が存在する場合
+                        string pathFrame = pathFaceImage + "face_frame1.png";
+                        if (System.IO.File.Exists(pathFrame))
+                        {
+                            BitmapImage bitimg4 = new BitmapImage(new Uri(pathFrame));
+                            Image imgFrame = new Image();
+                            imgFrame.Width = item_height;
+                            imgFrame.Height = item_height;
+                            imgFrame.Source = bitimg4;
+
+                            Grid.SetColumn(imgFrame, 2);
+                            Grid.SetRowSpan(imgFrame, 2);
+                            gridItem.Children.Add(imgFrame);
+                        }
+
+                    }
+
+                    this.panelList.Children.Add(gridItem);
+                    item_count++;
                 }
-
             }
-*/
+
 
         }
 
@@ -266,6 +388,22 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
+
+            //旗
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("030_FlagImage");
+                strings.Add(classPowerAndCity.ClassPower.FlagPath);
+                string path = System.IO.Path.Combine(strings.ToArray());
+                BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                Int32Rect rect = new Int32Rect(0, 0, 32, 32);
+                var destimg = new CroppedBitmap(bitimg1, rect);
+                this.imgFlag.Source = destimg;
+            }
+
+            // 勢力名
+            this.txtNamePower.Text = classPowerAndCity.ClassPower.Name;
 
         
         }
@@ -345,7 +483,7 @@ namespace WPF_Successor_001_to_Vahren
 
 
         // 勢力開始ウインドウにカーソルを乗せた時
-        private void win_MouseEnter(object sender, MouseEventArgs e)
+        private void winR_MouseEnter(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -370,6 +508,33 @@ namespace WPF_Successor_001_to_Vahren
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name;
             helpWindow.SetText("勢力を選択してプレイします。");
+            mainWindow.canvasUI.Children.Add(helpWindow);
+        }
+        private void winL_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (UIElement)sender;
+            cast.MouseLeave += win_MouseLeave;
+
+            // 他のヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // ヘルプを作成する
+            var helpWindow = new UserControl030_Help();
+            helpWindow.Name = "Help_" + this.Name;
+            helpWindow.SetText("勢力ではなく一人の人材を選択してプレイします。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
@@ -459,6 +624,26 @@ namespace WPF_Successor_001_to_Vahren
             ((Button)sender).Tag = this.Tag;
             mainWindow.ButtonSelectionPowerDecide_Click(sender, e);
         }
+
+
+        // ボタンの背景画像を白っぽくする
+        private void borderButtonImage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += borderButtonImage_MouseLeave;
+        }
+        private void borderButtonImage_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var cast = (Border)sender;
+            cast.Background = Brushes.Transparent;
+            // イベントを取り除く
+            cast.MouseLeave -= borderButtonImage_MouseLeave;
+        }
+
+
 
 
     }

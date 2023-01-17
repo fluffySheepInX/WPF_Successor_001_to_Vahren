@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             d:DesignWidth="382" d:DesignHeight="535"
              MinWidth="382" >
     <Grid UseLayoutRounding="True"
             MouseLeftButtonDown="win_MouseLeftButtonDown"
@@ -39,18 +38,18 @@
 
         <Grid Margin="16" Width="350">
             <Grid.RowDefinitions>
-                <RowDefinition Height="45"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Margin="0,10,35,0" TextAlignment="Center" FontSize="23" Foreground="White" Text="タイトル" Name="txtTitle" />
             <Button Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Width="35" Height="35" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
-            <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="490" Margin="5" Focusable="False"
+            <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="480" Margin="5" Focusable="False"
                     VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
                 <StackPanel Name="panelList">
 
 <!--
-                    <Grid Height="60" Margin="5,5,0,5">
+                    <Grid Height="60" Margin="5,0,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>
@@ -66,7 +65,7 @@
                         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金100" />
                     </Grid>
 
-                    <Grid Height="60" Margin="5,5,0,5">
+                    <Grid Height="60" Margin="5,10,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>
@@ -82,7 +81,7 @@
                         <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="金10000" />
                     </Grid>
 
-                    <Grid Height="60" Margin="5,5,0,5">
+                    <Grid Height="60" Margin="5,10,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="54"/>
                             <ColumnDefinition Width="*"/>

@@ -5,14 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Width="1014" Height="682">
+             Width="1014" Height="692">
     <Grid UseLayoutRounding="True"
             MouseLeftButtonDown="win_MouseLeftButtonDown"
-            MouseRightButtonDown="btnClose_Click"
-            MouseEnter="win_MouseEnter" >
+            MouseRightButtonDown="btnClose_Click" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="432"/>
-            <ColumnDefinition Width="582"/>
+            <ColumnDefinition Width="462"/>
+            <ColumnDefinition Width="552"/>
         </Grid.ColumnDefinitions>
 
         <Grid>
@@ -20,7 +19,7 @@
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
         </Grid>
-        <Grid>
+        <Grid MouseEnter="winL_MouseEnter">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="16"/>
                 <ColumnDefinition />
@@ -35,20 +34,77 @@
             <Rectangle Grid.Column="1" Name="rectWindowTop" />
             <Image Grid.Column="2" Name="imgWindowRightTop" />
             <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+
+            <Canvas Grid.Row="1" Grid.Column="1">
+                <TextBlock Canvas.Top="5" Width="430" TextAlignment="Center" FontSize="20" Foreground="#c8c8ff" Text="勢力の人材" Name="txtTitle" />
+                <ScrollViewer Canvas.Left="5" Canvas.Top="40" Name="scrollList" Width="420" Height="620" Focusable="False"
+                        VerticalScrollBarVisibility="Visible" CanContentScroll="True" >
+                    <StackPanel Name="panelList">
+
+<!--
+                        <Grid Height="60" Margin="5,0,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="54"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Button Grid.RowSpan="2" Height="54" Width="54">
+                                <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene001.png" />
+                            </Button>
+                            <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="人材の名前と種族" />
+                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="レベルとクラス" />
+                            <Image Grid.Column="2" Grid.RowSpan="2" Height="60" Width="60" Source="./001_Warehouse/001_DefaultGame/010_FaceImage/face001.png" />
+                        </Grid>
+
+                        <Grid Height="60" Margin="5,10,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="54"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Button Grid.RowSpan="2" Height="54" Width="54">
+                                <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene002.png" />
+                            </Button>
+                            <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="人材の名前と種族" />
+                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="レベルとクラス" />
+                            <Image Grid.Column="2" Grid.RowSpan="2" Height="60" Width="60" Source="./001_Warehouse/001_DefaultGame/010_FaceImage/face002.png" />
+                        </Grid>
+
+                        <Grid Height="60" Margin="5,10,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="54"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Button Grid.RowSpan="2" Height="54" Width="54">
+                                <Image Height="32" Width="32" Source="./001_Warehouse/001_DefaultGame/040_ChipImage/chipGene003.png" />
+                            </Button>
+                            <TextBlock Grid.Column="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="人材の名前と種族" />
+                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="20" Foreground="White" HorizontalAlignment="Center" Text="レベルとクラス" />
+                            <Image Grid.Column="2" Grid.RowSpan="2" Height="60" Width="60" Source="./001_Warehouse/001_DefaultGame/010_FaceImage/face003.png" />
+                        </Grid>
+-->
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Canvas>
+
             <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
             <Image Grid.Row="2" Name="imgWindowLeftBottom" />
             <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
-        </Grid>
-
-        <Grid Margin="16">
-            <Canvas>
-                <TextBlock Canvas.Top="5" Width="400" TextAlignment="Center" FontSize="20" Foreground="#c8c8ff" Text="勢力の人材" Name="txtTitleTalent" />
-                <ScrollViewer Canvas.Left="5" Canvas.Top="40" Name="scrollList" Width="390" Height="490" Focusable="False"
-                        VerticalScrollBarVisibility="Visible" CanContentScroll="True" >
-                    <StackPanel Name="panelList" />
-                </ScrollViewer>
-            </Canvas>
         </Grid>
 
         <Grid Grid.Column="1">
@@ -56,7 +112,7 @@
             <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom2" Fill="Black" Opacity="0.5" />
             <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
         </Grid>
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" MouseEnter="winR_MouseEnter">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="16"/>
                 <ColumnDefinition />
@@ -71,24 +127,27 @@
             <Rectangle Grid.Column="1" Name="rectWindowTop2" />
             <Image Grid.Column="2" Name="imgWindowRightTop2" />
             <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
+
+            <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
+                <Image Canvas.Left="5" Canvas.Top="5" Height="32" Width="32" Name="imgFlag"/>
+                <TextBlock Canvas.Left="50" Canvas.Top="5" FontSize="23" Foreground="White" Text="勢力の名前" Name="txtNamePower"/>
+
+                <Button Name="btnClose" Width="35" Height="35" Canvas.Left="485" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
+
+
+                <Button x:Name="btnOK" Width="100" Height="35" Canvas.Left="100" Canvas.Top="620" FontSize="20" Focusable="False" Content="決定"
+                        Click="btnOK_Click" />
+                <Button x:Name="btnCancel" Width="100" Height="35" Canvas.Left="300" Canvas.Top="620" FontSize="20" Focusable="False" Content="取消"
+                        Click="btnClose_Click" />
+
+
+            </Canvas>
+
             <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
             <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
             <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
         </Grid>
-
-        <Canvas Grid.Column="1" Margin="16" Background="#008000">
-
-            <Button Name="btnClose" Width="35" Height="35" Canvas.Left="515" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
-
-
-            <Button x:Name="btnOK" Width="100" Height="35" Canvas.Left="150" Canvas.Top="610" FontSize="20" Focusable="False" Content="決定"
-                    Click="btnOK_Click" />
-            <Button x:Name="btnCancel" Width="100" Height="35" Canvas.Left="300" Canvas.Top="610" FontSize="20" Focusable="False" Content="取消"
-                    Click="btnClose_Click" />
-
-
-        </Canvas>
 
     </Grid>
 </UserControl>
