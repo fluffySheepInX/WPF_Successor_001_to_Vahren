@@ -839,7 +839,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         public static void GetClassEvent(string value, ClassGameStatus classGameStatus)
         {
             // コメント行を取り除く
-            value = ReplaceComment(value);
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("//") == true)
+                    {
+                        var data = line[i].Split("//");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
 
             var nameTag =
                 new Regex(GetPatTagEvent("Event"), RegexOptions.IgnoreCase)
