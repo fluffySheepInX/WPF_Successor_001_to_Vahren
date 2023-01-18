@@ -98,17 +98,6 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        #region ClassContext
-        private ClassContext classContext = new ClassContext();
-
-        public ClassContext ClassContext
-        {
-            get { return classContext; }
-            set { classContext = value; }
-        }
-
-        #endregion
-
         #region NumberScenarioSelection
         public int NumberScenarioSelection
         {
@@ -3118,9 +3107,9 @@ namespace WPF_Successor_001_to_Vahren
                     throw new Exception();
                 }
 
-                if (this.ClassContext == null)
+                if (ClassGameStatus.ClassContext == null)
                 {
-                    this.ClassContext = new ClassContext();
+                    ClassGameStatus.ClassContext = new ClassContext();
                 }
             }
 
@@ -3144,55 +3133,53 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 // Context
-                //{
-                //    string targetString = "NewFormatSpot";
-                //    // 大文字かっこも入るが、上でチェックしている
-                //    // \sは空行や改行など
-                //    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
-                //    var scenarioMatches = new Regex(@"spot[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+                {
+                    string targetString = "NewFormatContext";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    var scenarioMatches = new Regex(@"Context[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
 
-                //    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
-                //    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
 
-                //    if (listMatches == null)
-                //    {
-                //        // データがない！
-                //        throw new Exception();
-                //    }
-                //    if (listMatches.Count < 1)
-                //    {
-                //        // データがないので次
-                //    }
-                //    else
-                //    {
-                //        foreach (var getData in listMatches)
-                //        {
-                //            //enumを使うべき？
-                //            int kind = 0;
-                //            {
-                //                //このコードだとNewFormatSpotTest等が通るのでよくない
-                //                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
-                //                if (String.Compare(join, targetString, true) == 0)
-                //                {
-                //                    kind = 0;
-                //                }
-                //                else
-                //                {
-                //                    kind = 1;
-                //                }
-                //            }
+                    // データがない！
+                    if (listMatches == null) throw new Exception();
 
-                //            if (kind == 0)
-                //            {
-                //                ClassGameStatus.AllListSpot.Add(ClassStaticCommonMethod.GetClassSpotNewFormat(getData.Value, ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName));
-                //            }
-                //            else
-                //            {
-                //                ClassGameStatus.AllListSpot.Add(ClassStaticCommonMethod.GetClassSpot(getData.Value, ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName));
-                //            }
-                //        }
-                //    }
-                //}
+                    if (listMatches.Count < 1)
+                    {
+                        // データがないので次
+                    }
+                    else
+                    {
+                        foreach (var getData in listMatches)
+                        {
+                            //enumを使うべき？
+                            int kind = 0;
+                            {
+                                //このコードだとNewFormatContextTest等が通るのでよくない
+                                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                if (String.Compare(join, targetString, true) == 0)
+                                {
+                                    kind = 0;
+                                }
+                                else
+                                {
+                                    kind = 1;
+                                }
+                            }
+
+                            if (kind == 0)
+                            {
+                                ClassGameStatus.ClassContext = ClassStaticCommonMethod.GetClassContextNewFormat(getData.Value);
+                            }
+                            else
+                            {
+                                //ClassGameStatus.AllListSpot.Add(ClassStaticCommonMethod.GetClassSpot(getData.Value, ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName));
+                            }
+                        }
+                    }
+                }
                 // Context 終わり
             }
         }

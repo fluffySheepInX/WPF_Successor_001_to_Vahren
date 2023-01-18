@@ -839,18 +839,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         public static void GetClassEvent(string value, ClassGameStatus classGameStatus)
         {
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("//") == true)
-                    {
-                        var data = line[i].Split("//");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             var nameTag =
                 new Regex(GetPatTagEvent("Event"), RegexOptions.IgnoreCase)
@@ -884,18 +873,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             ClassContext classContext = new ClassContext();
 
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("#") == true)
-                    {
-                        var data = line[i].Split("#");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             //title_name
             {
@@ -935,23 +913,28 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return classContext;
         }
 
+        private static string ReplaceComment(string value)
+        {
+            value = value.ReplaceLineEndings();
+            string[] line = value.Split(Environment.NewLine).ToArray();
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i].Contains("#") == true)
+                {
+                    var data = line[i].Split("#");
+                    line[i] = String.Concat(data[0], Environment.NewLine);
+                }
+            }
+            value = String.Join(Environment.NewLine, line);
+            return value;
+        }
+
         public static ClassSpot GetClassSpotNewFormat(string value, string fullname)
         {
             ClassSpot classSpot = new ClassSpot();
 
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("#") == true)
-                    {
-                        var data = line[i].Split("#");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             //NewFormatSpot
             {
@@ -1243,18 +1226,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             ClassScenarioInfo classScenario = new ClassScenarioInfo();
 
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("#") == true)
-                    {
-                        var data = line[i].Split("#");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             //scenarioName
             {
@@ -1498,18 +1470,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             ClassPower classPower = new ClassPower();
 
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("#") == true)
-                    {
-                        var data = line[i].Split("#");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             {
                 var name =
@@ -1711,18 +1672,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             ClassUnit classUnit = new ClassUnit();
 
             // コメント行を取り除く
-            {
-                string[] line = value.Split(Environment.NewLine).ToArray();
-                for (int i = 0; i < line.Length; i++)
-                {
-                    if (line[i].Contains("#") == true)
-                    {
-                        var data = line[i].Split("#");
-                        line[i] = String.Concat(data[0], Environment.NewLine);
-                    }
-                }
-                value = String.Join(Environment.NewLine, line);
-            }
+            value = ReplaceComment(value);
 
             {
                 var nameTag =

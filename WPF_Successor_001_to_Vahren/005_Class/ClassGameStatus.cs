@@ -133,6 +133,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listObject = value; }
         }
         #endregion
+        #region ClassContext
+        private ClassContext classContext = new ClassContext();
+        public ClassContext ClassContext
+        {
+            get { return classContext; }
+            set { classContext = value; }
+        }
+        #endregion
 
         // 元データからシナリオ用にコピーして使うデータ
         #region NowListSpot
