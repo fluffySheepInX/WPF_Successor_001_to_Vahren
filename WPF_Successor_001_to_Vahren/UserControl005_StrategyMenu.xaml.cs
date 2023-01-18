@@ -324,14 +324,24 @@ namespace WPF_Successor_001_to_Vahren
             // 開いてる子ウインドウを全て閉じる
             mainWindow.canvasUI.Children.Clear();
 
-            //ターン終了時処理
+            ////ターン終了時処理
+            //メニュー隠す
             this.Visibility = Visibility.Hidden;
 
-            //ターン加算
-            // 本来は、全ての勢力行動が終わってからターン数を増やさないといけない。
-            // 現在は AI勢力の思考部分ができてないので、プレイヤー操作が終わった時点で加算する。
-            mainWindow.ClassGameStatus.NowTurn += 1;
-            DisplayTurn(mainWindow);
+            //お金増やす
+            {
+                var listSpotMoney = mainWindow.ClassGameStatus.NowListSpot
+                                .Where(x => x.PowerNameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag);
+                int countMoney = 0;
+                foreach (var item in listSpotMoney)
+                {
+                    countMoney = countMoney + item.Gain;
+                }
+                countMoney = countMoney * (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+
+                mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money += countMoney;
+                this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
+            }
 
             // AI呼び出し
 
@@ -421,8 +431,15 @@ namespace WPF_Successor_001_to_Vahren
             }
             */
 
-            //ターン開始時処理
+            ////ターン開始時処理
+            //ターン加算
+            // 本来は、全ての勢力行動が終わってからターン数を増やさないといけない。
+            // 現在は AI勢力の思考部分ができてないので、プレイヤー操作が終わった時点で加算する。
+            mainWindow.ClassGameStatus.NowTurn += 1;
+            DisplayTurn(mainWindow);
+            //イベント実行
             mainWindow.ExecuteEvent();
+            //メニュー表示
             this.Visibility = Visibility.Visible;
         }
 
