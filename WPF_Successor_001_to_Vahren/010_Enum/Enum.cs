@@ -119,4 +119,29 @@
         Spe = 2
     }
     #endregion
+
+    #region PowerFix
+    /// <summary>
+    /// off	普通に侵攻する（デフォルト）
+    /// on	他国に侵攻しない
+    /// home	homeデータに列挙された領地のみ侵攻する
+    /// hold	領内の部隊を動かさず、他国にも侵攻しない
+    /// warlike	兵力差に関係なく常に攻め込む
+    /// freeze	ターン行動を完全スルーする
+    /// </summary>
+    public enum FlagPowerFix
+    {
+        on = 0
+            ,
+        off = 1
+            ,
+        home = 2
+            ,
+        hold = 3
+            ,
+        warlike = 4
+            ,
+        freeze = 5
+    }
+    #endregion
 }

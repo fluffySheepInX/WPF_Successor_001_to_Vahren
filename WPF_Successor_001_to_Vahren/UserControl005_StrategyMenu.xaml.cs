@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using WPF_Successor_001_to_Vahren._005_Class;
+using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -356,7 +357,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // AI呼び出し
-
+            foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
+            {
+                ClassStaticStraregyAI.Thinking(mainWindow.ClassGameStatus,itemPower);
+            }
             // AI呼び出し後に下を行う
 
             // ターン開始時に全ての勢力を同時に訓練する方がいいかも？

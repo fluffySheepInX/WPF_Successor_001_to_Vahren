@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WPF_Successor_001_to_Vahren._010_Enum;
 
 namespace WPF_Successor_001_to_Vahren._005_Class
 {
@@ -149,6 +150,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _listCommonConscription; }
             set { _listCommonConscription = value; }
+        }
+        #endregion
+        #region Fix
+        private FlagPowerFix fix;
+        public FlagPowerFix Fix
+        {
+            get { return fix; }
+            set { fix = value; }
         }
         #endregion
 
