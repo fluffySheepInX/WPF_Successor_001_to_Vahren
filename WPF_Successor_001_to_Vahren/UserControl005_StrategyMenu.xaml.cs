@@ -213,7 +213,8 @@ namespace WPF_Successor_001_to_Vahren
 
             //総収入
             {
-                this.txtTotalGain.Text = total_gain.ToString();
+                total_gain *= (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+                this.txtTotalGain.Text = "+" + total_gain.ToString();
             }
             //ユニット数
             {
@@ -333,11 +334,22 @@ namespace WPF_Successor_001_to_Vahren
                 var listSpotMoney = mainWindow.ClassGameStatus.NowListSpot
                                 .Where(x => x.PowerNameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag);
                 int countMoney = 0;
-                foreach (var item in listSpotMoney)
+                int addMoney = 0; // 維持費と財政値による増減
+                foreach (var itemSpot in listSpotMoney)
                 {
-                    countMoney = countMoney + item.Gain;
+                    countMoney += itemSpot.Gain;
+                    foreach (var itemTroop in itemSpot.UnitGroup)
+                    {
+                        foreach (var itemUnit in itemTroop.ListClassUnit)
+                        {
+                            // 維持費の分だけ減らして、財政値の分だけ増やす
+                            addMoney -= itemUnit.Cost;
+                            addMoney += itemUnit.Finance;
+                        }
+                    }
                 }
-                countMoney = countMoney * (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+                countMoney *= (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+                countMoney += addMoney;
 
                 mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money += countMoney;
                 this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
