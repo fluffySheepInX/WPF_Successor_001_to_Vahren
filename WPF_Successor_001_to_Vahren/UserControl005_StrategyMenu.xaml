@@ -48,8 +48,8 @@
 
             <ScrollViewer Grid.Row="1" VerticalAlignment="Top" VerticalScrollBarVisibility="Auto" CanContentScroll="True" Focusable="False">
                 <StackPanel Width="160" Margin="5,0">
-                    <Grid Height="30">
-                        <TextBlock FontSize="20" Foreground="#00ffff" Text="軍資金"/>
+                    <Grid Height="30" MouseEnter="txtMilitaryFunds_MouseEnter">
+                        <TextBlock FontSize="20" Foreground="#00ffff" Text="軍資金" />
                         <TextBlock FontSize="20" Foreground="#ffff00" TextAlignment="Right" Text="9999999" Name="txtMoney"/>
                     </Grid>
                     <Grid Height="30">
