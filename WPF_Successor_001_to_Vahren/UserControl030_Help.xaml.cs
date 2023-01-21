@@ -24,11 +24,7 @@ namespace WPF_Successor_001_to_Vahren
         public UserControl030_Help()
         {
             InitializeComponent();
-        }
 
-        // ヘルプの文章を指定する
-        public void SetText(string txtInput)
-        {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
@@ -42,9 +38,6 @@ namespace WPF_Successor_001_to_Vahren
                 int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
                 Canvas.SetZIndex(this, maxZ + 1);
             }
-
-            // 入力された文字列をそのまま表示する
-            this.txtHelp.Text = txtInput;
 
             // ウインドウ枠
             SetWindowFrame(mainWindow);
@@ -153,6 +146,58 @@ namespace WPF_Successor_001_to_Vahren
             myImageBrush.ViewportUnits = BrushMappingMode.Absolute;
             myImageBrush.TileMode = TileMode.Tile;
             this.rectWindowRight.Fill = myImageBrush;
+        }
+
+        // ヘルプの文章を指定する
+        public void SetText(string strInput)
+        {
+            // 入力された文字列をそのまま表示する
+            this.txtHelp.Text = strInput;
+        }
+
+        // ヘルプの画像を指定する
+        public void SetImage(string strPath)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            if (System.IO.File.Exists(strPath) == false)
+            {
+                return;
+            }
+            BitmapImage bitmap = new BitmapImage(new Uri(strPath));
+            Image imgHelp = new Image();
+
+            // まずは Text を空にする
+            this.txtHelp.Text = string.Empty;
+            this.txtHelp.Inlines.Clear();
+
+            // 画面よりも大きい画像なら縮小する
+            double spaceWidth = mainWindow.canvasUI.Width;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                spaceWidth += mainWindow.canvasUI.Margin.Left * 2;
+            }
+            spaceWidth -= 32 + 5 * 2; // 枠と隙間の分
+            double spaceHeight = mainWindow.canvasUI.Height;
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                spaceHeight += mainWindow.canvasUI.Margin.Top * 2;
+            }
+            spaceHeight -= 32 + 5 * 2; // 枠と隙間の分
+            if (bitmap.PixelHeight > spaceHeight)
+            {
+                imgHelp.Height = spaceHeight;
+            }
+            else if (bitmap.PixelWidth > spaceWidth)
+            {
+                imgHelp.Width = spaceWidth;
+            }
+            imgHelp.Source = bitmap;
+            this.txtHelp.Inlines.Add(imgHelp);
         }
 
     }

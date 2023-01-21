@@ -286,20 +286,20 @@ namespace WPF_Successor_001_to_Vahren
 
         // ウインドウが開いて一定時間経過すると、自動的に閉じる
         private DispatcherTimer _timerClose = new DispatcherTimer();
-        private void Window_AutoClose(object sender, EventArgs e)
+        private void Window_AutoClose(object? sender, EventArgs e)
         {
             // プレイヤーが入力してないので、false を返す
             DialogResult = false;
         }
 
         // ウインドウが最前面になったらタイマーを開始する
-        private void Window_Activated(object sender, EventArgs e)
+        private void Window_Activated(object? sender, EventArgs e)
         {
             _timerClose.Start();
         }
 
         // 他のウインドウの後ろになったらタイマーを止める
-        private void Window_Deactivated(object sender, EventArgs e)
+        private void Window_Deactivated(object? sender, EventArgs e)
         {
             _timerClose.Stop();
         }

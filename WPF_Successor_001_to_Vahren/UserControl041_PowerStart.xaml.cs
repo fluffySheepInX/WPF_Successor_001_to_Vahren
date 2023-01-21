@@ -29,7 +29,7 @@ namespace WPF_Successor_001_to_Vahren
 
         // 定数
         // 項目サイズをここで調節できます
-        private const int item_height = 60, space_height = 10, btn_width = 54, btn_height = 54;
+        private const int item_height = 72, space_height = 10, btn_width = 54, btn_height = 54, face_size = 64;
 
         public void SetData()
         {
@@ -203,7 +203,7 @@ namespace WPF_Successor_001_to_Vahren
                 pathFaceImage = System.IO.Path.Combine(strings.ToArray()) + System.IO.Path.DirectorySeparatorChar;
             }
 
-            // 雇用可能なユニットのリストを初期化する
+            // 勢力に所属する初期人材のリストを初期化する
             this.panelList.Children.Clear();
             int item_count = 0;
 
@@ -238,7 +238,7 @@ namespace WPF_Successor_001_to_Vahren
                     gridItem.ColumnDefinitions.Add(colDef3);
                     RowDefinition rowDef1 = new RowDefinition();
                     RowDefinition rowDef2 = new RowDefinition();
-                    rowDef1.Height = new GridLength(1.0, GridUnitType.Star);
+                    rowDef1.Height = new GridLength(2.0, GridUnitType.Star);
                     rowDef2.Height = new GridLength(1.0, GridUnitType.Star);
                     gridItem.RowDefinitions.Add(rowDef1);
                     gridItem.RowDefinitions.Add(rowDef2);
@@ -251,7 +251,6 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         gridItem.Margin = new Thickness(5, space_height, 5, 0);
                     }
-                    //gridItem.Background = Brushes.Gray; // 実験用
 
                     // ユニット画像
                     BitmapImage bitimg1 = new BitmapImage(new Uri(pathChipImage + itemUnit.Image));
@@ -304,20 +303,41 @@ namespace WPF_Successor_001_to_Vahren
                     Grid.SetRowSpan(btnUnit, 2);
                     gridItem.Children.Add(btnUnit);
 
-                    // 名前
+                    StackPanel panelName = new StackPanel();
+                    panelName.Tag = itemUnit;
+                    panelName.HorizontalAlignment = HorizontalAlignment.Center;
+                    panelName.VerticalAlignment = VerticalAlignment.Center;
+                    Grid.SetColumn(panelName, 1);
+                    gridItem.Children.Add(panelName);
+
+                    // 肩書
+                    if (itemUnit.Help != string.Empty)
+                    {
+                        TextBlock txtHelp = new TextBlock();
+                        // 文字を少し小さくする
+                        txtHelp.Height = 22;
+                        txtHelp.FontSize = 17;
+                        txtHelp.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 0));
+                        txtHelp.Text = itemUnit.Help;
+                        panelName.Children.Add(txtHelp);
+
+                        // 下寄りにする
+                        panelName.VerticalAlignment = VerticalAlignment.Bottom;
+                    }
+
+                    // 名前と種族
                     TextBlock txtName = new TextBlock();
                     txtName.Tag = itemUnit;
-                    txtName.FontSize = 20;
+                    txtName.Height = 25;
+                    txtName.FontSize = 19;
                     txtName.Foreground = Brushes.White;
-                    txtName.HorizontalAlignment = HorizontalAlignment.Center;
                     txtName.Text = itemUnit.Name + "（" + itemUnit.Race + "）";
-                    Grid.SetColumn(txtName, 1);
-                    gridItem.Children.Add(txtName);
+                    panelName.Children.Add(txtName);
 
-                    // クラス
+                    // レベルとクラス
                     TextBlock txtClass = new TextBlock();
                     txtClass.Tag = itemUnit;
-                    txtClass.FontSize = 20;
+                    txtClass.FontSize = 19;
                     txtClass.Foreground = Brushes.Yellow;
                     txtClass.HorizontalAlignment = HorizontalAlignment.Center;
                     var originalClass = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemUnit.Class).FirstOrDefault();
@@ -339,12 +359,20 @@ namespace WPF_Successor_001_to_Vahren
                     {
                         BitmapImage bitimg2 = new BitmapImage(new Uri(pathFaceImage + itemUnit.Face));
                         Image imgFace = new Image();
-                        imgFace.Width = item_height;
-                        imgFace.Height = item_height;
+                        imgFace.Width = face_size;
+                        imgFace.Height = face_size;
                         imgFace.Source = bitimg2;
 
                         // 顔絵のマスク画像が存在する場合
-                        string pathMask = pathFaceImage + "face_mask1.png";
+                        string pathMask;
+                        if (item_count % 2 == 1)
+                        {
+                            pathMask = pathFaceImage + "face_mask2.png";
+                        }
+                        else
+                        {
+                            pathMask = pathFaceImage + "face_mask1.png";
+                        }
                         if (System.IO.File.Exists(pathMask))
                         {
                             BitmapImage bitimg3 = new BitmapImage(new Uri(pathMask));
@@ -357,7 +385,15 @@ namespace WPF_Successor_001_to_Vahren
                         gridItem.Children.Add(imgFace);
 
                         // 顔絵の枠画像が存在する場合
-                        string pathFrame = pathFaceImage + "face_frame1.png";
+                        string pathFrame;
+                        if (item_count % 2 == 1)
+                        {
+                            pathFrame = pathFaceImage + "face_frame2.png";
+                        }
+                        else
+                        {
+                            pathFrame = pathFaceImage + "face_frame1.png";
+                        }
                         if (System.IO.File.Exists(pathFrame))
                         {
                             BitmapImage bitimg4 = new BitmapImage(new Uri(pathFrame));
@@ -378,7 +414,6 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-
         }
 
         private void DisplayPowerInfo(MainWindow mainWindow)
@@ -389,7 +424,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            //旗
+            // 旗
             {
                 List<string> strings = new List<string>();
                 strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
@@ -402,10 +437,88 @@ namespace WPF_Successor_001_to_Vahren
                 this.imgFlag.Source = destimg;
             }
 
-            // 勢力名
+            // 勢力の説明
+            if (classPowerAndCity.ClassPower.Help != string.Empty)
+            {
+                this.txtHelpPower.Text = classPowerAndCity.ClassPower.Help;
+            }
+            else
+            {
+                this.txtHelpPower.Visibility = Visibility.Collapsed;
+            }
+
+            // 勢力の名前
             this.txtNamePower.Text = classPowerAndCity.ClassPower.Name;
 
-        
+            // マスターの顔絵と名前
+            var unitMaster = mainWindow.ClassGameStatus.ListUnit.Where(x => x.NameTag == classPowerAndCity.ClassPower.MasterTag).FirstOrDefault();
+            if (unitMaster != null)
+            {
+                // 顔絵
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("010_FaceImage");
+                strings.Add(unitMaster.Face);
+                string path = System.IO.Path.Combine(strings.ToArray());
+                BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                this.imgFace.Source = bitimg1;
+
+                // 名前
+                this.txtNameMaster.Text = unitMaster.Name;
+            }
+
+            // マスターの称号
+            this.txtHelpMaster.Text = classPowerAndCity.ClassPower.Head;
+
+            // 難易度
+            this.txtDifficulty.Text = classPowerAndCity.ClassPower.Diff;
+
+            // 各領地のデータを集計する
+            int spot_count = 0;
+            int total_gain = 0;
+            int unit_count = 0;
+            string powerNameTag = classPowerAndCity.ClassPower.NameTag;
+            var listSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.PowerNameTag == powerNameTag);
+            foreach (var itemSpot in listSpot)
+            {
+                spot_count++;
+                total_gain += itemSpot.Gain;
+                foreach (var itemTroop in itemSpot.UnitGroup)
+                {
+                    unit_count += itemTroop.ListClassUnit.Count;
+                }
+            }
+
+            // 領地数
+            this.txtNumberSpot.Text = spot_count.ToString();
+
+            // 総収入
+            {
+                total_gain *= (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+                this.txtTotalGain.Text = total_gain.ToString();
+            }
+
+            // 軍資金
+            this.txtMoney.Text = classPowerAndCity.ClassPower.Money.ToString();
+
+            // ユニット数
+            this.txtNumberUnit.Text = unit_count.ToString();
+
+            // 勢力の詳細
+            this.txtDetail.Text = classPowerAndCity.ClassPower.Text;
+
+            // ボタンの背景
+            mainWindow.SetButtonImage(this.btnCancel, "wnd5.png");
+            // 選択できない勢力なら「決定ボタン」隠す
+            if (classPowerAndCity.ClassPower.EnableSelect == "off")
+            {
+                this.btnOK.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                mainWindow.SetButtonImage(this.btnOK, "wnd5.png");
+            }
+
         }
 
 
@@ -483,7 +596,7 @@ namespace WPF_Successor_001_to_Vahren
 
 
         // 勢力開始ウインドウにカーソルを乗せた時
-        private void winR_MouseEnter(object sender, MouseEventArgs e)
+        private void win_MouseEnter(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -507,34 +620,7 @@ namespace WPF_Successor_001_to_Vahren
             // ヘルプを作成する
             var helpWindow = new UserControl030_Help();
             helpWindow.Name = "Help_" + this.Name;
-            helpWindow.SetText("勢力を選択してプレイします。");
-            mainWindow.canvasUI.Children.Add(helpWindow);
-        }
-        private void winL_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var mainWindow = (MainWindow)Application.Current.MainWindow;
-            if (mainWindow == null)
-            {
-                return;
-            }
-
-            // カーソルを離した時のイベントを追加する
-            var cast = (UIElement)sender;
-            cast.MouseLeave += win_MouseLeave;
-
-            // 他のヘルプを全て隠す
-            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
-            {
-                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
-                {
-                    itemHelp.Visibility = Visibility.Hidden;
-                }
-            }
-
-            // ヘルプを作成する
-            var helpWindow = new UserControl030_Help();
-            helpWindow.Name = "Help_" + this.Name;
-            helpWindow.SetText("勢力ではなく一人の人材を選択してプレイします。");
+            helpWindow.SetText("勢力または人材を選択してプレイします。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
         private void win_MouseLeave(object sender, MouseEventArgs e)
@@ -553,6 +639,107 @@ namespace WPF_Successor_001_to_Vahren
             foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
             {
                 if (itemHelp.Name == "Help_" + this.Name)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemHelp);
+                    break;
+                }
+            }
+
+            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 勢力名にカーソルを乗せた時
+        private void gridPower_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var classPowerAndCity = (ClassPowerAndCity)this.Tag;
+            if (classPowerAndCity == null)
+            {
+                return;
+            }
+
+            // 勢力画像が設定されてないか存在しないなら終わる
+            if (classPowerAndCity.ClassPower.Image == string.Empty)
+            {
+                return;
+            }
+            if (System.IO.File.Exists(classPowerAndCity.ClassPower.Image) == false)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (Grid)sender;
+            cast.MouseLeave += gridPower_MouseLeave;
+
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+
+            // 他のヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // ヘルプを作成する（文字列ではなく画像を表示する）
+            var helpWindow = new UserControl030_Help();
+            helpWindow.Name = "Help_PowerImage";
+            helpWindow.SetImage(classPowerAndCity.ClassPower.Image);
+            mainWindow.canvasUI.Children.Add(helpWindow);
+        }
+        private void gridPower_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (Grid)sender;
+            cast.MouseLeave -= win_MouseLeave;
+
+            // ハイライトを解除する（背景を取り除く）
+            cast.Background = null;
+
+            // 表示中のヘルプを取り除く
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if (itemHelp.Name == "Help_PowerImage")
                 {
                     mainWindow.canvasUI.Children.Remove(itemHelp);
                     break;
@@ -607,7 +794,7 @@ namespace WPF_Successor_001_to_Vahren
             // キャンバスから自身を取り除く
             mainWindow.canvasUI.Children.Remove(this);
 
-/*
+            // 決定ボタンを隠せば押されることは無い。不要ならコメントアウトすればいい
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
             if (classPowerAndCity == null)
             {
@@ -618,7 +805,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 return;
             }
-*/
 
             // 関数をこっちに移してもいいけど、とりあえず MainWindow のメンバ関数として呼び出す
             ((Button)sender).Tag = this.Tag;

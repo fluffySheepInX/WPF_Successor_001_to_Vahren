@@ -45,7 +45,7 @@
             <Button Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Width="35" Height="35" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <ScrollViewer Grid.Row="1" Name="scrollList" Width="340" Height="480" Margin="5" Focusable="False"
-                    VerticalScrollBarVisibility="Auto" CanContentScroll="True" >
+                    VerticalScrollBarVisibility="Auto" >
                 <StackPanel Name="panelList">
 
 <!--

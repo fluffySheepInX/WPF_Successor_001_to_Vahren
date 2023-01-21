@@ -616,7 +616,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 勢力メニューを更新する
-            mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            if (mainWindow.ClassGameStatus.WindowStrategyMenu != null)
+            {
+                mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            }
         }
 
 
@@ -791,7 +794,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 勢力メニューを更新する
-            mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            if (mainWindow.ClassGameStatus.WindowStrategyMenu != null)
+            {
+                mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            }
         }
 
         // ボタンの背景画像を白っぽくする
