@@ -145,7 +145,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region ListMember
+        /// <summary>
+        /// ListMember内部
+        /// </summary>
         private List<(string, int)> _listMember = new List<(string, int)>();
+        /// <summary>
+        /// 初期メンバー（ユニット）配置用
+        /// </summary>
         public List<(string, int)> ListMember
         {
             get { return _listMember; }
@@ -172,7 +178,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region UnitGroup
+        /// <summary>
+        /// UnitGroup内部
+        /// </summary>
         private List<ClassHorizontalUnit> _unitGroup = new List<ClassHorizontalUnit>();
+        /// <summary>
+        /// ユニットの実データ。
+        /// unitの所属情報を書き換え等、こちらでやる
+        /// </summary>
         public List<ClassHorizontalUnit> UnitGroup
         {
             get { return _unitGroup; }

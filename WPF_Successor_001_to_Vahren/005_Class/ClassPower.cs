@@ -57,6 +57,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _name = value; }
         }
         #endregion
+        #region Help
+        private string help = string.Empty;
+        public string Help
+        {
+            get { return help; }
+            set { help = value; }
+        }
+        #endregion
         #region Money
         private int _money;
         public int Money

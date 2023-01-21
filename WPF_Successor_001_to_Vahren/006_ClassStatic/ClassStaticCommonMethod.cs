@@ -1506,6 +1506,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 classPower.NameTag = first.Value.Replace(Environment.NewLine, "");
             }
             {
+                var help =
+                    new Regex(GetPat("help"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(help);
+                if (first != null)
+                {
+                    classPower.Help = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
+            {
                 var money =
                     new Regex(@"(?<=money[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
                     .Matches(value);

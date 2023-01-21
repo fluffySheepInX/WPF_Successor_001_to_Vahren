@@ -18,7 +18,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             switch (classPower.Fix)
             {
                 case _010_Enum.FlagPowerFix.on:
-                    //徴兵など次ターンの準備する
+                    //交戦国をチェック
+
+                    //国境都市を取得
+                    ClassSpot classSpot;
+                    //国境都市で徴兵
+
+
+                    //その他準備
 
                     break;
                 case _010_Enum.FlagPowerFix.off:
