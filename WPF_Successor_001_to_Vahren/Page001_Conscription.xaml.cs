@@ -534,7 +534,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money -= convTag.ClassUnit.Price;
-            mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            if (mainWindow.ClassGameStatus.WindowStrategyMenu != null)
+            {
+                mainWindow.ClassGameStatus.WindowStrategyMenu.DisplayPowerStatus(mainWindow);
+            }
 
             ClassUnit? extName = mainWindow.ClassGameStatus
                         .ListUnit

@@ -1262,7 +1262,7 @@ namespace WPF_Successor_001_to_Vahren
                     break;
                 }
             }
-            if (isFound == false)
+            if ((isFound == false) && (classPowerAndCity.ClassPower.NameTag != string.Empty))
             {
                 // 新規に作成する
                 var itemWindow = new UserControl041_PowerStart();
@@ -1311,8 +1311,8 @@ namespace WPF_Successor_001_to_Vahren
             // 勢力を選択中なら、勢力プレイ開始ウィンドウを表示する
             else if (mainWindow.ClassGameStatus.NowSituation == _010_Enum.Situation.SelectGroup)
             {
-                //DisplayPowerStart(mainWindow, sender);
-                mainWindow.DisplayPowerSelection(sender);
+                DisplayPowerStart(mainWindow, sender);
+                //mainWindow.DisplayPowerSelection(sender);
             }
         }
 
