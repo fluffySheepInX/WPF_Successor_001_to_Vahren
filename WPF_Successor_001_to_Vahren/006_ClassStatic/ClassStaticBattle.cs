@@ -1690,7 +1690,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="commonWindow"></param>
         /// <param name="canvasMain"></param>
         /// <exception cref="Exception"></exception>
-        public static async void TimerAction60FPSAfterFadeInBattleStart(CommonWindow commonWindow, Canvas canvasMain, DelegateMapRenderedFromBattle actionMapRenderedFromBattle)
+        public static async void TimerAction60FPSAfterFadeInBattleStart(CommonWindow commonWindow, Canvas canvasMain, DelegateMapRenderedFromBattle? actionMapRenderedFromBattle)
         {
             if (commonWindow.AfterFadeIn == false)
             {
@@ -1853,6 +1853,41 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
         #endregion
+
+        #region SetTimerBattle
+        /// <summary>
+        /// バトル起点タイマー
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="timerAfterFadeIn"></param>
+        /// <param name="commonWindow"></param>
+        /// <param name="canvas"></param>
+        public static void SetTimerBattle(bool test, DispatcherTimer timerAfterFadeIn, CommonWindow commonWindow, Canvas canvas)
+        {
+            timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
+            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+            if (test == true)
+            {
+                timerAfterFadeIn.Tick += (x, s) =>
+                {
+                    ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvas, null);
+                    ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
+                };
+            }
+            else
+            {
+                //後で直す
+                timerAfterFadeIn.Tick += (x, s) =>
+                {
+                    ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvas, null);
+                    ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
+                };
+            }
+            commonWindow.AfterFadeIn = true;
+            timerAfterFadeIn.Start();
+        }
+        #endregion
+
 
         #endregion
 

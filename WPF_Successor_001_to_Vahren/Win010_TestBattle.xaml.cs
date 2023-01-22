@@ -140,6 +140,7 @@ namespace WPF_Successor_001_to_Vahren
                                                 this.CanvasMainWidth, this._sizeClientWinWidth,
                                                 CanvasMapBattle_MouseLeftButtonDown,
                                                 windowMapBattle_MouseRightButtonDown);
+            //建築物描写
             {
                 // get files.
                 IEnumerable<string> files = ClassStaticBattle.GetFiles015_BattleMapCellImage(ClassConfigGameTitle.DirectoryGameTitle[NowNumberGameTitle].FullName);
@@ -779,15 +780,7 @@ namespace WPF_Successor_001_to_Vahren
             //ウィンドウ
             ClassStaticBattle.CreatePageBattle(this.canvasMain, this._sizeClientWinHeight, this);
 
-            timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
-            timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
-            timerAfterFadeIn.Tick += (x, s) =>
-            {
-                ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(this, this.canvasMain, null);
-                ClassStaticCommonMethod.KeepInterval(timerAfterFadeIn);
-            };
-            AfterFadeIn = true;
-            timerAfterFadeIn.Start();
+            ClassStaticBattle.SetTimerBattle(true, timerAfterFadeIn, this, this.canvasMain);
         }
 
 
