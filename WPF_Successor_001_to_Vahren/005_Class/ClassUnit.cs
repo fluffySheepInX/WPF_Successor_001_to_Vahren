@@ -179,8 +179,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region Gender
-        private _010_Enum.Gender? gender;
-        public _010_Enum.Gender? Gender
+        private _010_Enum.Gender gender = _010_Enum.Gender.Neuter;
+        public _010_Enum.Gender Gender
         {
             get { return gender; }
             set { gender = value; }

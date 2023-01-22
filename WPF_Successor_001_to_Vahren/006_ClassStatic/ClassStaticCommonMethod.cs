@@ -1891,7 +1891,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 var first = CheckMatchElement(gender);
                 if (first == null)
                 {
-                    classUnit.Gender = null;
+                    classUnit.Gender = 0;
                 }
                 else
                 {

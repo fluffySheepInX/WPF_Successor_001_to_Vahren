@@ -148,11 +148,11 @@
     #region Gender
     public enum Gender
     {
-        Male = 0
+        Neuter = 0
             ,
-        Female = 1
+        Male = 1
             ,
-        Neuter = 2
+        Female = 2
             ,
         Androgynous = 3
             ,
