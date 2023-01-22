@@ -11,6 +11,8 @@ NewFormatUnit AbelIrijhorn
 	join    = "私が上の人間に欲していることはただ一つ。じっと座っていること。ただそれだけだ。";
 	face = "face001.png";
 	voice_type = "AbelIrijhorn";
+	#male(男性)/female(女性)/neuter(中性)/androgynous(両性具有)/infertile(無生殖者)の5種類
+	gender = "female";
 	#onで人材
 	talent = "on";
 
@@ -74,6 +76,7 @@ NewFormatUnit VictodyRoyle
 	join    = "提督どこー？";
 	face = "face002.png";
 	voice_type = "VictodyRoyle";
+	gender = "female";
 	talent = "on";
 	friend = "LineInfantryM14";
 	merce = "LineInfantryM14";
@@ -127,6 +130,7 @@ NewFormatUnit JothianRoarcy
 	join    = "いくらでも膝を折りましょう。貴方が名君であるならば";
 	face = "face003.png";
 	voice_type = "JothianRoarcy";
+	gender = "male";
 	talent = "on";
 	
 	#部下に出来る種類
@@ -183,6 +187,7 @@ NewFormatUnit MabateRoarcy
 	join    = "新入社員です！私のお兄ちゃんのこともよろしく！";
 	face = "face005.png";
 	voice_type = "MabateRoarcy";
+	gender = "female";
 	talent = "on";
 
 	#部下に出来る種類

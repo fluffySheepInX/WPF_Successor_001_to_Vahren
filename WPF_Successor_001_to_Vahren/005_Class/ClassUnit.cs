@@ -178,6 +178,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _voice_type = value; }
         }
         #endregion
+        #region Gender
+        private _010_Enum.Gender? gender;
+        public _010_Enum.Gender? Gender
+        {
+            get { return gender; }
+            set { gender = value; }
+        }
+        #endregion
         #region Talent
         private string _talent = string.Empty;
         public string Talent

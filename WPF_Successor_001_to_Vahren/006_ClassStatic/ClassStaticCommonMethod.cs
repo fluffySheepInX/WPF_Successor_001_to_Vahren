@@ -1883,6 +1883,23 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classUnit.Voice_type = first.Value.Replace(Environment.NewLine, "");
                 }
             }
+            //gender
+            {
+                var gender =
+                    new Regex(GetPat("gender"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(gender);
+                if (first == null)
+                {
+                    classUnit.Gender = null;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classUnit.Gender = (Gender)Enum.Parse(typeof(Gender), re, true);
+                }
+            }
+
             {
                 var talent =
                     new Regex(GetPat("talent"), RegexOptions.IgnoreCase)

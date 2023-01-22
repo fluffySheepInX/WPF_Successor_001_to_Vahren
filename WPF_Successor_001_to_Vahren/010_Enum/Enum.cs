@@ -144,4 +144,19 @@
         freeze = 5
     }
     #endregion
+
+    #region Gender
+    public enum Gender
+    {
+        Male = 0
+            ,
+        Female = 1
+            ,
+        Neuter = 2
+            ,
+        Androgynous = 3
+            ,
+        infertile = 4
+    }
+    #endregion
 }
