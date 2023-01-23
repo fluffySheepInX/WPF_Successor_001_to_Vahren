@@ -18,10 +18,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             switch (classPower.Fix)
             {
                 case _010_Enum.FlagPowerFix.on:
-                    //交戦国をチェック
+                    //ランダム(補正有り)でターゲットとなる国を選ぶ
 
                     //国境都市を取得
                     ClassSpot classSpot;
+                    
                     //国境都市で徴兵
 
 

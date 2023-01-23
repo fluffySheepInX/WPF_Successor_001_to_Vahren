@@ -2394,6 +2394,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             ClassUnit classUnit = new ClassUnit();
             return classUnit;
         }
+        public static ClassDiplomacy GetClassDiplomacy(string value)
+        {
+            ClassDiplomacy classDiplomacy = new ClassDiplomacy();
+
+            // コメント行を取り除く
+            value = ReplaceComment(value);
+
+
+
+            return classDiplomacy;
+        }
 
         public static Match? CheckMatchElement(MatchCollection scenarioName)
         {
