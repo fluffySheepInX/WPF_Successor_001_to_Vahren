@@ -299,7 +299,7 @@ namespace WPF_Successor_001_to_Vahren
                         btnUnit.Content = imgUnit;
                     }
                     // btnUnit.Click += btnUnit_Click;
-                    // btnUnit.MouseEnter += btnUnit_MouseEnter;
+                    btnUnit.MouseEnter += btnUnit_MouseEnter;
                     Grid.SetRowSpan(btnUnit, 2);
                     gridItem.Children.Add(btnUnit);
 
@@ -365,13 +365,17 @@ namespace WPF_Successor_001_to_Vahren
 
                         // 顔絵のマスク画像が存在する場合
                         string pathMask;
-                        if (item_count % 2 == 1)
+                        if (itemUnit.Gender == _010_Enum.Gender.Male)
+                        {
+                            pathMask = pathFaceImage + "face_mask1.png";
+                        }
+                        else if (itemUnit.Gender == _010_Enum.Gender.Female)
                         {
                             pathMask = pathFaceImage + "face_mask2.png";
                         }
                         else
                         {
-                            pathMask = pathFaceImage + "face_mask1.png";
+                            pathMask = pathFaceImage + "face_mask3.png";
                         }
                         if (System.IO.File.Exists(pathMask))
                         {
@@ -386,13 +390,17 @@ namespace WPF_Successor_001_to_Vahren
 
                         // 顔絵の枠画像が存在する場合
                         string pathFrame;
-                        if (item_count % 2 == 1)
+                        if (itemUnit.Gender == _010_Enum.Gender.Male)
+                        {
+                            pathFrame = pathFaceImage + "face_frame1.png";
+                        }
+                        else if (itemUnit.Gender == _010_Enum.Gender.Female)
                         {
                             pathFrame = pathFaceImage + "face_frame2.png";
                         }
                         else
                         {
-                            pathFrame = pathFaceImage + "face_frame1.png";
+                            pathFrame = pathFaceImage + "face_frame3.png";
                         }
                         if (System.IO.File.Exists(pathFrame))
                         {
@@ -774,6 +782,114 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
         }
+
+        // ボタンにカーソルを乗せた時
+        private void btnUnit_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (FrameworkElement)sender;
+            cast.MouseLeave += btnUnit_MouseLeave;
+
+            // 場所が重なるのでヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // メンバーにできるユニットを表示する
+            var helpMember = new UserControl031_HelpMember();
+            helpMember.Name = StringName.windowMember;
+            helpMember.Tag = cast.Tag;
+            helpMember.SetData();
+            mainWindow.canvasUI.Children.Add(helpMember);
+
+            // ユニット情報のヒント
+            {
+                ClassCityAndUnit classCityAndUnit = new ClassCityAndUnit();
+                classCityAndUnit.ClassPowerAndCity = (ClassPowerAndCity)this.Tag;
+                classCityAndUnit.ClassUnit = (ClassUnit)cast.Tag;
+
+                // ユニット情報のヒントを表示する
+                var hintUnit = new UserControl016_UnitHint();
+                hintUnit.Tag = classCityAndUnit;
+                hintUnit.Name = StringName.windowUnitHint;
+                hintUnit.SetData();
+                mainWindow.canvasUI.Children.Add(hintUnit);
+            }
+        }
+        private void btnUnit_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (FrameworkElement)sender;
+            cast.MouseLeave -= btnUnit_MouseLeave;
+
+            // メンバーのヘルプを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl031_HelpMember>())
+            {
+                if (itemWindow.Name == StringName.windowMember)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+
+            // ユニット情報のヒント
+            {
+                // ユニット情報のヒントを閉じる
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl016_UnitHint>())
+                {
+                    if (itemWindow.Name == StringName.windowUnitHint)
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        break;
+                    }
+                }
+            }
+
+            // 他のヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         // 勢力選択画面で決定押した時の処理
         private void btnOK_Click(object sender, RoutedEventArgs e)

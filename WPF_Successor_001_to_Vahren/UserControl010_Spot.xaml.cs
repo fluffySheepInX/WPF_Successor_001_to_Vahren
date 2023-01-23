@@ -1981,7 +1981,7 @@ namespace WPF_Successor_001_to_Vahren
                     // ユニット情報のヒントを表示する
                     var hintUnit = new UserControl016_UnitHint();
                     hintUnit.Tag = classCityAndUnit;
-                    hintUnit.Name = "UnitHint";
+                    hintUnit.Name = StringName.windowUnitHint;
                     hintUnit.SetData();
                     mainWindow.canvasUI.Children.Add(hintUnit);
                 }
@@ -2012,7 +2012,7 @@ namespace WPF_Successor_001_to_Vahren
                     // ユニット情報のヒントを閉じる
                     foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl016_UnitHint>())
                     {
-                        if (itemWindow.Name == "UnitHint")
+                        if (itemWindow.Name == StringName.windowUnitHint)
                         {
                             mainWindow.canvasUI.Children.Remove(itemWindow);
                             break;
@@ -2558,7 +2558,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl016_UnitHint>())
                 {
-                    if (itemWindow.Name == "UnitHint")
+                    if (itemWindow.Name == StringName.windowUnitHint)
                     {
                         mainWindow.canvasUI.Children.Remove(itemWindow);
                         bCloseHint = true;
