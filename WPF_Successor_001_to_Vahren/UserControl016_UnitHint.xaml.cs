@@ -282,6 +282,36 @@ namespace WPF_Successor_001_to_Vahren
                     this.txtLevelClass.Text = "Lv" + targetUnit.Level.ToString() + " " + originalClass.Name;
                 }
             }
+            // 性別
+            {
+                if (targetUnit.Gender == _010_Enum.Gender.Male)
+                {
+                    this.txtSex.Text = "（男性）";
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 255));
+                }
+                else if (targetUnit.Gender == _010_Enum.Gender.Female)
+                {
+                    this.txtSex.Text = "（女性）";
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 200));
+                }
+                /*
+                else if (targetUnit.Gender == _010_Enum.Gender.Androgynous)
+                {
+                    this.txtSex.Text = "（両性）";
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 200));
+                }
+                else if (targetUnit.Gender == _010_Enum.Gender.infertile)
+                {
+                    this.txtSex.Text = "（無性）";
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 0));
+                }
+                */
+                else
+                {
+                    // Neuter (中性) または未設定なら何も表示しない
+                    this.txtSex.Text = string.Empty;
+                }
+            }
 
             // 経験値
             {
