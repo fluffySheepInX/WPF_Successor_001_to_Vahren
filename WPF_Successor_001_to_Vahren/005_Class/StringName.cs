@@ -38,6 +38,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         // ユニット情報ウィンドウ（UserControl015_Unit）の Name の接頭語
         public static readonly string windowUnit = "WindowUnit";
 
+        // ユニット情報のヒント（UserControl016_UnitHint）の Name
+        public static readonly string windowUnitHint = "HintUnit";
+
         // メンバーにできるユニットのヘルプ（UserControl031_HelpMember）の Name
         public static readonly string windowMember = "HelpMember";
 
