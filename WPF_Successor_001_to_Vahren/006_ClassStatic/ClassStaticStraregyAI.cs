@@ -96,19 +96,64 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         break;//複数の時はこれを外す
                     }
 
-                    //ターゲットとの国境都市を取得
-                    List<ClassSpot> classSpot = new List<ClassSpot>();
+                    ////ターゲットとの国境都市を取得
+                    //自国領土を取得
+                    List<ClassSpot> mySpot = new List<ClassSpot>();
+                    foreach (var item in classGameStatus.NowListSpot)
+                    {
+                        if (item.PowerNameTag == classPower.NameTag)
+                        {
+                            mySpot.Add(item);
+                        }
+                    }
+                    //自国領土と接触している他国領土のタグをチェック
+                    List<ClassSpot> mySpotOtherLand = new List<ClassSpot>();
+                    foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
+                    {
+                        //自国領土かチェック
+                        if (mySpot.Where(x => itemListLinkSpot.Item1.Contains(x.NameTag)).Count() == 1)
+                        {
+                            //リンクしている領土が他国の領土かチェック
+                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                            if (ch == null)
+                            {
+                                continue;
+                            }
+                            //本来ならターゲットは複数あっても良いが、今は一つに絞る
+                            if (ch.PowerNameTag == targetPowers[0].NameTag)
+                            {
+                                //ターゲットの国と隣接している都市なので、リストへ格納
+                                mySpotOtherLand.Add(ch);
+                            }
+                            continue;
+                        }
+                        //自国領土かチェック
+                        if (mySpot.Where(x => itemListLinkSpot.Item2.Contains(x.NameTag)).Count() == 1)
+                        {
+                            //リンクしている領土が他国の領土かチェック
+                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                            if (ch == null)
+                            {
+                                continue;
+                            }
+                            //本来ならターゲットは複数あっても良いが、今は一つに絞る
+                            if (ch.PowerNameTag == targetPowers[0].NameTag)
+                            {
+                                //ターゲットの国と隣接している都市なので、リストへ格納
+                                mySpotOtherLand.Add(ch);
+                            }
+                            continue;
+                        }
+                    }
 
-
-
-                    //ターゲットとの国境都市があるかチェック
-                    if (classSpot.Count == 0)
+                    if (mySpotOtherLand.Count == 0)
                     {
                         //ターゲットとの国境都市が無い
                     }
                     else
                     {
-                        //ターゲットとの国境都市で徴兵
+                        ////ターゲットとの国境都市で徴兵
+                        //本来は乱数で決めちゃダメ
 
                     }
                     //その他準備
