@@ -524,7 +524,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // ユニットの追加先が存在するか調べる
             ClassHorizontalUnit? targetTroop = null;
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
             if (targetUnit != null)
             {
                 // ユニット情報ウインドウから雇用する場合は、そのユニットの部隊に優先的に追加する
@@ -673,7 +673,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // ユニットの追加先が存在するか調べる
             ClassHorizontalUnit? targetTroop = null;
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
             int add_count = member_capacity;
             if (targetUnit != null)
             {

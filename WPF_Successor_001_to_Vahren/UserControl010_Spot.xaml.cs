@@ -406,7 +406,7 @@ namespace WPF_Successor_001_to_Vahren
             if (_isControl)
             {
                 // 操作可能な時だけドロップ先の枠の分も確保する
-                int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+                int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
                 if (j_max < member_capacity)
                 {
                     j_max++;
@@ -1009,7 +1009,7 @@ namespace WPF_Successor_001_to_Vahren
         private void MakeDropTarget_Unit(MainWindow mainWindow, int troop_id, int member_id)
         {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
 
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
@@ -1222,7 +1222,7 @@ namespace WPF_Successor_001_to_Vahren
         private void MakeDropTarget_Troop(MainWindow mainWindow, int troop_id)
         {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
             int spot_capacity = classPowerAndCity.ClassSpot.Capacity;
 
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
@@ -1411,7 +1411,7 @@ namespace WPF_Successor_001_to_Vahren
         private bool MakeDropTarget_Whole(MainWindow mainWindow)
         {
             var classPowerAndCity = (ClassPowerAndCity)this.Tag;
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
 
             var listTroop = classPowerAndCity.ClassSpot.UnitGroup;
             int i, troop_count, spot_capacity;

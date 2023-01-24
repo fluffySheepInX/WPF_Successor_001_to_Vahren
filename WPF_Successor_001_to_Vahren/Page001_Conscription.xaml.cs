@@ -157,7 +157,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.lblMemberCount.Content =
                     count.ToString() +
                     "/" +
-                    mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].SpotCapacity;
+                    mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].SpotCapacity;
             }
             // 駐在部隊
             {
@@ -414,7 +414,7 @@ namespace WPF_Successor_001_to_Vahren
 
             if (selectUnitNumber == -1)
             {
-                count = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+                count = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
 
                 var cloneExt = extName.DeepCopy();
                 cloneExt.IsSelect = false;
@@ -437,7 +437,7 @@ namespace WPF_Successor_001_to_Vahren
             else
             {
                 //その部隊での残り雇用数算出
-                count = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity
+                count = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity
                     - mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup[selectUnitNumber].ListClassUnit.Count;
 
                 if (count <= 0)
@@ -528,7 +528,7 @@ namespace WPF_Successor_001_to_Vahren
 
             //駐在数が多すぎたらダメ
             if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup.Count
-                >= mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].SpotCapacity)
+                >= mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].SpotCapacity)
             {
                 return;
             }
@@ -559,7 +559,7 @@ namespace WPF_Successor_001_to_Vahren
             if (selectUnitNumber != -1)
             {
                 if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassSpot.UnitGroup[selectUnitNumber].ListClassUnit.Count
-                    >= mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity)
+                    >= mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity)
                 {
                     MessageBox.Show("定員オーバーです");
                     return;

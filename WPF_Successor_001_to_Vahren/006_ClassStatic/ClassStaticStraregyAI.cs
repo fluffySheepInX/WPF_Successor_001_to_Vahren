@@ -77,16 +77,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         absTargetPowerList.Add(item.Key, Math.Abs(item.Value - 100));
                     }
 
-                    //ランダムで値を取得して、絶対値と比較
+                    ////ランダムで値を取得して、絶対値と比較
+                    //範囲内ならターゲットの国とする
                     Random random = new Random(DateTime.Now.Second);
                     List<ClassPower> targetPowers = new List<ClassPower>();
                     foreach (var item in absTargetPowerList)
                     {
-                        //範囲内ならターゲットの国とする
                         if (item.Value < random.Next(1, 100 + 1) == true)
                         {
+                            //範囲外
                             continue;
                         }
+                        //範囲内
                         var tar = classGameStatus.ListPower.Where(x => x.NameTag == item.Key).FirstOrDefault();
                         if (tar == null) continue;
                         targetPowers.Add(tar);

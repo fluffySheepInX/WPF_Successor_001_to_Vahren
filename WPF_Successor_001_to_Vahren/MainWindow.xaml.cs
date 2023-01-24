@@ -75,18 +75,9 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        #region NumberScenarioSelection
-        public int NumberScenarioSelection
-        {
-            get { return _numberScenarioSelection; }
-            set { _numberScenarioSelection = value; }
-        }
-        #endregion
-
         #endregion
 
         #region PrivateField
-        private int _numberScenarioSelection;
         private int _difficultyLevel = 0;
 
         private readonly string _pathConfigFile
@@ -333,7 +324,7 @@ namespace WPF_Successor_001_to_Vahren
             var target = (Button)sender;
             int a = Convert.ToInt32(target.Tag);
             //MessageBox.Show(a.ToString());
-            this.NumberScenarioSelection = a;
+            this.ClassGameStatus.NumberScenarioSelection = a;
 
             switch (this.ClassGameStatus.ListClassScenarioInfo[a].ButtonType)
             {
@@ -2271,7 +2262,7 @@ namespace WPF_Successor_001_to_Vahren
         private void InitializeGameData()
         {
             //シナリオで設定されてる標準の駐留数
-            int default_capacity = this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
+            int default_capacity = this.ClassGameStatus.ListClassScenarioInfo[this.ClassGameStatus.NumberScenarioSelection].SpotCapacity;
 
             // 元データからシナリオ用にデータをコピーする
             // （ゲーム中に値を変更しても元データに影響しないようにする為です。）
@@ -3417,7 +3408,7 @@ namespace WPF_Successor_001_to_Vahren
             //イベント実行
             {
                 var ev = this.ClassGameStatus.ListEvent
-                            .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].World)
+                            .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.ClassGameStatus.NumberScenarioSelection].World)
                             .FirstOrDefault();
                 if (ev != null)
                 {
@@ -3616,7 +3607,7 @@ namespace WPF_Successor_001_to_Vahren
         public void ExecuteEvent()
         {
             var ev = this.ClassGameStatus.ListEvent
-                        .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].World)
+                        .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.ClassGameStatus.NumberScenarioSelection].World)
                         .FirstOrDefault();
             if (ev != null)
             {

@@ -118,7 +118,7 @@ namespace WPF_Successor_001_to_Vahren
             this.txtNameSpot.Text = classSpot.Name + "へ出撃";
 
             // 出撃部隊数
-            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
+            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].WarCapacity;
             this.txtNumber.Text = "0/" + war_capacity.ToString();
 
             // ボタンの背景
@@ -234,7 +234,7 @@ namespace WPF_Successor_001_to_Vahren
         public void UpdateSortieUnit(MainWindow mainWindow)
         {
             // 部隊の最大メンバー数
-            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].MemberCapacity;
+            int member_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].MemberCapacity;
 
             // 画像のディレクトリ
             List<string> strings = new List<string>();
@@ -341,7 +341,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 出撃部隊数
-            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
+            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].WarCapacity;
             this.txtNumber.Text = mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Count.ToString() + "/" + war_capacity.ToString();
         }
 

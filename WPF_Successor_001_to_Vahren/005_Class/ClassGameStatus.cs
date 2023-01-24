@@ -86,6 +86,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         #endregion
 
+        #region NumberScenarioSelection
+        private int _numberScenarioSelection;
+        public int NumberScenarioSelection
+        {
+            get { return _numberScenarioSelection; }
+            set { _numberScenarioSelection = value; }
+        }
+        #endregion
+
         // ファイルから読み込んだオリジナルのデータ
         #region ListSpot
         private List<ClassSpot> _listSpot = new List<ClassSpot>();
