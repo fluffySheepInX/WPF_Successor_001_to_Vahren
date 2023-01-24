@@ -95,7 +95,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        // ファイルから読み込んだオリジナルのデータ
+        #region ファイルから読み込んだオリジナルのデータ
         #region ListSpot
         private List<ClassSpot> _listSpot = new List<ClassSpot>();
         public List<ClassSpot> AllListSpot
@@ -168,8 +168,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listClassScenarioInfo = value; }
         }
         #endregion
+        #endregion
 
-        // 元データからシナリオ用にコピーして使うデータ
+        #region 元データからシナリオ用にコピーして使うデータ
         #region NowListSpot
         private List<ClassSpot> _nowlistSpot = new List<ClassSpot>();
         public List<ClassSpot> NowListSpot
@@ -201,6 +202,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return nowClassDiplomacy; }
             set { nowClassDiplomacy = value; }
         }
+        #endregion
         #endregion
 
         #region NowTurn
@@ -278,6 +280,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region 戦闘に関する数字
         #region BattleThread
         private int battleThread = 1;
         public int BattleThread
@@ -285,6 +288,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return battleThread; }
             set { battleThread = value; }
         }
+        #endregion
+        #region NumberSleep
+        private int numberSleep = (int)(Math.Floor(((double)1 / 60) * 1000));
+        public int NumberSleep
+        {
+            get { return numberSleep; }
+            set { numberSleep = value; }
+        }
+        #endregion
         #endregion
 
         #region IsDrag

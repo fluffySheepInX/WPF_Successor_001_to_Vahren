@@ -391,7 +391,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         break;
                     }
 
-                    Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                    Thread.Sleep(classGameStatus.NumberSleep);
 
                     ClassVec classVec = new ClassVec();
                     classVec.Target = new Point(classUnit.OrderPosiLeft.X, classUnit.OrderPosiLeft.Y);
@@ -558,7 +558,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                Thread.Sleep(classGameStatus.NumberSleep);
 
                 foreach (var item in listClassHorizontalUnits)
                 {
@@ -633,7 +633,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                Thread.Sleep(classGameStatus.NumberSleep);
 
                 try
                 {
@@ -763,7 +763,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                Thread.Sleep(classGameStatus.NumberSleep);
 
                 try
                 {
@@ -1089,7 +1089,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             while (true)
             {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                Thread.Sleep(classGameStatus.NumberSleep);
 
                 ClassVec classVec = new ClassVec();
                 classUnit.OrderPosiSkill.TryGetValue(dicKey, out Point resultTryOrd);
@@ -1255,7 +1255,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (token.IsCancellationRequested) return;
 
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                Thread.Sleep(classGameStatus.NumberSleep);
                 bool flagAttack = false;
 
                 foreach (var item in aaa)
