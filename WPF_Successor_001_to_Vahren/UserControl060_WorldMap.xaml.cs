@@ -58,7 +58,7 @@ namespace WPF_Successor_001_to_Vahren
                 strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
                 strings.Add("005_BackgroundImage");
                 strings.Add("015_MapImage");
-                strings.Add(mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].NameMapImageFile);
+                strings.Add(mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].NameMapImageFile);
                 string path = System.IO.Path.Combine(strings.ToArray());
                 if (System.IO.File.Exists(path))
                 {
@@ -76,7 +76,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 //現シナリオで使用するスポットを抽出する
                 List<ClassSpot> spotList = new List<ClassSpot>();
-                foreach (var item in mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].DisplayListSpot)
+                foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].DisplayListSpot)
                 {
                     foreach (var item2 in mainWindow.ClassGameStatus.NowListSpot)
                     {
@@ -89,7 +89,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
 
                 //spotをlineで繋ぐ
-                foreach (var item in mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].ListLinkSpot)
+                foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].ListLinkSpot)
                 {
                     var ext1 = spotList.Where(x => x.NameTag == item.Item1).FirstOrDefault();
                     if (ext1 == null)
@@ -1384,7 +1384,7 @@ namespace WPF_Successor_001_to_Vahren
             ////隣接チェック
             //国に関係なく隣接都市名を抽出
             List<string> NameRinsetuSpot = new List<string>();
-            foreach (var item in mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].ListLinkSpot)
+            foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].ListLinkSpot)
             {
                 if (classPowerAndCity.ClassSpot.NameTag == item.Item1)
                 {

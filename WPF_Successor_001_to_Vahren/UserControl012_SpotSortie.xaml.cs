@@ -591,7 +591,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 現在登録されてる出撃部隊数をチェックする
-            int war_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
+            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
             if (mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Count >= war_capacity)
             {
                 var dialog = new Win020_Dialog();
@@ -700,7 +700,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 現在登録されてる出撃部隊数をチェックする
-            int war_capacity = mainWindow.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
+            int war_capacity = mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.NumberScenarioSelection].WarCapacity;
             int sortie_troop_count = mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Count;
             if (sortie_troop_count >= war_capacity)
             {

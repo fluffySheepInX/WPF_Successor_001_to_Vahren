@@ -23,6 +23,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region IDCount_セットで使うこと！
         #region IDCount
         private long iDCount = 0;
         public long IDCount
@@ -38,6 +39,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             iDCount += 1;
         }
+        #endregion
         #region Camera
         private Point _camera;
         public Point Camera
@@ -149,6 +151,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { classDiplomacy = value; }
         }
         #endregion
+        #region ListClassScenario
+        private List<ClassScenarioInfo> _listClassScenarioInfo = new List<ClassScenarioInfo>();
+        public List<ClassScenarioInfo> ListClassScenarioInfo
+        {
+            get { return _listClassScenarioInfo; }
+            set { _listClassScenarioInfo = value; }
+        }
+        #endregion
 
         // 元データからシナリオ用にコピーして使うデータ
         #region NowListSpot
@@ -173,6 +183,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _nowlistUnit; }
             set { _nowlistUnit = value; }
+        }
+        #endregion
+        #region NowClassDiplomacy
+        private ClassDiplomacy nowClassDiplomacy = new ClassDiplomacy();
+        public ClassDiplomacy NowClassDiplomacy
+        {
+            get { return nowClassDiplomacy; }
+            set { nowClassDiplomacy = value; }
         }
         #endregion
 

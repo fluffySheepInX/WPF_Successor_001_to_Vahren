@@ -8,6 +8,22 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassDiplomacy
     {
+        public ClassDiplomacy ShallowCopy()
+        {
+            return (ClassDiplomacy)MemberwiseClone();
+        }
+        public ClassDiplomacy DeepCopy()
+        {
+            ClassDiplomacy cp = ShallowCopy();
+            // 配列など参照型のデータを新規作成して元の値をコピーする
+            cp.Diplo = new List<(string, string, int)>(cp.Diplo);
+            cp.League = new List<(string, string, int)>(cp.League);
+            cp.EnemyPower = new List<(string, string, string, int)>(cp.EnemyPower);
+            cp.OneWayLove = new List<(string, string, int)>(cp.OneWayLove);
+            cp.Cold = new List<(string, string, int)>(cp.Cold);
+            return cp;
+        }
+
         #region Diplo
         private List<(string, string, int)> diplo = new List<(string, string, int)>();
         public List<(string, string, int)> Diplo

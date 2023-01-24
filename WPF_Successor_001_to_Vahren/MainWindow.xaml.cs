@@ -1,40 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
 using WPF_Successor_001_to_Vahren._015_Lexer;
 using WPF_Successor_001_to_Vahren._020_AST;
-using WPF_Successor_001_to_Vahren._025_Parser;
 using WPF_Successor_001_to_Vahren._030_Evaluator;
-using WpfAnimatedGif;
-using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 using Image = System.Windows.Controls.Image;
 
@@ -90,14 +75,6 @@ namespace WPF_Successor_001_to_Vahren
         }
         #endregion
 
-        #region ListClassScenario
-        public List<ClassScenarioInfo> ListClassScenarioInfo
-        {
-            get { return _listClassScenarioInfo; }
-            set { _listClassScenarioInfo = value; }
-        }
-        #endregion
-
         #region NumberScenarioSelection
         public int NumberScenarioSelection
         {
@@ -110,7 +87,6 @@ namespace WPF_Successor_001_to_Vahren
 
         #region PrivateField
         private int _numberScenarioSelection;
-        private List<ClassScenarioInfo> _listClassScenarioInfo = new List<ClassScenarioInfo>();
         private int _difficultyLevel = 0;
 
         private readonly string _pathConfigFile
@@ -197,10 +173,10 @@ namespace WPF_Successor_001_to_Vahren
                 double ratio = (double)h2 / h1;
                 if (ratio != 1)
                 {
-                    MessageBox.Show("拡大倍率が100%ではありません。" 
-                                    + System.Environment.NewLine 
-                                    + "システムの拡大縮小率を100%にすることで、" 
-                                    + System.Environment.NewLine 
+                    MessageBox.Show("拡大倍率が100%ではありません。"
+                                    + System.Environment.NewLine
+                                    + "システムの拡大縮小率を100%にすることで、"
+                                    + System.Environment.NewLine
                                     + "レイアウトの崩れが直ります。");
                 }
                 #endregion
@@ -359,7 +335,7 @@ namespace WPF_Successor_001_to_Vahren
             //MessageBox.Show(a.ToString());
             this.NumberScenarioSelection = a;
 
-            switch (this.ListClassScenarioInfo[a].ButtonType)
+            switch (this.ClassGameStatus.ListClassScenarioInfo[a].ButtonType)
             {
                 case ButtonType.Scenario:
                     break;
@@ -369,7 +345,7 @@ namespace WPF_Successor_001_to_Vahren
                             new System
                             .Diagnostics
                             .ProcessStartInfo("https://mail.google.com/mail/u/0/?tf=cm&fs=1&to=" +
-                                                this.ListClassScenarioInfo[a].Mail +
+                                                this.ClassGameStatus.ListClassScenarioInfo[a].Mail +
                                                 "&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0");
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
@@ -377,7 +353,7 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 case ButtonType.Internet:
                     {
-                        var startInfo = new System.Diagnostics.ProcessStartInfo(this.ListClassScenarioInfo[a].Internet);
+                        var startInfo = new System.Diagnostics.ProcessStartInfo(this.ClassGameStatus.ListClassScenarioInfo[a].Internet);
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
                         return;
@@ -416,7 +392,7 @@ namespace WPF_Successor_001_to_Vahren
             // 右上
             {
                 Canvas canvas = new Canvas();
-                if (this.ListClassScenarioInfo[tag].ScenarioImageBool == true)
+                if (this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImageBool == true)
                 {
                     canvas.Height = this.CanvasMainHeight / 2;
                 }
@@ -451,7 +427,7 @@ namespace WPF_Successor_001_to_Vahren
                     TextBlock tbDate1 = new TextBlock();
                     tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
 
-                    tbDate1.Text = this.ListClassScenarioInfo[tag].ScenarioIntroduce;
+                    tbDate1.Text = this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioIntroduce;
                     tbDate1.Height = canvas.Height;
                     tbDate1.Margin = new Thickness { Left = 15, Top = 15 };
                     canvas.Children.Add(tbDate1);
@@ -459,7 +435,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasMain.Children.Add(canvas);
             }
 
-            if (this.ListClassScenarioInfo[tag].ScenarioImageBool == false)
+            if (this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImageBool == false)
             {
                 return;
             }
@@ -504,7 +480,7 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                     strings.Add("005_BackgroundImage");
                     strings.Add("005_MenuImage");
-                    strings.Add(this.ListClassScenarioInfo[tag].ScenarioImage);
+                    strings.Add(this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImage);
                     string path = System.IO.Path.Combine(strings.ToArray());
 
                     var bi = new BitmapImage(new Uri(path));
@@ -534,7 +510,7 @@ namespace WPF_Successor_001_to_Vahren
                 strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                 strings.Add("005_BackgroundImage");
                 strings.Add("005_MenuImage");
-                strings.Add(this.ListClassScenarioInfo[Convert.ToInt32(image.Tag)].ScenarioImage);
+                strings.Add(this.ClassGameStatus.ListClassScenarioInfo[Convert.ToInt32(image.Tag)].ScenarioImage);
                 string base_path = System.IO.Path.Combine(strings.ToArray());
                 base_path = System.IO.Path.ChangeExtension(base_path, string.Empty);
                 base_path = base_path.Substring(0, base_path.Length - 1);
@@ -2130,7 +2106,7 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Background = new SolidColorBrush(Color.FromRgb(39, 51, 54));
 
             // シナリオ情報一括読み込み
-            if (this.ListClassScenarioInfo.Count <= 0)
+            if (this.ClassGameStatus.ListClassScenarioInfo.Count <= 0)
             {
                 Set_List_ClassInfo(this.NowNumberGameTitle);
             }
@@ -2164,7 +2140,7 @@ namespace WPF_Successor_001_to_Vahren
                     rectangleInfo.StrokeThickness = 5;
                     canvas.Children.Add(rectangleInfo);
 
-                    foreach (var item in this.ListClassScenarioInfo
+                    foreach (var item in this.ClassGameStatus.ListClassScenarioInfo
                                             .Where(y => y.Sortkey <= 0)
                                             .OrderBy(x => x.Sortkey)
                                             .Select((value, index) => (value, index)))
@@ -2249,11 +2225,11 @@ namespace WPF_Successor_001_to_Vahren
                         canvas.Children.Add(grid);
                     }
 
-                    int tag = this.ListClassScenarioInfo
+                    int tag = this.ClassGameStatus.ListClassScenarioInfo
                                             .Where(y => y.Sortkey <= 0)
                                             .Count();
 
-                    foreach (var item in this.ListClassScenarioInfo
+                    foreach (var item in this.ClassGameStatus.ListClassScenarioInfo
                                             .Where(y => y.Sortkey > 0)
                                             .OrderBy(x => x.Sortkey)
                                             .Select((value, index) => (value, index)))
@@ -2295,7 +2271,7 @@ namespace WPF_Successor_001_to_Vahren
         private void InitializeGameData()
         {
             //シナリオで設定されてる標準の駐留数
-            int default_capacity = this.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
+            int default_capacity = this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].SpotCapacity;
 
             // 元データからシナリオ用にデータをコピーする
             // （ゲーム中に値を変更しても元データに影響しないようにする為です。）
@@ -2322,6 +2298,9 @@ namespace WPF_Successor_001_to_Vahren
             // ユニット・データのコピーは領地に配置する際に行う
             this.ClassGameStatus.NowListUnit.Clear();
 
+            // 外交構造体のディープコピー
+            // （ゲーム中に値を変更しても元データに影響しないようにする為です。）
+            this.ClassGameStatus.NowClassDiplomacy = this.ClassGameStatus.ClassDiplomacy.DeepCopy();
         }
 
         private void SetListClassMapBattle(int gameTitleNumber)
@@ -2681,9 +2660,9 @@ namespace WPF_Successor_001_to_Vahren
                     throw new Exception();
                 }
 
-                if (this.ListClassScenarioInfo == null)
+                if (this.ClassGameStatus.ListClassScenarioInfo == null)
                 {
-                    this.ListClassScenarioInfo = new List<ClassScenarioInfo>();
+                    this.ClassGameStatus.ListClassScenarioInfo = new List<ClassScenarioInfo>();
                 }
             }
 
@@ -2747,16 +2726,16 @@ namespace WPF_Successor_001_to_Vahren
 
                             if (kind == 0)
                             {
-                                this.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenarioNewFormat(getData.Value));
+                                this.ClassGameStatus.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenarioNewFormat(getData.Value));
                             }
                             else
                             {
-                                this.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenario(getData.Value));
+                                this.ClassGameStatus.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenario(getData.Value));
                             }
                         }
-                        if (this.ListClassScenarioInfo.Count > 1)
+                        if (this.ClassGameStatus.ListClassScenarioInfo.Count > 1)
                         {
-                            this.ListClassScenarioInfo.Sort((x, y) => x.Sortkey - y.Sortkey);
+                            this.ClassGameStatus.ListClassScenarioInfo.Sort((x, y) => x.Sortkey - y.Sortkey);
                         }
                     }
                 }
@@ -3163,7 +3142,7 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            foreach ( var file in files ) 
+            foreach (var file in files)
             {
                 string readAllLines;
                 readAllLines = File.ReadAllText(file);
@@ -3438,7 +3417,7 @@ namespace WPF_Successor_001_to_Vahren
             //イベント実行
             {
                 var ev = this.ClassGameStatus.ListEvent
-                            .Where(x => x.Name == this.ListClassScenarioInfo[this.NumberScenarioSelection].World)
+                            .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].World)
                             .FirstOrDefault();
                 if (ev != null)
                 {
@@ -3637,7 +3616,7 @@ namespace WPF_Successor_001_to_Vahren
         public void ExecuteEvent()
         {
             var ev = this.ClassGameStatus.ListEvent
-                        .Where(x => x.Name == this.ListClassScenarioInfo[this.NumberScenarioSelection].World)
+                        .Where(x => x.Name == this.ClassGameStatus.ListClassScenarioInfo[this.NumberScenarioSelection].World)
                         .FirstOrDefault();
             if (ev != null)
             {

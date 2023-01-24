@@ -58,7 +58,6 @@ namespace WPF_Successor_001_to_Vahren
         #endregion
         #region ClassGameStatus
         private ClassGameStatus _classGameStatus = new ClassGameStatus();
-
         public ClassGameStatus ClassGameStatus
         {
             get { return _classGameStatus; }

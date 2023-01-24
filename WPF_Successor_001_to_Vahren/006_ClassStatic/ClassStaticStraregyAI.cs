@@ -46,11 +46,53 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     ////ランダム(補正有り)でターゲットとなる国を選ぶ
                     //友好度50のリストを作る
+                    Dictionary<string, int> baseTargetPowerList = new Dictionary<string, int>();
+                    foreach (var item in classGameStatus.NowListPower.Where(x => x.Index != classPower.Index))
+                    {
+                        baseTargetPowerList.Add(item.NameTag, 50);
+                    }
                     //友好度50のリストを本来のデータで上書きする
+                    foreach (var itemBaseTargetPowerList in baseTargetPowerList.ToList())
+                    {
+                        foreach (var item in classGameStatus.ClassDiplomacy.Diplo)
+                        {
+                            if (itemBaseTargetPowerList.Key == item.Item1 && item.Item2 == classPower.NameTag)
+                            {
+                                baseTargetPowerList[itemBaseTargetPowerList.Key] = item.Item3;
+                                continue;
+                            }
+                            if (itemBaseTargetPowerList.Key == item.Item2 && item.Item1 == classPower.NameTag)
+                            {
+                                baseTargetPowerList[item.Item1] = item.Item3;
+                                continue;
+                            }
+                        }
+                    }
                     //-100して絶対値を取る
+                    //友好度100なら0
+                    //友好度0なら100
+                    Dictionary<string, int> absTargetPowerList = new Dictionary<string, int>();
+                    foreach (var item in baseTargetPowerList)
+                    {
+                        absTargetPowerList.Add(item.Key, Math.Abs(item.Value - 100));
+                    }
+
                     //ランダムで値を取得して、絶対値と比較
-                    //範囲内ならターゲットの国とする
-                    //本来ならターゲットは複数あっても良いが、今は一つに絞る
+                    Random random = new Random(DateTime.Now.Second);
+                    List<ClassPower> targetPowers = new List<ClassPower>();
+                    foreach (var item in absTargetPowerList)
+                    {
+                        //範囲内ならターゲットの国とする
+                        if (item.Value < random.Next(1, 100 + 1) == true)
+                        {
+                            continue;
+                        }
+                        var tar = classGameStatus.ListPower.Where(x => x.NameTag == item.Key).FirstOrDefault();
+                        if (tar == null) continue;
+                        targetPowers.Add(tar);
+                        //本来ならターゲットは複数あっても良いが、今は一つに絞る
+                        break;//複数の時はこれを外す
+                    }
 
                     //ターゲットとの国境都市を取得
                     List<ClassSpot> classSpot = new List<ClassSpot>();
