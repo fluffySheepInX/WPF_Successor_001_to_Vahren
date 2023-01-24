@@ -2866,6 +2866,56 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 // Power 終わり
 
+                //Diplomacy
+                {
+                    string targetString = "Diplomacy";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    //var scenarioMatches = new Regex(@"Object[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    //listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                    if (listMatches != null)
+                    {
+                        if (listMatches.Count < 1)
+                        {
+                            // データがないので次
+                        }
+                        else
+                        {
+                            foreach (var getData in listMatches)
+                            {
+                                //enumを使うべき？
+                                int kind = 0;
+                                {
+                                    //このコードだとNewFormatObjectTest等が通るのでよくない
+                                    string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                    if (String.Compare(join, targetString, true) == 0)
+                                    {
+                                        kind = 0;
+                                    }
+                                    else
+                                    {
+                                        kind = 1;
+                                    }
+                                }
+
+                                if (kind == 0)
+                                {
+                                    ClassGameStatus.ClassDiplomacy = ClassStaticCommonMethod.GetClassDiplomacy(getData.Value);
+                                }
+                                else
+                                {
+                                    //ClassGameStatus.ListObject.Add(GetClassObj(getData.Value));
+                                }
+                            }
+                        }
+                    }
+                }
+                //object 終わり
+
                 // Unit
                 {
                     string targetString = "NewFormatUnit";

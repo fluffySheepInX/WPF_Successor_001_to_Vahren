@@ -2401,7 +2401,113 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             // コメント行を取り除く
             value = ReplaceComment(value);
 
-
+            //diplo
+            {
+                var diplo =
+                    new Regex(GetPat("diplo"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(diplo);
+                if (first != null)
+                {
+                    var va = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    foreach (var item in va)
+                    {
+                        var eq = item.Split("=");
+                        var cou = classDiplomacy.Diplo.Where(x => x.Item1 == eq[0] && x.Item2 == eq[1]).Count();
+                        if (cou > 1)
+                        {
+                            throw new Exception("diploで同じ勢力が重複して設定されています");
+                        }
+                        classDiplomacy.Diplo.Add(new(eq[0], eq[1], int.Parse(eq[2])));
+                    }
+                }
+            }
+            //league
+            {
+                var league =
+                    new Regex(GetPat("league"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(league);
+                if (first != null)
+                {
+                    var va = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    foreach (var item in va)
+                    {
+                        var eq = item.Split("=");
+                        var cou = classDiplomacy.League.Where(x => x.Item1 == eq[0] && x.Item2 == eq[1]).Count();
+                        if (cou > 1)
+                        {
+                            throw new Exception("Leagueで同じ勢力が重複して設定されています");
+                        }
+                        classDiplomacy.League.Add(new(eq[0], eq[1], int.Parse(eq[2])));
+                    }
+                }
+            }
+            //enemy_power
+            {
+                var enemy_power =
+                    new Regex(GetPat("enemy_power"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(enemy_power);
+                if (first != null)
+                {
+                    var va = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    foreach (var item in va)
+                    {
+                        var eq = item.Split("=");
+                        var cou = classDiplomacy.EnemyPower.Where(x => x.Item1 == eq[0] && x.Item2 == eq[1] && x.Item3 == eq[2]).Count();
+                        if (cou > 1)
+                        {
+                            throw new Exception("EnemyPowerで同じ勢力が重複して設定されています");
+                        }
+                        classDiplomacy.EnemyPower.Add(new(eq[0], eq[1], eq[2], int.Parse(eq[3])));
+                    }
+                }
+            }
+            //one-way_love
+            {
+                var one_way_love =
+                    new Regex(GetPat("one-way_love"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(one_way_love);
+                if (first != null)
+                {
+                    var va = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    foreach (var item in va)
+                    {
+                        var eq0 = item.Split("⇒");
+                        var eq = eq0[1].Split("=");
+                        var cou = classDiplomacy.OneWayLove.Where(x => x.Item1 == eq0[0] && x.Item2 == eq[0]).Count();
+                        if (cou > 1)
+                        {
+                            throw new Exception("one-way_loveで同じ勢力が重複して設定されています");
+                        }
+                        classDiplomacy.OneWayLove.Add(new(eq0[0], eq[0], int.Parse(eq[1])));
+                    }
+                }
+            }
+            //cold
+            {
+                var cold =
+                    new Regex(GetPat("cold"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(cold);
+                if (first != null)
+                {
+                    var va = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    foreach (var item in va)
+                    {
+                        var eq0 = item.Split("⇒");
+                        var eq = eq0[1].Split("=");
+                        var cou = classDiplomacy.Cold.Where(x => x.Item1 == eq0[0] && x.Item2 == eq[0]).Count();
+                        if (cou > 1)
+                        {
+                            throw new Exception("Coldで同じ勢力が重複して設定されています");
+                        }
+                        classDiplomacy.Cold.Add(new(eq0[0], eq[0], int.Parse(eq[1])));
+                    }
+                }
+            }
 
             return classDiplomacy;
         }

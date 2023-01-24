@@ -141,6 +141,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { classContext = value; }
         }
         #endregion
+        #region ClassDiplomacy
+        private ClassDiplomacy classDiplomacy = new ClassDiplomacy();
+        public ClassDiplomacy ClassDiplomacy
+        {
+            get { return classDiplomacy; }
+            set { classDiplomacy = value; }
+        }
+        #endregion
 
         // 元データからシナリオ用にコピーして使うデータ
         #region NowListSpot
