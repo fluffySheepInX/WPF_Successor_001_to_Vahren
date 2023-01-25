@@ -32,6 +32,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         // 領地ウィンドウ（UserControl010_Spot）の Name の接頭語
         public static readonly string windowSpot = "WindowSpot";
 
+        // 領地ウィンドウ（UserControl011_SpotHint）の Name
+        public static readonly string windowSpotHint = "HintSpot";
+
         // 出撃選択用領地ウィンドウ（UserControl012_SpotSortie）の Name の接頭語
         public static readonly string windowSpotSortie = "WindowSpotSortie";
 
@@ -40,6 +43,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         // ユニット情報のヒント（UserControl016_UnitHint）の Name
         public static readonly string windowUnitHint = "HintUnit";
+
+        // 領地の詳細説明ウィンドウ（UserControl025_DetailSpot）の Name
+        public static readonly string windowDetailSpot = "DetailSpot";
+
+        // ユニットの詳細説明ウィンドウ（UserControl026_DetailUnit）の Name
+        public static readonly string windowDetailUnit = "DetailUnit";
 
         // メンバーにできるユニットのヘルプ（UserControl031_HelpMember）の Name
         public static readonly string windowMember = "HelpMember";
