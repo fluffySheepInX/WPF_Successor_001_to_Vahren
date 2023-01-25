@@ -737,7 +737,7 @@ namespace WPF_Successor_001_to_Vahren
                 // 領地のヒントが表示されてる時はヘルプを隠す
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl011_SpotHint>())
                 {
-                    if (itemWindow.Name == "HintSpot")
+                    if (itemWindow.Name == StringName.windowSpotHint)
                     {
                         helpWindow.Visibility = Visibility.Hidden;
                         break;
@@ -951,7 +951,7 @@ namespace WPF_Successor_001_to_Vahren
 
             // 領地のヒントを作成する
             var hintSpot = new UserControl011_SpotHint();
-            hintSpot.Name = "HintSpot";
+            hintSpot.Name = StringName.windowSpotHint;
             hintSpot.Tag = classPowerAndCity;
             hintSpot.SetData();
             mainWindow.canvasUI.Children.Add(hintSpot);
@@ -959,11 +959,11 @@ namespace WPF_Successor_001_to_Vahren
             // 領地の説明文を表示する
             if (classPowerAndCity.ClassSpot.Text != string.Empty)
             {
-                var detailSpot = new UserControl025_DetailSpot();
-                detailSpot.Name = "DetailSpot";
-                detailSpot.Tag = classPowerAndCity.ClassSpot;
-                detailSpot.SetData();
-                mainWindow.canvasUI.Children.Add(detailSpot);
+                var itemWindow = new UserControl025_DetailSpot();
+                itemWindow.Name = StringName.windowDetailSpot;
+                itemWindow.Tag = classPowerAndCity.ClassSpot;
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
             }
         }
         private void mapSpot_MouseLeave(object sender, MouseEventArgs e)
@@ -1011,7 +1011,7 @@ namespace WPF_Successor_001_to_Vahren
             // 領地のヒントを閉じる
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl011_SpotHint>())
             {
-                if (itemWindow.Name == "HintSpot")
+                if (itemWindow.Name == StringName.windowSpotHint)
                 {
                     mainWindow.canvasUI.Children.Remove(itemWindow);
                     break;
@@ -1051,7 +1051,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl025_DetailSpot>())
                 {
-                    if (itemWindow.Name == "DetailSpot")
+                    if (itemWindow.Name == StringName.windowDetailSpot)
                     {
                         itemWindow.Remove();
                         break;

@@ -283,34 +283,30 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
             // 性別
+            switch (targetUnit.Gender)
             {
-                if (targetUnit.Gender == _010_Enum.Gender.Male)
-                {
+                case _010_Enum.Gender.Male:
                     this.txtSex.Text = "（男性）";
                     this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 255));
-                }
-                else if (targetUnit.Gender == _010_Enum.Gender.Female)
-                {
+                    break;
+                case _010_Enum.Gender.Female:
                     this.txtSex.Text = "（女性）";
                     this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 200));
-                }
-                /*
-                else if (targetUnit.Gender == _010_Enum.Gender.Androgynous)
-                {
+                    break;
+                case _010_Enum.Gender.Androgynous:
                     this.txtSex.Text = "（両性）";
-                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 200));
-                }
-                else if (targetUnit.Gender == _010_Enum.Gender.infertile)
-                {
+                    // 青色と赤色の両方だから紫色にする
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(224, 0, 224));
+                    break;
+                case  _010_Enum.Gender.infertile:
                     this.txtSex.Text = "（無性）";
-                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 0));
-                }
-                */
-                else
-                {
-                    // Neuter (中性) または未設定なら何も表示しない
+                    // 性別の特徴が無いから、灰色にする
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                    break;
+                default:
+                    // Neuter (中性) または未設定（不明、未定義）なら何も表示しない
                     this.txtSex.Text = string.Empty;
-                }
+                    break;
             }
 
             // 経験値

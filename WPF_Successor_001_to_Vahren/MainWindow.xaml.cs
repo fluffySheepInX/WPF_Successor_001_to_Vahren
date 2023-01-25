@@ -3153,7 +3153,7 @@ namespace WPF_Successor_001_to_Vahren
                                 var first = ClassStaticCommonMethod.CheckMatchElement(diplo);
                                 if (first != null)
                                 {
-                                    itemListUnit.Text = first.ToString();
+                                    itemListUnit.Text = ClassStaticCommonMethod.MoldingText(first.ToString(), "$<double>");
                                 }
                             }
                         }

@@ -42,7 +42,7 @@
                         Focusable="False" VerticalScrollBarVisibility="Visible" >
                     <StackPanel Name="panelList">
 
-
+<!--
                         <Grid Height="72" Margin="5,0,5,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="54"/>
@@ -107,7 +107,7 @@
                             <Image Grid.Column="2" Grid.RowSpan="2" Height="64" Width="64" Source="./001_Warehouse/001_DefaultGame/010_FaceImage/face003.png" />
                             <Image Grid.Column="2" Grid.RowSpan="2" Height="72" Width="72" Source="./001_Warehouse/001_DefaultGame/010_FaceImage/face_frame2.png" />
                         </Grid>
-
+-->
 
                     </StackPanel>
                 </ScrollViewer>
