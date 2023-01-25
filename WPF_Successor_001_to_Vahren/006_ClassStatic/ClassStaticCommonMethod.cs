@@ -2592,6 +2592,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 // ヴァーレントゥーガのテキスト用特殊記号「$」を改行に置換する。
                 strTemp = strTemp.Replace("$", System.Environment.NewLine);
             }
+            if (strStatus.Contains("<double>"))
+            {
+                // テキスト用特殊記号「<double>」を「"」に置換する。
+                strTemp = strTemp.Replace("<double>", "\"");
+            }
 
             return strTemp;
         }
