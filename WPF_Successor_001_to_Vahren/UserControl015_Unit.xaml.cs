@@ -274,34 +274,30 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
             // 性別
+            switch (targetUnit.Gender)
             {
-                if (targetUnit.Gender == _010_Enum.Gender.Male)
-                {
+                case _010_Enum.Gender.Male:
                     this.txtSex.Text = "（男性）";
                     this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 255));
-                }
-                else if (targetUnit.Gender == _010_Enum.Gender.Female)
-                {
+                    break;
+                case _010_Enum.Gender.Female:
                     this.txtSex.Text = "（女性）";
                     this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 200));
-                }
-                /*
-                else if (targetUnit.Gender == _010_Enum.Gender.Androgynous)
-                {
+                    break;
+                case _010_Enum.Gender.Androgynous:
                     this.txtSex.Text = "（両性）";
-                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 0, 200));
-                }
-                else if (targetUnit.Gender == _010_Enum.Gender.infertile)
-                {
+                    // 青色と赤色の両方だから紫色にする
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(224, 0, 224));
+                    break;
+                case  _010_Enum.Gender.infertile:
                     this.txtSex.Text = "（無性）";
-                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(255, 200, 0));
-                }
-                */
-                else
-                {
-                    // Neuter (中性) または未設定なら何も表示しない
+                    // 性別の特徴が無いから、灰色にする
+                    this.txtSex.Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                    break;
+                default:
+                    // Neuter (中性) または未設定（不明、未定義）なら何も表示しない
                     this.txtSex.Text = string.Empty;
-                }
+                    break;
             }
 
             // 経験値
@@ -960,7 +956,7 @@ namespace WPF_Successor_001_to_Vahren
             id_list.Clear();
         }
 
-        // スキルのボタンにマウスを乗せた時
+        // スキルのボタンにカーソルを乗せた時
         private void btnSkill_MouseEnter(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -975,7 +971,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
-            // マウスを離した時のイベントを追加する
+            // カーソルを離した時のイベントを追加する
             cast.MouseLeave += btnSkill_MouseLeave;
 
             // 場所が重なるのでヘルプを全て隠す
@@ -1046,6 +1042,75 @@ namespace WPF_Successor_001_to_Vahren
                             break;
                         }
                     }
+                }
+            }
+        }
+
+        // ユニットの名前パネルにカーソルを乗せた時
+        private void panelNameUnit_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var classCityAndUnit = (ClassCityAndUnit)this.Tag;
+            if (classCityAndUnit == null)
+            {
+                return;
+            }
+            var targetUnit = classCityAndUnit.ClassUnit;
+            if (targetUnit == null)
+            {
+                return;
+            }
+
+            // ユニットの説明文が設定されてないなら終わる
+            if (targetUnit.Text == string.Empty)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            var cast = (StackPanel)sender;
+            cast.MouseLeave += panelNameUnit_MouseLeave;
+
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+
+            // ユニットの説明文を表示する
+            if (targetUnit.Text != string.Empty)
+            {
+                var itemWindow = new UserControl026_DetailUnit();
+                itemWindow.Name = StringName.windowDetailUnit;
+                itemWindow.Tag = targetUnit;
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+            }
+        }
+        private void panelNameUnit_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (StackPanel)sender;
+            cast.MouseLeave -= btnSkill_MouseLeave;
+
+            // ハイライトを解除する（背景を取り除く）
+            cast.Background = null;
+
+            // ユニットの説明文を取り除く
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl026_DetailUnit>())
+            {
+                if (itemWindow.Name == StringName.windowDetailUnit)
+                {
+                    itemWindow.Remove();
+                    break;
                 }
             }
         }

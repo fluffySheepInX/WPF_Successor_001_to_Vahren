@@ -44,7 +44,8 @@
             <Button Name="btnClose" Width="35" Height="35" Canvas.Left="525" Padding="0,-6,0,0" FontSize="30" Focusable="False" Click="btnClose_Click">×</Button>
 
             <StackPanel Canvas.Left="80" Canvas.Top="5" Width="400">
-                <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Height="35" HorizontalAlignment="Center"
+                        MouseEnter="panelNameUnit_MouseEnter" >
                     <TextBlock FontSize="23" Foreground="White" Text="ユニットの名前" Name="txtNameUnit" />
                     <TextBlock Margin="0,2" FontSize="20" Foreground="#C8FFC8" Text="（種族名）" Name="txtRace" />
                 </StackPanel>
