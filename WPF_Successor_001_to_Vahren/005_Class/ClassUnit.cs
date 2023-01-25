@@ -114,6 +114,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _help = value; }
         }
         #endregion
+        #region Text
+        private string text = string.Empty;
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+        #endregion
         #region Race
         private string _race = string.Empty;
         public string Race

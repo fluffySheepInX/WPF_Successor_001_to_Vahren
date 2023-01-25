@@ -3100,6 +3100,67 @@ namespace WPF_Successor_001_to_Vahren
                     itemUnit.Skill.Add(x);
                 }
             }
+
+            //detailから情報取得
+            foreach (var item in files)
+            {
+                string readAllLines;
+                readAllLines = File.ReadAllText(item);
+
+                if (readAllLines.Length == 0)
+                {
+                    continue;
+                }
+
+                // 大文字かっこは許しまへんで
+                {
+                    var ch = readAllLines.Length - readAllLines.Replace("{", "").Replace("}", "").Length;
+                    if (ch % 2 != 0 || readAllLines.Length - ch == 0)
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                // detail
+                {
+                    string targetString = "detail";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    //var scenarioMatches = new Regex(@"detail[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    //listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                    if (listMatches == null)
+                    {
+                        // データがない！
+                        throw new Exception();
+                    }
+                    if (listMatches.Count < 1)
+                    {
+                        // データがないので次
+                    }
+                    else
+                    {
+                        foreach (var getData in listMatches)
+                        {
+                            foreach (var itemListUnit in ClassGameStatus.ListUnit)
+                            {
+                                var diplo =
+                                    new Regex(ClassStaticCommonMethod.GetPat(itemListUnit.NameTag), RegexOptions.IgnoreCase)
+                                    .Matches(getData.Value);
+                                var first = ClassStaticCommonMethod.CheckMatchElement(diplo);
+                                if (first != null)
+                                {
+                                    itemListUnit.Text = first.ToString();
+                                }
+                            }
+                        }
+                    }
+                }
+                // detail 終わり
+            }
         }
 
 
