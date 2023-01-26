@@ -96,6 +96,7 @@ namespace WPF_Successor_001_to_Vahren
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // ウインドウの大きさを取得する
+                double actual_width = this.ActualWidth;
                 double actual_height = this.ActualHeight;
 
                 // マウスの位置によってウインドウの位置を変える
@@ -114,7 +115,7 @@ namespace WPF_Successor_001_to_Vahren
                     // 画面の右下隅に配置する
                     this.Margin = new Thickness()
                     {
-                        Left = mainWindow.canvasUI.Width - offsetLeft - this.MinWidth,
+                        Left = mainWindow.canvasUI.Width - offsetLeft - actual_width,
                         Top = mainWindow.canvasUI.Height - offsetTop - actual_height
                     };
                 }

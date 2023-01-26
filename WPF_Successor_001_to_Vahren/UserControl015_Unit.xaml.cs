@@ -1047,7 +1047,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ユニットの名前パネルにカーソルを乗せた時
-        private void panelNameUnit_MouseEnter(object sender, MouseEventArgs e)
+        private void gridName_MouseEnter(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -1073,8 +1073,8 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // カーソルを離した時のイベントを追加する
-            var cast = (StackPanel)sender;
-            cast.MouseLeave += panelNameUnit_MouseLeave;
+            var cast = (Grid)sender;
+            cast.MouseLeave += gridName_MouseLeave;
 
             // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
             cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
@@ -1089,7 +1089,7 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.canvasUI.Children.Add(itemWindow);
             }
         }
-        private void panelNameUnit_MouseLeave(object sender, MouseEventArgs e)
+        private void gridName_MouseLeave(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
@@ -1098,11 +1098,11 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // イベントを取り除く
-            var cast = (StackPanel)sender;
-            cast.MouseLeave -= btnSkill_MouseLeave;
+            var cast = (Grid)sender;
+            cast.MouseLeave -= gridName_MouseLeave;
 
-            // ハイライトを解除する（背景を取り除く）
-            cast.Background = null;
+            // ハイライトを解除する（背景を透明にする）
+            cast.Background = Brushes.Transparent;
 
             // ユニットの説明文を取り除く
             foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl026_DetailUnit>())

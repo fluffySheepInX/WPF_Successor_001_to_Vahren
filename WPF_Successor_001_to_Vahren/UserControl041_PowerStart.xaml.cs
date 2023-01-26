@@ -304,11 +304,17 @@ namespace WPF_Successor_001_to_Vahren
                     gridItem.Children.Add(btnUnit);
 
                     StackPanel panelName = new StackPanel();
-                    panelName.Tag = itemUnit;
                     panelName.HorizontalAlignment = HorizontalAlignment.Center;
                     panelName.VerticalAlignment = VerticalAlignment.Center;
-                    Grid.SetColumn(panelName, 1);
-                    gridItem.Children.Add(panelName);
+
+                    Grid gridName = new Grid();
+                    gridName.Tag = itemUnit;
+                    // マウスに反応するように背景を透明にしておく
+                    gridName.Background = Brushes.Transparent;
+                    gridName.MouseEnter += gridName_MouseEnter;
+                    gridName.Children.Add(panelName);
+                    Grid.SetColumn(gridName, 1);
+                    gridItem.Children.Add(gridName);
 
                     // 肩書
                     if (itemUnit.Help != string.Empty)
@@ -327,7 +333,6 @@ namespace WPF_Successor_001_to_Vahren
 
                     // 名前と種族
                     TextBlock txtName = new TextBlock();
-                    txtName.Tag = itemUnit;
                     txtName.Height = 25;
                     txtName.FontSize = 19;
                     txtName.Foreground = Brushes.White;
@@ -742,7 +747,9 @@ namespace WPF_Successor_001_to_Vahren
             cast.MouseLeave -= win_MouseLeave;
 
             // ハイライトを解除する（背景を取り除く）
-            cast.Background = null;
+            //cast.Background = null;
+            // ハイライトを解除する（背景を透明にする）
+            cast.Background = Brushes.Transparent;
 
             // 表示中のヘルプを取り除く
             foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
@@ -779,6 +786,70 @@ namespace WPF_Successor_001_to_Vahren
                             break;
                         }
                     }
+                }
+            }
+        }
+
+        // ユニットの名前パネルにカーソルを乗せた時
+        private void gridName_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (Grid)sender;
+            var targetUnit = (ClassUnit)cast.Tag;
+            if (targetUnit == null)
+            {
+                return;
+            }
+
+            // ユニットの説明文が設定されてないなら終わる
+            if (targetUnit.Text == string.Empty)
+            {
+                return;
+            }
+
+            // カーソルを離した時のイベントを追加する
+            cast.MouseLeave += gridName_MouseLeave;
+
+            // ハイライトで強調する（文字色が白色なので、あまり白くすると読めなくなる）
+            cast.Background = new SolidColorBrush(Color.FromArgb(48, 255, 255, 255));
+
+            // ユニットの説明文を表示する
+            if (targetUnit.Text != string.Empty)
+            {
+                var itemWindow = new UserControl026_DetailUnit();
+                itemWindow.Name = StringName.windowDetailUnit;
+                itemWindow.Tag = targetUnit;
+                itemWindow.SetData();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+            }
+        }
+        private void gridName_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (Grid)sender;
+            cast.MouseLeave -= gridName_MouseLeave;
+
+            // ハイライトを解除する（背景を透明にする）
+            cast.Background = Brushes.Transparent;
+
+            // ユニットの説明文を取り除く
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl026_DetailUnit>())
+            {
+                if (itemWindow.Name == StringName.windowDetailUnit)
+                {
+                    itemWindow.Remove();
+                    break;
                 }
             }
         }

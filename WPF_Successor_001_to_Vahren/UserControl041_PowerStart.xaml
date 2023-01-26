@@ -142,7 +142,7 @@
 
             <Canvas Grid.Row="1" Grid.Column="1">
                 <Image Canvas.Left="5" Canvas.Top="15" Height="32" Width="32" Name="imgFlag"/>
-                <Grid Canvas.Left="45" Height="60"
+                <Grid Canvas.Left="45" Height="60" Width="430" Background="Transparent"
                         MouseEnter="gridPower_MouseEnter" >
                     <StackPanel Margin="5,0" VerticalAlignment="Center">
                         <TextBlock FontSize="20" Foreground="#ffc800" Text="勢力の説明" Name="txtHelpPower"/>
