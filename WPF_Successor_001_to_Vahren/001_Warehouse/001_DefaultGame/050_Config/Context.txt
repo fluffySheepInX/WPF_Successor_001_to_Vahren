@@ -22,9 +22,9 @@
 	#中立領地に登場するモンスターの最大部隊数
 	neutral_max = "12";
 	#中立領地に登場するモンスターの最小部隊数
-	neutral_min = "6"
+	neutral_min = "6";
 	#中立領地に登場するモンスターの最大部隊メンバー数
-	neutral_member_max = "12"
+	neutral_member_max = "12";
 	#中立領地に登場するモンスターの最小部隊メンバー数
 	neutral_member_min = "6";
 

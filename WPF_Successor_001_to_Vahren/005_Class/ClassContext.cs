@@ -33,6 +33,42 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 			get { return gain_per; }
 			set { gain_per = value; }
 		}
+        #endregion
+
+        #region NeutralMax
+        private int neutral_max;
+		public int NeutralMax
+        {
+			get { return neutral_max; }
+			set { neutral_max = value; }
+		}
+        #endregion
+
+        #region NeutralMin
+        private int neutral_min;
+		public int NeutralMin
+        {
+			get { return neutral_min; }
+			set { neutral_min = value; }
+		}
+        #endregion
+
+        #region NeutralMemberMax
+        private int neutral_member_max;
+		public int NeutralMemberMax
+        {
+			get { return neutral_member_max; }
+			set { neutral_member_max = value; }
+		}
+        #endregion
+
+        #region neutralMemberMin
+        private int neutral_member_min;
+		public int neutralMemberMin
+        {
+			get { return neutral_member_min; }
+			set { neutral_member_min = value; }
+		}
 		#endregion
 	}
 }

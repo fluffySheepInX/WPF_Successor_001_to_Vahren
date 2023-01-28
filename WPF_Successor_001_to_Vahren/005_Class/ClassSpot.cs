@@ -168,6 +168,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region MonsterOrder
+        private string monsterOrder = string.Empty;
+        public string MonsterOrder
+        {
+            get { return monsterOrder; }
+            set { monsterOrder = value; }
+        }
+        #endregion
         #region ListMonster
         private List<(string, int)> _listMonster = new List<(string, int)>();
         public List<(string, int)> ListMonster

@@ -920,6 +920,50 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classContext.GainPer = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
+            //neutral_max
+            {
+                var neutral_max =
+                    new Regex(GetPat("neutral_max"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(neutral_max);
+                if (first != null)
+                {
+                    classContext.NeutralMax = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //neutral_min
+            {
+                var neutral_min =
+                    new Regex(GetPat("neutral_min"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(neutral_min);
+                if (first != null)
+                {
+                    classContext.NeutralMin = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //neutral_member_max
+            {
+                var neutral_member_max =
+                    new Regex(GetPat("neutral_member_max"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(neutral_member_max);
+                if (first != null)
+                {
+                    classContext.NeutralMemberMax = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
+            //neutral_member_min
+            {
+                var neutral_member_min =
+                    new Regex(GetPat("neutral_member_min"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(neutral_member_min);
+                if (first != null)
+                {
+                    classContext.neutralMemberMin = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
+                }
+            }
 
             return classContext;
         }
@@ -1113,6 +1157,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classSpot.ListWanderingMonster = values;
                 }
             }
+            //monsterOrder
+            {
+                var monsterOrder =
+                    new Regex(GetPat("monsterOrder"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(monsterOrder);
+                if (first == null)
+                {
+                    classSpot.MonsterOrder = "random";
+                }
+                else
+                {
+                    classSpot.MonsterOrder = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
             //monster
             {
                 var monster =
@@ -1129,7 +1188,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     foreach (var item in first.Value.Replace(Environment.NewLine, "").Split(",").ToList())
                     {
                         var cutResult = item.Split("*").ToList();
-                        values.Add(new(cutResult[0], int.Parse(cutResult[1])));
+                        if (cutResult.Count == 1)
+                        {
+                            values.Add(new(cutResult[0], 1));
+                        }
+                        else
+                        {
+                            values.Add(new(cutResult[0], int.Parse(cutResult[1])));
+                        }
                     }
                     classSpot.ListMonster = values;
                 }
