@@ -1,7 +1,7 @@
 ﻿NewFormatPower sc_a_p_a
 {
-	#カラキエール・エレイル(elel)の揺り籠
 	name = "館エレイル帝国";
+	help = "カラキエール・エレイル(elel)の揺り籠";
 	money = "50000";
 	#デフォはpng
 	#次にjpgを探す
