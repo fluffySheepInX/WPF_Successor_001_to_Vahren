@@ -945,26 +945,62 @@ namespace WPF_Successor_001_to_Vahren
                 // 中立領地にモンスターをランダム配置する（初期メンバーが指定されてる場合は除外する）
                 if ((itemSpot.PowerNameTag == string.Empty) && (itemSpot.UnitGroup.Count() == 0))
                 {
-                    // ListWanderingMonster と ListMonster の仕様が不明なので、元のままにしておく。
-                    // ヴァーレンだと、指定された比率と制限に準じて、部隊数とメンバー数をランダムに決める。
-                    foreach (var ListWanderingMonster in itemSpot.ListWanderingMonster)
+                    if (itemSpot.MonsterOrder == "order")
                     {
-                        var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == ListWanderingMonster.Item1).FirstOrDefault();
-                        if (info == null)
+                        // ListWanderingMonster と ListMonster の仕様が不明なので、元のままにしておく。
+                        // ヴァーレンだと、指定された比率と制限に準じて、部隊数とメンバー数をランダムに決める。
+                        foreach (var ListMonster in itemSpot.ListMonster)
+                        {
+                            var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == ListMonster.Item1).FirstOrDefault();
+                            if (info == null) continue;
+
+                            var classUnit = new List<ClassUnit>();
+                            for (int i = 0; i < ListMonster.Item2; i++)
+                            {
+                                var deep = info.DeepCopy();
+                                deep.ID = this.ClassGameStatus.IDCount;
+                                this.ClassGameStatus.SetIDCount();
+                                this.ClassGameStatus.NowListUnit.Add(deep); // 検索用
+                                classUnit.Add(deep);
+                            }
+
+                            itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
+                        }
+                    }
+                    else if (itemSpot.MonsterOrder == "random")
+                    {
+                        //指定された比率と制限に準じて、部隊数とメンバー数をランダムに決めるようにしたいが、
+                        //実装が大変なので今はこれで
+                        if (itemSpot.ListMonster.Count == 0)
                         {
                             continue;
                         }
-                        var classUnit = new List<ClassUnit>();
-                        for (int i = 0; i < ListWanderingMonster.Item2; i++)
-                        {
-                            var deep = info.DeepCopy();
-                            deep.ID = this.ClassGameStatus.IDCount;
-                            this.ClassGameStatus.SetIDCount();
-                            this.ClassGameStatus.NowListUnit.Add(deep); // 検索用
-                            classUnit.Add(deep);
-                        }
 
-                        itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
+                        Random randomUnit = new Random(DateTime.Now.Second);
+                        Random randomUnitMember = new Random(DateTime.Now.Second);
+                        Random randomUnitKind = new Random(DateTime.Now.Second);
+                        int kind = randomUnitKind.Next(itemSpot.ListMonster.Count - 1, itemSpot.ListMonster.Count);
+                        var info = this.ClassGameStatus.ListUnit.Where(x => x.NameTag == itemSpot.ListMonster[kind].Item1).FirstOrDefault();
+                        if (info == null) continue;
+
+                        int unitNum = randomUnit.Next(this.ClassGameStatus.ClassContext.NeutralMin, this.ClassGameStatus.ClassContext.NeutralMax + 1);
+
+                        for (int i = 0; i < unitNum; i++)
+                        {
+                            var classUnit = new List<ClassUnit>();
+                            int unitMemberNum = randomUnit.Next(this.ClassGameStatus.ClassContext.neutralMemberMin, this.ClassGameStatus.ClassContext.NeutralMemberMax + 1);
+
+                            for (int j = 0; j < unitMemberNum; j++)
+                            {
+                                var deep = info.DeepCopy();
+                                deep.ID = this.ClassGameStatus.IDCount;
+                                this.ClassGameStatus.SetIDCount();
+                                this.ClassGameStatus.NowListUnit.Add(deep); // 検索用
+                                classUnit.Add(deep);
+                            }
+
+                            itemSpot.UnitGroup.Add(new ClassHorizontalUnit() { Spot = itemSpot, FlagDisplay = true, ListClassUnit = classUnit });
+                        }
                     }
                 }
             }
