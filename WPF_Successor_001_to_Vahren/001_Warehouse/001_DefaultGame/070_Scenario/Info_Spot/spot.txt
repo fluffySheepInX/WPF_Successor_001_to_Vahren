@@ -85,7 +85,10 @@ NewFormatSpot spot0002
 
 	#滅亡等で中立になった時のユニット
 	wanderingMonster = "ghostFire*4,ghostFire*8,ghostFire*3,ghostFire*1";
-	#中立時初期ユニット
+	##中立時初期ユニット
+	#ランダムもしくは全指定か
+	monsterOrder = "order";
+	#全指定
 	monster = "ghostFire*5,ghostFire*5,ghostFire*5";
 }
 
@@ -129,10 +132,11 @@ NewFormatSpot spot0004
 	x = "2650";
 	y = "450";
 	map = "testMap002";
-	#滅亡等で中立になった時のユニット
-	wanderingMonster = "ghostFire*7,ghostFire*2,ghostFire*3";
-	#中立時初期ユニット
-	monster = "ghostFire*5,ghostFire*5,ghostFire*5";
+	##中立時初期ユニット
+	#ランダムもしくは全指定か
+	monsterOrder = "random";
+	#全指定
+	monster = "ghostFire";
 }
 
 NewFormatSpot spot0005

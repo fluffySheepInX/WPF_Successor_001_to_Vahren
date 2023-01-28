@@ -162,7 +162,7 @@ NewFormatScenario sc4
 	text="押すと飛びます！";
 	sortkey = "2";
 	ButtonType = "Internet";
-	internet = "http://lockedroom.tokyo/";
+	internet = "http://lockedroom.uvs.jp/";
 }
 
 
