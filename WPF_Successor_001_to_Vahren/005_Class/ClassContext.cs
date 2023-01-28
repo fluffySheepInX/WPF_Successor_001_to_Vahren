@@ -69,6 +69,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 			get { return neutral_member_min; }
 			set { neutral_member_min = value; }
 		}
+        #endregion
+
+        #region enemyTurnSkip
+        private bool enemy_turn_skip;
+		public bool enemyTurnSkip
+        {
+			get { return enemy_turn_skip; }
+			set { enemy_turn_skip = value; }
+		}
 		#endregion
 	}
 }

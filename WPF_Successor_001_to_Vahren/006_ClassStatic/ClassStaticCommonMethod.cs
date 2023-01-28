@@ -964,6 +964,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classContext.neutralMemberMin = Convert.ToInt32(first.Value.Replace(Environment.NewLine, ""));
                 }
             }
+            //enemy_turn_skip
+            {
+                var enemy_turn_skip =
+                    new Regex(GetPat("enemy_turn_skip"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(enemy_turn_skip);
+                if (first == null)
+                {
+                    classContext.enemyTurnSkip = false;
+                }
+                else
+                {
+                    classContext.enemyTurnSkip = bool.Parse(first.Value);
+                }
+            }
 
             return classContext;
         }

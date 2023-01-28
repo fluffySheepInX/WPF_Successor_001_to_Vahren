@@ -357,9 +357,12 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // AI呼び出し
-            foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
+            if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)
             {
-                ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus,itemPower);
+                foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
+                {
+                    ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower);
+                }
             }
             // AI呼び出し後に下を行う
 
