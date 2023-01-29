@@ -3,6 +3,13 @@ Evgeni TcherkasskiによるPixabayからの画像
 https://pixabay.com/ja/users/evgenit-4930349/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=7204955
 
 
+このシナリオで使用している写真（pre0,pre1）は、
+ぱくたそ(www.pakutaso.com）の写真素材を利用しています。
+二次配布物の受領者がこの写真を継続して利用する場合は、
+ぱくたそ公式サイトからご自身でダウンロードしていただくか、
+ぱくたそのご利用規約(www.pakutaso.com/userpolicy.html）に同意していただく必要があります。
+同意いただけない場合は写真素材のご利用はできませんのでご注意ください。
+
 スキル画像の
 longsword.png
 musket.png

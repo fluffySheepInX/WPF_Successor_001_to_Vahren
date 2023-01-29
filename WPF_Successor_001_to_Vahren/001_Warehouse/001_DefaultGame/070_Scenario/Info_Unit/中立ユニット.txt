@@ -21,7 +21,7 @@
 	defense = "70";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "2";
+	speed   = "0.5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
@@ -59,7 +59,7 @@ NewFormatUnit ghostFireTest
 	defense = "70";
 	magic   = "100";
 	magDef  = "100";
-	speed   = "2";
+	speed   = "0.5";
 	dext    = "50";
 	move    = "200";
 	hprec   = "100";
