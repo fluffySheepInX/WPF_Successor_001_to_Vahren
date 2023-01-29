@@ -294,7 +294,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ScenarioSelection_MouseRightButtonDown(object sender, MouseEventArgs e)
+        public void ScenarioSelection_MouseRightButtonDown(object sender, MouseEventArgs e)
         {
             this.FadeOut = true;
 
@@ -2144,6 +2144,13 @@ namespace WPF_Successor_001_to_Vahren
                 SetListClassMapBattle(this.NowNumberGameTitle);
             }
 
+            /*
+            // シナリオ選択ウィンドウを開く（canvasUIではなくcanvasMainに追加する）
+            var itemWindow = new UserControl070_Scenario();
+            itemWindow.SetData();
+            this.canvasMain.Children.Add(itemWindow);
+            return; // 実験中なのでここで終わる。
+            */
 
             // 左上作る
             {

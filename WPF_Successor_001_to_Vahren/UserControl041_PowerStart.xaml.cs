@@ -54,7 +54,6 @@ namespace WPF_Successor_001_to_Vahren
                 Left = mainWindow.canvasUI.Width / 2 - this.Width / 2,
                 Top = mainWindow.canvasUI.Height / 2 - this.Height / 2
             };
-
         }
 
         // ウインドウ枠を作る
