@@ -377,7 +377,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
         #region 移動関係
 
-        public static void TaskBattleMoveExecuteAsync(ClassUnit classUnit,
+        public static async void TaskBattleMoveExecuteAsync(ClassUnit classUnit,
                                                             CancellationToken token,
                                                             ClassGameStatus classGameStatus,
                                                             Window window)
@@ -391,7 +391,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         break;
                     }
 
-                    Thread.Sleep(classGameStatus.NumberSleep);
+                    await Task.Delay(classGameStatus.NumberSleep);
 
                     ClassVec classVec = new ClassVec();
                     classVec.Target = new Point(classUnit.OrderPosiLeft.X, classUnit.OrderPosiLeft.Y);
@@ -535,7 +535,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        public static void TaskBattleMoveAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window)
+        public static async void TaskBattleMoveAsync(CancellationToken cancelToken, ClassGameStatus classGameStatus, Window window)
         {
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
 
@@ -558,7 +558,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep(classGameStatus.NumberSleep);
+                await Task.Delay(classGameStatus.NumberSleep);
 
                 foreach (var item in listClassHorizontalUnits)
                 {
@@ -597,7 +597,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
-        public static void TaskBattleMoveAIAsync(CancellationToken cancelToken,
+        public static async void TaskBattleMoveAIAsync(CancellationToken cancelToken,
                                                     ClassGameStatus classGameStatus,
                                                     Window window)
         {
@@ -633,7 +633,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep(classGameStatus.NumberSleep);
+                await Task.Delay(classGameStatus.NumberSleep);
 
                 try
                 {
@@ -651,7 +651,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         {
                                             if (cancelToken.IsCancellationRequested) return;
 
-                                            Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 1000)));
+                                            await Task.Delay(classGameStatus.NumberSleep);
                                         }
                                         else
                                         {
@@ -677,17 +677,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     moveUnit.FlagMoving = true;
                                     if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
                                     {
-                                        if (value.Item1 != null)
+                                        if (value.Item1.Status == TaskStatus.RanToCompletion)
                                         {
-                                            value.Item2.Cancel();
+                                            //value.Item2.Cancel();
                                             t.Remove(moveUnit.ID);
                                         }
                                     }
-                                    var tokenSource = new CancellationTokenSource();
-                                    var token = tokenSource.Token;
-                                    (Task, CancellationTokenSource) aaa =
-                                        new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
-                                    t.Add(moveUnit.ID, aaa);
+                                    else
+                                    {
+                                        var tokenSource = new CancellationTokenSource();
+                                        var token = tokenSource.Token;
+                                        (Task, CancellationTokenSource) aaa =
+                                            new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                        t.Add(moveUnit.ID, aaa);
+                                        classGameStatus.AiRoot.Remove(item.Key);
+                                    }
                                 }
                             }
                         }
@@ -713,7 +717,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
-        public static void TaskBattleMoveAStar(CancellationToken cancelToken,
+        public static async void TaskBattleMoveAStar(CancellationToken cancelToken,
                                                         ClassGameStatus classGameStatus,
                                                         Window window,
                                                         Canvas canvasMain)
@@ -758,22 +762,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 listPath = re1.Children.OfType<Path>().ToList();
             }));
 
-            int counter = 180;
+            int counter = 90;
             while (true)
             {
                 if (cancelToken.IsCancellationRequested) return;
 
-                Thread.Sleep(classGameStatus.NumberSleep);
+                await Task.Delay(classGameStatus.NumberSleep);
 
                 try
                 {
-                    foreach (var itemTarget in listTarget.Where(x => x.FlagBuilding == false))
+                    if (counter >= 90)
                     {
-                        try
+                        foreach (var itemTarget in listTarget.Where(x => x.FlagBuilding == false))
                         {
-                            foreach (var itemListClassUnit in itemTarget.ListClassUnit.Where(x => x.FlagMoving == false))
+                            try
                             {
-                                if (counter >= 180)
+                                foreach (var itemListClassUnit in itemTarget.ListClassUnit.Where(x => x.FlagMoving == false))
                                 {
                                     var listRoot = new List<Point>();
 
@@ -983,12 +987,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            //コレクションに変更があった時
-                            MessageBox.Show(ex.Message);
-                            throw;
+                            catch (Exception ex)
+                            {
+                                //コレクションに変更があった時
+                                MessageBox.Show(ex.Message);
+                                throw;
+                            }
                         }
                     }
                 }
@@ -997,6 +1001,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //コレクションに変更があった時
                 }
 
+                var ext = listTarget.Where(x => x.ListClassUnit.Count == 0).ToList();
+                foreach (var item in ext)
+                {
+                    listTarget.Remove(item);
+                }
                 counter++;
             }
         }
@@ -1065,7 +1074,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
         #region スキル関係
 
-        public static void TaskBattleSkillExecuteAsync(ClassUnit classUnit,
+        public static async void TaskBattleSkillExecuteAsync(ClassUnit classUnit,
                                                             ClassUnit classUnitDef,
                                                             ClassSkill classSkill,
                                                             ClassGameStatus classGameStatus,
@@ -1089,7 +1098,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
             while (true)
             {
-                Thread.Sleep(classGameStatus.NumberSleep);
+
+                await Task.Delay(classGameStatus.NumberSleep);
 
                 ClassVec classVec = new ClassVec();
                 classUnit.OrderPosiSkill.TryGetValue(dicKey, out Point resultTryOrd);
@@ -1148,10 +1158,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                                                 if (re1 == null) Environment.Exit(1);
                                                 var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                                if (re2 == null) throw new Exception();
-
-                                                re1.Children.Remove(re2);
-                                                classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
+                                                if (re2 == null)
+                                                {
+                                                    throw new Exception();
+                                                }
+                                                else
+                                                {
+                                                    re1.Children.Remove(re2);
+                                                    classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
+                                                }
                                             }
                                             else
                                             {
@@ -1226,7 +1241,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        public static void TaskBattleSkill(CancellationToken token, Canvas canvasMain, ClassGameStatus classGameStatus)
+        public static async void TaskBattleSkill(CancellationToken token, Canvas canvasMain, ClassGameStatus classGameStatus)
         {
             List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
             List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
@@ -1255,7 +1270,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 if (token.IsCancellationRequested) return;
 
-                Thread.Sleep(classGameStatus.NumberSleep);
+                await Task.Delay(classGameStatus.NumberSleep);
                 bool flagAttack = false;
 
                 foreach (var item in aaa)
@@ -1449,7 +1464,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         //RushInterval分、間隔を保つ
                                         if (rushBase > 1)
                                         {
-                                            Thread.Sleep(itemSkill.RushInterval * 100);
+                                            await Task.Delay(itemSkill.RushInterval * 100);
 
                                             //次ラッシュの準備
                                             singleAttackNumber = r1.Next();
@@ -1713,7 +1728,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             //まだ未実装
             while (flag1 == true)
             {
-                Thread.Sleep((int)(Math.Floor(((double)1 / 60) * 10000)));
+                Thread.Sleep(commonWindow.ClassGameStatus.NumberSleep);
                 break;
                 await Task.Run(() =>
                 {
