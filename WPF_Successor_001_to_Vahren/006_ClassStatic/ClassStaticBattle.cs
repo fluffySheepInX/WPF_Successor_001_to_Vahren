@@ -637,27 +637,58 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 try
                 {
-                    foreach (var item in classGameStatus.AiRoot)
+                    var target = classGameStatus.AiRoot.ToList();
+                    List<Task> abc = new List<Task>();
+
+                    //一つずつ動いてしまうバグはここが原因※修正済み
+                    foreach (var item in target)
                     {
-                        try
+                        abc.Add(Task.Run(async () =>
                         {
-                            foreach (var moveUnit in list.Where(x => x.ID == item.Key && x.FlagMoving == false))
+                            try
                             {
+                                var moveUnit = list.Where(x => x.ID == item.Key && x.FlagMoving == false).FirstOrDefault();
+                                if (moveUnit == null) { return; }
+                                //Value = Point(経路
                                 foreach (var itemNext in item.Value)
                                 {
-                                    while (true)
+                                    //ここで次のポイントまで時間稼ぎをする
+                                    if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
                                     {
-                                        if (moveUnit.FlagMoving == true)
-                                        {
-                                            if (cancelToken.IsCancellationRequested) return;
+                                        //既に走っている
 
-                                            await Task.Delay(classGameStatus.NumberSleep);
+                                        if (value.Item1 == null)
+                                        {
+                                            throw new Exception();
+                                        }
+
+                                        //終わったタスク
+                                        if (value.Item1.Status == TaskStatus.RanToCompletion)
+                                        {
+                                            //削除する
+                                            t.Remove(moveUnit.ID);
                                         }
                                         else
                                         {
-                                            break;
+                                            //終わってない
+                                            while (true)
+                                            {
+                                                if (cancelToken.IsCancellationRequested) return;
+
+                                                await Task.Delay(classGameStatus.NumberSleep);
+
+                                                //終わったタスク
+                                                if (value.Item1.Status == TaskStatus.RanToCompletion)
+                                                {
+                                                    //value.Item2.Cancel();
+                                                    t.Remove(moveUnit.ID);
+                                                    //次のタスクへ
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }
+
                                     //移動スレッド開始
                                     var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemNext.X][(int)itemNext.Y].MapPath;
                                     if (aaaaa == null) return;
@@ -675,29 +706,43 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     );
                                     moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
                                     moveUnit.FlagMoving = true;
-                                    if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
-                                    {
-                                        if (value.Item1.Status == TaskStatus.RanToCompletion)
-                                        {
-                                            //value.Item2.Cancel();
-                                            t.Remove(moveUnit.ID);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var tokenSource = new CancellationTokenSource();
-                                        var token = tokenSource.Token;
-                                        (Task, CancellationTokenSource) aaa =
-                                            new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
-                                        t.Add(moveUnit.ID, aaa);
-                                        classGameStatus.AiRoot.Remove(item.Key);
-                                    }
+
+                                    var tokenSource = new CancellationTokenSource();
+                                    var token = tokenSource.Token;
+                                    (Task, CancellationTokenSource) aaa =
+                                        new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                    t.Add(moveUnit.ID, aaa);
                                 }
                             }
-                        }
-                        catch (Exception)
+                            catch (Exception)
+                            {
+                                throw;
+                            }
+                        }));
+                    }
+
+                    //タスクが全て終わり切るまで次のループには行かない
+                    while (true)
+                    {
+                        await Task.Delay(classGameStatus.NumberSleep);
+
+                        bool flag = true;
+
+                        foreach (var item in abc)
                         {
-                            throw;
+                            if (item.Status == TaskStatus.RanToCompletion)
+                            {
+
+                            }
+                            else
+                            {
+                                flag = false;
+                            }
+                        }
+
+                        if (flag)
+                        {
+                            break;
                         }
                     }
                 }
@@ -957,7 +1002,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         foreach (var itemResultAStarRev in listRoot)
                                         {
-                                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                                            _ = Application.Current.Dispatcher.InvokeAsync((Action)(() =>
                                             {
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
 
@@ -1464,7 +1509,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         //RushInterval分、間隔を保つ
                                         if (rushBase > 1)
                                         {
-                                            await Task.Delay(itemSkill.RushInterval * 100);
+                                            await Task.Delay(itemSkill.RushInterval * 10);
 
                                             //次ラッシュの準備
                                             singleAttackNumber = r1.Next();
