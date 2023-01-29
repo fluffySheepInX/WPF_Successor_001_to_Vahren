@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="WPF_Successor_001_to_Vahren.UserControl075_Option"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
+             mc:Ignorable="d" 
+             Height="450" 
+             Width="450"
+             Background="AliceBlue"
+             >
+    <Grid>
+        <Grid>
+            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="16"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="16"/>
+                <RowDefinition />
+                <RowDefinition Height="16"/>
+            </Grid.RowDefinitions>
+            <Image Name="imgWindowLeftTop" />
+            <Rectangle Grid.Column="1" Name="rectWindowTop" />
+            <Image Grid.Column="2" Name="imgWindowRightTop" />
+            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
+            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
+        </Grid>
+
+        <Canvas Width="430" Height="430">
+            <StackPanel>
+                <Button x:Name="btnDecide" Width="430" Height="30" Click="btnDecide_Click">適用</Button>
+            </StackPanel>
+        </Canvas>
+    </Grid>
+</UserControl>

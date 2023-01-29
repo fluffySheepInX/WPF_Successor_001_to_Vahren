@@ -61,6 +61,9 @@
     <Compile Update="UserControl070_Scenario.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl075_Option.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Win010_TestBattle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -127,6 +130,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl070_Scenario.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl075_Option.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Win010_TestBattle.xaml">

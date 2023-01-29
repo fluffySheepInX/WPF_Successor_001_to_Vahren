@@ -1993,7 +1993,14 @@ namespace WPF_Successor_001_to_Vahren
                     // マウスカーソルがボタンの上に来ると強調する
                     borderMenu.Background = Brushes.Transparent;
                     borderMenu.MouseEnter += titleMenu_MouseEnter;
-                    borderMenu.MouseLeftButtonDown += titleMenu_MouseLeftButtonDown;
+                    if (item.index != 4)
+                    {
+                        borderMenu.MouseLeftButtonDown += titleMenu_MouseLeftButtonDown;
+                    }
+                    else
+                    {
+                        borderMenu.MouseLeftButtonDown += SetupOption;
+                    }
                     borderMenu.Margin = new Thickness()
                     {
                         Top = (this.title_menu_space * item.index) + marginTop,
@@ -2003,6 +2010,20 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
             // Play BGM
+        }
+
+        public void SetupOption(object sender, MouseButtonEventArgs e)
+        {
+            var itemWindow = new UserControl075_Option();
+            itemWindow.Margin = new Thickness()
+            {
+                Left = (this.canvasUI.ActualWidth / 2) - itemWindow.Width / 2,
+                Top = (this.canvasUI.ActualHeight / 2) - itemWindow.Height / 2
+            };
+            // プレイヤーがボタンを操作可能かどうか
+            bool bControl = false;
+            itemWindow.SetData(bControl);
+            this.canvasUI.Children.Add(itemWindow);
         }
 
         #region Title関係のメソッド群
@@ -2101,6 +2122,18 @@ namespace WPF_Successor_001_to_Vahren
 
             strings.RemoveAt(strings.Count - 1);
             strings.Add("0004_luna.png");
+            {
+                string fullPath = System.IO.Path.Combine(
+                        strings.ToArray()
+                    );
+                if (File.Exists(fullPath) == true)
+                {
+                    result.Add(fullPath);
+                }
+            }
+
+            strings.RemoveAt(strings.Count - 1);
+            strings.Add("tool.png");
             {
                 string fullPath = System.IO.Path.Combine(
                         strings.ToArray()
