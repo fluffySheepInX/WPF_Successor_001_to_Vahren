@@ -12,32 +12,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
-    <EmbeddedResource Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
-    <None Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
-    <Page Remove="001_Warehouse\001_DefaultGame\042_ChipImageEffectSkill\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\001_MessageWindow\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\005_LoadImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\001_SystemImage\010_MainMenuImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\001_TitleImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\005_BackgroundImage\010_EventImage\" />
-    <Folder Include="001_Warehouse\001_DefaultGame\020_BattleUnitImage\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Page020_Talk.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-  </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="ROBOCOPY &quot;$(ProjectDir)001_Warehouse&quot; &quot;$(TargetDir)001_Warehouse&quot; /MIR&#xD;&#xA;xcopy &quot;$(ProjectDir)TestBattle.bat&quot; $(TargetDir) /Y&#xD;&#xA;IF %25ERRORLEVEL%25 LSS 8 EXIT 0" />
   </Target>
