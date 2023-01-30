@@ -35,9 +35,9 @@
             <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
-        <TextBlock FontSize="23" Foreground="White" Margin="6,6">都市の名前</TextBlock>
+        <TextBlock FontSize="23" Foreground="White" Margin="16,6">都市の名前</TextBlock>
         <Button x:Name="btnClose" Padding="0,0,0,0" FontSize="30" Focusable="False" Click="btnClose_Click" Content="×" Margin="1013,6,15,940" />
-        <TabControl VerticalContentAlignment="Top" VerticalAlignment="Top" Height="930" Background="#454545" Margin="10,60,10,0">
+        <TabControl VerticalContentAlignment="Top" VerticalAlignment="Top" Height="930" Background="#454545" Margin="16,60,10,0">
             <TabItem Header="都市内政" Height="40" FontSize="30">
                 <Canvas Margin="10,10,10,10">
                     <TreeView FontSize="20" Margin="10,10">

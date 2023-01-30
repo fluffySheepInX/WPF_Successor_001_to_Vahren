@@ -37,8 +37,67 @@
         </Grid>
 
         <Canvas Margin="16">
-            <StackPanel>
-                <Button x:Name="btnDecide" Width="400" Height="30" Click="btnDecide_Click">適用</Button>
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="btnDecide" Width="200" Height="30" Click="btnDecide_Click">適用</Button>
+                    <Button x:Name="btnCancel" Width="200" Height="30" Click="btnDecide_Click">キャンセル</Button>
+                </StackPanel>
+                <Border BorderBrush="dodgerblue" BorderThickness="5">
+                    <StackPanel Orientation="Vertical">
+                        <Button x:Name="btnPower" Width="200" Height="30" Click="btnDecide_Click">勢力一覧</Button>
+                        <Button x:Name="btnTalent" Width="200" Height="30" Click="btnDecide_Click">人材一覧</Button>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#152c2a" BorderThickness="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnShowBattleMe" Width="200" Height="30" Click="btnDecide_Click">自国の戦闘を見る</Button>
+                        <Button x:Name="btnNoShowBattle" Width="200" Height="30" Click="btnDecide_Click">自国の戦闘を見ない</Button>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="dodgerblue" BorderThickness="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnShowBattleOther" Width="200" Height="30" Click="btnDecide_Click">他国の戦闘を見る</Button>
+                        <Button x:Name="btnNoShowBattleOther" Width="200" Height="30" Click="btnDecide_Click">他国の戦闘を見ない</Button>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="#152c2a" BorderThickness="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="btnSave" Width="200" Height="30" Click="btnDecide_Click">セーブ</Button>
+                        <Button x:Name="btnLoad" Width="200" Height="30" Click="btnDecide_Click">ロード</Button>
+                    </StackPanel>
+                </Border>
+                <Button x:Name="btnGoTitle" Width="200" Height="30" Click="btnDecide_Click">タイトルへ戻る</Button>
+                <Grid>
+                    <TextBlock FontSize="12" Foreground="White" Margin="16,6">メッセージ表示時間の設定</TextBlock>
+                    <StackPanel HorizontalAlignment="Right" Height="40" VerticalAlignment="Center" Width="230">
+                        <Slider x:Name="slMessage" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
+                                    TickFrequency="0.1" LargeChange="0.1" Minimum="0.1" Maximum="1.9"
+                                    Width="230" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Value="1.2"/>
+                        <TextBlock x:Name="ASlider" Foreground="White" Text="{Binding Value, ElementName=slMessage}" HorizontalAlignment="Center" Height="14"/>
+                    </StackPanel>
+                </Grid>
+                <Grid>
+                    <TextBlock FontSize="12" Foreground="White" Margin="16,6">BGM</TextBlock>
+                    <StackPanel HorizontalAlignment="Right" Height="40" VerticalAlignment="Center" Width="230">
+                        <Slider x:Name="slBGM" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
+                                    TickFrequency="1" LargeChange="1" Minimum="1" Maximum="100"
+                                    Width="230" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Value="50"/>
+                        <TextBlock x:Name="ASliderBGM" Foreground="White" Text="{Binding Value, ElementName=slBGM}" HorizontalAlignment="Center" Height="14"/>
+                    </StackPanel>
+                </Grid>
+                <Grid>
+                    <TextBlock FontSize="12" Foreground="White" Margin="16,6">SE</TextBlock>
+                    <StackPanel HorizontalAlignment="Right" Height="40" VerticalAlignment="Center" Width="230">
+                        <Slider x:Name="slSE" TickPlacement="TopLeft" IsSnapToTickEnabled="True" 
+                                    TickFrequency="1" LargeChange="1" Minimum="1" Maximum="100"
+                                    Width="230" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Value="50"/>
+                        <TextBlock x:Name="ASliderSE" Foreground="White" Text="{Binding Value, ElementName=slSE}" HorizontalAlignment="Center" Height="14"/>
+                    </StackPanel>
+                </Grid>
+
             </StackPanel>
         </Canvas>
     </Grid>
