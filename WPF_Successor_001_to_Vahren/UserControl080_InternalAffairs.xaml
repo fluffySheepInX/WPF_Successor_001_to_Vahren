@@ -46,7 +46,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
                                            Width="96" Height="96" Margin="2" />
-                                    <TextBlock Text="交通網改善" FontSize="32" Height="96" />
+                                    <TextBlock Text="インフラ関係" FontSize="32" Height="96" />
                                 </StackPanel>
                             </TreeViewItem.Header>
                             <TreeViewItem>
@@ -54,12 +54,20 @@
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
                                            Width="96" Height="96" Margin="2" />
+                                        <TextBlock Text="交通網改善" FontSize="32" Height="96" />
+                                    </StackPanel>
+                                </TreeViewItem.Header>
+                                <TreeViewItem Header="グループ員２"/>
+                                <TreeViewItem Header="グループ員３"/>
+                            </TreeViewItem>
+                            <TreeViewItem>
+                                <TreeViewItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
+                                               Width="96" Height="96" Margin="2" />
                                         <TextBlock Text="物流整備" FontSize="32" Height="96" />
                                     </StackPanel>
                                 </TreeViewItem.Header>
-                                <TreeViewItem Header="グループ員１"/>
-                                <TreeViewItem Header="グループ員２"/>
-                                <TreeViewItem Header="グループ員３"/>
                             </TreeViewItem>
                         </TreeViewItem>
                     </TreeView>
