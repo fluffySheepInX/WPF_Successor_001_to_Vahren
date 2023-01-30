@@ -5,53 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Width="1014" Height="682">
-    <Grid UseLayoutRounding="True" Name="gridWhole">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="482"/>
-            <ColumnDefinition Width="532"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="720" d:DesignWidth="1040"
+             Background="Transparent">
+    <Grid UseLayoutRounding="True">
+        <Image Stretch="UniformToFill" Name="imgScenarioBack" />
 
-        <Grid>
-            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
-        </Grid>
-        <Grid>
+        <Grid Width="1014" Height="682" Name="gridWhole">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="482"/>
+                <ColumnDefinition Width="532"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="16"/>
                 <RowDefinition />
-                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Image Name="imgWindowLeftTop" />
-            <Rectangle Grid.Column="1" Name="rectWindowTop" />
-            <Image Grid.Column="2" Name="imgWindowRightTop" />
-            <Rectangle Grid.Row="1" Name="rectWindowLeft" />
 
-            <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
-            
-            </Canvas>
-
-            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
-            <Image Grid.Row="2" Name="imgWindowLeftBottom" />
-            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
-            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
-        </Grid>
-
-        <Grid Grid.Row="1" Height="300" Name="gridLeftBottom">
             <Grid>
-                <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight3" Fill="Black" Opacity="0.5" />
-                <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom3" Fill="Black" Opacity="0.5" />
-                <Rectangle Margin="0,0,8,8" Name="rectWindowPlane3" Fill="#303030" />
+                <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="0,0,8,8" Name="rectWindowPlane" Fill="#303030" />
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -64,52 +36,85 @@
                     <RowDefinition />
                     <RowDefinition Height="16"/>
                 </Grid.RowDefinitions>
-                <Image Name="imgWindowLeftTop3" />
-                <Rectangle Grid.Column="1" Name="rectWindowTop3" />
-                <Image Grid.Column="2" Name="imgWindowRightTop3" />
-                <Rectangle Grid.Row="1" Name="rectWindowLeft3" />
+                <Image Name="imgWindowLeftTop" />
+                <Rectangle Grid.Column="1" Name="rectWindowTop" />
+                <Image Grid.Column="2" Name="imgWindowRightTop" />
+                <Rectangle Grid.Row="1" Name="rectWindowLeft" />
 
                 <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
                 
                 </Canvas>
 
-                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight3" />
-                <Image Grid.Row="2" Name="imgWindowLeftBottom3" />
-                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom3" />
-                <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom3" />
+                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
+                <Image Grid.Row="2" Name="imgWindowLeftBottom" />
+                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom" />
+                <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
             </Grid>
+
+            <Grid Grid.Row="1" Height="300" Name="gridLeftBottom">
+                <Grid>
+                    <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight3" Fill="Black" Opacity="0.5" />
+                    <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom3" Fill="Black" Opacity="0.5" />
+                    <Rectangle Margin="0,0,8,8" Name="rectWindowPlane3" Fill="#303030" />
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="16"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="16"/>
+                        <RowDefinition />
+                        <RowDefinition Height="16"/>
+                    </Grid.RowDefinitions>
+                    <Image Name="imgWindowLeftTop3" />
+                    <Rectangle Grid.Column="1" Name="rectWindowTop3" />
+                    <Image Grid.Column="2" Name="imgWindowRightTop3" />
+                    <Rectangle Grid.Row="1" Name="rectWindowLeft3" />
+
+                    <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
+                    
+                    </Canvas>
+
+                    <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight3" />
+                    <Image Grid.Row="2" Name="imgWindowLeftBottom3" />
+                    <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom3" />
+                    <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom3" />
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+                <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight2" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom2" Fill="Black" Opacity="0.5" />
+                <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
+            </Grid>
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="16"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition />
+                    <RowDefinition Height="16"/>
+                </Grid.RowDefinitions>
+                <Image Name="imgWindowLeftTop2" />
+                <Rectangle Grid.Column="1" Name="rectWindowTop2" />
+                <Image Grid.Column="2" Name="imgWindowRightTop2" />
+                <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
+
+                <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
+
+                </Canvas>
+
+                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
+                <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
+                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
+                <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
+            </Grid>
+
         </Grid>
-
-        <Grid Grid.Column="1" Grid.RowSpan="2">
-            <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight2" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom2" Fill="Black" Opacity="0.5" />
-            <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
-        </Grid>
-        <Grid Grid.Column="1" Grid.RowSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="16"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="16"/>
-                <RowDefinition />
-                <RowDefinition Height="16"/>
-            </Grid.RowDefinitions>
-            <Image Name="imgWindowLeftTop2" />
-            <Rectangle Grid.Column="1" Name="rectWindowTop2" />
-            <Image Grid.Column="2" Name="imgWindowRightTop2" />
-            <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
-
-            <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
-
-            </Canvas>
-
-            <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
-            <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
-            <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
-            <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
-        </Grid>
-
     </Grid>
 </UserControl>

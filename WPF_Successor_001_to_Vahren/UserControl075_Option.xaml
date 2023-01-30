@@ -36,9 +36,9 @@
             <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom" />
         </Grid>
 
-        <Canvas Width="430" Height="430">
+        <Canvas Margin="16">
             <StackPanel>
-                <Button x:Name="btnDecide" Width="430" Height="30" Click="btnDecide_Click">適用</Button>
+                <Button x:Name="btnDecide" Width="400" Height="30" Click="btnDecide_Click">適用</Button>
             </StackPanel>
         </Canvas>
     </Grid>
