@@ -40,9 +40,23 @@
         <TabControl VerticalContentAlignment="Top" VerticalAlignment="Top" Height="930" Background="#454545" Margin="16,60,10,0">
             <TabItem Header="都市内政" Height="40" FontSize="30">
                 <Canvas Margin="10,10,10,10">
-                    <TreeView FontSize="20" Margin="10,10">
-                        <TreeViewItem Header="都市内政">
-                            <TreeViewItem Header="Aグループ">
+                    <TreeView x:Name="tvInternalAffairs" FontSize="20" Margin="10,10">
+                        <TreeViewItem IsExpanded="True">
+                            <TreeViewItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
+                                           Width="96" Height="96" Margin="2" />
+                                    <TextBlock Text="交通網改善" FontSize="32" Height="96" />
+                                </StackPanel>
+                            </TreeViewItem.Header>
+                            <TreeViewItem>
+                                <TreeViewItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
+                                           Width="96" Height="96" Margin="2" />
+                                        <TextBlock Text="物流整備" FontSize="32" Height="96" />
+                                    </StackPanel>
+                                </TreeViewItem.Header>
                                 <TreeViewItem Header="グループ員１"/>
                                 <TreeViewItem Header="グループ員２"/>
                                 <TreeViewItem Header="グループ員３"/>
@@ -51,7 +65,7 @@
                     </TreeView>
                 </Canvas>
             </TabItem>
-            <TabItem Header="特殊内政・ステータス" Height="40" FontSize="30">
+            <TabItem Header="特殊内政" Height="40" FontSize="30">
             </TabItem>
         </TabControl>
     </Grid>
