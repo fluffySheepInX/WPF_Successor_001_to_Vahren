@@ -2797,7 +2797,7 @@ namespace WPF_Successor_001_to_Vahren
                             }
                             else
                             {
-                                this.ClassGameStatus.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenario(getData.Value));
+                                //this.ClassGameStatus.ListClassScenarioInfo.Add(ClassStaticCommonMethod.GetClassScenario(getData.Value));
                             }
                         }
                         if (this.ClassGameStatus.ListClassScenarioInfo.Count > 1)
