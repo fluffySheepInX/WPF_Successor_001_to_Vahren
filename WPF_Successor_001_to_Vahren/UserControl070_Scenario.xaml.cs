@@ -25,6 +25,10 @@ namespace WPF_Successor_001_to_Vahren
             InitializeComponent();
         }
 
+        // 定数
+        // 項目サイズをここで調節できます
+        private const int item_height = 50, space_height = 10;
+
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -102,7 +106,7 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // シナリオ選択欄を表示する
-            //DisplayScenarioList(mainWindow);
+            DisplayScenarioList(mainWindow, heightLeftBottom);
 
             // ウインドウ枠
             SetWindowFrame(mainWindow, heightLeftBottom);
@@ -253,6 +257,93 @@ namespace WPF_Successor_001_to_Vahren
             if (heightLeftBottom > 0)
             {
                 this.rectWindowRight3.Fill = myImageBrush;
+            }
+        }
+
+        private void DisplayScenarioList(MainWindow mainWindow, int heightLeftBottom)
+        {
+            // ボタンのリストを初期化する
+            this.panelList.Children.Clear();
+            this.panelList2.Children.Clear();
+            int item_count = 0;
+
+            // シナリオを Sortkey 順に左上のメニューに入れる
+            foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo
+                                    .Where(y => y.Sortkey <= 0)
+                                    .OrderBy(x => x.Sortkey)
+                                    .Select((value, index) => (value, index)))
+            {
+                string strTitle = item.value.ScenarioName;
+                if (strTitle == string.Empty)
+                {
+                    strTitle = "Sortkey = " + item.value.Sortkey.ToString();
+                }
+
+                Button btnItem = new Button();
+                btnItem.Content = strTitle;
+                btnItem.FontSize = 20;
+                btnItem.Focusable = false;
+                btnItem.Height = item_height;
+                if (item_count == 0)
+                {
+                    btnItem.Margin = new Thickness(5, 0, 5, 0);
+                }
+                else
+                {
+                    btnItem.Margin = new Thickness(5, space_height, 5, 0);
+                }
+                btnItem.Tag = item.index;
+                // ボタンの背景
+                mainWindow.SetButtonImage(btnItem, "wnd5.png");
+
+                this.panelList.Children.Add(btnItem);
+                item_count++;
+            }
+
+            // 左下メニューが存在するかどうかでボタンの追加先が異なる
+            if (heightLeftBottom > 0)
+            {
+                item_count = 0;
+            }
+            foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo
+                                    .Where(y => y.Sortkey > 0)
+                                    .OrderBy(x => x.Sortkey)
+                                    .Select((value, index) => (value, index)))
+            {
+                string strTitle = item.value.ScenarioName;
+                if (strTitle == string.Empty)
+                {
+                    strTitle = "Sortkey = " + item.value.Sortkey.ToString();
+                }
+
+                Button btnItem = new Button();
+                btnItem.Content = strTitle;
+                btnItem.FontSize = 20;
+                btnItem.Focusable = false;
+                btnItem.Height = item_height;
+                if (item_count == 0)
+                {
+                    btnItem.Margin = new Thickness(5, 0, 5, 0);
+                }
+                else
+                {
+                    btnItem.Margin = new Thickness(5, space_height, 5, 0);
+                }
+                btnItem.Tag = item.index;
+                // ボタンの背景
+                mainWindow.SetButtonImage(btnItem, "wnd5.png");
+
+                if (heightLeftBottom > 0)
+                {
+                    // 左下メニューに入れる
+                    this.panelList2.Children.Add(btnItem);
+                }
+                else
+                {
+                    // 左上メニューに入れる
+                    this.panelList.Children.Add(btnItem);
+                }
+                item_count++;
             }
         }
 
