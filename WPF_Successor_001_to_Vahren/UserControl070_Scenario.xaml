@@ -41,9 +41,23 @@
                 <Image Grid.Column="2" Name="imgWindowRightTop" />
                 <Rectangle Grid.Row="1" Name="rectWindowLeft" />
 
-                <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
-                
-                </Canvas>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="0,5" FontSize="20" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択" Name="txtTitle" />
+                    <ScrollViewer Grid.Row="1" Name="scrollList" Focusable="False"
+                            VerticalScrollBarVisibility="Visible" Background="Gray">
+                        <StackPanel Name="panelList">
+
+                            <Button Height="50" Margin="5,0,5,0" FontSize="20" Focusable="False" Content="シナリオ１" />
+                            <Button Height="50" Margin="5,10,5,0" FontSize="20" Focusable="False" Content="シナリオ２" />
+                            <Button Height="50" Margin="5,10,5,0" FontSize="20" Focusable="False" Content="シナリオ３" />
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
 
                 <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
                 <Image Grid.Row="2" Name="imgWindowLeftBottom" />
@@ -73,9 +87,23 @@
                     <Image Grid.Column="2" Name="imgWindowRightTop3" />
                     <Rectangle Grid.Row="1" Name="rectWindowLeft3" />
 
-                    <Canvas Grid.Row="1" Grid.Column="1" Background="#008000">
-                    
-                    </Canvas>
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="45"/>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Margin="0,5" FontSize="20" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択画面の２つ目のメニュー" Name="txtTitle2" />
+                        <ScrollViewer Grid.Row="1" Name="scrollList2" Focusable="False"
+                                VerticalScrollBarVisibility="Visible" Background="Gray">
+                            <StackPanel Name="panelList2">
+
+                                <Button Height="50" Margin="5,0,5,0" FontSize="20" Focusable="False" Content="シナリオ１１" />
+                                <Button Height="50" Margin="5,10,5,0" FontSize="20" Focusable="False" Content="シナリオ１２" />
+                                <Button Height="50" Margin="5,10,5,0" FontSize="20" Focusable="False" Content="シナリオ１３" />
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
 
                     <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight3" />
                     <Image Grid.Row="2" Name="imgWindowLeftBottom3" />
