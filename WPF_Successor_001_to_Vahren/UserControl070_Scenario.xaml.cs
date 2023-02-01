@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -279,24 +280,25 @@ namespace WPF_Successor_001_to_Vahren
                     strTitle = "Sortkey = " + item.value.Sortkey.ToString();
                 }
 
-                Button btnItem = new Button();
-                btnItem.Content = strTitle;
-                btnItem.FontSize = 20;
-                btnItem.Focusable = false;
-                btnItem.Height = item_height;
+                Button btnMenu = new Button();
+                btnMenu.Content = strTitle;
+                btnMenu.FontSize = 20;
+                btnMenu.Focusable = false;
+                btnMenu.Height = item_height;
                 if (item_count == 0)
                 {
-                    btnItem.Margin = new Thickness(5, 0, 5, 0);
+                    btnMenu.Margin = new Thickness(5, 0, 5, 0);
                 }
                 else
                 {
-                    btnItem.Margin = new Thickness(5, space_height, 5, 0);
+                    btnMenu.Margin = new Thickness(5, space_height, 5, 0);
                 }
-                btnItem.Tag = item.index;
+                btnMenu.Tag = item.value;
+                btnMenu.MouseEnter += btnMenu_MouseEnter;
                 // ボタンの背景
-                mainWindow.SetButtonImage(btnItem, "wnd5.png");
+                mainWindow.SetButtonImage(btnMenu, "wnd5.png");
 
-                this.panelList.Children.Add(btnItem);
+                this.panelList.Children.Add(btnMenu);
                 item_count++;
             }
 
@@ -316,34 +318,90 @@ namespace WPF_Successor_001_to_Vahren
                     strTitle = "Sortkey = " + item.value.Sortkey.ToString();
                 }
 
-                Button btnItem = new Button();
-                btnItem.Content = strTitle;
-                btnItem.FontSize = 20;
-                btnItem.Focusable = false;
-                btnItem.Height = item_height;
+                Button btnMenu = new Button();
+                btnMenu.Content = strTitle;
+                btnMenu.FontSize = 20;
+                btnMenu.Focusable = false;
+                btnMenu.Height = item_height;
                 if (item_count == 0)
                 {
-                    btnItem.Margin = new Thickness(5, 0, 5, 0);
+                    btnMenu.Margin = new Thickness(5, 0, 5, 0);
                 }
                 else
                 {
-                    btnItem.Margin = new Thickness(5, space_height, 5, 0);
+                    btnMenu.Margin = new Thickness(5, space_height, 5, 0);
                 }
-                btnItem.Tag = item.index;
+                btnMenu.Tag = item.value;
+                btnMenu.MouseEnter += btnMenu_MouseEnter;
                 // ボタンの背景
-                mainWindow.SetButtonImage(btnItem, "wnd5.png");
+                mainWindow.SetButtonImage(btnMenu, "wnd5.png");
 
                 if (heightLeftBottom > 0)
                 {
                     // 左下メニューに入れる
-                    this.panelList2.Children.Add(btnItem);
+                    this.panelList2.Children.Add(btnMenu);
                 }
                 else
                 {
                     // 左上メニューに入れる
-                    this.panelList.Children.Add(btnItem);
+                    this.panelList.Children.Add(btnMenu);
                 }
                 item_count++;
+            }
+        }
+
+        private void btnMenu_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (ClassScenarioInfo)((Button)sender).Tag;
+            if (cast == null)
+            {
+                return;
+            }
+
+            // シナリオ名
+            this.txtNameScenario.Text = cast.ScenarioName;
+
+            // シナリオ詳細説明文
+            switch (cast.ButtonType)
+            {
+                case _010_Enum.ButtonType.Mail:
+                    // 説明文が存在しない時のためにメールアドレスも表示する
+                    this.txtDetail.Text = cast.Mail + Environment.NewLine + cast.ScenarioIntroduce;
+                    break;
+                case _010_Enum.ButtonType.Internet:
+                    // 説明文が存在しない時のためにリンク先アドレスも表示する
+                    this.txtDetail.Text = cast.Internet + Environment.NewLine + cast.ScenarioIntroduce;
+                    break;
+                default:
+                    this.txtDetail.Text = cast.ScenarioIntroduce;
+                    break;
+            }
+
+            // シナリオ画像
+            this.imgScenario.Source = null;
+            this.imgScenario.Visibility = Visibility.Collapsed;
+            if (cast.ScenarioImageRate > 0)
+            {
+                List<string> strings = new List<string>();
+                strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+                strings.Add("005_BackgroundImage");
+                strings.Add("005_MenuImage");
+                strings.Add(cast.ScenarioImage);
+                string path = System.IO.Path.Combine(strings.ToArray());
+                if (System.IO.File.Exists(path))
+                {
+                    BitmapImage bitimg1 = new BitmapImage(new Uri(path));
+                    // 画像を高さをウィンドウ内寸に対する割合で決める
+                    this.imgScenario.Height = Math.Floor((this.gridWhole.Height - 32 - 45) * cast.ScenarioImageRate / 100);
+                    this.imgScenario.Source = bitimg1;
+                    this.imgScenario.Visibility = Visibility.Visible;
+                }
             }
         }
 

@@ -36,12 +36,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
-        #region ScenarioImageBool
-        private bool _scenarioImageBool = false;
-        public bool ScenarioImageBool
+        #region ScenarioImageRate
+        private int _scenarioImageRate = 0;
+        public int ScenarioImageRate
         {
-            get { return _scenarioImageBool; }
-            set { _scenarioImageBool = value; }
+            get { return _scenarioImageRate; }
+            set { _scenarioImageRate = value; }
         }
         #endregion
 

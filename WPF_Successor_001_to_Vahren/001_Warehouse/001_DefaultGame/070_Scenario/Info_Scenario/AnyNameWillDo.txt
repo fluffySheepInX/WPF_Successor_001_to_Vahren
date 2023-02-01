@@ -16,9 +16,9 @@ NewFormatScenario sc1
 	scenario_name="憂鬱なる提督達より愛をこめて";
 
 	#シナリオ選択画面の右下にイメージ画像を出すか設定します。
-	#Trueの時、イメージが出ます。
-	#Falseの時、テキストが下最大限まで出ます
-	scenario_image_bool="True";
+	#1~100の時、高さのパーセント割合でイメージが出ます。100だとテキストが消えます。
+	#0の時、テキストが下最大限まで出ます
+	scenario_image_rate = "50";
 
 	#シナリオ選択画面の右下に出ます。
 	#
@@ -164,7 +164,14 @@ NewFormatScenario sc4
 	ButtonType = "Internet";
 	internet = "http://lockedroom.uvs.jp/";
 }
-
+NewFormatScenario sc5
+{
+	scenario_name="メールを送る実験";
+	text="システムに設定されてるメーラーを開きます！";
+	sortkey = "3";
+	ButtonType = "Mail";
+	mail = "mailto:fluffysheepinx@gmail.com";
+}
 
 scenario sc3
 {

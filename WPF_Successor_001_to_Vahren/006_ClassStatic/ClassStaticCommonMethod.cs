@@ -1362,19 +1362,27 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classScenario.ScenarioIntroduce = MoldingText(first.Value, "$");
                 }
             }
-            //scenario_image_bool
+            //scenario_image_rate
             {
-                var scenario_image_bool =
-                    new Regex(@"(?<=scenario_image_bool[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
+                var scenario_image_rate =
+                    new Regex(@"(?<=scenario_image_rate[\s]*=[\s]*\"")([\s\S\n]+?.*(?=\""))", RegexOptions.IgnoreCase)
                     .Matches(value);
-                var first = CheckMatchElement(scenario_image_bool);
+                var first = CheckMatchElement(scenario_image_rate);
                 if (first == null)
                 {
-                    classScenario.ScenarioImageBool = false;
+                    classScenario.ScenarioImageRate = 0;
                 }
                 else
                 {
-                    classScenario.ScenarioImageBool = Convert.ToBoolean(first.Value);
+                    classScenario.ScenarioImageRate = Convert.ToInt32(first.Value);
+                    if (classScenario.ScenarioImageRate < 0)
+                    {
+                        classScenario.ScenarioImageRate = 0;
+                    }
+                    else if (classScenario.ScenarioImageRate > 100)
+                    {
+                        classScenario.ScenarioImageRate = 100;
+                    }
                 }
             }
             //scenario_image
