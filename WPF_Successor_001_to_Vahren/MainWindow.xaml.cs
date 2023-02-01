@@ -321,30 +321,83 @@ namespace WPF_Successor_001_to_Vahren
         /// <param name="e"></param>
         private void ScenarioSelectionButton_click(Object sender, EventArgs e)
         {
-            var target = (Button)sender;
-            int a = Convert.ToInt32(target.Tag);
-            //MessageBox.Show(a.ToString());
-            this.ClassGameStatus.NumberScenarioSelection = a;
+            var cast = (ClassScenarioInfo)((Button)sender).Tag;
+            if (cast == null)
+            {
+                return;
+            }
 
-            switch (this.ClassGameStatus.ListClassScenarioInfo[a].ButtonType)
+            switch (cast.ButtonType)
             {
                 case ButtonType.Scenario:
                     break;
                 case ButtonType.Mail:
                     {
-                        var startInfo =
-                            new System
-                            .Diagnostics
-                            .ProcessStartInfo("https://mail.google.com/mail/u/0/?tf=cm&fs=1&to=" +
-                                                this.ClassGameStatus.ListClassScenarioInfo[a].Mail +
-                                                "&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0");
-                        startInfo.UseShellExecute = true;
-                        System.Diagnostics.Process.Start(startInfo);
+                        string strAddress = cast.Mail;
+                        bool boolMailer = false;
+                        if (strAddress.StartsWith("mailto:"))
+                        {
+                            boolMailer = true;
+                            strAddress = strAddress.Replace("mailto:", "");
+                        }
+
+                        // 指定された文字列がメールアドレスとして正しい形式か検証する
+                        // https://dobon.net/vb/dotnet/internet/validatemailaddress.html
+                        if (string.IsNullOrEmpty(strAddress))
+                        {
+                            MessageBox.Show("メールアドレスが空です。");
+                            return;
+                        }
+                        try
+                        {
+                            System.Net.Mail.MailAddress a = new System.Net.Mail.MailAddress(strAddress);
+                        }
+                        catch (FormatException)
+                        {
+                            //FormatExceptionがスローされた時は、正しくない
+                            MessageBox.Show("メールアドレスが正しい形式ではありません。");
+                            return;
+                        }
+
+                        if (boolMailer)
+                        {
+                            // システムに設定されてるメーラーを開く
+                            // メーラーが登録されてないと駄目っぽい？
+                            var startInfo = new System.Diagnostics.ProcessStartInfo(cast.Mail);
+                            startInfo.UseShellExecute = true;
+                            System.Diagnostics.Process.Start(startInfo);
+                        }
+                        else
+                        {
+                            // Gmailの画面を開く。Gmailのアカウントを持ってないといけない。
+                            var startInfo =
+                                new System
+                                .Diagnostics
+                                .ProcessStartInfo("https://mail.google.com/mail/u/0/?tf=cm&fs=1&to=" +
+                                                    cast.Mail +
+                                                    "&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0");
+                            startInfo.UseShellExecute = true;
+                            System.Diagnostics.Process.Start(startInfo);
+                        }
                         return;
                     }
                 case ButtonType.Internet:
                     {
-                        var startInfo = new System.Diagnostics.ProcessStartInfo(this.ClassGameStatus.ListClassScenarioInfo[a].Internet);
+                        string strAddress = cast.Internet;
+
+                        // 指定された文字列がURLとして正しい形式か検証する
+                        if (string.IsNullOrEmpty(strAddress))
+                        {
+                            MessageBox.Show("URLが空です。");
+                            return;
+                        }
+                        if (Uri.IsWellFormedUriString(strAddress, UriKind.Absolute) == false)
+                        {
+                            MessageBox.Show("URLが正しい形式ではありません。");
+                            return;
+                        }
+
+                        var startInfo = new System.Diagnostics.ProcessStartInfo(cast.Internet);
                         startInfo.UseShellExecute = true;
                         System.Diagnostics.Process.Start(startInfo);
                         return;
@@ -378,12 +431,16 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            int tag = Convert.ToInt32(((Button)sender).Tag);
+            var cast = (ClassScenarioInfo)((Button)sender).Tag;
+            if (cast == null)
+            {
+                return;
+            }
 
             // 右上
             {
                 Canvas canvas = new Canvas();
-                if (this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImageBool == true)
+                if (cast.ScenarioImageRate > 0)
                 {
                     canvas.Height = this.CanvasMainHeight / 2;
                 }
@@ -418,7 +475,7 @@ namespace WPF_Successor_001_to_Vahren
                     TextBlock tbDate1 = new TextBlock();
                     tbDate1.FontSize = tbDate1.FontSize + fontSizePlus;
 
-                    tbDate1.Text = this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioIntroduce;
+                    tbDate1.Text = cast.ScenarioIntroduce;
                     tbDate1.Height = canvas.Height;
                     tbDate1.Margin = new Thickness { Left = 15, Top = 15 };
                     canvas.Children.Add(tbDate1);
@@ -426,7 +483,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.canvasMain.Children.Add(canvas);
             }
 
-            if (this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImageBool == false)
+            if (cast.ScenarioImageRate == 0)
             {
                 return;
             }
@@ -471,7 +528,7 @@ namespace WPF_Successor_001_to_Vahren
                     strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                     strings.Add("005_BackgroundImage");
                     strings.Add("005_MenuImage");
-                    strings.Add(this.ClassGameStatus.ListClassScenarioInfo[tag].ScenarioImage);
+                    strings.Add(cast.ScenarioImage);
                     string path = System.IO.Path.Combine(strings.ToArray());
 
                     var bi = new BitmapImage(new Uri(path));
@@ -482,7 +539,7 @@ namespace WPF_Successor_001_to_Vahren
                     image.Stretch = Stretch.Uniform;
                     image.Source = bi;
                     image.Name = "ScenarioImage";
-                    image.Tag = tag;
+                    image.Tag = cast;
                     canvas.Children.Add(image);
                 }
                 this.canvasMain.Children.Add(canvas);
@@ -501,7 +558,7 @@ namespace WPF_Successor_001_to_Vahren
                 strings.Add(ClassConfigGameTitle.DirectoryGameTitle[this.NowNumberGameTitle].FullName);
                 strings.Add("005_BackgroundImage");
                 strings.Add("005_MenuImage");
-                strings.Add(this.ClassGameStatus.ListClassScenarioInfo[Convert.ToInt32(image.Tag)].ScenarioImage);
+                strings.Add(((ClassScenarioInfo)image.Tag).ScenarioImage);
                 string base_path = System.IO.Path.Combine(strings.ToArray());
                 base_path = System.IO.Path.ChangeExtension(base_path, string.Empty);
                 base_path = base_path.Substring(0, base_path.Length - 1);
@@ -2226,7 +2283,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Height = hei;
                         button.Width = (this.CanvasMainWidth / 2) - 100;
                         button.Margin = new Thickness { Left = 15, Top = 15 + ((hei + 20) * item.index) };
-                        button.Tag = item.index;
+                        button.Tag = item.value;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
                         button.MouseRightButtonDown += Disable_MouseEvent;
@@ -2292,10 +2349,6 @@ namespace WPF_Successor_001_to_Vahren
                         canvas.Children.Add(grid);
                     }
 
-                    int tag = this.ClassGameStatus.ListClassScenarioInfo
-                                            .Where(y => y.Sortkey <= 0)
-                                            .Count();
-
                     foreach (var item in this.ClassGameStatus.ListClassScenarioInfo
                                             .Where(y => y.Sortkey > 0)
                                             .OrderBy(x => x.Sortkey)
@@ -2315,7 +2368,7 @@ namespace WPF_Successor_001_to_Vahren
                         button.Height = hei;
                         button.Width = (this.CanvasMainWidth / 2) - 100;
                         button.Margin = new Thickness { Left = 15, Top = titleHeight + 15 + ((hei + 20) * item.index) };
-                        button.Tag = tag + item.index;
+                        button.Tag = item.value;
                         button.MouseEnter += WindowMainMenuLeftTop_MouseEnter;
                         button.Click += ScenarioSelectionButton_click;
                         button.MouseRightButtonDown += Disable_MouseEvent;
