@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -295,6 +296,8 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 btnMenu.Tag = item.value;
                 btnMenu.MouseEnter += btnMenu_MouseEnter;
+                btnMenu.Click += mainWindow.ScenarioSelectionButton_click;
+                btnMenu.MouseRightButtonDown += Disable_MouseEvent;
                 // ボタンの背景
                 mainWindow.SetButtonImage(btnMenu, "wnd5.png");
 
@@ -333,6 +336,8 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 btnMenu.Tag = item.value;
                 btnMenu.MouseEnter += btnMenu_MouseEnter;
+                btnMenu.Click += mainWindow.ScenarioSelectionButton_click;
+                btnMenu.MouseRightButtonDown += Disable_MouseEvent;
                 // ボタンの背景
                 mainWindow.SetButtonImage(btnMenu, "wnd5.png");
 
@@ -365,25 +370,40 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // シナリオ名
-            this.txtNameScenario.Text = cast.ScenarioName;
+            if (cast.Help != string.Empty)
+            {
+                this.txtNameScenario.Text = cast.Help + " " + cast.ScenarioName;
+            }
+            else
+            {
+                this.txtNameScenario.Text = cast.ScenarioName;
+            }
 
             // シナリオ詳細説明文
-            switch (cast.ButtonType)
+            if (cast.ScenarioImageRate < 100)
             {
-                case _010_Enum.ButtonType.Mail:
-                    // 説明文が存在しない時のためにメールアドレスも表示する
-                    this.txtDetail.Text = cast.Mail + Environment.NewLine + cast.ScenarioIntroduce;
-                    break;
-                case _010_Enum.ButtonType.Internet:
-                    // 説明文が存在しない時のためにリンク先アドレスも表示する
-                    this.txtDetail.Text = cast.Internet + Environment.NewLine + cast.ScenarioIntroduce;
-                    break;
-                default:
-                    this.txtDetail.Text = cast.ScenarioIntroduce;
-                    break;
+                switch (cast.ButtonType)
+                {
+                    case _010_Enum.ButtonType.Mail:
+                        // 説明文が存在しない時のためにメールアドレスも表示する
+                        this.txtDetail.Text = cast.Mail + Environment.NewLine + cast.ScenarioIntroduce;
+                        break;
+                    case _010_Enum.ButtonType.Internet:
+                        // 説明文が存在しない時のためにリンク先アドレスも表示する
+                        this.txtDetail.Text = cast.Internet + Environment.NewLine + cast.ScenarioIntroduce;
+                        break;
+                    default:
+                        this.txtDetail.Text = cast.ScenarioIntroduce;
+                        break;
+                }
+            }
+            else
+            {
+                this.txtDetail.Text = string.Empty;
             }
 
             // シナリオ画像
+            this.imgScenario.Tag = null;
             this.imgScenario.Source = null;
             this.imgScenario.Visibility = Visibility.Collapsed;
             if (cast.ScenarioImageRate > 0)
@@ -398,11 +418,103 @@ namespace WPF_Successor_001_to_Vahren
                 {
                     BitmapImage bitimg1 = new BitmapImage(new Uri(path));
                     // 画像を高さをウィンドウ内寸に対する割合で決める
-                    this.imgScenario.Height = Math.Floor((this.gridWhole.Height - 32 - 45) * cast.ScenarioImageRate / 100);
+                    this.imgScenario.Height = Math.Floor((this.gridWhole.Height - 32 - 40) * cast.ScenarioImageRate / 100);
                     this.imgScenario.Source = bitimg1;
                     this.imgScenario.Visibility = Visibility.Visible;
+                    this.imgScenario.Tag = cast;
                 }
             }
+        }
+
+        // ボタン等を右クリックした際に、親コントロールが反応しないようにする
+        private void Disable_MouseEvent(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        // シナリオ選択画面で右パネルにマウス・カーソルを乗せた時
+        private void gridRight_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (ClassScenarioInfo)this.imgScenario.Tag;
+            if (cast == null)
+            {
+                return;
+            }
+
+            // 画像のパス途中まで
+            List<string> strings = new List<string>();
+            strings.Add(mainWindow.ClassConfigGameTitle.DirectoryGameTitle[mainWindow.NowNumberGameTitle].FullName);
+            strings.Add("005_BackgroundImage");
+            strings.Add("005_MenuImage");
+            strings.Add(cast.ScenarioImage);
+            string base_path = System.IO.Path.Combine(strings.ToArray());
+            base_path = System.IO.Path.ChangeExtension(base_path, string.Empty);
+            base_path = base_path.Substring(0, base_path.Length - 1);
+
+            ObjectAnimationUsingKeyFrames animation = new ObjectAnimationUsingKeyFrames();
+
+            // 最初のフレームは指定された画像 (Source) を使う
+            DiscreteObjectKeyFrame key0 = new DiscreteObjectKeyFrame();
+            key0.KeyTime = TimeSpan.Zero;
+            key0.Value = this.imgScenario.Source;
+            animation.KeyFrames.Add(key0);
+
+            // 次のフレームからは連番で探す（最大99枚まで、多いと重くなる？）
+            int frame_span = 1000;
+            int num;
+            for (num = 1; num < 100; num++)
+            {
+                string number_path = base_path + num;
+
+                // JPG, PNG, GIF の順番に探す
+                string find_path = number_path + ".jpg";
+                if (System.IO.File.Exists(find_path) == false)
+                {
+                    find_path = number_path + ".png";
+                    if (System.IO.File.Exists(find_path) == false)
+                    {
+                        find_path = number_path + ".gif";
+                        if (System.IO.File.Exists(find_path) == false)
+                        {
+                            break;
+                        }
+                    }
+                }
+                BitmapImage bi = new BitmapImage(new Uri(find_path));
+
+                DiscreteObjectKeyFrame key = new DiscreteObjectKeyFrame();
+                key.KeyTime = new TimeSpan(0, 0, 0, 0, frame_span * num);
+                key.Value = bi;
+                animation.KeyFrames.Add(key);
+            }
+            // 他の画像を見つけた時だけアニメーションを開始する
+            if (num > 1)
+            {
+                animation.RepeatBehavior = RepeatBehavior.Forever;
+                animation.Duration = new TimeSpan(0, 0, 0, 0, frame_span * num);
+                this.imgScenario.BeginAnimation(Image.SourceProperty, animation);
+            }
+        }
+
+        // シナリオ選択画面で右パネルからマウス・カーソルを離した時
+        private void gridRight_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var cast = (ClassScenarioInfo)this.imgScenario.Tag;
+            if (cast == null)
+            {
+                return;
+            }
+
+            // アニメーションを取り除く
+            this.imgScenario.BeginAnimation(Image.SourceProperty, null);
+
+            // 最初に表示してた画像 (Source) に戻る
         }
 
     }

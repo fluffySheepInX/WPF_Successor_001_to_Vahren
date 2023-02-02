@@ -319,7 +319,7 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ScenarioSelectionButton_click(Object sender, EventArgs e)
+        public void ScenarioSelectionButton_click(Object sender, EventArgs e)
         {
             var cast = (ClassScenarioInfo)((Button)sender).Tag;
             if (cast == null)
@@ -330,6 +330,31 @@ namespace WPF_Successor_001_to_Vahren
             switch (cast.ButtonType)
             {
                 case ButtonType.Scenario:
+                    // データが正しいか確かめる
+                    if (cast.World == string.Empty)
+                    {
+                        MessageBox.Show("シナリオにワールドマップが設定されてません。");
+                        return;
+                    }
+                    if (cast.DisplayListSpot.Count == 0)
+                    {
+                        MessageBox.Show("シナリオに領地が設定されてません。");
+                        return;
+                    }
+                    if (cast.InitListPower.Count == 0)
+                    {
+                        MessageBox.Show("シナリオに勢力が設定されてません。");
+                        return;
+                    }
+
+                    // 選択されたシナリオ番号（ListClassScenarioInfoにおけるIndex）を取得する
+                    int indexScenario = this.ClassGameStatus.ListClassScenarioInfo.IndexOf(cast);
+                    if (indexScenario < 0)
+                    {
+                        MessageBox.Show("シナリオが見つかりません。");
+                        return;
+                    }
+                    this.ClassGameStatus.NumberScenarioSelection = indexScenario;
                     break;
                 case ButtonType.Mail:
                     {
@@ -2234,13 +2259,12 @@ namespace WPF_Successor_001_to_Vahren
                 SetListClassMapBattle(this.NowNumberGameTitle);
             }
 
-            /*
             // シナリオ選択ウィンドウを開く（canvasUIではなくcanvasMainに追加する）
             var itemWindow = new UserControl070_Scenario();
             itemWindow.SetData();
             this.canvasMain.Children.Add(itemWindow);
             return; // 実験中なのでここで終わる。
-            */
+            // ちゃんと動くなら、下のコードを削除して、不要な関数を掃除すること。
 
             // 左上作る
             {
