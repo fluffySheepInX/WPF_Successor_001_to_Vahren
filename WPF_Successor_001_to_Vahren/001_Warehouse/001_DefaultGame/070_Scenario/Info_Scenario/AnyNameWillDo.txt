@@ -22,13 +22,14 @@ NewFormatScenario sc1
 
 	#シナリオ選択画面の右下に出ます。
 	#
-	#.jpg←未対応
-	#.png←未対応
+	#.jpg
+	#.png
 	#.gif
 	#
-	# デフォでは横900,縦500でぴったりになります。
-	#
-	#scenario_image="test_900x500.gif";
+	#ここで指定したファイル名の後ろに連番で他の画像が存在するとスライドショーします。
+	#例えば sc.png に続いて sc1.png, sc2.png, sc3.png, sc4.png があるなら、
+	#sc.png -> sc1.png -> sc2.png -> sc3.png -> sc4.png -> 先頭に戻ってループする。
+	#右パネルにマウスカーソルを乗せるとスライドショーが始まり、離すと停止します。
 	scenario_image="sc.png";
 
 	#
@@ -45,7 +46,7 @@ NewFormatScenario sc1
 	#ヴァーレントゥーガだと help name
 	#という表記になります。
 	help = "前哨戦1";
-	
+
 	#デフォルトで各行の先頭及び後方の空白は取り除かれます。
 	#空白を入れたい場合はスペースを使って下さい。
 	#
@@ -84,6 +85,7 @@ NewFormatScenario sc1
 			spot0009,spot0010,spot0011,
 			s001,spot0099,spot0098";
 
+	#初期勢力
 	power = "sc_a_p_a,sc_a_p_b,sc_a_p_c";
 
 	#全て出す
@@ -166,14 +168,6 @@ NewFormatScenario sc4
 	sortkey = "2";
 	ButtonType = "Internet";
 	internet = "http://lockedroom.uvs.jp/";
-}
-NewFormatScenario sc5
-{
-	scenario_name="メールを送る実験";
-	text="システムに設定されてるメーラーを開きます！";
-	sortkey = "3";
-	ButtonType = "Mail";
-	mail = "mailto:fluffysheepinx@gmail.com";
 }
 
 scenario sc3

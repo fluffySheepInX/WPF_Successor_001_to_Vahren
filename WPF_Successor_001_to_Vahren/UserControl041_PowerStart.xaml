@@ -36,10 +36,14 @@
             <Image Grid.Column="2" Name="imgWindowRightTop" />
             <Rectangle Grid.Row="1" Name="rectWindowLeft" />
 
-            <Canvas Grid.Row="1" Grid.Column="1">
-                <TextBlock Canvas.Top="5" Width="430" TextAlignment="Center" FontSize="20" Foreground="#c8c8ff" Text="勢力の人材" Name="txtTitle" />
-                <ScrollViewer Canvas.Left="0" Canvas.Top="45" Name="scrollList" Width="430" Height="605"
-                        Focusable="False" VerticalScrollBarVisibility="Visible" >
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock FontSize="20" Margin="0,5" Foreground="#c8c8ff" TextAlignment="Center" Text="勢力の人材" Name="txtTitle" />
+                <ScrollViewer Grid.Row="1" Name="scrollList" Focusable="False"
+                        VerticalScrollBarVisibility="Auto" >
                     <StackPanel Name="panelList">
 
 <!--
@@ -111,7 +115,7 @@
 
                     </StackPanel>
                 </ScrollViewer>
-            </Canvas>
+            </Grid>
 
             <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight" />
             <Image Grid.Row="2" Name="imgWindowLeftBottom" />
@@ -177,7 +181,7 @@
                 </StackPanel>
 
                 <ScrollViewer Canvas.Top="245" Width="520" Height="350" Name="scrollDetail"
-                        Focusable="False" VerticalScrollBarVisibility="Visible">
+                        Focusable="False" VerticalScrollBarVisibility="Auto">
                     <TextBlock Margin="5,0" FontSize="20" Foreground="White" Name="txtDetail"
                             TextWrapping="Wrap" LineHeight="35"
                             Text="power構造体のtext要素です。長い文章は自動的に改行されます。"/>

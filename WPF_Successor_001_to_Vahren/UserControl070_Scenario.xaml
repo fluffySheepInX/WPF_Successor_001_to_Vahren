@@ -43,12 +43,12 @@
 
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="45"/>
+                        <RowDefinition Height="50"/>
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="0,5" FontSize="20" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択" Name="txtTitle" />
+                    <TextBlock FontSize="20" Margin="0,5" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択" Name="txtTitle" />
                     <ScrollViewer Grid.Row="1" Name="scrollList" Focusable="False"
-                            VerticalScrollBarVisibility="Visible">
+                            VerticalScrollBarVisibility="Auto">
                         <StackPanel Name="panelList">
 <!--
                             <Button Height="50" Margin="5,0,5,0" FontSize="20" Focusable="False" Content="シナリオ１" />
@@ -89,12 +89,12 @@
 
                     <Grid Grid.Row="1" Grid.Column="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="45"/>
+                            <RowDefinition Height="50"/>
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <TextBlock Margin="0,5" FontSize="20" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択画面の２つ目のメニュー" Name="txtTitle2" />
+                        <TextBlock FontSize="20" Margin="0,5" Foreground="#c8c8ff" TextAlignment="Center" Text="シナリオ選択画面の２つ目のメニュー" Name="txtTitle2" />
                         <ScrollViewer Grid.Row="1" Name="scrollList2" Focusable="False"
-                                VerticalScrollBarVisibility="Visible">
+                                VerticalScrollBarVisibility="Auto">
                             <StackPanel Name="panelList2">
 <!--
                                 <Button Height="50" Margin="5,0,5,0" FontSize="20" Focusable="False" Content="シナリオ１１" />
@@ -112,49 +112,52 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Column="1" Grid.RowSpan="2">
-                <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight2" Fill="Black" Opacity="0.5" />
-                <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom2" Fill="Black" Opacity="0.5" />
-                <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
-            </Grid>
-            <Grid Grid.Column="1" Grid.RowSpan="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="16"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="16"/>
-                    <RowDefinition />
-                    <RowDefinition Height="16"/>
-                </Grid.RowDefinitions>
-                <Image Name="imgWindowLeftTop2" />
-                <Rectangle Grid.Column="1" Name="rectWindowTop2" />
-                <Image Grid.Column="2" Name="imgWindowRightTop2" />
-                <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
-
-                <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Column="1" Grid.RowSpan="2"
+                    MouseEnter="gridRight_MouseEnter"
+                    MouseLeave="gridRight_MouseLeave" >
+                <Grid>
+                    <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight2" Fill="Black" Opacity="0.5" />
+                    <Rectangle Margin="8,0,0,0" Height="8" VerticalAlignment="Bottom" Name="rectShadowBottom2" Fill="Black" Opacity="0.5" />
+                    <Rectangle Margin="0,0,8,8" Name="rectWindowPlane2" Fill="#303030" />
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="16"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="45"/>
+                        <RowDefinition Height="16"/>
                         <RowDefinition />
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="16"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="0,5" FontSize="20" Foreground="#ffc800" TextAlignment="Center" Text="シナリオ名" Name="txtNameScenario" />
-                    <ScrollViewer Grid.Row="1" Name="scrollDetail" Focusable="False"
-                            VerticalScrollBarVisibility="Visible" Background="Gray">
-                        <TextBlock Margin="5,0" FontSize="20" Foreground="White" Name="txtDetail"
-                                TextWrapping="Wrap" LineHeight="35"
-                                Text="scenario構造体のtext要素です。長い文章は自動的に改行されます。"/>
-                    </ScrollViewer>
-                    <Image Grid.Row="2" Name="imgScenario" />
+                    <Image Name="imgWindowLeftTop2" />
+                    <Rectangle Grid.Column="1" Name="rectWindowTop2" />
+                    <Image Grid.Column="2" Name="imgWindowRightTop2" />
+                    <Rectangle Grid.Row="1" Name="rectWindowLeft2" />
+
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock FontSize="20" Margin="0,5" Foreground="#ffc800" TextAlignment="Center" Name="txtNameScenario" />
+                        <ScrollViewer Grid.Row="1" Name="scrollDetail" Focusable="False"
+                                VerticalScrollBarVisibility="Auto">
+                            <TextBlock Margin="5,0" FontSize="20" Foreground="White" Name="txtDetail"
+                                    TextWrapping="Wrap" LineHeight="35"/>
+                        </ScrollViewer>
+                        <Image Grid.Row="2" Name="imgScenario" />
+                    </Grid>
+
+                    <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
+                    <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
+                    <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
+                    <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
                 </Grid>
 
-                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectWindowRight2" />
-                <Image Grid.Row="2" Name="imgWindowLeftBottom2" />
-                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectWindowBottom2" />
-                <Image Grid.Row="2" Grid.Column="2" Name="imgWindowRightBottom2" />
             </Grid>
-
         </Grid>
     </Grid>
 </UserControl>

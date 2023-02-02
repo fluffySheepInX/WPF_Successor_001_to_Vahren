@@ -147,7 +147,20 @@ namespace WPF_Successor_001_to_Vahren
             this.panelList.Children.Clear();
             int item_count = 0;
 
-            foreach (var itemPower in mainWindow.ClassGameStatus.ListPower)
+            // 現シナリオに登場する初期勢力を抽出する
+            List<ClassPower> powerList = new List<ClassPower>();
+            foreach (var item in mainWindow.ClassGameStatus.ListClassScenarioInfo[mainWindow.ClassGameStatus.NumberScenarioSelection].InitListPower)
+            {
+                foreach (var item2 in mainWindow.ClassGameStatus.NowListPower)
+                {
+                    if (item == item2.NameTag)
+                    {
+                        powerList.Add(item2);
+                        break;
+                    }
+                }
+            }
+            foreach (var itemPower in powerList)
             {
 
                 StackPanel panelItem = new StackPanel();
