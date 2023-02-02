@@ -27,6 +27,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
 
+        #region Help
+        private string help = string.Empty;
+        public string Help
+        {
+            get { return help; }
+            set { help = value; }
+        }
+        #endregion
+
         #region ScenarioIntroduce
         private string _scenarioIntroduce = String.Empty;
         public string ScenarioIntroduce
@@ -102,6 +111,23 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         {
             get { return _listSpot; }
             set { _listSpot = value; }
+        }
+        #endregion
+
+        #region ListPower
+        private List<string> listPower = new List<string>();
+        public List<string> ListPower
+        {
+            get { return listPower; }
+            set { listPower = value; }
+        }
+        #endregion
+        #region InitListPower
+        private List<string> initListPower = new List<string>();
+        public List<string> InitListPower
+        {
+            get { return initListPower; }
+            set { initListPower = value; }
         }
         #endregion
 

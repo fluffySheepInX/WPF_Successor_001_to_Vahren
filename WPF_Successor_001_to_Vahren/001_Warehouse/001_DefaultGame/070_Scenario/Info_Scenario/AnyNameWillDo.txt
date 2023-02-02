@@ -41,9 +41,10 @@ NewFormatScenario sc1
 	#
 	sortkey = "-10";
 
-	#改行を入力すると、空文字に変換される
-	#ヘルプウィンドウに表示される文字列。
-	help_string="";
+	#シナリオ選択画面の右パネルに詳細表示する際、
+	#ヴァーレントゥーガだと help name
+	#という表記になります。
+	help = "前哨戦1";
 	
 	#デフォルトで各行の先頭及び後方の空白は取り除かれます。
 	#空白を入れたい場合はスペースを使って下さい。
@@ -82,6 +83,8 @@ NewFormatScenario sc1
 			spot0005,spot0006,spot0007,spot0008,
 			spot0009,spot0010,spot0011,
 			s001,spot0099,spot0098";
+
+	power = "sc_a_p_a,sc_a_p_b,sc_a_p_c";
 
 	#全て出す
 	#未実装

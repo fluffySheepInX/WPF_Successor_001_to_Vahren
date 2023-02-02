@@ -1346,6 +1346,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 classScenario.Sortkey = Convert.ToInt32(first.Value);
             }
+            //help
+            {
+                var help =
+                    new Regex(GetPat("help"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(help);
+                if (first != null)
+                {
+                    classScenario.Help = first.Value.Replace(Environment.NewLine, "");
+                }
+            }
             //text
             {
                 var text =
@@ -1475,6 +1486,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 else
                 {
                     classScenario.DisplayListSpot = first.Value.Replace("\t", "").Replace(Environment.NewLine, "").Split(",").ToList();
+                }
+            }
+            //power
+            {
+                var power =
+                    new Regex(GetPat("power"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(power);
+                if (first != null)
+                {
+                    classScenario.ListPower = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
+                    classScenario.InitListPower = first.Value.Replace(Environment.NewLine, "").Split(",").ToList();
                 }
             }
             //spot_capacity
