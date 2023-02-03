@@ -161,24 +161,50 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         ////ターゲットとの国境都市が無い
                         //適当な都市で徴兵や内政
                         int cou = mySpot.Count();
-                        int targetNum = random.Next(0, cou + 1);
+                        int targetNum = random.Next(0, cou);
                         var targetSpot = mySpot.ToList()[targetNum];
 
                         ////徴兵・内政
-                        //同系統徴兵
-                        foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                        //空都市かチェック
+                        if (targetSpot.UnitGroup.Count == 0)
                         {
-                            var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
-                            if (unitBase == null)
-                            {
-                                continue;
-                            }
+                            var unitBase = classGameStatus.ListUnit
+                                            .Where(x => classPower.ListCommonConscription.Contains(x.NameTag))
+                                            .ToList();
+                            int targetNumunitBase = random.Next(0, unitBase.Count());
 
-                            while (classPower.Money - unitBase.Cost > 0
-                                && itemUnitGroup.ListClassUnit.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                            int counterUnitGroup = 0;
+                            while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                    && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                             {
-                                itemUnitGroup.ListClassUnit.Add(unitBase.DeepCopy());
-                                classPower.Money = classPower.Money - unitBase.Cost;
+                                targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
+                                targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
+                                if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count() 
+                                    == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                {
+                                    counterUnitGroup++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //同系統徴兵
+                            foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                            {
+                                var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
+                                if (unitBase == null)
+                                {
+                                    continue;
+                                }
+
+                                while (classPower.Money - unitBase.Cost > 0
+                                    && itemUnitGroup.ListClassUnit.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                {
+                                    itemUnitGroup.ListClassUnit.Add(unitBase.DeepCopy());
+                                    classPower.Money = classPower.Money - unitBase.Cost;
+                                }
                             }
                         }
                     }
@@ -196,7 +222,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         List<string> targetLandString = new List<string>();
-                        foreach (var itemLand in targetLand) 
+                        foreach (var itemLand in targetLand)
                         {
                             targetLandString.Add(itemLand.NameTag);
                         }
@@ -217,7 +243,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         targetMySpot = targetMySpot.Distinct().ToList();
 
                         int cou = targetMySpot.Count();
-                        int targetNum = random.Next(0, cou + 1);
+                        int targetNum = random.Next(0, cou);
                         var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == targetMySpot[targetNum]).FirstOrDefault();
                         if (ch == null)
                         {
