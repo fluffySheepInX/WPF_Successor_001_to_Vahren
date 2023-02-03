@@ -160,16 +160,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         ////ターゲットとの国境都市が無い
                         //適当な都市で徴兵や内政
-
-                    }
-                    else
-                    {
-                        ////ターゲットとの国境都市で徴兵や内政
-                        //本来は乱数で決めちゃダメ
-                        //ターゲットとの国境都市を乱数で取得
-                        int cou = spotOtherLand.Where(x => x.PowerNameTag == targetPowers[0].NameTag).Count();
+                        int cou = mySpot.Count();
                         int targetNum = random.Next(0, cou + 1);
-                        var targetSpot = spotOtherLand.Where(x => x.PowerNameTag == targetPowers[0].NameTag).ToList()[targetNum];
+                        var targetSpot = mySpot.ToList()[targetNum];
 
                         ////徴兵・内政
                         //同系統徴兵
@@ -181,10 +174,73 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 continue;
                             }
 
-                            if (classPower.Money - unitBase.Cost > 0
+                            while (classPower.Money - unitBase.Cost > 0
                                 && itemUnitGroup.ListClassUnit.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                             {
                                 itemUnitGroup.ListClassUnit.Add(unitBase.DeepCopy());
+                                classPower.Money = classPower.Money - unitBase.Cost;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ////ターゲットとの国境都市で徴兵や内政
+                        //本来は乱数で決めちゃダメ
+                        //ターゲットとの国境都市を乱数で取得
+
+                        //ターゲットとの国境都市(他国)を取得
+                        var targetLand = spotOtherLand.Where(x => x.PowerNameTag == targetPowers[0].NameTag);
+                        if (targetLand.Count() == 0)
+                        {
+                            break;
+                        }
+
+                        List<string> targetLandString = new List<string>();
+                        foreach (var itemLand in targetLand) 
+                        {
+                            targetLandString.Add(itemLand.NameTag);
+                        }
+
+                        //ターゲットとの国境都市(自国)を取得
+                        List<string> targetMySpot = new List<string>();
+                        foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
+                        {
+                            if (targetLandString.Contains(itemListLinkSpot.Item1))
+                            {
+                                targetMySpot.Add(itemListLinkSpot.Item2);
+                            }
+                            if (targetLandString.Contains(itemListLinkSpot.Item2))
+                            {
+                                targetMySpot.Add(itemListLinkSpot.Item1);
+                            }
+                        }
+                        targetMySpot = targetMySpot.Distinct().ToList();
+
+                        int cou = targetMySpot.Count();
+                        int targetNum = random.Next(0, cou + 1);
+                        var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == targetMySpot[targetNum]).FirstOrDefault();
+                        if (ch == null)
+                        {
+                            break;
+                        }
+
+                        var targetSpot = ch;
+
+                        ////徴兵・内政
+                        //同系統徴兵
+                        foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                        {
+                            var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
+                            if (unitBase == null)
+                            {
+                                continue;
+                            }
+
+                            while (classPower.Money - unitBase.Cost > 0
+                                && itemUnitGroup.ListClassUnit.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                            {
+                                itemUnitGroup.ListClassUnit.Add(unitBase.DeepCopy());
+                                classPower.Money = classPower.Money - unitBase.Cost;
                             }
                         }
                     }
