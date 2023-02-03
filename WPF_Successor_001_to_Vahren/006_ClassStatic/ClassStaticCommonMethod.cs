@@ -1790,6 +1790,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classPower.Image = path;
                 }
             }
+            //fix
+            {
+                var fix =
+                    new Regex(GetPat("fix"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(fix);
+                if (first == null)
+                {
+                    classPower.Fix = FlagPowerFix.off;
+                }
+                else
+                {
+                    FlagPowerFix sEnum = (FlagPowerFix)Enum.Parse(typeof(FlagPowerFix), first.Value,true);
+                    classPower.Fix = sEnum;
+                }
+            }
 
             return classPower;
         }

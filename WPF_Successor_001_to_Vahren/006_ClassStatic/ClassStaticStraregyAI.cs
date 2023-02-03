@@ -44,13 +44,72 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             {
                 case _010_Enum.FlagPowerFix.on:
 
+                    ////他国との国境都市を取得
+                    //自国領土を取得
+                    List<ClassSpot> mySpot = new List<ClassSpot>();
+                    foreach (var item in classGameStatus.NowListSpot)
+                    {
+                        if (item.PowerNameTag == classPower.NameTag)
+                        {
+                            mySpot.Add(item);
+                        }
+                    }
+
+                    //自国領土と接触している他国領土のタグを取得
+                    List<ClassSpot> spotOtherLand = new List<ClassSpot>();
+                    foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
+                    {
+                        //自国領土かチェック
+                        if (mySpot.Where(x => itemListLinkSpot.Item1.Contains(x.NameTag)).Count() == 1)
+                        {
+                            ////リンクしている領土が他国の領土かチェック
+                            //リンクしている領土を取得
+                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                            if (ch == null)
+                            {
+                                continue;
+                            }
+                            //リストへ格納
+                            spotOtherLand.Add(ch);
+                            continue;
+                        }
+                        //自国領土かチェック
+                        if (mySpot.Where(x => itemListLinkSpot.Item2.Contains(x.NameTag)).Count() == 1)
+                        {
+                            ////リンクしている領土が他国の領土かチェック
+                            //リンクしている領土を取得
+                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                            if (ch == null)
+                            {
+                                continue;
+                            }
+                            //リストへ格納
+                            spotOtherLand.Add(ch);
+                            continue;
+                        }
+                    }
+
+                    //隣接している他国の一覧を取得
+                    List<ClassPower> adjacentPowers = new List<ClassPower>();
+                    foreach (var item in spotOtherLand)
+                    {
+                        var result = classGameStatus.NowListPower
+                                        .Where(x => x.NameTag == item.NameTag)
+                                        .FirstOrDefault();
+                        if (result != null)
+                        {
+                            adjacentPowers.Add(result);
+                        }
+                    }
+
                     ////ランダム(補正有り)でターゲットとなる国を選ぶ
                     //友好度50のリストを作る
                     Dictionary<string, int> baseTargetPowerList = new Dictionary<string, int>();
-                    foreach (var item in classGameStatus.NowListPower.Where(x => x.Index != classPower.Index))
+                    foreach (var item in adjacentPowers)
                     {
                         baseTargetPowerList.Add(item.NameTag, 50);
                     }
+
                     //友好度50のリストを本来のデータで上書きする
                     foreach (var itemBaseTargetPowerList in baseTargetPowerList.ToList())
                     {
@@ -68,6 +127,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
                     }
+
                     //-100して絶対値を取る
                     //友好度100なら0
                     //友好度0なら100
@@ -96,65 +156,37 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         break;//複数の時はこれを外す
                     }
 
-                    ////ターゲットとの国境都市を取得
-                    //自国領土を取得
-                    List<ClassSpot> mySpot = new List<ClassSpot>();
-                    foreach (var item in classGameStatus.NowListSpot)
+                    if (targetPowers.Count == 0)
                     {
-                        if (item.PowerNameTag == classPower.NameTag)
-                        {
-                            mySpot.Add(item);
-                        }
-                    }
-                    //自国領土と接触している他国領土のタグをチェック
-                    List<ClassSpot> mySpotOtherLand = new List<ClassSpot>();
-                    foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
-                    {
-                        //自国領土かチェック
-                        if (mySpot.Where(x => itemListLinkSpot.Item1.Contains(x.NameTag)).Count() == 1)
-                        {
-                            //リンクしている領土が他国の領土かチェック
-                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
-                            if (ch == null)
-                            {
-                                continue;
-                            }
-                            //本来ならターゲットは複数あっても良いが、今は一つに絞る
-                            if (ch.PowerNameTag == targetPowers[0].NameTag)
-                            {
-                                //ターゲットの国と隣接している都市なので、リストへ格納
-                                mySpotOtherLand.Add(ch);
-                            }
-                            continue;
-                        }
-                        //自国領土かチェック
-                        if (mySpot.Where(x => itemListLinkSpot.Item2.Contains(x.NameTag)).Count() == 1)
-                        {
-                            //リンクしている領土が他国の領土かチェック
-                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
-                            if (ch == null)
-                            {
-                                continue;
-                            }
-                            //本来ならターゲットは複数あっても良いが、今は一つに絞る
-                            if (ch.PowerNameTag == targetPowers[0].NameTag)
-                            {
-                                //ターゲットの国と隣接している都市なので、リストへ格納
-                                mySpotOtherLand.Add(ch);
-                            }
-                            continue;
-                        }
-                    }
+                        ////ターゲットとの国境都市が無い
+                        //適当な都市で徴兵や内政
 
-                    if (mySpotOtherLand.Count == 0)
-                    {
-                        //ターゲットとの国境都市が無い
                     }
                     else
                     {
-                        ////ターゲットとの国境都市で徴兵
+                        ////ターゲットとの国境都市で徴兵や内政
                         //本来は乱数で決めちゃダメ
+                        //ターゲットとの国境都市を乱数で取得
+                        int cou = spotOtherLand.Where(x => x.PowerNameTag == targetPowers[0].NameTag).Count();
+                        int targetNum = random.Next(0, cou + 1);
+                        var targetSpot = spotOtherLand.Where(x => x.PowerNameTag == targetPowers[0].NameTag).ToList()[targetNum];
 
+                        ////徴兵・内政
+                        //同系統徴兵
+                        foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                        {
+                            var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
+                            if (unitBase == null)
+                            {
+                                continue;
+                            }
+
+                            if (classPower.Money - unitBase.Cost > 0
+                                && itemUnitGroup.ListClassUnit.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                            {
+                                itemUnitGroup.ListClassUnit.Add(unitBase.DeepCopy());
+                            }
+                        }
                     }
                     //その他準備
 
