@@ -140,40 +140,55 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             if (mapValue != null) mapDetail.Tip = mapValue;
 
                             //build(城壁や矢倉など
-                            var spBuild = splitA[1].Split("$");
-                            foreach (var item in spBuild)
+                            if (splitA.Length > 1)
                             {
-                                map.TryGetValue(item, out string? mapValue2);
-                                if (mapValue2 != null) mapDetail.Building.Add(mapValue2);
+                                var spBuild = splitA[1].Split("$");
+                                foreach (var item in spBuild)
+                                {
+                                    map.TryGetValue(item, out string? mapValue2);
+                                    if (mapValue2 != null) mapDetail.Building.Add(mapValue2);
+                                }
                             }
 
                             //flag(部隊チップの種別
-                            int num = -1;
-                            int temp = -1;
-                            if (int.TryParse(splitA[2], out temp) != true)
+                            if (splitA.Length > 2)
                             {
-                                throw new Exception("");
+                                int num = -1;
+                                int temp = -1;
+                                if (int.TryParse(splitA[2], out temp) != true)
+                                {
+                                    throw new Exception("");
+                                }
+                                num = temp;
+                                FlagBattleMapUnit sEnum = (FlagBattleMapUnit)Enum.ToObject(typeof(FlagBattleMapUnit), num);
+                                mapDetail.FlagBattleMapUnit = sEnum;
                             }
-                            num = temp;
-                            FlagBattleMapUnit sEnum = (FlagBattleMapUnit)Enum.ToObject(typeof(FlagBattleMapUnit), num);
-                            mapDetail.FlagBattleMapUnit = sEnum;
 
                             //部隊
-                            mapDetail.Unit = splitA[3];
-                            if (mapDetail.Unit == "@@")
+                            if (splitA.Length > 3)
                             {
-                                mapDetail.KougekiButaiNoIti = true;
-                            }
-                            if (mapDetail.Unit == "@")
-                            {
-                                mapDetail.BoueiButaiNoIti = true;
+                                mapDetail.Unit = splitA[3];
+                                if (mapDetail.Unit == "@@")
+                                {
+                                    mapDetail.KougekiButaiNoIti = true;
+                                }
+                                if (mapDetail.Unit == "@")
+                                {
+                                    mapDetail.BoueiButaiNoIti = true;
+                                }
                             }
 
                             //方向
-                            mapDetail.Houkou = splitA[4];
+                            if (splitA.Length > 4)
+                            {
+                                mapDetail.Houkou = splitA[4];
+                            }
 
                             //陣形
-                            mapDetail.Zinkei = splitA[5];
+                            if (splitA.Length > 5)
+                            {
+                                mapDetail.Zinkei = splitA[5];
+                            }
 
                             classMapBattle.MapData[classMapBattle.MapData.Count - 1].Add(mapDetail);
                         }

@@ -2265,6 +2265,7 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasMain.Children.Add(itemWindow);
             return; // 実験中なのでここで終わる。
             // ちゃんと動くなら、下のコードを削除して、不要な関数を掃除すること。
+            /*
 
             // 左上作る
             {
@@ -2409,6 +2410,7 @@ namespace WPF_Successor_001_to_Vahren
 
             //多分意味ない
             Thread.Sleep(10);
+            */
         }
 
         // シナリオごとにデータを初期化する関数
