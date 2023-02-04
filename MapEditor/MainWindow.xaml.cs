@@ -704,11 +704,15 @@ namespace MapEditor
             {
                 for (int k = 0; k < MapData[i].Count; k++)
                 {
+                    // field
                     targetString.TryGetValue(MapData[i][k].field, out string? valueField);
                     if (valueField == null)
                     {
                         continue;
                     }
+                    stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(valueField));
+
+                    // object
                     List<string> liGetValueBuild = new List<string>();
                     foreach (var item in MapData[i][k].build)
                     {
@@ -723,45 +727,45 @@ namespace MapEditor
                         }
                     }
                     string getValueBuild = string.Empty;
-                    if (liGetValueBuild.Count == 0)
-                    {
-                        getValueBuild = "null";
-                    }
-                    else
+                    if (liGetValueBuild.Count > 0)
                     {
                         foreach (var item in liGetValueBuild)
                         {
-                            getValueBuild = getValueBuild + "$" + System.IO.Path.GetFileNameWithoutExtension(item);
+                            if (getValueBuild != string.Empty)
+                            {
+                                getValueBuild += "$";
+                            }
+                            getValueBuild += System.IO.Path.GetFileNameWithoutExtension(item);
                         }
                     }
-                    string unit;
-                    if (MapData[i][k].unit == String.Empty)
+                    if (getValueBuild != string.Empty)
                     {
-                        unit = "null";
-                    }
-                    else
-                    {
-                        unit = MapData[i][k].unit;
-                    }
-                    string houkou;
-                    if (MapData[i][k].direction == String.Empty)
-                    {
-                        houkou = "null";
-                    }
-                    else
-                    {
-                        houkou = MapData[i][k].direction;
-                    }
-                    string zinkei;
-                    if (MapData[i][k].formation == String.Empty)
-                    {
-                        zinkei = "null";
-                    }
-                    else
-                    {
-                        zinkei = MapData[i][k].formation;
+                        stringBuilder.Append("*" + getValueBuild);
                     }
 
+                    // unit
+                    string unit = MapData[i][k].unit;
+                    string houkou = MapData[i][k].direction;
+                    string zinkei = MapData[i][k].formation;
+                    if (unit != string.Empty)
+                    {
+                        if (getValueBuild == string.Empty)
+                        {
+                            stringBuilder.Append("*");
+                        }
+                        stringBuilder.Append("*" + Convert.ToString(MapData[i][k].flag) + "*" + unit);
+                        if (houkou != string.Empty)
+                        {
+                            stringBuilder.Append("*" + houkou);
+                            if (zinkei != string.Empty)
+                            {
+                                stringBuilder.Append("*" + zinkei);
+                            }
+                        }
+                    }
+
+                    stringBuilder.Append(",");
+                    /*
                     stringBuilder.Append(System.IO.Path.GetFileNameWithoutExtension(valueField) +
                                     "*" + getValueBuild +
                                     "*" + Convert.ToString(MapData[i][k].flag) +
@@ -769,6 +773,7 @@ namespace MapEditor
                                     "*" + houkou +
                                     "*" + zinkei +
                                     ",");
+                    */
                 }
                 //改行
                 stringBuilder.AppendLine("@,");
