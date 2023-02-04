@@ -189,8 +189,11 @@ for idx, arg in enumerate(sys.argv[1:]):
         if object_text != None:
             f.write("*")
             split_text = object_text.split()
-            for elem in split_text:
-                f.write("$ele" + str(map_element.index(elem)))
+            for i, elem in enumerate(split_text):
+                if i == 0:
+                    f.write("ele" + str(map_element.index(elem)))
+                else:
+                    f.write("$ele" + str(map_element.index(elem)))
         elif multi_text != None:
             f.write("*")
         # unit
