@@ -998,29 +998,29 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     }
 
                                     #region 移動経路を見たい時用に
-                                    if (listRoot.Count != 0)
-                                    {
-                                        foreach (var itemResultAStarRev in listRoot)
-                                        {
-                                            _ = Application.Current.Dispatcher.InvokeAsync((Action)(() =>
-                                            {
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                    //if (listRoot.Count != 0)
+                                    //{
+                                    //    foreach (var itemResultAStarRev in listRoot)
+                                    //    {
+                                    //        _ = Application.Current.Dispatcher.InvokeAsync((Action)(() =>
+                                    //        {
+                                    //            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
 
-                                                Canvas canvas = new Canvas();
-                                                canvas.Background = Brushes.Yellow;
-                                                canvas.Height = TakasaMapTip;
-                                                canvas.Width = yokoMapTip;
-                                                var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
-                                                if (aaaaa == null) return;
-                                                canvas.Margin = new Thickness()
-                                                {
-                                                    Left = aaaaa.Margin.Left,
-                                                    Top = aaaaa.Margin.Top
-                                                };
-                                                re1.Children.Add(canvas);
-                                            }));
-                                        }
-                                    }
+                                    //            Canvas canvas = new Canvas();
+                                    //            canvas.Background = Brushes.Yellow;
+                                    //            canvas.Height = TakasaMapTip;
+                                    //            canvas.Width = yokoMapTip;
+                                    //            var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
+                                    //            if (aaaaa == null) return;
+                                    //            canvas.Margin = new Thickness()
+                                    //            {
+                                    //                Left = aaaaa.Margin.Left,
+                                    //                Top = aaaaa.Margin.Top
+                                    //            };
+                                    //            re1.Children.Add(canvas);
+                                    //        }));
+                                    //    }
+                                    //}
                                     #endregion
 
                                     if (listRoot.Count != 0)
@@ -1329,210 +1329,217 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             //ターゲットとなるユニットを抽出し、
                             //スキル射程範囲を確認
                             var xA = itemGroupBy.NowPosiLeft;
-                            foreach (var itemDefUnitGroup in listTarget)
+                            try
                             {
-                                foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
+                                foreach (var itemDefUnitGroup in listTarget)
                                 {
-                                    //三平方の定理から射程内か確認
+                                    foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                     {
-                                        var xB = itemDefUnitList.NowPosiLeft;
-                                        double teihen = xA.X - xB.X;
-                                        double takasa = xA.Y - xB.Y;
-                                        double syahen = (teihen * teihen) + (takasa * takasa);
-                                        double kyori = Math.Sqrt(syahen);
-
-                                        double xAHankei = (32 / 2) + itemSkill.Range;
-                                        double xBHankei = 32 / 2;
-
-                                        bool check = true;
-                                        if (kyori > (xAHankei + xBHankei))
+                                        //三平方の定理から射程内か確認
                                         {
-                                            check = false;
-                                        }
-                                        //チェック
-                                        if (check == false)
-                                        {
-                                            continue;
-                                        }
-                                    }
+                                            var xB = itemDefUnitList.NowPosiLeft;
+                                            double teihen = xA.X - xB.X;
+                                            double takasa = xA.Y - xB.Y;
+                                            double syahen = (teihen * teihen) + (takasa * takasa);
+                                            double kyori = Math.Sqrt(syahen);
 
-                                    int singleAttackNumber = r1.Next();
-                                    itemGroupBy.OrderPosiSkill.Clear();
+                                            double xAHankei = (32 / 2) + itemSkill.Range;
+                                            double xBHankei = 32 / 2;
 
-                                    itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
-                                    itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
-
-                                    var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                    from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                    to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                    );
-                                    itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
-                                    itemGroupBy.FlagMovingSkill = true;
-
-                                    //rush数だけ実行する
-                                    int rushBase = 1;
-                                    if (itemSkill.Rush > 1) rushBase = itemSkill.Rush;
-
-                                    for (int iii = 0; iii < rushBase; iii++)
-                                    {
-                                        //rush_random_degree分、ずらす
-                                        if (itemSkill.RushRandomDegree > 1)
-                                        {
-                                            Random rand = new System.Random();
-                                            int degree = rand.Next(-itemSkill.RushRandomDegree, itemSkill.RushRandomDegree + 1);
-                                            //ラジアン ⇒ 度*π/180 を掛ける
-                                            double rad = degree * (Math.PI / 180);
-
-                                            //[0]を基準にするのでOK
-                                            var caRe = ConvertVecX(rad,
-                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
-                                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber].Y,
-                                                                    itemGroupBy.NowPosiCenter.X,
-                                                                    itemGroupBy.NowPosiCenter.Y);
-
-                                            itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
-                                            calc0 = ClassCalcVec.ReturnVecDistance(
-                                                            from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                            to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                            );
-                                            itemGroupBy.VecMoveSkill[singleAttackNumber] = ClassCalcVec.ReturnNormalize(calc0);
-                                        }
-
-                                        //Image出す
-                                        {
-                                            if (Application.Current == null)
+                                            bool check = true;
+                                            if (kyori > (xAHankei + xBHankei))
                                             {
-                                                Environment.Exit(1);
+                                                check = false;
+                                            }
+                                            //チェック
+                                            if (check == false)
+                                            {
+                                                continue;
+                                            }
+                                        }
+
+                                        int singleAttackNumber = r1.Next();
+                                        itemGroupBy.OrderPosiSkill.Clear();
+
+                                        itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
+                                        itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
+                                        var calc0 = ClassCalcVec.ReturnVecDistance(
+                                                        from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                        to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                        );
+                                        itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
+                                        itemGroupBy.FlagMovingSkill = true;
+
+                                        //rush数だけ実行する
+                                        int rushBase = 1;
+                                        if (itemSkill.Rush > 1) rushBase = itemSkill.Rush;
+
+                                        for (int iii = 0; iii < rushBase; iii++)
+                                        {
+                                            //rush_random_degree分、ずらす
+                                            if (itemSkill.RushRandomDegree > 1)
+                                            {
+                                                Random rand = new System.Random();
+                                                int degree = rand.Next(-itemSkill.RushRandomDegree, itemSkill.RushRandomDegree + 1);
+                                                //ラジアン ⇒ 度*π/180 を掛ける
+                                                double rad = degree * (Math.PI / 180);
+
+                                                //[0]を基準にするのでOK
+                                                var caRe = ConvertVecX(rad,
+                                                                        itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
+                                                                        itemGroupBy.OrderPosiSkill[singleAttackNumber].Y,
+                                                                        itemGroupBy.NowPosiCenter.X,
+                                                                        itemGroupBy.NowPosiCenter.Y);
+
+                                                itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
+                                                calc0 = ClassCalcVec.ReturnVecDistance(
+                                                                from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                                to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                                );
+                                                itemGroupBy.VecMoveSkill[singleAttackNumber] = ClassCalcVec.ReturnNormalize(calc0);
                                             }
 
-                                            Application.Current.Dispatcher.Invoke((Action)(() =>
+                                            //Image出す
                                             {
-                                                //後始末
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                if (re1 != null)
+                                                if (Application.Current == null)
                                                 {
-                                                    var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID + singleAttackNumber);
-                                                    if (re2 != null) re1.Children.Remove(re2);
-                                                    var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
-                                                    if (re3 != null) re1.Children.Remove(re3);
-                                                }
-                                                else if (re1 == null)
-                                                {
-                                                    return;
+                                                    Environment.Exit(1);
                                                 }
 
-                                                //スキル画像
+                                                Application.Current.Dispatcher.Invoke((Action)(() =>
                                                 {
-                                                    //二点間の角度を求める
-                                                    var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
-                                                                                (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
-                                                    var degree = radian * (180 / Math.PI);
-
-                                                    List<string> strings = new List<string>();
-                                                    strings.Add(fP);
-                                                    strings.Add("042_ChipImageSkillEffect");
-                                                    if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                    //後始末
+                                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                                    if (re1 != null)
                                                     {
-                                                        strings.Add(itemSkill.Image + "N.png");
+                                                        var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID + singleAttackNumber);
+                                                        if (re2 != null) re1.Children.Remove(re2);
+                                                        var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
+                                                        if (re3 != null) re1.Children.Remove(re3);
                                                     }
-                                                    else
+                                                    else if (re1 == null)
                                                     {
-                                                        strings.Add(itemSkill.Image + "NW.png");
+                                                        return;
                                                     }
-                                                    string path = System.IO.Path.Combine(strings.ToArray());
 
-                                                    var bi = new BitmapImage(new Uri(path));
-                                                    Image image = new Image();
-                                                    image.Stretch = Stretch.Fill;
-                                                    image.Source = bi;
-                                                    image.Margin = new Thickness(0, 0, 0, 0);
-                                                    image.Height = itemSkill.H;
-                                                    image.Width = itemSkill.W;
-                                                    image.HorizontalAlignment = HorizontalAlignment.Left;
-                                                    image.VerticalAlignment = VerticalAlignment.Top;
-
-                                                    Canvas canvas = new Canvas();
-                                                    canvas.Background = Brushes.Transparent;
-                                                    canvas.Height = itemSkill.H;
-                                                    canvas.Width = itemSkill.W;
-                                                    canvas.Opacity = (double)itemSkill.A / 255;
-                                                    canvas.Margin = new Thickness()
+                                                    //スキル画像
                                                     {
-                                                        Left = itemGroupBy.NowPosiSkill[singleAttackNumber].X,
-                                                        Top = itemGroupBy.NowPosiSkill[singleAttackNumber].Y
-                                                    };
-                                                    canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
+                                                        //二点間の角度を求める
+                                                        var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
+                                                                                    (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
+                                                        var degree = radian * (180 / Math.PI);
 
-                                                    RotateTransform rotateTransform2;
-                                                    if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
-                                                    {
-                                                        rotateTransform2 =
-                                                            new RotateTransform(degree - 90);
+                                                        List<string> strings = new List<string>();
+                                                        strings.Add(fP);
+                                                        strings.Add("042_ChipImageSkillEffect");
+                                                        if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                        {
+                                                            strings.Add(itemSkill.Image + "N.png");
+                                                        }
+                                                        else
+                                                        {
+                                                            strings.Add(itemSkill.Image + "NW.png");
+                                                        }
+                                                        string path = System.IO.Path.Combine(strings.ToArray());
+
+                                                        var bi = new BitmapImage(new Uri(path));
+                                                        Image image = new Image();
+                                                        image.Stretch = Stretch.Fill;
+                                                        image.Source = bi;
+                                                        image.Margin = new Thickness(0, 0, 0, 0);
+                                                        image.Height = itemSkill.H;
+                                                        image.Width = itemSkill.W;
+                                                        image.HorizontalAlignment = HorizontalAlignment.Left;
+                                                        image.VerticalAlignment = VerticalAlignment.Top;
+
+                                                        Canvas canvas = new Canvas();
+                                                        canvas.Background = Brushes.Transparent;
+                                                        canvas.Height = itemSkill.H;
+                                                        canvas.Width = itemSkill.W;
+                                                        canvas.Opacity = (double)itemSkill.A / 255;
+                                                        canvas.Margin = new Thickness()
+                                                        {
+                                                            Left = itemGroupBy.NowPosiSkill[singleAttackNumber].X,
+                                                            Top = itemGroupBy.NowPosiSkill[singleAttackNumber].Y
+                                                        };
+                                                        canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
+
+                                                        RotateTransform rotateTransform2;
+                                                        if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                        {
+                                                            rotateTransform2 =
+                                                                new RotateTransform(degree - 90);
+                                                        }
+                                                        else
+                                                        {
+                                                            rotateTransform2 =
+                                                                new RotateTransform(degree - 135);
+                                                        }
+                                                        canvas.RenderTransform = rotateTransform2;
+                                                        canvas.RenderTransformOrigin = new Point(0.5, 0.5);
+
+                                                        canvas.Children.Add(image);
+                                                        re1.Children.Add(canvas);
                                                     }
-                                                    else
+                                                    //ray表示
                                                     {
-                                                        rotateTransform2 =
-                                                            new RotateTransform(degree - 135);
+                                                        var alpha = itemSkill.Ray[0];
+                                                        SolidColorBrush solidColorBrush =
+                                                            new SolidColorBrush(
+                                                                Color.FromRgb((byte)itemSkill.Ray[1], (byte)itemSkill.Ray[2], (byte)itemSkill.Ray[3]));
+                                                        Line line = new Line();
+                                                        line.Opacity = (double)alpha / 255;
+                                                        line.Fill = solidColorBrush;
+                                                        line.Stroke = solidColorBrush;
+                                                        line.StrokeThickness = 3;
+                                                        line.Name = "skillEffectRay" + itemGroupBy.ID + singleAttackNumber;
+                                                        line.X1 = itemGroupBy.NowPosiSkill[singleAttackNumber].X;
+                                                        line.X2 = itemGroupBy.NowPosiSkill[singleAttackNumber].X + (itemSkill.W / 2);
+                                                        line.Y1 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y;
+                                                        line.Y2 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y + (itemSkill.H / 2);
+                                                        line.HorizontalAlignment = HorizontalAlignment.Left;
+                                                        line.VerticalAlignment = VerticalAlignment.Top;
+                                                        re1.Children.Add(line);
                                                     }
-                                                    canvas.RenderTransform = rotateTransform2;
-                                                    canvas.RenderTransformOrigin = new Point(0.5, 0.5);
+                                                }));
+                                            }
 
-                                                    canvas.Children.Add(image);
-                                                    re1.Children.Add(canvas);
-                                                }
-                                                //ray表示
-                                                {
-                                                    var alpha = itemSkill.Ray[0];
-                                                    SolidColorBrush solidColorBrush =
-                                                        new SolidColorBrush(
-                                                            Color.FromRgb((byte)itemSkill.Ray[1], (byte)itemSkill.Ray[2], (byte)itemSkill.Ray[3]));
-                                                    Line line = new Line();
-                                                    line.Opacity = (double)alpha / 255;
-                                                    line.Fill = solidColorBrush;
-                                                    line.Stroke = solidColorBrush;
-                                                    line.StrokeThickness = 3;
-                                                    line.Name = "skillEffectRay" + itemGroupBy.ID + singleAttackNumber;
-                                                    line.X1 = itemGroupBy.NowPosiSkill[singleAttackNumber].X;
-                                                    line.X2 = itemGroupBy.NowPosiSkill[singleAttackNumber].X + (itemSkill.W / 2);
-                                                    line.Y1 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y;
-                                                    line.Y2 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y + (itemSkill.H / 2);
-                                                    line.HorizontalAlignment = HorizontalAlignment.Left;
-                                                    line.VerticalAlignment = VerticalAlignment.Top;
-                                                    re1.Children.Add(line);
-                                                }
-                                            }));
+                                            //スキル発動スレッド開始
+                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
+
+                                            //RushInterval分、間隔を保つ
+                                            if (rushBase > 1)
+                                            {
+                                                await Task.Delay(itemSkill.RushInterval * 10);
+
+                                                //次ラッシュの準備
+                                                singleAttackNumber = r1.Next();
+                                                itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
+                                                itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
+                                                calc0 = ClassCalcVec.ReturnVecDistance(
+                                                                from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                                to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                                );
+                                                itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
+                                                itemGroupBy.FlagMovingSkill = true;
+                                            }
                                         }
 
-                                        //スキル発動スレッド開始
-                                        var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
-
-                                        //RushInterval分、間隔を保つ
-                                        if (rushBase > 1)
-                                        {
-                                            await Task.Delay(itemSkill.RushInterval * 10);
-
-                                            //次ラッシュの準備
-                                            singleAttackNumber = r1.Next();
-                                            itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
-                                            itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
-
-                                            calc0 = ClassCalcVec.ReturnVecDistance(
-                                                            from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                            to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                            );
-                                            itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
-                                            itemGroupBy.FlagMovingSkill = true;
-                                        }
+                                        flagAttack = true;
+                                        break;
                                     }
 
-                                    flagAttack = true;
-                                    break;
+                                    if (flagAttack == true)
+                                    {
+                                        break;
+                                    }
                                 }
+                            }
+                            catch (Exception)
+                            {
 
-                                if (flagAttack == true)
-                                {
-                                    break;
-                                }
                             }
                             if (flagAttack == true)
                             {

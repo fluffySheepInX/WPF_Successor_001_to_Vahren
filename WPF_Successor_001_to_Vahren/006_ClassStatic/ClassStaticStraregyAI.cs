@@ -65,7 +65,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item2
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
                                 if (ch == null)
                                 {
                                     continue;
@@ -79,7 +82,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item1
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
                                 if (ch == null)
                                 {
                                     continue;
@@ -90,12 +96,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
 
+                        spotOtherLand = spotOtherLand.Distinct().ToList();
+
                         //隣接している他国の一覧を取得
                         List<ClassPower> adjacentPowers = new List<ClassPower>();
                         foreach (var item in spotOtherLand)
                         {
                             var result = classGameStatus.NowListPower
-                                            .Where(x => x.NameTag == item.NameTag)
+                                            .Where(x => x != classPower)
+                                            .Where(x => x.NameTag == item.PowerNameTag)
                                             .FirstOrDefault();
                             if (result != null)
                             {
@@ -157,6 +166,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             break;//複数の時はこれを外す
                         }
 
+                        if (targetPowers.Count == 0 && absTargetPowerList.Count != 0)
+                        {
+                            Random randomTwo = new Random(DateTime.Now.Second);
+                            var abc = absTargetPowerList.OrderBy(x => randomTwo.Next()).FirstOrDefault();
+                            var ch = classGameStatus.ListPower.Where(x => x.NameTag == abc.Key).FirstOrDefault();
+                            if (ch != null)
+                            {
+                                targetPowers.Add(ch);
+                            }
+                        }
+
                         if (targetPowers.Count == 0)
                         {
                             ////ターゲットが無い
@@ -207,6 +227,29 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         classPower.Money = classPower.Money - unitBase.Cost;
                                     }
                                 }
+
+                                {
+                                    var unitBase = classGameStatus.ListUnit
+                                                    .Where(x => classPower.ListCommonConscription.Contains(x.NameTag))
+                                                    .ToList();
+                                    int targetNumunitBase = random.Next(0, unitBase.Count());
+
+                                    int counterUnitGroup = targetSpot.UnitGroup.Count();
+                                    while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                            && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
+                                    {
+                                        targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
+                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
+                                        if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                            == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                        {
+                                            counterUnitGroup++;
+                                        }
+                                    }
+                                }
+
                             }
                         }
                         else
@@ -229,29 +272,66 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
 
                             //ターゲットとの国境都市(自国)を取得
-                            List<string> targetMySpot = new List<string>();
+                            List<string> targetMySpots = new List<string>();
                             foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
                             {
                                 if (targetLandString.Contains(itemListLinkSpot.Item1))
                                 {
-                                    targetMySpot.Add(itemListLinkSpot.Item2);
+                                    var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                                    if (msB != null)
+                                    {
+                                        targetMySpots.Add(itemListLinkSpot.Item2);
+                                    }
                                 }
                                 if (targetLandString.Contains(itemListLinkSpot.Item2))
                                 {
-                                    targetMySpot.Add(itemListLinkSpot.Item1);
+                                    var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                                    if (msB != null)
+                                    {
+                                        targetMySpots.Add(itemListLinkSpot.Item1);
+                                    }
                                 }
                             }
-                            targetMySpot = targetMySpot.Distinct().ToList();
+                            targetMySpots = targetMySpots.Distinct().ToList();
 
-                            int cou = targetMySpot.Count();
+                            int cou = targetMySpots.Count();
                             int targetNum = random.Next(0, cou);
-                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == targetMySpot[targetNum]).FirstOrDefault();
+                            var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == targetMySpots[targetNum]).FirstOrDefault();
                             if (ch == null)
                             {
                                 break;
                             }
 
                             var targetSpot = ch;
+
+                            //他都市からユニット移動
+                            Random randomOne = new Random(DateTime.Now.Second);
+                            int sc = classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity;
+                            var moveUnitSpot = mySpot.Where(x => x != targetSpot).OrderBy(x => randomOne.Next());
+                            foreach (var itemMoveUnitSpot in moveUnitSpot)
+                            {
+                                if (sc - targetSpot.UnitGroup.Count <= 0)
+                                {
+                                    break;
+                                }
+                                List<ClassHorizontalUnit> lisHo = new List<ClassHorizontalUnit>();
+                                foreach (var itemMoveUnitSpotUnitGroup in itemMoveUnitSpot.UnitGroup)
+                                {
+                                    if (sc - targetSpot.UnitGroup.Count <= 0)
+                                    {
+                                        break;
+                                    }
+                                    targetSpot.UnitGroup.Add(itemMoveUnitSpotUnitGroup);
+                                    lisHo.Add(itemMoveUnitSpotUnitGroup);
+                                }
+
+                                //元都市から削除
+                                foreach (var itemLisHo in lisHo)
+                                {
+                                    itemMoveUnitSpot.UnitGroup.Remove(itemLisHo);
+                                }
+
+                            }
 
                             ////徴兵・内政
                             //同系統徴兵
@@ -271,10 +351,29 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 }
                             }
 
-                            //他都市から移動
+                            {
+                                var unitBase = classGameStatus.ListUnit
+                                                .Where(x => classPower.ListCommonConscription.Contains(x.NameTag))
+                                                .ToList();
+                                int targetNumunitBase = random.Next(0, unitBase.Count());
+
+                                int counterUnitGroup = targetSpot.UnitGroup.Count();
+                                while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                        && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
+                                {
+                                    targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
+                                    targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                    targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                    classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
+                                    if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                    {
+                                        counterUnitGroup++;
+                                    }
+                                }
+                            }
 
                         }
-
                     }
 
                     break;
@@ -339,7 +438,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item2
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
                                 if (ch == null)
                                 {
                                     continue;
@@ -353,7 +455,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item1
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
                                 if (ch == null)
                                 {
                                     continue;
@@ -364,12 +469,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
 
+                        spotOtherLand = spotOtherLand.Distinct().ToList();
+
                         //隣接している他国の一覧を取得
                         List<ClassPower> adjacentPowers = new List<ClassPower>();
                         foreach (var item in spotOtherLand)
                         {
                             var result = classGameStatus.NowListPower
-                                            .Where(x => x.NameTag == item.NameTag)
+                                            .Where(x => x != classPower)
+                                            .Where(x => x.NameTag == item.PowerNameTag)
                                             .FirstOrDefault();
                             if (result != null)
                             {
@@ -508,11 +616,19 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 if (targetLandString.Contains(itemListLinkSpot.Item1))
                                 {
-                                    targetMySpot.Add(itemListLinkSpot.Item2);
+                                    var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                                    if (msB != null)
+                                    {
+                                        targetMySpot.Add(itemListLinkSpot.Item2);
+                                    }
                                 }
                                 if (targetLandString.Contains(itemListLinkSpot.Item2))
                                 {
-                                    targetMySpot.Add(itemListLinkSpot.Item1);
+                                    var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                                    if (msB != null)
+                                    {
+                                        targetMySpot.Add(itemListLinkSpot.Item1);
+                                    }
                                 }
                             }
                             targetMySpot = targetMySpot.Distinct().ToList();

@@ -20,13 +20,13 @@
 	gain_per = "200";
 
 	#中立領地に登場するモンスターの最大部隊数
-	neutral_max = "12";
+	neutral_max = "3";
 	#中立領地に登場するモンスターの最小部隊数
-	neutral_min = "6";
+	neutral_min = "1";
 	#中立領地に登場するモンスターの最大部隊メンバー数
-	neutral_member_max = "12";
+	neutral_member_max = "3";
 	#中立領地に登場するモンスターの最小部隊メンバー数
-	neutral_member_min = "6";
+	neutral_member_min = "1";
 
 	#敵戦略ターンをスキップするかどうか
 	#デバッグにどうぞ

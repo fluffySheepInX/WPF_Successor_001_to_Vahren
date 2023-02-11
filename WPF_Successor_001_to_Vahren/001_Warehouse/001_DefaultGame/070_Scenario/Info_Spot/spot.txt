@@ -109,6 +109,9 @@ NewFormatSpot spot0007
 	x = "2600";
 	y = "300";
 	map = "testMap002";
+
+	member = "LineInfantryM14*2,DragoonFrancesca,HowitzerC11";
+
 	gain = "50";
 	castle = "5";
 	capacity = "10";
