@@ -290,7 +290,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region NumberSleep
-        private int numberSleep = (int)(Math.Floor(((double)1 / 60) * 1000));
+        private int numberSleep = (int)(Math.Floor(((double)1 / 30) * 1000));
         public int NumberSleep
         {
             get { return numberSleep; }

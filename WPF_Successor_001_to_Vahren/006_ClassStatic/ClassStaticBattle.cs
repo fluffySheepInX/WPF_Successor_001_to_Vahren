@@ -1692,6 +1692,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classGameStatus.ClassBattle.DefUnitGroup.Clear();
                     classGameStatus.ClassBattle.NeutralUnitGroup.Clear();
 
+                    commonWindow.IsBattle = false;
+
                     return;
                 }
             }
@@ -1743,6 +1745,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classGameStatus.ClassBattle.SortieUnitGroup.Clear();
                     classGameStatus.ClassBattle.DefUnitGroup.Clear();
                     classGameStatus.ClassBattle.NeutralUnitGroup.Clear();
+
+                    commonWindow.IsBattle = false;
 
                     return;
                 }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
     public static class ClassStaticStraregyAI
     {
-        public static void ThinkingEasy(ClassGameStatus classGameStatus, ClassPower classPower)
+        public static async void ThinkingEasy(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
         {
             if (classGameStatus == null) return;
 
@@ -406,11 +407,190 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 case _010_Enum.FlagPowerFix.home:
 
                     {
-                        //攻め入るかチェック
+                        ////攻め入るかチェック
+                        //自国領土を取得
+                        List<ClassSpot> mySpot = new List<ClassSpot>();
+                        foreach (var item in classGameStatus.NowListSpot)
+                        {
+                            if (item.PowerNameTag == classPower.NameTag)
+                            {
+                                mySpot.Add(item);
+                            }
+                        }
+
+                        //自国領土と接触している他国領土のタグを取得
+                        List<ClassSpot> spotOtherLand = new List<ClassSpot>();
+                        foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
+                        {
+                            //自国領土かチェック
+                            if (mySpot.Where(x => itemListLinkSpot.Item1.Contains(x.NameTag)).Count() == 1)
+                            {
+                                ////リンクしている領土が他国の領土かチェック
+                                //リンクしている領土を取得
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item2
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
+                                if (ch == null)
+                                {
+                                    continue;
+                                }
+                                //リストへ格納
+                                spotOtherLand.Add(ch);
+                                continue;
+                            }
+                            //自国領土かチェック
+                            if (mySpot.Where(x => itemListLinkSpot.Item2.Contains(x.NameTag)).Count() == 1)
+                            {
+                                ////リンクしている領土が他国の領土かチェック
+                                //リンクしている領土を取得
+                                var ch = classGameStatus.NowListSpot
+                                            .Where(x => x.NameTag == itemListLinkSpot.Item1
+                                                    && x.PowerNameTag != classPower.NameTag)
+                                            .FirstOrDefault();
+                                if (ch == null)
+                                {
+                                    continue;
+                                }
+                                //リストへ格納
+                                spotOtherLand.Add(ch);
+                                continue;
+                            }
+                        }
+
+                        spotOtherLand = spotOtherLand.Distinct().ToList();
+
+                        //隣接している他国の一覧を取得
+                        List<ClassPower> adjacentPowers = new List<ClassPower>();
+                        foreach (var item in spotOtherLand)
+                        {
+                            var result = classGameStatus.NowListPower
+                                            .Where(x => x != classPower)
+                                            .Where(x => x.NameTag == item.PowerNameTag)
+                                            .FirstOrDefault();
+                            if (result != null)
+                            {
+                                adjacentPowers.Add(result);
+                            }
+                        }
+
+                        //自国領土と接触している他国領土にhomeがあるかチェック
+                        var intersect = spotOtherLand
+                                        .Select(x => x.NameTag)
+                                        .Intersect(classPower.ListHome)
+                                        .FirstOrDefault();
+
+                        if (intersect == null || intersect == string.Empty)
+                        {
+                            break;
+                        }
+
                         //戦力差、アンチユニット・アンチスキルなどで計算
 
-                        //攻め入る
+                        ////homeと隣接してる自都市から兵を出す
+                        //ターゲットとの国境都市(自国)を取得
+                        List<string> targetMySpots = new List<string>();
+                        foreach (var itemListLinkSpot in classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].ListLinkSpot)
+                        {
+                            if (intersect.Contains(itemListLinkSpot.Item1))
+                            {
+                                var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item2).FirstOrDefault();
+                                if (msB != null)
+                                {
+                                    targetMySpots.Add(itemListLinkSpot.Item2);
+                                }
+                            }
+                            if (intersect.Contains(itemListLinkSpot.Item2))
+                            {
+                                var msB = mySpot.Where(x => x.NameTag == itemListLinkSpot.Item1).FirstOrDefault();
+                                if (msB != null)
+                                {
+                                    targetMySpots.Add(itemListLinkSpot.Item1);
+                                }
+                            }
+                        }
+                        targetMySpots = targetMySpots
+                                        .Distinct()
+                                        .ToList();
 
+                        if (targetMySpots.Count == 0)
+                        {
+                            break;
+                        }
+
+                        var selectSpot = mySpot.Where(x => x.NameTag == targetMySpots[0]).FirstOrDefault();
+                        if (selectSpot == null)
+                        {
+                            break;
+                        }
+
+                        foreach (var item in selectSpot.UnitGroup.Where(x => x.FlagDisplay == true))
+                        {
+                            //出撃クラスにunit追加
+                            mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Add(item);
+
+                            item.FlagDisplay = false;
+                        }
+
+                        //防衛ユニット設定
+                        var ooo = spotOtherLand.Where(x => x.NameTag == intersect).FirstOrDefault();
+                        if (ooo == null)
+                        {
+                            break;
+                        }
+                        foreach (var item in ooo.UnitGroup)
+                        {
+                            if (mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Count()
+                                < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].WarCapacity)
+                            {
+                                mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Add(item);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        //map設定
+                        var extractMap = mainWindow
+                                        .ClassGameStatus
+                                        .ListClassMapBattle
+                                        .Where(x => x.TagName == ooo.Map)
+                                        .FirstOrDefault();
+                        if (extractMap != null)
+                        {
+                            mainWindow.ClassGameStatus.ClassBattle.ClassMapBattle = extractMap;
+
+                            Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
+                            {
+                                ClassStaticBattle.AddBuilding(mainWindow.ClassGameStatus);
+
+                                return true;
+                            }));
+                        }
+
+                        //攻め入る
+                        mainWindow.IsBattle = true;
+                        Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
+                        {
+                            mainWindow.SetBattleMap();
+
+                            return true;
+                        }));
+
+                        string runResult = await Task.Run(async () =>
+                        {
+                            while (mainWindow.IsBattle)
+                            {
+                                await Task.Delay(classGameStatus.NumberSleep);
+                            }
+                            return "abc";
+                        });
+
+                        if (runResult == "")
+                        {
+                            break;
+                        }
                         //徴兵など次ターンの準備する
                     }
 
@@ -670,7 +850,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         //Power構造体からdiplomacyを取得
                         //Power構造体からhomeを取得
-                        //Power構造体からfixを取得
                         //現在のdiploを取得
                         //現在のenemy_powerを取得
                         //現在のleagueを取得

@@ -1976,7 +1976,6 @@ namespace WPF_Successor_001_to_Vahren
             }
             Application.Current.Properties["window"] = this;
 
-
             timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             timerAfterFadeIn.Tick += (x, s) =>

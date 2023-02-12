@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -307,7 +308,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // ターン終了ボタンをクリックした時
-        private void btnTurnEnd_Click(object sender, RoutedEventArgs e)
+        private async void btnTurnEnd_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Win025_Select();
             dialog.SetText("プレイヤーのターンを終了します。");
@@ -361,7 +362,16 @@ namespace WPF_Successor_001_to_Vahren
             {
                 foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
                 {
-                    ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower);
+                    string runResult = await Task.Run(() =>
+                    {
+                        ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower, mainWindow);
+                        return "abc";
+                    });
+
+                    if (runResult == "")
+                    {
+                        break;
+                    }
                 }
             }
             // AI呼び出し後に下を行う

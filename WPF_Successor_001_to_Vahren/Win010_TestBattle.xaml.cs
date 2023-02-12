@@ -117,6 +117,7 @@ namespace WPF_Successor_001_to_Vahren
         /// <param name="e"></param>
         private void CommonWindow_ContentRendered(object sender, EventArgs e)
         {
+            this.IsBattle = true;
             SetBattleMap();
         }
         #endregion

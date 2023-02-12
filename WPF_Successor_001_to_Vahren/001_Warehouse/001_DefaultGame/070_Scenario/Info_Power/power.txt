@@ -53,7 +53,7 @@ NewFormatPower sc_a_p_c
 	money = "10000";
 	flag = "flag3";
 	master = "YaibaDagest";
-	home = "spot0001";
+	home = "spot0004";
 	head = "賊長";
 	diff = "高";
 	text ="
@@ -65,6 +65,6 @@ NewFormatPower sc_a_p_c
 ";
 	member = "spot0003,spot0007";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
-	fix = "on";
+	fix = "home";
 }
 

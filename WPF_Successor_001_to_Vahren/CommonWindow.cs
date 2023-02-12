@@ -115,7 +115,9 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
         #endregion
-
+        #region IsBattle
+        public bool IsBattle { get; set; } = false;
+        #endregion
         #region フェード関係
         private bool _fadeOut = false;
         private bool _fadeOutExecution = false;

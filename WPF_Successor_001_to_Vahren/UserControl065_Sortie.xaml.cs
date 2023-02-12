@@ -833,6 +833,8 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.delegateBattleMap = mainWindow.SetBattleMap;
 
                 mainWindow.FadeIn = true;
+
+                mainWindow.IsBattle = true;
             }
         }
 
