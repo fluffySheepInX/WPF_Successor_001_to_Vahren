@@ -324,7 +324,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if (itemWindow.Name == StringName.windowPowerHint)
                 {
-                    itemWindow.SetPower(_nowPower, false);
+                    if (_nowPower != null)
+                    {
+                        itemWindow.SetPower(_nowPower, false);
+                    }
                     itemWindow.SetPos();
                     itemWindow.SetText(strStatus);
                     boolFound = true;
@@ -335,7 +338,10 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var itemWindow = new UserControl042_PowerHint();
                 itemWindow.Name = StringName.windowPowerHint;
-                itemWindow.SetPower(_nowPower, false);
+                if (_nowPower != null)
+                {
+                    itemWindow.SetPower(_nowPower, false);
+                }
                 itemWindow.SetPos();
                 itemWindow.SetText(strStatus);
                 mainWindow.canvasUI.Children.Add(itemWindow);
@@ -439,6 +445,14 @@ namespace WPF_Successor_001_to_Vahren
             _timerTurn.Tick -= new EventHandler(turn_StartAI);
             _timerTurn.Stop();
 
+            if (_nowPower == null)
+            {
+                ShowProgress(mainWindow, "手順の終了処理・・・");
+                _timerTurn.Tick += new EventHandler(turn_FinishAI);
+                _timerTurn.Start();
+                return;
+            }
+
             // AI思考を実行する
             bool boolBattle = ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, _nowPower, mainWindow);
             if (boolBattle)
@@ -532,6 +546,13 @@ namespace WPF_Successor_001_to_Vahren
             // 連続実行されないよう、自身を取り除いて、タイマーを止める
             _timerTurn.Tick -= new EventHandler(turn_FinishAI);
             _timerTurn.Stop();
+
+            if (_nowPower == null)
+            {
+                _timerTurn.Tick += new EventHandler(turn_SelectAI);
+                _timerTurn.Start();
+                return;
+            }
 
             // COM勢力のターン終了処理（資金の増減や終了時イベントなど）
             ClassStaticStraregyAI.ThinkingEnd(mainWindow.ClassGameStatus, _nowPower, mainWindow);
@@ -721,27 +742,6 @@ namespace WPF_Successor_001_to_Vahren
                 mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money += countMoney;
                 this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
             }
-
-/*
-            // AI呼び出し
-            if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)
-            {
-                foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
-                {
-                    string runResult = await Task.Run(() =>
-                    {
-                        ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower, mainWindow);
-                        return "abc";
-                    });
-
-                    if (runResult == "")
-                    {
-                        break;
-                    }
-                }
-            }
-            // AI呼び出し後に下を行う
-*/
 
             // AI呼び出し
             if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)

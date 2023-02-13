@@ -163,7 +163,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             return getClassAStar;
         }
 
-        public void OpenAround(ClassAStar parent, List<List<MapDetail>> MapData, ClassGameStatus classGameStatus, Canvas canvasMain = null)
+        public void OpenAround(ClassAStar parent, List<List<MapDetail>> MapData, ClassGameStatus classGameStatus, Canvas? canvasMain = null)
         {
             List<ClassHorizontalUnit> listClassHorizontalUnits = new List<ClassHorizontalUnit>();
             switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
@@ -231,7 +231,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                                     canvas.Background = Brushes.DarkRed;
                                     canvas.Height = 32;
                                     canvas.Width = 32;
+                                    if (classGameStatus.ClassBattle.ClassMapBattle == null)
+                                    {
+                                        throw new Exception("OpenAround error 001...");
+                                    }
                                     var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[x + i][y + j].MapPath;
+                                    if (aaaaa == null)
+                                    {
+                                        throw new Exception("OpenAround error 002...");
+                                    }
                                     canvas.Margin = new Thickness()
                                     {
                                         Left = aaaaa.Margin.Left,

@@ -668,7 +668,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         */
                     }
 
-                    break;
                 case _010_Enum.FlagPowerFix.hold:
 
                     {
@@ -950,7 +949,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         }
 
         // 戦闘を開始する
-        public static async void StartBattle(MainWindow mainWindow)
+        public static void StartBattle(MainWindow mainWindow)
         {
             //攻め入る
             mainWindow.IsBattle = true;
