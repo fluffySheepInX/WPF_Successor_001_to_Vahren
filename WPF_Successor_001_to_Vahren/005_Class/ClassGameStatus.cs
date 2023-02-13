@@ -270,6 +270,15 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { taskBattleMoveDefAsync = value; }
         }
         #endregion
+        #region IsDebugBattle
+        private bool isDebugBattle = false;
+        public bool IsDebugBattle
+        {
+            get { return isDebugBattle; }
+            set { isDebugBattle = value; }
+        }
+
+        #endregion
 
         #region AiRoot
         private Dictionary<long, List<Point>> aiRoot = new Dictionary<long, List<Point>>();

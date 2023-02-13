@@ -1974,6 +1974,19 @@ namespace WPF_Successor_001_to_Vahren
                 Canvas.SetZIndex(frame, 99);
                 this.canvasMain.Children.Add(frame);
             }
+            {
+                if (this.ClassGameStatus.IsDebugBattle == true)
+                {
+                    Button button = new Button();
+                    button.Content = "プレイヤー強制勝利";
+                    button.Height = 45;
+                    button.Width = 90;
+                    button.Margin = new Thickness(0, 0, 0, 0);
+                    button.Click += btnDebugWin_Click;
+                    Canvas.SetZIndex(button, 99);
+                    this.canvasMain.Children.Add(button);
+                }
+            }
             Application.Current.Properties["window"] = this;
 
             timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);

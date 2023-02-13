@@ -563,6 +563,29 @@ namespace WPF_Successor_001_to_Vahren
                 break;
             }
         }
+        public void btnDebugWin_Click(object sender, RoutedEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Button)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (cw.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    break;
+                default:
+                    break;
+            }
+
+            lisClassHorizontalUnit.Clear();
+        }
+
         #endregion
 
         #endregion
@@ -619,6 +642,13 @@ namespace WPF_Successor_001_to_Vahren
                             int num = 1;
                             int.TryParse(resultSplit[1], out num);
                             this.ClassGameStatus.BattleThread = num;
+                        }
+                        break;
+                    case "DebugBattle":
+                        {
+                            bool aaa = false;
+                            bool.TryParse(resultSplit[1], out aaa);
+                            this.ClassGameStatus.IsDebugBattle = aaa;
                         }
                         break;
                     default:

@@ -11,6 +11,7 @@
 DefaultGameTitle,001_DefaultGame
 Language,japan
 BattleThread,1
+DebugBattle,True
 
 #↑データここまで
 
