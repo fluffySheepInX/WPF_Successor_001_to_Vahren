@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 
@@ -21,6 +21,9 @@ namespace WPF_Successor_001_to_Vahren
         public UserControl005_StrategyMenu()
         {
             InitializeComponent();
+
+            // タイマーの初期化
+            _timerTurn.Interval = TimeSpan.FromSeconds(1); // 実験用に待機時間を長くする。本来は短くする
         }
 
         // 最初に呼び出した時
@@ -307,74 +310,255 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-        // ターン終了ボタンをクリックした時
-        private async void btnTurnEnd_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new Win025_Select();
-            dialog.SetText("プレイヤーのターンを終了します。");
-            bool? result = dialog.ShowDialog();
-            if (result == false)
-            {
-                return;
-            }
 
+        // ターン経過処理用（アクセスしやすいよう MainWindow の public にしてもいいかも？）
+        private DispatcherTimer _timerTurn = new DispatcherTimer();
+        private ClassPower? _nowPower = null; // 現在思考中の勢力
+
+        // 経過表示用
+        private void ShowProgress(MainWindow mainWindow, string strStatus)
+        {
+            // 勢力のヒントを表示する（既に表示されてる場合は更新する）
+            bool boolFound = false;
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl042_PowerHint>())
+            {
+                if (itemWindow.Name == StringName.windowPowerHint)
+                {
+                    itemWindow.SetPower(_nowPower, false);
+                    itemWindow.SetPos();
+                    itemWindow.SetText(strStatus);
+                    boolFound = true;
+                    break;
+                }
+            }
+            if (boolFound == false)
+            {
+                var itemWindow = new UserControl042_PowerHint();
+                itemWindow.Name = StringName.windowPowerHint;
+                itemWindow.SetPower(_nowPower, false);
+                itemWindow.SetPos();
+                itemWindow.SetText(strStatus);
+                mainWindow.canvasUI.Children.Add(itemWindow);
+            }
+        }
+        private void HideProgress(MainWindow mainWindow)
+        {
+            // 勢力のヒントを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl042_PowerHint>())
+            {
+                if (itemWindow.Name == StringName.windowPowerHint)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+        }
+
+        // AI思考を開始する勢力を選ぶ
+        private void turn_SelectAI(object? sender, EventArgs e)
+        {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
                 return;
             }
-
-            // 開いてる子ウインドウを全て閉じる
-            mainWindow.canvasUI.Children.Clear();
-
-            ////ターン終了時処理
-            //メニュー隠す
-            this.Visibility = Visibility.Hidden;
-
-            //お金増やす
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
             {
-                var listSpotMoney = mainWindow.ClassGameStatus.NowListSpot
-                                .Where(x => x.PowerNameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag);
-                int countMoney = 0;
-                int addMoney = 0; // 維持費と財政値による増減
-                foreach (var itemSpot in listSpotMoney)
-                {
-                    countMoney += itemSpot.Gain;
-                    foreach (var itemTroop in itemSpot.UnitGroup)
-                    {
-                        foreach (var itemUnit in itemTroop.ListClassUnit)
-                        {
-                            // 維持費の分だけ減らして、財政値の分だけ増やす
-                            addMoney -= itemUnit.Cost;
-                            addMoney += itemUnit.Finance;
-                        }
-                    }
-                }
-                countMoney *= (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
-                countMoney += addMoney;
-
-                mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money += countMoney;
-                this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
+                return;
             }
 
-            // AI呼び出し
-            if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)
-            {
-                foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
-                {
-                    string runResult = await Task.Run(() =>
-                    {
-                        ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower, mainWindow);
-                        return "abc";
-                    });
+            // 連続実行されないよう、自身を取り除いて、タイマーを止める
+            _timerTurn.Tick -= new EventHandler(turn_SelectAI);
+            _timerTurn.Stop();
 
-                    if (runResult == "")
-                    {
-                        break;
-                    }
+            // AI思考を開始する勢力を選ぶ
+            foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
+            {
+                // 既に思考した勢力が来たら、その次を選ぶ
+                if (_nowPower == itemPower)
+                {
+                    _nowPower = null; // 空にしておけば、次のループで選ばれるはず
+                    continue;
+                }
+
+                // プレイヤー操作勢力は除外する
+                if (itemPower == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower)
+                {
+                    continue;
+                }
+                // 将来的には、滅亡したCOM勢力も除外すること
+
+                // 思考中の勢力が空なら、最初に見つけた勢力にする
+                if (_nowPower == null)
+                {
+                    _nowPower = itemPower;
+                    break;
                 }
             }
-            // AI呼び出し後に下を行う
+
+            // 未行動の勢力が見つかれば
+            if (_nowPower != null)
+            {
+                //MessageBox.Show(_nowPower.Name + "のAI思考中です。");
+                ShowProgress(mainWindow, "思考中・・・");
+
+                // AI思考を開始する
+                _timerTurn.Tick += new EventHandler(turn_StartAI);
+                _timerTurn.Start();
+            }
+            // 全ての勢力が行動終了したら
+            else
+            {
+                //MessageBox.Show("全ての勢力の手順が終了しました。");
+                HideProgress(mainWindow);
+
+                // 次はターン開始処理にする
+                _timerTurn.Tick += new EventHandler(turn_StartTurn);
+                _timerTurn.Start();
+            }
+        }
+
+        // AI思考を開始する
+        private void turn_StartAI(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 連続実行されないよう、自身を取り除いて、タイマーを止める
+            _timerTurn.Tick -= new EventHandler(turn_StartAI);
+            _timerTurn.Stop();
+
+            // AI思考を実行する
+            bool boolBattle = ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, _nowPower, mainWindow);
+            if (boolBattle)
+            {
+                ShowProgress(mainWindow, "戦闘開始・・・");
+                _timerTurn.Tick += new EventHandler(turn_BattleAI);
+                _timerTurn.Start();
+            }
+            else
+            {
+                // 戦闘しないなら、終了処理を行う
+                ShowProgress(mainWindow, "手順の終了処理・・・");
+                _timerTurn.Tick += new EventHandler(turn_FinishAI);
+                _timerTurn.Start();
+            }
+        }
+
+        // AI戦闘を開始する
+        private void turn_BattleAI(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 連続実行されないよう、自身を取り除く
+            _timerTurn.Tick -= new EventHandler(turn_BattleAI);
+            // 戦闘は非同期処理なので、タイマーを動かしたまま、経過表示を消す
+            HideProgress(mainWindow);
+
+            // COM勢力の戦闘開始
+            ClassStaticStraregyAI.StartBattle(mainWindow);
+
+            // 戦闘が終了するのを待つ
+            _timerTurn.Tick += new EventHandler(turn_WaitAI);
+        }
+
+        // 戦闘が終わるのを待つ
+        private void turn_WaitAI(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 戦闘中なら何もしない
+            if (mainWindow.IsBattle)
+            {
+                return;
+            }
+
+            // 戦闘してなければ、終了処理を行う
+            _timerTurn.Tick -= new EventHandler(turn_WaitAI);
+
+            // 戦闘終了後に、徴兵など次ターンの準備する？
+            // その場合は、もう一つステップを増やすこと
+            ShowProgress(mainWindow, "手順の終了処理・・・");
+            _timerTurn.Tick += new EventHandler(turn_FinishAI);
+            _timerTurn.Start();
+        }
+
+        // AI思考を終える
+        private void turn_FinishAI(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 連続実行されないよう、自身を取り除いて、タイマーを止める
+            _timerTurn.Tick -= new EventHandler(turn_FinishAI);
+            _timerTurn.Stop();
+
+            // COM勢力のターン終了処理（資金の増減や終了時イベントなど）
+            ClassStaticStraregyAI.ThinkingEnd(mainWindow.ClassGameStatus, _nowPower, mainWindow);
+
+            // 次の勢力へ移る
+            _timerTurn.Tick += new EventHandler(turn_SelectAI);
+            _timerTurn.Start();
+        }
+
+        // 全体のターン開始時の処理（訓練して、未行動にして、イベントを実行する）
+        private void turn_StartTurn(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 連続実行されないよう、自身を取り除いて、タイマーを止める
+            _timerTurn.Tick -= new EventHandler(turn_StartTurn);
+            _timerTurn.Stop();
 
             // ターン開始時に全ての勢力を同時に訓練する方がいいかも？
             // ヴァーレントゥーガは勢力ごとの手順が終わる際に訓練上昇するので、
@@ -470,6 +654,107 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.ExecuteEvent();
             //メニュー表示
             this.Visibility = Visibility.Visible;
+
+            // プレイヤーがワールドマップを操作できるようにする
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap != null)
+            {
+                worldMap.canvasMap.IsHitTestVisible = true;
+            }
+        }
+
+
+        // ターン終了ボタンをクリックした時
+        private void btnTurnEnd_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Win025_Select();
+            dialog.SetText("プレイヤーのターンを終了します。");
+            bool? result = dialog.ShowDialog();
+            if (result == false)
+            {
+                return;
+            }
+
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 開いてる子ウインドウを全て閉じる
+            mainWindow.canvasUI.Children.Clear();
+
+            ////ターン終了時処理
+            //メニュー隠す
+            this.Visibility = Visibility.Hidden;
+
+            // プレイヤーがワールドマップを操作できないようにする
+            // 他のウインドウは操作できるので、イベントには応答できる。ゲーム終了もできる。
+            var worldMap = mainWindow.ClassGameStatus.WorldMap;
+            if (worldMap != null)
+            {
+                worldMap.canvasMap.IsHitTestVisible = false;
+            }
+
+            //お金増やす
+            {
+                var listSpotMoney = mainWindow.ClassGameStatus.NowListSpot
+                                .Where(x => x.PowerNameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag);
+                int countMoney = 0;
+                int addMoney = 0; // 維持費と財政値による増減
+                foreach (var itemSpot in listSpotMoney)
+                {
+                    countMoney += itemSpot.Gain;
+                    foreach (var itemTroop in itemSpot.UnitGroup)
+                    {
+                        foreach (var itemUnit in itemTroop.ListClassUnit)
+                        {
+                            // 維持費の分だけ減らして、財政値の分だけ増やす
+                            addMoney -= itemUnit.Cost;
+                            addMoney += itemUnit.Finance;
+                        }
+                    }
+                }
+                countMoney *= (int)(mainWindow.ClassGameStatus.ClassContext.GainPer * 0.01);
+                countMoney += addMoney;
+
+                mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money += countMoney;
+                this.txtMoney.Text = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money.ToString();
+            }
+
+/*
+            // AI呼び出し
+            if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)
+            {
+                foreach (var itemPower in mainWindow.ClassGameStatus.NowListPower)
+                {
+                    string runResult = await Task.Run(() =>
+                    {
+                        ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, itemPower, mainWindow);
+                        return "abc";
+                    });
+
+                    if (runResult == "")
+                    {
+                        break;
+                    }
+                }
+            }
+            // AI呼び出し後に下を行う
+*/
+
+            // AI呼び出し
+            if (mainWindow.ClassGameStatus.ClassContext.enemyTurnSkip == false)
+            {
+                _nowPower = null; // 思考中の勢力を消す
+                _timerTurn.Tick += new EventHandler(turn_SelectAI);
+            }
+            // AI思考をスキップするなら、ターン開始処理に繋ぐ
+            else
+            {
+                _timerTurn.Tick += new EventHandler(turn_StartTurn);
+            }
+            _timerTurn.Start();
         }
 
         // ターン終了ボタンにカーソルを乗せた時
