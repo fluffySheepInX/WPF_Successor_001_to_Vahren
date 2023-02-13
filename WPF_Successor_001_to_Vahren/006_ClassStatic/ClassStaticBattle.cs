@@ -1622,12 +1622,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         var spots = Application.Current.Properties["defensePowerAndCity"];
                         if (spots == null)
                         {
+                            MessageBox.Show("defensePowerAndCity が設定されてません");
                             return;
                         }
 
                         var convSpots = spots as ClassPowerAndCity;
                         if (convSpots == null)
                         {
+                            MessageBox.Show("防衛側の領地が設定されてません");
                             return;
                         }
                         var targetSpot = convSpots.ClassSpot;

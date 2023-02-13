@@ -43,6 +43,9 @@
     <Compile Update="UserControl041_PowerStart.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserControl042_PowerHint.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl045_Skill.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -115,6 +118,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl041_PowerStart.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControl042_PowerHint.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserControl045_Skill.xaml">

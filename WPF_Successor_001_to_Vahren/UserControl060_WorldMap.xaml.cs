@@ -211,6 +211,8 @@ namespace WPF_Successor_001_to_Vahren
                             Left = item.value.X - spot_size / 4,
                             Top = item.value.Y - spot_size / 2 - imgFlag.Height
                         };
+                        imgFlag.Tag = item.value;
+                        imgFlag.MouseEnter += mapFlag_MouseEnter;
                         this.canvasMap.Children.Add(imgFlag);
                         Panel.SetZIndex(imgFlag, 1);
                     }
@@ -257,6 +259,8 @@ namespace WPF_Successor_001_to_Vahren
                 Left = classSpot.X - spot_size / 4,
                 Top = classSpot.Y - spot_size / 2 - imgFlag.Height
             };
+            imgFlag.Tag = classSpot;
+            imgFlag.MouseEnter += mapFlag_MouseEnter;
             this.canvasMap.Children.Add(imgFlag);
             Panel.SetZIndex(imgFlag, 1);
         }
@@ -1080,6 +1084,167 @@ namespace WPF_Successor_001_to_Vahren
                     break;
                 }
             }
+        }
+
+        // 戦略マップの旗にマウスを乗せた時
+        private void mapFlag_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var cast = (FrameworkElement)sender;
+            if (cast.Tag is not ClassSpot)
+            {
+                return;
+            }
+
+            // マウスを離した時のイベントを追加する
+            cast.MouseLeave += mapFlag_MouseLeave;
+
+            // 選択した領地の勢力のヒントを表示する
+            ClassSpot classSpot = (ClassSpot)cast.Tag;
+            var classPower = mainWindow.ClassGameStatus.NowListPower
+                        .Where(x => x.NameTag == classSpot.PowerNameTag)
+                        .FirstOrDefault();
+            if (classPower == null)
+            {
+                // 存在しない勢力なら何もしない
+                return;
+            }
+
+            // 勢力のヒントを表示する
+            // ヴァーレントゥーガだとプレイヤー担当勢力は表示しないけど、どうする？
+            if (classPower != mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower)
+            {
+                var itemWindow = new UserControl042_PowerHint();
+                itemWindow.Name = StringName.windowPowerHint;
+                itemWindow.SetPower(classPower, true);
+                itemWindow.SetPos();
+                mainWindow.canvasUI.Children.Add(itemWindow);
+            }
+
+            // 将来的には、同盟勢力と敵対勢力の領地を強調する
+            /*
+            {
+                string powerNameTag = classPowerAndCity.ClassPower.NameTag;
+                string strFilename;
+                // プレイヤー勢力なら色を変える
+                if (mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag == powerNameTag)
+                {
+                    strFilename = "circle_Aqua.png";
+                }
+                else
+                {
+                    strFilename = "circle_Lime.png";
+                }
+                PowerMark(strFilename, powerNameTag);
+            }
+            */
+
+            //将来的には、外交関係のヒントを表示すること
+            /*
+
+            // 場所が重なるのでヘルプを全て隠す
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Visible) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    itemHelp.Visibility = Visibility.Hidden;
+                }
+            }
+
+            // 領地のヒントを作成する
+            var hintSpot = new UserControl011_SpotHint();
+            hintSpot.Name = StringName.windowSpotHint;
+            hintSpot.Tag = classPowerAndCity;
+            hintSpot.SetData();
+            mainWindow.canvasUI.Children.Add(hintSpot);
+
+            */
+        }
+        private void mapFlag_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // イベントを取り除く
+            var cast = (FrameworkElement)sender;
+            cast.MouseLeave -= mapFlag_MouseLeave;
+
+            ClassSpot classSpot = (ClassSpot)cast.Tag;
+            var classPower = mainWindow.ClassGameStatus.NowListPower
+                        .Where(x => x.NameTag == classSpot.PowerNameTag)
+                        .FirstOrDefault();
+            if (classPower == null)
+            {
+                return;
+            }
+
+            // 勢力のヒントを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl042_PowerHint>())
+            {
+                if (itemWindow.Name == StringName.windowPowerHint)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+
+            // 将来的には、外交関係の強調を解除する
+            /*
+            {
+                RemovePowerMark(classPowerAndCity.ClassPower.NameTag);
+            }
+            */
+
+            // 将来的には、外交関係のヒントを閉じる
+            /*
+
+            // 領地のヒントを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl011_SpotHint>())
+            {
+                if (itemWindow.Name == StringName.windowSpotHint)
+                {
+                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    break;
+                }
+            }
+
+            // ヘルプを隠してた場合は、最前面のヘルプだけ表示する
+            int maxZ = -1, thisZ;
+            foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+            {
+                if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                {
+                    thisZ = Canvas.GetZIndex(itemHelp);
+                    if (maxZ < thisZ)
+                    {
+                        maxZ = thisZ;
+                    }
+                }
+            }
+            if (maxZ >= 0)
+            {
+                foreach (var itemHelp in mainWindow.canvasUI.Children.OfType<UserControl030_Help>())
+                {
+                    if ((itemHelp.Visibility == Visibility.Hidden) && (itemHelp.Name.StartsWith("Help_") == true))
+                    {
+                        if (Canvas.GetZIndex(itemHelp) == maxZ)
+                        {
+                            itemHelp.Visibility = Visibility.Visible;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            */
         }
 
 
