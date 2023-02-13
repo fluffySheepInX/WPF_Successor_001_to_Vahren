@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -597,31 +598,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="cancelToken"></param>
         /// <param name="classGameStatus"></param>
         /// <param name="window"></param>
+        /// <param name="listTarget"></param>
         public static async void TaskBattleMoveAIAsync(CancellationToken cancelToken,
                                                     ClassGameStatus classGameStatus,
-                                                    Window window)
+                                                    Window window,
+                                                    List<ClassHorizontalUnit> listTarget)
         {
             // チェック
             if (classGameStatus.ClassBattle == null) return;
             if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
 
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
-
-            // 移動する陣営決定
-            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
-            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
 
             List<ClassUnit> list = new List<ClassUnit>();
             foreach (var itemH in listTarget)
@@ -765,32 +752,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         public static async void TaskBattleMoveAStar(CancellationToken cancelToken,
                                                         ClassGameStatus classGameStatus,
                                                         Window window,
-                                                        Canvas canvasMain)
+                                                        Canvas canvasMain,
+                                                        List<ClassHorizontalUnit> listMoveTarget,
+                                                        List<ClassHorizontalUnit> listEnemy)
         {
             // チェック
             if (classGameStatus.ClassBattle == null) return;
             if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
 
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
-
-            // 移動する陣営決定
-            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
-            List<ClassHorizontalUnit> listEnemy = new List<ClassHorizontalUnit>();
-            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
-                    listEnemy = classGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
-                    listEnemy = classGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
 
             //アスターアルゴリズムの為
             List<Path> listPath = new List<Path>(); ;
@@ -818,7 +788,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 {
                     if (counter >= 90)
                     {
-                        foreach (var itemTarget in listTarget.Where(x => x.FlagBuilding == false))
+                        foreach (var itemTarget in listMoveTarget.Where(x => x.FlagBuilding == false))
                         {
                             try
                             {
@@ -870,7 +840,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     if (rowT == -1) continue;
                                     if (colT == -1) continue;
 
-                                    //最寄りの敵のマップチップを取得
+                                    //最寄りの敵の座標を取得
                                     Point xy1 = itemListClassUnit.NowPosiCenter;
                                     xy1.X = xy1.X * xy1.X;
                                     xy1.Y = xy1.Y * xy1.Y;
@@ -887,7 +857,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             dicDis.Add(itemEnemyListClassUnit, disA - disB);
                                         }
                                     }
-                                    var minValue = dicDis.Values.Min();
+                                    double minValue = dicDis.Values.Min();
                                     var minElem = dicDis.FirstOrDefault(x => x.Value == minValue);
 
                                     //最寄りの敵のマップチップを取得
@@ -956,7 +926,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             break;
                                         }
                                         classAStarManager.RemoveClassAStar(startAstar);
-                                        classAStarManager.OpenAround(startAstar, classGameStatus.ClassBattle.ClassMapBattle.MapData, classGameStatus, canvasMain);
+                                        classAStarManager.OpenAround(startAstar,
+                                                                        classGameStatus.ClassBattle.ClassMapBattle.MapData,
+                                                                        classGameStatus,
+                                                                        listClassHorizontalUnits: listMoveTarget,
+                                                                        canvasMain
+                                                                        );
 
                                         if (classAStarManager.ListClassAStar != null)
                                         {
@@ -1046,10 +1021,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //コレクションに変更があった時
                 }
 
-                var ext = listTarget.Where(x => x.ListClassUnit.Count == 0).ToList();
+                var ext = listMoveTarget.Where(x => x.ListClassUnit.Count == 0).ToList();
                 foreach (var item in ext)
                 {
-                    listTarget.Remove(item);
+                    listMoveTarget.Remove(item);
                 }
                 counter++;
             }
@@ -1860,13 +1835,26 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        canvasMain,
+                                                                        listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                        listEnemy: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => 
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token, 
+                                                                        commonWindow.ClassGameStatus, 
+                                                                        commonWindow,
+                                                                        listTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup
+                                                                        )
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }
@@ -1878,7 +1866,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        canvasMain,
+                                                                        listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                        listEnemy: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
                         //防衛ユニット
@@ -1891,7 +1886,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() => 
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token, 
+                                                                        commonWindow.ClassGameStatus, 
+                                                                        commonWindow,
+                                                                        listTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }
@@ -1903,20 +1903,50 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        canvasMain,
+                                                                        listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                        listEnemy: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                        }
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        listTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
                         }
                         //防衛(AI)ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAStar(token, commonWindow.ClassGameStatus, commonWindow, canvasMain)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        canvasMain,
+                                                                        listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                        listEnemy: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAIAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow,
+                                                                        listTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
                         }
                     }

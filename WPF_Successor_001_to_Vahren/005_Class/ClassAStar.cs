@@ -163,23 +163,13 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             return getClassAStar;
         }
 
-        public void OpenAround(ClassAStar parent, List<List<MapDetail>> MapData, ClassGameStatus classGameStatus, Canvas? canvasMain = null)
+        public void OpenAround(ClassAStar parent, 
+                                List<List<MapDetail>> MapData, 
+                                ClassGameStatus classGameStatus,
+                                List<ClassHorizontalUnit> listClassHorizontalUnits,
+                                Canvas? canvasMain = null
+                                )
         {
-            List<ClassHorizontalUnit> listClassHorizontalUnits = new List<ClassHorizontalUnit>();
-            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    listClassHorizontalUnits = classGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    listClassHorizontalUnits = classGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
-
             var x = parent.Row;
             var y = parent.Col;
             var cost = parent.Cost;

@@ -589,6 +589,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
 
+                        mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.None;
+
                         //map設定
                         var extractMap = mainWindow
                                         .ClassGameStatus
@@ -640,32 +642,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         return true;
                         // breakで抜けると return false になるので、return true で強制的に出る。
                         // 戦闘しない場合は、break で抜けるか、return false で終わること。
-
-                        /*
-                        //攻め入る
-                        mainWindow.IsBattle = true;
-                        Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
-                        {
-                            mainWindow.SetBattleMap();
-
-                            return true;
-                        }));
-
-                        string runResult = await Task.Run(async () =>
-                        {
-                            while (mainWindow.IsBattle)
-                            {
-                                await Task.Delay(classGameStatus.NumberSleep);
-                            }
-                            return "abc";
-                        });
-
-                        if (runResult == "")
-                        {
-                            break;
-                        }
-                        //徴兵など次ターンの準備する
-                        */
                     }
 
                 case _010_Enum.FlagPowerFix.hold:

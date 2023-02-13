@@ -310,6 +310,16 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
+        #region COM思考関係
+
+        //ターン終了ボタンを押下する⇒btnTurnEnd_Clickイベント実行
+        //1.turn_SelectAI
+        //2.turn_StartAI
+        //3.turn_BattleAI
+        //4.turn_WaitAI
+        //5.turn_FinishAI
+        //6.turn_StartTurn
+        //基本はこの流れで進行する
 
         // ターン経過処理用（アクセスしやすいよう MainWindow の public にしてもいいかも？）
         private DispatcherTimer _timerTurn = new DispatcherTimer();
@@ -684,7 +694,6 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
 
-
         // ターン終了ボタンをクリックした時
         private void btnTurnEnd_Click(object sender, RoutedEventArgs e)
         {
@@ -756,6 +765,7 @@ namespace WPF_Successor_001_to_Vahren
             }
             _timerTurn.Start();
         }
+        #endregion COM思考関係
 
         // ターン終了ボタンにカーソルを乗せた時
         private void btnTurnEnd_MouseEnter(object sender, MouseEventArgs e)

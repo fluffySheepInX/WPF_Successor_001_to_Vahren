@@ -484,6 +484,7 @@ namespace WPF_Successor_001_to_Vahren
                     lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.None:
+                    //AI同士の戦いにフラグは立てない
                     break;
                 default:
                     break;
@@ -578,6 +579,8 @@ namespace WPF_Successor_001_to_Vahren
                     lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
                     break;
                 case BattleWhichIsThePlayer.None:
+                    //とりあえずAI同士では出撃側が強制勝利
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
                     break;
                 default:
                     break;
