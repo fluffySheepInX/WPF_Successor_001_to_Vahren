@@ -4,16 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using WPF_Successor_001_to_Vahren._005_Class;
 
 namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 {
     public static class ClassStaticStraregyAI
     {
-        public static async void ThinkingEasy(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
-        {
-            if (classGameStatus == null) return;
 
+        // COM勢力の手順を終わる
+        public static void ThinkingEnd(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
+        {
+            //お金増やす
+            {
+                var listSpotMoney = classGameStatus.NowListSpot
+                                .Where(x => x.PowerNameTag == classPower.NameTag);
+                int countMoney = 0;
+                int addMoney = 0; // 維持費と財政値による増減
+                foreach (var itemSpot in listSpotMoney)
+                {
+                    countMoney += itemSpot.Gain;
+                    foreach (var itemTroop in itemSpot.UnitGroup)
+                    {
+                        foreach (var itemUnit in itemTroop.ListClassUnit)
+                        {
+                            // 維持費の分だけ減らして、財政値の分だけ増やす
+                            addMoney -= itemUnit.Cost;
+                            addMoney += itemUnit.Finance;
+                        }
+                    }
+                }
+                countMoney *= (int)(classGameStatus.ClassContext.GainPer * 0.01);
+                countMoney += addMoney;
+
+                // どの勢力の処理中か分かるようにする（実験用なので後でコメントアウトすること）
+                //MessageBox.Show(classPower.Name + "のお金が " + countMoney + " 増えたよ！");
+
+                classPower.Money += countMoney;
+            }
+        }
+
+        // COM勢力の戦闘処理に続ける場合は true を返すこと
+        public static bool ThinkingEasy(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
+        {
+            if (classGameStatus == null) return false;
+
+            // この処理はCOM手順の最後に行うこと（プレイヤーと同じく手順終了時にお金が増減するはず）
+            /*
             //お金増やす
             {
                 var listSpotMoney = classGameStatus.NowListSpot
@@ -38,6 +75,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 classPower.Money += countMoney;
             }
+            */
 
             ////状態によって隣国へ攻め入る
             ///状態をチェック
@@ -533,12 +571,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         //防衛ユニット設定
-                        var ooo = spotOtherLand.Where(x => x.NameTag == intersect).FirstOrDefault();
-                        if (ooo == null)
+                        var defSpot = spotOtherLand.Where(x => x.NameTag == intersect).FirstOrDefault();
+                        if (defSpot == null)
                         {
                             break;
                         }
-                        foreach (var item in ooo.UnitGroup)
+                        foreach (var item in defSpot.UnitGroup)
                         {
                             if (mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Count()
                                 < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].WarCapacity)
@@ -555,7 +593,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         var extractMap = mainWindow
                                         .ClassGameStatus
                                         .ListClassMapBattle
-                                        .Where(x => x.TagName == ooo.Map)
+                                        .Where(x => x.TagName == defSpot.Map)
                                         .FirstOrDefault();
                         if (extractMap != null)
                         {
@@ -569,6 +607,41 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }));
                         }
 
+                        // 現在のマップ表示位置を記録しておく
+                        var worldMap = classGameStatus.WorldMap;
+                        if (worldMap != null)
+                        {
+                            classGameStatus.Camera = new Point(Canvas.GetLeft(worldMap), Canvas.GetTop(worldMap));
+                        }
+
+                        // 戦闘後に防衛側の情報を参照できるよう記録しておく
+                        ClassPowerAndCity classPowerAndCity;
+                        if (defSpot.PowerNameTag == string.Empty)
+                        {
+                            // 中立領地
+                            classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
+                        }
+                        else
+                        {
+                            // 勢力の領地
+                            var getPo = classGameStatus.NowListPower.Where(x => x.NameTag == defSpot.PowerNameTag).FirstOrDefault();
+                            if (getPo != null)
+                            {
+                                classPowerAndCity = new ClassPowerAndCity(getPo, defSpot);
+                            }
+                            else
+                            {
+                                classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
+                            }
+                        }
+                        Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
+
+                        // 攻め込むのは次の関数で実行する（全ての準備を終えておくこと）
+                        return true;
+                        // breakで抜けると return false になるので、return true で強制的に出る。
+                        // 戦闘しない場合は、break で抜けるか、return false で終わること。
+
+                        /*
                         //攻め入る
                         mainWindow.IsBattle = true;
                         Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
@@ -592,6 +665,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             break;
                         }
                         //徴兵など次ターンの準備する
+                        */
                     }
 
                     break;
@@ -872,7 +946,30 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     break;
             }
 
-            return;
+            return false;
         }
+
+        // 戦闘を開始する
+        public static async void StartBattle(MainWindow mainWindow)
+        {
+            //攻め入る
+            mainWindow.IsBattle = true;
+            Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
+            {
+                mainWindow.SetBattleMap();
+
+                return true;
+            }));
+        }
+
+        // 戦闘終了後に、徴兵など次ターンの準備する
+        // この処理はまだ作ってない
+        /*
+        public static void AfterBattle(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
+        {
+        
+        }
+        */
+
     }
 }
