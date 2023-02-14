@@ -28,7 +28,6 @@ namespace WPF_Successor_001_to_Vahren
             InitializeComponent();
         }
 
-
         public void SetData()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -41,6 +40,23 @@ namespace WPF_Successor_001_to_Vahren
             if (targetSpot == null)
             {
                 return;
+            }
+
+            // 同じウィンドウ（あるいはダミー画像）が既に存在する場合は消す
+            {
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl025_DetailSpot>())
+                {
+                    if (itemWindow.Name == StringName.windowDetailSpot)
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        break;
+                    }
+                }
+                var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DummyDetailSpot");
+                if (imgDummy != null)
+                {
+                    mainWindow.canvasUI.Children.Remove(imgDummy);
+                }
             }
 
             // 最前面に配置する
@@ -246,6 +262,7 @@ namespace WPF_Successor_001_to_Vahren
             mainWindow.canvasUI.Children.Add(imgDummy);
 
             // 本体を取り除く
+            this.BeginAnimation(Grid.OpacityProperty, null);
             this.BeginAnimation(Grid.MarginProperty, null);
             mainWindow.canvasUI.Children.Remove(this);
 
@@ -263,7 +280,7 @@ namespace WPF_Successor_001_to_Vahren
             var animeOpacity = new DoubleAnimation();
             animeOpacity.To = 0.1;
             animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(time_span));
-            imgDummy.BeginAnimation(Grid.OpacityProperty, animeOpacity);
+            imgDummy.BeginAnimation(Image.OpacityProperty, animeOpacity);
 
             var animeMargin = new ThicknessAnimation();
             animeMargin.To = new Thickness()
@@ -273,7 +290,7 @@ namespace WPF_Successor_001_to_Vahren
             };
             animeMargin.Duration = new Duration(TimeSpan.FromSeconds(time_span));
             animeMargin.Completed += animeRemoveDetail_Completed;
-            imgDummy.BeginAnimation(Grid.MarginProperty, animeMargin);
+            imgDummy.BeginAnimation(Image.MarginProperty, animeMargin);
         }
         private void animeRemoveDetail_Completed(object? sender, EventArgs e)
         {
@@ -290,8 +307,8 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // ダミー画像を消す
-            imgDummy.BeginAnimation(Grid.OpacityProperty, null);
-            imgDummy.BeginAnimation(Grid.MarginProperty, null);
+            imgDummy.BeginAnimation(Image.OpacityProperty, null);
+            imgDummy.BeginAnimation(Image.MarginProperty, null);
             mainWindow.canvasUI.Children.Remove(imgDummy);
         }
 

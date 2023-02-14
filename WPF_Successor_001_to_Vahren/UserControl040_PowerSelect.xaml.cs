@@ -341,6 +341,13 @@ namespace WPF_Successor_001_to_Vahren
                     worldMap.PowerMarkAnime("circle_Yellow.png", classPower.NameTag);
                 }
             }
+
+            // 勢力のヒントを表示する
+            var itemWindow = new UserControl042_PowerHint();
+            itemWindow.Name = StringName.windowPowerHint;
+            itemWindow.SetPower(classPower, true);
+            itemWindow.SetPosAnime();
+            mainWindow.canvasUI.Children.Add(itemWindow);
         }
         private void btnPowerSelect_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -368,6 +375,16 @@ namespace WPF_Successor_001_to_Vahren
                 if (worldMap != null)
                 {
                     worldMap.RemovePowerMark(classPower.NameTag);
+                }
+            }
+
+            // 勢力のヒントを閉じる
+            foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl042_PowerHint>())
+            {
+                if (itemWindow.Name == StringName.windowPowerHint)
+                {
+                    itemWindow.Remove();
+                    break;
                 }
             }
         }

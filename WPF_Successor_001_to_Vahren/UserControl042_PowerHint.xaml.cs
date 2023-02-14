@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -72,11 +73,32 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         // 勢力を指定する（後から更新・変更できる）
-        public void SetPower(ClassPower targetPower, bool boolDetail)
+        public void SetPower(ClassPower? targetPower, bool boolDetail)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
             if (mainWindow == null)
             {
+                return;
+            }
+
+            // 勢力が空の場合は、全ての表示を消す。
+            this.txtStatus.Text = string.Empty;
+            if (targetPower == null)
+            {
+                // 上の項目
+                this.borderFace.Visibility = Visibility.Collapsed;
+                this.imgFlag.Source = null;
+                this.txtNamePower.Text = string.Empty;
+                this.txtMoney.Text = string.Empty;
+                this.txtTotalGain.Text = string.Empty;
+                this.txtNumberSpot.Text = string.Empty;
+                this.txtNumberUnit.Text = string.Empty;
+                // 下の項目
+                this.txtTotalCost.Text = string.Empty;
+                this.txtTotalFinance.Text = string.Empty;
+                this.txtTrainingAverage.Text = string.Empty;
+                this.txtTrainingUp.Text = string.Empty;
+                this.txtBaseLevel.Text = string.Empty;
                 return;
             }
 
@@ -189,7 +211,7 @@ namespace WPF_Successor_001_to_Vahren
                 this.txtTotalCost.Text = "維持費 " + total_cost.ToString();
 
                 // 財政値
-                this.txtTotalFinance.Text = "財政値" + total_finance.ToString();
+                this.txtTotalFinance.Text = "財政値 " + total_finance.ToString();
 
                 // 訓練限界
                 {
@@ -321,7 +343,149 @@ namespace WPF_Successor_001_to_Vahren
             this.rectWindowRight.Fill = myImageBrush;
         }
 
+        // 画面の左下にアニメーション付きで置く
+        public void SetPosAnime()
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
 
+            // 同じウィンドウ（あるいはダミー画像）が既に存在する場合は消す
+            {
+                foreach (var itemWindow in mainWindow.canvasUI.Children.OfType<UserControl042_PowerHint>())
+                {
+                    if (itemWindow.Name == StringName.windowPowerHint)
+                    {
+                        mainWindow.canvasUI.Children.Remove(itemWindow);
+                        break;
+                    }
+                }
+                var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DummyHintPower");
+                if (imgDummy != null)
+                {
+                    mainWindow.canvasUI.Children.Remove(imgDummy);
+                }
+            }
+
+            // 最前面に配置する
+            var listWindow = mainWindow.canvasUI.Children.OfType<UIElement>().Where(x => x != this);
+            if ( (listWindow != null) && (listWindow.Any()) )
+            {
+                int maxZ = listWindow.Select(x => Canvas.GetZIndex(x)).Max();
+                Canvas.SetZIndex(this, maxZ + 1);
+            }
+
+            // 面倒なので表示する際のアニメーションは省略する
+            // 将来的には追加してもいい、引数でアニメの on/off 指定とか
+            double offsetLeft = 0, offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Left < 0)
+            {
+                offsetLeft = mainWindow.canvasUI.Margin.Left * -1;
+            }
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+            // 画面の左下隅に配置する
+            this.Margin = new Thickness()
+            {
+                Left = offsetLeft,
+                Top = mainWindow.canvasUI.Height - offsetTop - this.Height
+            };
+
+            // 配置が終わったら、しゅっと表示されるようにする（少し上から落ちる）
+            var animeOpacity = new DoubleAnimation();
+            animeOpacity.From = 0.1;
+            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(0.2));
+            this.BeginAnimation(Canvas.OpacityProperty, animeOpacity);
+            var animeMargin = new ThicknessAnimation();
+            animeMargin.From = new Thickness()
+            {
+                Left = this.Margin.Left,
+                Top = this.Margin.Top - 100
+            };
+            animeMargin.Duration = new Duration(TimeSpan.FromSeconds(0.25));
+            this.BeginAnimation(Canvas.MarginProperty, animeMargin);
+        }
+
+        // アニメーション付きでウィンドウを取り除く
+        public void Remove()
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            // 消えるエフェクト用にダミー画像を用意する
+            Image imgDummy = new Image();
+            imgDummy.Name = "DummyHintPower";
+            imgDummy.Width = this.Width;
+            imgDummy.Height = this.Height;
+            imgDummy.Source = mainWindow.FrameworkElementToBitmapSource(this);
+            imgDummy.Stretch = Stretch.None;
+            Canvas.SetZIndex(imgDummy, Canvas.GetZIndex(this));
+            // 現在位置と透明度からアニメーションを開始する
+            imgDummy.Opacity = this.Opacity;
+            imgDummy.Margin = new Thickness()
+            {
+                Left = this.Margin.Left,
+                Top = this.Margin.Top
+            };
+            mainWindow.canvasUI.Children.Add(imgDummy);
+
+            // 本体を取り除く
+            this.BeginAnimation(Canvas.OpacityProperty, null);
+            this.BeginAnimation(Canvas.MarginProperty, null);
+            mainWindow.canvasUI.Children.Remove(this);
+
+            // ダミー画像をアニメーションさせる
+            double offsetTop = 0;
+            if (mainWindow.canvasUI.Margin.Top < 0)
+            {
+                offsetTop = mainWindow.canvasUI.Margin.Top * -1;
+            }
+
+            // 移動距離に応じてアニメーション時間を変える
+            double move_length = this.Margin.Top - (mainWindow.canvasUI.Height - offsetTop - imgDummy.Height - 100);
+            double time_span = 0.25 * move_length / 100;
+
+            var animeOpacity = new DoubleAnimation();
+            animeOpacity.To = 0.1;
+            animeOpacity.Duration = new Duration(TimeSpan.FromSeconds(time_span));
+            imgDummy.BeginAnimation(Image.OpacityProperty, animeOpacity);
+
+            var animeMargin = new ThicknessAnimation();
+            animeMargin.To = new Thickness()
+            {
+                Left = imgDummy.Margin.Left,
+                Top = mainWindow.canvasUI.Height - offsetTop - imgDummy.Height - 100
+            };
+            animeMargin.Duration = new Duration(TimeSpan.FromSeconds(time_span));
+            animeMargin.Completed += animeRemoveHint_Completed;
+            imgDummy.BeginAnimation(Image.MarginProperty, animeMargin);
+        }
+        private void animeRemoveHint_Completed(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var imgDummy = (Image)LogicalTreeHelper.FindLogicalNode(mainWindow.canvasUI, "DummyHintPower");
+            if (imgDummy == null)
+            {
+                return;
+            }
+
+            // ダミー画像を消す
+            imgDummy.BeginAnimation(Image.OpacityProperty, null);
+            imgDummy.BeginAnimation(Image.MarginProperty, null);
+            mainWindow.canvasUI.Children.Remove(imgDummy);
+        }
 
     }
 }
