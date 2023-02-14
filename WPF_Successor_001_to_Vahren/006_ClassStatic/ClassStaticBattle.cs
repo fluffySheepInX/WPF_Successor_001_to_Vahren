@@ -1099,26 +1099,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                             ClassSkill classSkill,
                                                             ClassGameStatus classGameStatus,
                                                             Canvas canvasMain,
-                                                            int dicKey)
+                                                            int dicKey,
+                                                            List<ClassHorizontalUnit> listTargetOfSkill)
         {
-            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
-            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
-
             while (true)
             {
-
                 await Task.Delay(classGameStatus.NumberSleep);
 
                 ClassVec classVec = new ClassVec();
@@ -1153,7 +1138,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //体力計算処理
                     try
                     {
-                        foreach (var item in listTarget)
+                        foreach (var item in listTargetOfSkill)
                         {
                             var re = item.ListClassUnit.Where(x => x.NowPosiCenter.X <= classVec.Target.X + classSkill.RandomSpace
                                                         && x.NowPosiCenter.X >= classVec.Target.X - classSkill.RandomSpace
@@ -1261,26 +1246,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
         }
 
-        public static async void TaskBattleSkill(CancellationToken token, Canvas canvasMain, ClassGameStatus classGameStatus)
+        public static async void TaskBattleSkill(CancellationToken token,
+                                                    Canvas canvasMain,
+                                                    ClassGameStatus classGameStatus,
+                                                    List<ClassHorizontalUnit> listExecuter,
+                                                    List<ClassHorizontalUnit> listTargetOfSkill)
         {
-            List<ClassHorizontalUnit> aaa = new List<ClassHorizontalUnit>();
-            List<ClassHorizontalUnit> listTarget = new List<ClassHorizontalUnit>();
-            switch (classGameStatus.ClassBattle.BattleWhichIsThePlayer)
-            {
-                case BattleWhichIsThePlayer.Sortie:
-                    aaa = classGameStatus.ClassBattle.SortieUnitGroup;
-                    listTarget = classGameStatus.ClassBattle.DefUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.Def:
-                    aaa = classGameStatus.ClassBattle.DefUnitGroup;
-                    listTarget = classGameStatus.ClassBattle.SortieUnitGroup;
-                    break;
-                case BattleWhichIsThePlayer.None:
-                    break;
-                default:
-                    break;
-            }
-
             if (classGameStatus.CommonWindow == null) return;
 
             string fP = classGameStatus.CommonWindow.GetPathDirectoryGameTitleFullName();
@@ -1293,240 +1264,266 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 await Task.Delay(classGameStatus.NumberSleep);
                 bool flagAttack = false;
 
-                foreach (var item in aaa)
+                try
                 {
-                    //スキル発動中でないユニットを抽出
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
+                    foreach (var item in listExecuter)
                     {
-                        //スキル優先順位確認
-                        foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
+                        //スキル発動中でないユニットを抽出
+                        foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
                         {
-                            //ターゲットとなるユニットを抽出し、
-                            //スキル射程範囲を確認
-                            var xA = itemGroupBy.NowPosiLeft;
-                            try
+                            //スキル優先順位確認
+                            foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
                             {
-                                foreach (var itemDefUnitGroup in listTarget)
+                                //ターゲットとなるユニットを抽出し、
+                                //スキル射程範囲を確認
+                                var xA = itemGroupBy.NowPosiLeft;
+                                try
                                 {
-                                    foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
+                                    foreach (var itemDefUnitGroup in listTargetOfSkill)
                                     {
-                                        //三平方の定理から射程内か確認
+                                        foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                         {
-                                            var xB = itemDefUnitList.NowPosiLeft;
-                                            double teihen = xA.X - xB.X;
-                                            double takasa = xA.Y - xB.Y;
-                                            double syahen = (teihen * teihen) + (takasa * takasa);
-                                            double kyori = Math.Sqrt(syahen);
-
-                                            double xAHankei = (32 / 2) + itemSkill.Range;
-                                            double xBHankei = 32 / 2;
-
-                                            bool check = true;
-                                            if (kyori > (xAHankei + xBHankei))
+                                            //三平方の定理から射程内か確認
                                             {
-                                                check = false;
-                                            }
-                                            //チェック
-                                            if (check == false)
-                                            {
-                                                continue;
-                                            }
-                                        }
+                                                var xB = itemDefUnitList.NowPosiLeft;
+                                                double teihen = xA.X - xB.X;
+                                                double takasa = xA.Y - xB.Y;
+                                                double syahen = (teihen * teihen) + (takasa * takasa);
+                                                double kyori = Math.Sqrt(syahen);
 
-                                        int singleAttackNumber = r1.Next();
-                                        itemGroupBy.OrderPosiSkill.Clear();
+                                                double xAHankei = (32 / 2) + itemSkill.Range;
+                                                double xBHankei = 32 / 2;
 
-                                        itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
-                                        itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
-
-                                        var calc0 = ClassCalcVec.ReturnVecDistance(
-                                                        from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                        to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                        );
-                                        itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
-                                        itemGroupBy.FlagMovingSkill = true;
-
-                                        //rush数だけ実行する
-                                        int rushBase = 1;
-                                        if (itemSkill.Rush > 1) rushBase = itemSkill.Rush;
-
-                                        for (int iii = 0; iii < rushBase; iii++)
-                                        {
-                                            //rush_random_degree分、ずらす
-                                            if (itemSkill.RushRandomDegree > 1)
-                                            {
-                                                Random rand = new System.Random();
-                                                int degree = rand.Next(-itemSkill.RushRandomDegree, itemSkill.RushRandomDegree + 1);
-                                                //ラジアン ⇒ 度*π/180 を掛ける
-                                                double rad = degree * (Math.PI / 180);
-
-                                                //[0]を基準にするのでOK
-                                                var caRe = ConvertVecX(rad,
-                                                                        itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
-                                                                        itemGroupBy.OrderPosiSkill[singleAttackNumber].Y,
-                                                                        itemGroupBy.NowPosiCenter.X,
-                                                                        itemGroupBy.NowPosiCenter.Y);
-
-                                                itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
-                                                calc0 = ClassCalcVec.ReturnVecDistance(
-                                                                from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                                to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                                );
-                                                itemGroupBy.VecMoveSkill[singleAttackNumber] = ClassCalcVec.ReturnNormalize(calc0);
-                                            }
-
-                                            //Image出す
-                                            {
-                                                if (Application.Current == null)
+                                                bool check = true;
+                                                if (kyori > (xAHankei + xBHankei))
                                                 {
-                                                    Environment.Exit(1);
+                                                    check = false;
+                                                }
+                                                //チェック
+                                                if (check == false)
+                                                {
+                                                    continue;
+                                                }
+                                            }
+
+                                            int singleAttackNumber = r1.Next();
+                                            itemGroupBy.OrderPosiSkill.Clear();
+
+                                            itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
+                                            itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
+                                            var calc0 = ClassCalcVec.ReturnVecDistance(
+                                                            from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                            to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                            );
+                                            itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
+                                            itemGroupBy.FlagMovingSkill = true;
+
+                                            //rush数だけ実行する
+                                            int rushBase = 1;
+                                            if (itemSkill.Rush > 1) rushBase = itemSkill.Rush;
+
+                                            for (int iii = 0; iii < rushBase; iii++)
+                                            {
+                                                //rush_random_degree分、ずらす
+                                                if (itemSkill.RushRandomDegree > 1)
+                                                {
+                                                    Random rand = new System.Random();
+                                                    int degree = rand.Next(-itemSkill.RushRandomDegree, itemSkill.RushRandomDegree + 1);
+                                                    //ラジアン ⇒ 度*π/180 を掛ける
+                                                    double rad = degree * (Math.PI / 180);
+
+                                                    //[0]を基準にするのでOK
+                                                    var caRe = ConvertVecX(rad,
+                                                                            itemGroupBy.OrderPosiSkill[singleAttackNumber].X,
+                                                                            itemGroupBy.OrderPosiSkill[singleAttackNumber].Y,
+                                                                            itemGroupBy.NowPosiCenter.X,
+                                                                            itemGroupBy.NowPosiCenter.Y);
+
+                                                    itemGroupBy.OrderPosiSkill[singleAttackNumber] = new Point(caRe.Item1, caRe.Item2);
+                                                    calc0 = ClassCalcVec.ReturnVecDistance(
+                                                                    from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                                    to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                                    );
+                                                    itemGroupBy.VecMoveSkill[singleAttackNumber] = ClassCalcVec.ReturnNormalize(calc0);
                                                 }
 
-                                                Application.Current.Dispatcher.Invoke((Action)(() =>
+                                                //Image出す
                                                 {
-                                                    //後始末
-                                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                    if (re1 != null)
+                                                    if (Application.Current == null)
                                                     {
-                                                        var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID + singleAttackNumber);
-                                                        if (re2 != null) re1.Children.Remove(re2);
-                                                        var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
-                                                        if (re3 != null) re1.Children.Remove(re3);
-                                                    }
-                                                    else if (re1 == null)
-                                                    {
-                                                        return;
+                                                        Environment.Exit(1);
                                                     }
 
-                                                    //スキル画像
+                                                    Application.Current.Dispatcher.Invoke((Action)(() =>
                                                     {
-                                                        //二点間の角度を求める
-                                                        var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
-                                                                                    (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
-                                                        var degree = radian * (180 / Math.PI);
-
-                                                        List<string> strings = new List<string>();
-                                                        strings.Add(fP);
-                                                        strings.Add("042_ChipImageSkillEffect");
-                                                        if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                        //後始末
+                                                        var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                                        if (re1 != null)
                                                         {
-                                                            strings.Add(itemSkill.Image + "N.png");
+                                                            var re2 = (Canvas)LogicalTreeHelper.FindLogicalNode(re1, "skillEffect" + itemGroupBy.ID + singleAttackNumber);
+                                                            if (re2 != null) re1.Children.Remove(re2);
+                                                            var re3 = (Line)LogicalTreeHelper.FindLogicalNode(re1, "skillEffectRay" + itemGroupBy.ID + singleAttackNumber);
+                                                            if (re3 != null) re1.Children.Remove(re3);
                                                         }
-                                                        else
+                                                        else if (re1 == null)
                                                         {
-                                                            strings.Add(itemSkill.Image + "NW.png");
+                                                            return;
                                                         }
-                                                        string path = System.IO.Path.Combine(strings.ToArray());
 
-                                                        var bi = new BitmapImage(new Uri(path));
-                                                        Image image = new Image();
-                                                        image.Stretch = Stretch.Fill;
-                                                        image.Source = bi;
-                                                        image.Margin = new Thickness(0, 0, 0, 0);
-                                                        image.Height = itemSkill.H;
-                                                        image.Width = itemSkill.W;
-                                                        image.HorizontalAlignment = HorizontalAlignment.Left;
-                                                        image.VerticalAlignment = VerticalAlignment.Top;
-
-                                                        Canvas canvas = new Canvas();
-                                                        canvas.Background = Brushes.Transparent;
-                                                        canvas.Height = itemSkill.H;
-                                                        canvas.Width = itemSkill.W;
-                                                        canvas.Opacity = (double)itemSkill.A / 255;
-                                                        canvas.Margin = new Thickness()
+                                                        //スキル画像
                                                         {
-                                                            Left = itemGroupBy.NowPosiSkill[singleAttackNumber].X,
-                                                            Top = itemGroupBy.NowPosiSkill[singleAttackNumber].Y
-                                                        };
-                                                        canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
+                                                            //二点間の角度を求める
+                                                            var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
+                                                                                        (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
+                                                            var degree = radian * (180 / Math.PI);
 
-                                                        RotateTransform rotateTransform2;
-                                                        if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
-                                                        {
-                                                            rotateTransform2 =
-                                                                new RotateTransform(degree - 90);
+                                                            List<string> strings = new List<string>();
+                                                            strings.Add(fP);
+                                                            strings.Add("042_ChipImageSkillEffect");
+                                                            if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                            {
+                                                                strings.Add(itemSkill.Image + "N.png");
+                                                            }
+                                                            else
+                                                            {
+                                                                strings.Add(itemSkill.Image + "NW.png");
+                                                            }
+                                                            string path = System.IO.Path.Combine(strings.ToArray());
+
+                                                            var bi = new BitmapImage(new Uri(path));
+                                                            Image image = new Image();
+                                                            image.Stretch = Stretch.Fill;
+                                                            image.Source = bi;
+                                                            image.Margin = new Thickness(0, 0, 0, 0);
+                                                            image.Height = itemSkill.H;
+                                                            image.Width = itemSkill.W;
+                                                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                                                            image.VerticalAlignment = VerticalAlignment.Top;
+
+                                                            Canvas canvas = new Canvas();
+                                                            canvas.Background = Brushes.Transparent;
+                                                            canvas.Height = itemSkill.H;
+                                                            canvas.Width = itemSkill.W;
+                                                            canvas.Opacity = (double)itemSkill.A / 255;
+                                                            canvas.Margin = new Thickness()
+                                                            {
+                                                                Left = itemGroupBy.NowPosiSkill[singleAttackNumber].X,
+                                                                Top = itemGroupBy.NowPosiSkill[singleAttackNumber].Y
+                                                            };
+                                                            canvas.Name = "skillEffect" + itemGroupBy.ID + singleAttackNumber;
+
+                                                            RotateTransform rotateTransform2;
+                                                            if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                            {
+                                                                rotateTransform2 =
+                                                                    new RotateTransform(degree - 90);
+                                                            }
+                                                            else
+                                                            {
+                                                                rotateTransform2 =
+                                                                    new RotateTransform(degree - 135);
+                                                            }
+                                                            canvas.RenderTransform = rotateTransform2;
+                                                            canvas.RenderTransformOrigin = new Point(0.5, 0.5);
+
+                                                            canvas.Children.Add(image);
+                                                            re1.Children.Add(canvas);
                                                         }
-                                                        else
+                                                        //ray表示
                                                         {
-                                                            rotateTransform2 =
-                                                                new RotateTransform(degree - 135);
+                                                            if (itemSkill.Ray.Count != 0)
+                                                            {
+                                                                var alpha = itemSkill.Ray[0];
+                                                                SolidColorBrush solidColorBrush =
+                                                                    new SolidColorBrush(
+                                                                        Color.FromRgb((byte)itemSkill.Ray[1], (byte)itemSkill.Ray[2], (byte)itemSkill.Ray[3]));
+                                                                Line line = new Line();
+                                                                line.Opacity = (double)alpha / 255;
+                                                                line.Fill = solidColorBrush;
+                                                                line.Stroke = solidColorBrush;
+                                                                line.StrokeThickness = 3;
+                                                                line.Name = "skillEffectRay" + itemGroupBy.ID + singleAttackNumber;
+                                                                line.X1 = itemGroupBy.NowPosiSkill[singleAttackNumber].X;
+                                                                line.X2 = itemGroupBy.NowPosiSkill[singleAttackNumber].X + (itemSkill.W / 2);
+                                                                line.Y1 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y;
+                                                                line.Y2 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y + (itemSkill.H / 2);
+                                                                line.HorizontalAlignment = HorizontalAlignment.Left;
+                                                                line.VerticalAlignment = VerticalAlignment.Top;
+                                                                re1.Children.Add(line);
+                                                            }
                                                         }
-                                                        canvas.RenderTransform = rotateTransform2;
-                                                        canvas.RenderTransformOrigin = new Point(0.5, 0.5);
+                                                    }));
+                                                }
 
-                                                        canvas.Children.Add(image);
-                                                        re1.Children.Add(canvas);
-                                                    }
-                                                    //ray表示
-                                                    {
-                                                        var alpha = itemSkill.Ray[0];
-                                                        SolidColorBrush solidColorBrush =
-                                                            new SolidColorBrush(
-                                                                Color.FromRgb((byte)itemSkill.Ray[1], (byte)itemSkill.Ray[2], (byte)itemSkill.Ray[3]));
-                                                        Line line = new Line();
-                                                        line.Opacity = (double)alpha / 255;
-                                                        line.Fill = solidColorBrush;
-                                                        line.Stroke = solidColorBrush;
-                                                        line.StrokeThickness = 3;
-                                                        line.Name = "skillEffectRay" + itemGroupBy.ID + singleAttackNumber;
-                                                        line.X1 = itemGroupBy.NowPosiSkill[singleAttackNumber].X;
-                                                        line.X2 = itemGroupBy.NowPosiSkill[singleAttackNumber].X + (itemSkill.W / 2);
-                                                        line.Y1 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y;
-                                                        line.Y2 = itemGroupBy.NowPosiSkill[singleAttackNumber].Y + (itemSkill.H / 2);
-                                                        line.HorizontalAlignment = HorizontalAlignment.Left;
-                                                        line.VerticalAlignment = VerticalAlignment.Top;
-                                                        re1.Children.Add(line);
-                                                    }
-                                                }));
+                                                //スキル発動スレッド開始
+                                                var t = Task.Run(() =>
+                                                    ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy,
+                                                                                                    itemDefUnitList,
+                                                                                                    itemSkill,
+                                                                                                    classGameStatus,
+                                                                                                    canvasMain,
+                                                                                                    singleAttackNumber,
+                                                                                                    listTargetOfSkill)
+                                                    );
+
+                                                //RushInterval分、間隔を保つ
+                                                if (rushBase > 1)
+                                                {
+                                                    await Task.Delay(itemSkill.RushInterval * 10);
+
+                                                    //次ラッシュの準備
+                                                    singleAttackNumber = r1.Next();
+                                                    itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
+                                                    itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
+
+                                                    calc0 = ClassCalcVec.ReturnVecDistance(
+                                                                    from: itemGroupBy.NowPosiSkill[singleAttackNumber],
+                                                                    to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
+                                                                    );
+                                                    itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
+                                                    itemGroupBy.FlagMovingSkill = true;
+                                                }
                                             }
 
-                                            //スキル発動スレッド開始
-                                            var t = Task.Run(() => ClassStaticBattle.TaskBattleSkillExecuteAsync(itemGroupBy, itemDefUnitList, itemSkill, classGameStatus, canvasMain, singleAttackNumber));
-
-                                            //RushInterval分、間隔を保つ
-                                            if (rushBase > 1)
-                                            {
-                                                await Task.Delay(itemSkill.RushInterval * 10);
-
-                                                //次ラッシュの準備
-                                                singleAttackNumber = r1.Next();
-                                                itemGroupBy.NowPosiSkill.Add(singleAttackNumber, itemGroupBy.GetNowPosiCenter());
-                                                itemGroupBy.OrderPosiSkill.Add(singleAttackNumber, itemDefUnitList.GetNowPosiCenter());
-
-                                                calc0 = ClassCalcVec.ReturnVecDistance(
-                                                                from: itemGroupBy.NowPosiSkill[singleAttackNumber],
-                                                                to: itemGroupBy.OrderPosiSkill[singleAttackNumber]
-                                                                );
-                                                itemGroupBy.VecMoveSkill.Add(singleAttackNumber, ClassCalcVec.ReturnNormalize(calc0));
-                                                itemGroupBy.FlagMovingSkill = true;
-                                            }
+                                            flagAttack = true;
+                                            break;
                                         }
 
-                                        flagAttack = true;
-                                        break;
-                                    }
-
-                                    if (flagAttack == true)
-                                    {
-                                        break;
+                                        if (flagAttack == true)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            catch (Exception)
-                            {
-
+                                catch (InvalidOperationException)
+                                {
+                                    //コレクションの変更（別スレッドで）なら何もしない
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                                if (flagAttack == true)
+                                {
+                                    break;
+                                }
                             }
                             if (flagAttack == true)
                             {
+                                flagAttack = false;
                                 break;
                             }
                         }
-                        if (flagAttack == true)
-                        {
-                            flagAttack = false;
-                            break;
-                        }
                     }
+                }
+                catch (InvalidOperationException)
+                {
+                    //コレクションの変更（別スレッドで）なら何もしない
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
@@ -1565,9 +1562,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     commonWindow.timerAfterFadeIn.Stop();
 
                     //タスクキル
-                    if (classGameStatus.TaskBattleSkill.Item1 != null)
+                    if (classGameStatus.TaskBattleSkill != null)
                     {
-                        classGameStatus.TaskBattleSkill.Item2.Cancel();
+                        foreach (var item in classGameStatus.TaskBattleSkill)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
                     foreach (var item in classGameStatus.TaskBattleMoveAsync)
                     {
@@ -1692,9 +1692,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     commonWindow.timerAfterFadeIn.Stop();
 
                     //タスクキル
-                    if (classGameStatus.TaskBattleSkill.Item1 != null)
+                    if (classGameStatus.TaskBattleSkill != null)
                     {
-                        classGameStatus.TaskBattleSkill.Item2.Cancel();
+                        foreach (var item in classGameStatus.TaskBattleSkill)
+                        {
+                            item.Item2.Cancel();
+                        }
                     }
                     foreach (var item in classGameStatus.TaskBattleMoveAsync)
                     {
@@ -1803,20 +1806,76 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
             {
                 ////スキルスレッド開始
-                //出撃ユニット
+                switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
                 {
-                    var tokenSource = new CancellationTokenSource();
-                    var token = tokenSource.Token;
-                    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
-                    commonWindow.ClassGameStatus.TaskBattleSkill = a;
+                    case BattleWhichIsThePlayer.Sortie:
+
+                        //出撃ユニット
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
+                        ////防衛ユニット
+                        //{
+                        //    var tokenSource = new CancellationTokenSource();
+                        //    var token = tokenSource.Token;
+                        //    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
+                        //    commonWindow.ClassGameStatus.TaskBattleSkillDef = a;
+                        //}
+
+                        break;
+                    case BattleWhichIsThePlayer.Def:
+                        //出撃ユニット
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
+                        break;
+                    case BattleWhichIsThePlayer.None:
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                ////防衛ユニット
-                //{
-                //    var tokenSource = new CancellationTokenSource();
-                //    var token = tokenSource.Token;
-                //    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
-                //    commonWindow.ClassGameStatus.TaskBattleSkillDef = a;
-                //}
             }
             ////移動スレッド開始
             switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
@@ -1848,9 +1907,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => 
-                                ClassStaticBattle.TaskBattleMoveAIAsync(token, 
-                                                                        commonWindow.ClassGameStatus, 
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                        commonWindow.ClassGameStatus,
                                                                         commonWindow,
                                                                         listTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup
                                                                         )
@@ -1886,9 +1945,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
-                            (Task, CancellationTokenSource) a = new(Task.Run(() => 
-                                ClassStaticBattle.TaskBattleMoveAIAsync(token, 
-                                                                        commonWindow.ClassGameStatus, 
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                        commonWindow.ClassGameStatus,
                                                                         commonWindow,
                                                                         listTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
                                 ), tokenSource);

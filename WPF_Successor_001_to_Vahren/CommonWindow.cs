@@ -388,9 +388,12 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
-            if (this.ClassGameStatus.TaskBattleSkill.Item1 != null)
+            if (this.ClassGameStatus.TaskBattleSkill != null)
             {
-                this.ClassGameStatus.TaskBattleSkill.Item2.Cancel();
+                foreach (var item in this.ClassGameStatus.TaskBattleSkill)
+                {
+                    item.Item2.Cancel();
+                }
             }
             if (this.ClassGameStatus.TaskBattleSkillDef.Item1 != null)
             {

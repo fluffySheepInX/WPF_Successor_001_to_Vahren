@@ -309,7 +309,7 @@ NewFormatUnit YaibaDagest
 	initMember = "DragoonFrancesca*7";
 
 	formation = "1";
-	skill = "gun01";
+	skill = "gunLaphroaig";
 
 	level = "3";
 	level_max = "100";
@@ -363,7 +363,7 @@ NewFormatUnit Gagot
 	initMember = "DragoonFrancesca*7";
 
 	formation = "1";
-	skill = "gun01";
+	skill = "gunLaphroaig";
 
 	level = "3";
 	level_max = "100";

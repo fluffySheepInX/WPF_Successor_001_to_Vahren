@@ -239,8 +239,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region TaskBattleSkill
-        private (Task, CancellationTokenSource) taskBattleSkill;
-        public (Task, CancellationTokenSource) TaskBattleSkill
+        private List<(Task, CancellationTokenSource)> taskBattleSkill = new List<(Task, CancellationTokenSource)>();
+        public List<(Task, CancellationTokenSource)> TaskBattleSkill
         {
             get { return taskBattleSkill; }
             set { taskBattleSkill = value; }
