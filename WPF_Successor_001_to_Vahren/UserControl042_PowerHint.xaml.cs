@@ -377,8 +377,7 @@ namespace WPF_Successor_001_to_Vahren
                 Canvas.SetZIndex(this, maxZ + 1);
             }
 
-            // 面倒なので表示する際のアニメーションは省略する
-            // 将来的には追加してもいい、引数でアニメの on/off 指定とか
+            // 画面の左下隅に配置する
             double offsetLeft = 0, offsetTop = 0;
             if (mainWindow.canvasUI.Margin.Left < 0)
             {
@@ -388,7 +387,6 @@ namespace WPF_Successor_001_to_Vahren
             {
                 offsetTop = mainWindow.canvasUI.Margin.Top * -1;
             }
-            // 画面の左下隅に配置する
             this.Margin = new Thickness()
             {
                 Left = offsetLeft,

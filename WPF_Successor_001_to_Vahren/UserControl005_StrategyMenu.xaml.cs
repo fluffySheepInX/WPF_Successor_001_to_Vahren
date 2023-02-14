@@ -320,7 +320,7 @@ namespace WPF_Successor_001_to_Vahren
         //5.turn_ResumeAI : AI思考を再開する
         //6.turn_FinishAI : AI思考を終了する ⇒1に戻ってループする
         //全ての勢力のAI思考が終われば
-        //7.turn_StartTurn : 次のターンの開始処理
+        // turn_StartTurn : 次のターンの開始処理
         //基本はこの流れで進行する
 
         // ターン経過処理用（アクセスしやすいよう MainWindow の public にしてもいいかも？）
