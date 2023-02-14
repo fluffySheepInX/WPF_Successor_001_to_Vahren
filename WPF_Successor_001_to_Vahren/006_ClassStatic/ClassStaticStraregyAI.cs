@@ -49,34 +49,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         {
             if (classGameStatus == null) return false;
 
-            // この処理はCOM手順の最後に行うこと（プレイヤーと同じく手順終了時にお金が増減するはず）
-            /*
-            //お金増やす
-            {
-                var listSpotMoney = classGameStatus.NowListSpot
-                                .Where(x => x.PowerNameTag == classPower.NameTag);
-                int countMoney = 0;
-                int addMoney = 0; // 維持費と財政値による増減
-                foreach (var itemSpot in listSpotMoney)
-                {
-                    countMoney += itemSpot.Gain;
-                    foreach (var itemTroop in itemSpot.UnitGroup)
-                    {
-                        foreach (var itemUnit in itemTroop.ListClassUnit)
-                        {
-                            // 維持費の分だけ減らして、財政値の分だけ増やす
-                            addMoney -= itemUnit.Cost;
-                            addMoney += itemUnit.Finance;
-                        }
-                    }
-                }
-                countMoney *= (int)(classGameStatus.ClassContext.GainPer * 0.01);
-                countMoney += addMoney;
-
-                classPower.Money += countMoney;
-            }
-            */
-
             ////状態によって隣国へ攻め入る
             ///状態をチェック
             switch (classPower.Fix)
@@ -937,14 +909,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }));
         }
 
-        // 戦闘終了後に、徴兵など次ターンの準備する
-        // この処理はまだ作ってない
-        /*
-        public static void AfterBattle(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
+        // 戦闘終了後に徴兵・再配置・別の戦闘などを行う
+        // COM勢力の戦闘処理に続ける場合は true を返すこと
+        public static bool AfterBattle(ClassGameStatus classGameStatus, ClassPower classPower, MainWindow mainWindow)
         {
-        
+            // 今は何もしないで終わる
+            return false;
         }
-        */
 
     }
 }
