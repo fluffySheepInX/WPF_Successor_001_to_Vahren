@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF_Successor_001_to_Vahren"
              mc:Ignorable="d" 
-             Width="432" Height="432">
+             Width="432" Height="382">
     <Grid IsHitTestVisible="False" UseLayoutRounding="True">
         <Grid>
             <Rectangle Margin="0,8" Width="8" HorizontalAlignment="Right" Name="rectShadowRight" Fill="Black" Opacity="0.5" />
@@ -64,9 +64,9 @@
             </StackPanel>
             <TextBlock Canvas.Left="290" Canvas.Top="210" FontSize="19" Foreground="#ffc800" Text="兵レベル +99" Name="txtBaseLevel" />
 
-            <Grid Canvas.Top="250" Width="400" Height="150" Background="Green">
+            <Grid Canvas.Top="250" Width="400" Height="90">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="White"
-                        TextWrapping="Wrap" LineHeight="30" Name="txtStatus"
+                        TextWrapping="Wrap" LineHeight="30" MaxWidth="390" Name="txtStatus"
                         Text="下部の中央に状態テキスト&#10;改行もできる" />
             </Grid>
 

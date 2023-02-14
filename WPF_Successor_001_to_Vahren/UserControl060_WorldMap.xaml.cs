@@ -1117,12 +1117,35 @@ namespace WPF_Successor_001_to_Vahren
 
             // 勢力のヒントを表示する
             // ヴァーレントゥーガだとプレイヤー担当勢力は表示しないけど、どうする？
-            if (classPower != mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower)
+            var currentPower = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower;
+            if (classPower != currentPower)
             {
                 var itemWindow = new UserControl042_PowerHint();
                 itemWindow.Name = StringName.windowPowerHint;
                 itemWindow.SetPower(classPower, true);
-                itemWindow.SetPos();
+                if (currentPower.NameTag != string.Empty)
+                {
+                    // 外交関係を調べる
+                    int intDiplo = 50; // 設定が無い場合の標準値を 50 にする
+                    foreach (var item in mainWindow.ClassGameStatus.NowClassDiplomacy.Diplo)
+                    {
+                        if (currentPower.NameTag == item.Item1 && item.Item2 == classPower.NameTag)
+                        {
+                            intDiplo = item.Item3;
+                            continue;
+                        }
+                        if (currentPower.NameTag == item.Item2 && item.Item1 == classPower.NameTag)
+                        {
+                            intDiplo = item.Item3;
+                            continue;
+                        }
+                    }
+                    //itemWindow.SetText("現在の勢力は" + currentPower.Name + "\n対象の勢力は" + classPower.Name + "\n友好度 = " + intDiplo.ToString());
+                    itemWindow.SetText("友好度 = " + intDiplo.ToString());
+                    // 将来的には数値ではなく、「友邦」とか「敵対」のような文字で表現すること。
+                    // 同盟中なら、同盟期間も表示すればいい。
+                }
+                itemWindow.SetPosAnime();
                 mainWindow.canvasUI.Children.Add(itemWindow);
             }
 
@@ -1191,7 +1214,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if (itemWindow.Name == StringName.windowPowerHint)
                 {
-                    mainWindow.canvasUI.Children.Remove(itemWindow);
+                    itemWindow.Remove();
                     break;
                 }
             }

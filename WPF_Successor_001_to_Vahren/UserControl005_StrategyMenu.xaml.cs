@@ -313,12 +313,14 @@ namespace WPF_Successor_001_to_Vahren
         #region COM思考関係
 
         //ターン終了ボタンを押下する⇒btnTurnEnd_Clickイベント実行
-        //1.turn_SelectAI
-        //2.turn_StartAI
-        //3.turn_BattleAI
-        //4.turn_WaitAI
-        //5.turn_FinishAI
-        //6.turn_StartTurn
+        //1.turn_SelectAI : AI思考する勢力を選ぶ
+        //2.turn_StartAI  : AI思考を開始する
+        //3.turn_BattleAI : AI戦闘を開始する
+        //4.turn_WaitAI   : AI戦闘の終了を待つ
+        //5.turn_ResumeAI : AI思考を再開する
+        //6.turn_FinishAI : AI思考を終了する ⇒1に戻ってループする
+        //全ての勢力のAI思考が終われば
+        // turn_StartTurn : 次のターンの開始処理
         //基本はこの流れで進行する
 
         // ターン経過処理用（アクセスしやすいよう MainWindow の public にしてもいいかも？）
@@ -334,10 +336,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if (itemWindow.Name == StringName.windowPowerHint)
                 {
-                    if (_nowPower != null)
-                    {
-                        itemWindow.SetPower(_nowPower, false);
-                    }
+                    itemWindow.SetPower(_nowPower, false);
                     itemWindow.SetPos();
                     itemWindow.SetText(strStatus);
                     boolFound = true;
@@ -348,10 +347,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var itemWindow = new UserControl042_PowerHint();
                 itemWindow.Name = StringName.windowPowerHint;
-                if (_nowPower != null)
-                {
-                    itemWindow.SetPower(_nowPower, false);
-                }
+                itemWindow.SetPower(_nowPower, false);
                 itemWindow.SetPos();
                 itemWindow.SetText(strStatus);
                 mainWindow.canvasUI.Children.Add(itemWindow);
@@ -455,16 +451,12 @@ namespace WPF_Successor_001_to_Vahren
             _timerTurn.Tick -= new EventHandler(turn_StartAI);
             _timerTurn.Stop();
 
-            if (_nowPower == null)
+            bool boolBattle = false;
+            if (_nowPower != null)
             {
-                ShowProgress(mainWindow, "手順の終了処理・・・");
-                _timerTurn.Tick += new EventHandler(turn_FinishAI);
-                _timerTurn.Start();
-                return;
+                // AI思考を実行する
+                boolBattle = ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, _nowPower, mainWindow);
             }
-
-            // AI思考を実行する
-            bool boolBattle = ClassStaticStraregyAI.ThinkingEasy(mainWindow.ClassGameStatus, _nowPower, mainWindow);
             if (boolBattle)
             {
                 ShowProgress(mainWindow, "戦闘開始・・・");
@@ -531,11 +523,50 @@ namespace WPF_Successor_001_to_Vahren
             // 戦闘してなければ、終了処理を行う
             _timerTurn.Tick -= new EventHandler(turn_WaitAI);
 
-            // 戦闘終了後に、徴兵など次ターンの準備する？
-            // その場合は、もう一つステップを増やすこと
-            ShowProgress(mainWindow, "手順の終了処理・・・");
-            _timerTurn.Tick += new EventHandler(turn_FinishAI);
+            // 戦闘終了後にAI思考を続行する
+            ShowProgress(mainWindow, "戦闘後の処理・・・");
+            _timerTurn.Tick += new EventHandler(turn_ResumeAI);
             _timerTurn.Start();
+        }
+
+        // 戦闘後に AI思考を再開する
+        private void turn_ResumeAI(object? sender, EventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            // ゲーム画面が最前面かどうか調べて、背面になってれば何もせずに終わる
+            // バックグラウンドでも動くようにしたい場合は、続行すればいい。
+            if (mainWindow.IsActive == false)
+            {
+                return;
+            }
+
+            // 連続実行されないよう、自身を取り除いて、タイマーを止める
+            _timerTurn.Tick -= new EventHandler(turn_ResumeAI);
+            _timerTurn.Stop();
+
+            bool boolBattle = false;
+            if (_nowPower != null)
+            {
+                // 戦闘終了後に徴兵・再配置・別の戦闘などを行う
+                boolBattle = ClassStaticStraregyAI.AfterBattle(mainWindow.ClassGameStatus, _nowPower, mainWindow);
+            }
+            if (boolBattle)
+            {
+                ShowProgress(mainWindow, "戦闘開始・・・");
+                _timerTurn.Tick += new EventHandler(turn_BattleAI);
+                _timerTurn.Start();
+            }
+            else
+            {
+                // 戦闘しないなら、終了処理を行う
+                ShowProgress(mainWindow, "手順の終了処理・・・");
+                _timerTurn.Tick += new EventHandler(turn_FinishAI);
+                _timerTurn.Start();
+            }
         }
 
         // AI思考を終える
@@ -557,15 +588,11 @@ namespace WPF_Successor_001_to_Vahren
             _timerTurn.Tick -= new EventHandler(turn_FinishAI);
             _timerTurn.Stop();
 
-            if (_nowPower == null)
+            if (_nowPower != null)
             {
-                _timerTurn.Tick += new EventHandler(turn_SelectAI);
-                _timerTurn.Start();
-                return;
+                // COM勢力のターン終了処理（資金の増減や終了時イベントなど）
+                ClassStaticStraregyAI.ThinkingEnd(mainWindow.ClassGameStatus, _nowPower, mainWindow);
             }
-
-            // COM勢力のターン終了処理（資金の増減や終了時イベントなど）
-            ClassStaticStraregyAI.ThinkingEnd(mainWindow.ClassGameStatus, _nowPower, mainWindow);
 
             // 次の勢力へ移る
             _timerTurn.Tick += new EventHandler(turn_SelectAI);
