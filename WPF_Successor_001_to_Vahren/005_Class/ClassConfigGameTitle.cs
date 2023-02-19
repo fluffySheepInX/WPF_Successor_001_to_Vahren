@@ -13,6 +13,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             DirectoryGameTitle = new List<DirectoryInfo>();
         }
 
+        //なぜこれらがここにあるかが不明
         #region WindowSelectionPowerLeftTop
         private Point _windowSelectionPowerLeftTop = new Point() { X = 600, Y = 500 };
         public Point WindowSelectionPowerLeftTop

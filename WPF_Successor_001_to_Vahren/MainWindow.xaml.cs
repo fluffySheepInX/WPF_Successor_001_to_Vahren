@@ -14,6 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Serialization;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
@@ -83,8 +84,6 @@ namespace WPF_Successor_001_to_Vahren
         private readonly string _pathConfigFile
             = System.IO.Path.Combine(Environment.CurrentDirectory, "configFile.xml");
 
-        private ClassConfigGameTitle _classConfigGameTitle = new ClassConfigGameTitle();
-
         #endregion
 
         #region PublicField
@@ -111,6 +110,39 @@ namespace WPF_Successor_001_to_Vahren
         {
             InitializeComponent();
             ReadFileOrderDocument();
+
+            // xml存在確認
+            string fileName = this._pathConfigFile;
+            if (File.Exists(fileName) == false)
+            {
+                // 無ければ作る(初期データ作成)
+                ClassConfigCommon config = new ClassConfigCommon();
+                XmlSerializer serializer = new XmlSerializer(config.GetType());
+                using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                    serializer.Serialize(fs, config);
+                using (FileStream fs = new FileStream(fileName, FileMode.Open))
+                {
+                    var aaaa = serializer.Deserialize(fs);
+                    if (aaaa != null)
+                    {
+                        this.ClassConfigCommon = (ClassConfigCommon)(aaaa);
+                    }
+                }
+            }
+            else
+            {
+                // 有れば読み込む
+                this.ClassConfigCommon = new ClassConfigCommon();
+                XmlSerializer serializer = new XmlSerializer(this.ClassConfigCommon.GetType());
+                using (FileStream fs = new FileStream(fileName, FileMode.Open))
+                {
+                    var aaaa = serializer.Deserialize(fs);
+                    if (aaaa != null)
+                    {
+                        this.ClassConfigCommon = (ClassConfigCommon)(aaaa);
+                    }
+                }
+            }
 
             //context読み込み
             //コンストラクタでNowNumberGameTitleは設定されている筈
@@ -1153,34 +1185,6 @@ namespace WPF_Successor_001_to_Vahren
         /// </summary>
         public void MainWindowContentRendered()
         {
-            //// xml存在確認
-            //string fileName = this._pathConfigFile;
-            //if (File.Exists(fileName) == false)
-            //{
-            //    // 無ければ作る(初期データ作成)
-            //    Config config = new Config();
-            //    {
-            //        var props = typeof(Config).GetProperties().Where(p => p.Name.StartsWith("ClearDay"));
-            //        foreach (var p in props)
-            //        {
-            //            p.SetValue(config, false);
-            //        }
-            //    }
-            //    XmlSerializer serializer = new XmlSerializer(config.GetType());
-            //    using (FileStream fs = new FileStream(fileName, FileMode.Create))
-            //        serializer.Serialize(fs, config);
-            //    using (FileStream fs = new FileStream(fileName, FileMode.Open))
-            //        this.config = (Config)serializer.Deserialize(fs);
-            //}
-            //else
-            //{
-            //    // 有れば読み込む
-            //    this.config = new Config();
-            //    XmlSerializer serializer = new XmlSerializer(this.config.GetType());
-            //    using (FileStream fs = new FileStream(fileName, FileMode.Open))
-            //        this.config = (Config)serializer.Deserialize(fs);
-            //}
-
             SetWindowTitle(targetNumber: 0);
         }
 

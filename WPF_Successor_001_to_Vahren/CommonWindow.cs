@@ -75,6 +75,14 @@ namespace WPF_Successor_001_to_Vahren
             set { _classConfigGameTitle = value; }
         }
         #endregion
+        #region ClassConfigCommon
+        private ClassConfigCommon classConfigCommon = new ClassConfigCommon();
+        public ClassConfigCommon ClassConfigCommon
+        {
+            get { return classConfigCommon; }
+            set { classConfigCommon = value; }
+        }
+        #endregion
         #region Dir001_Warehouse
         /// <summary>
         /// ゲームデータを格納するフォルダ名

@@ -918,6 +918,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 case _010_Enum.FlagPowerFix.on:
                     break;
                 case _010_Enum.FlagPowerFix.off:
+
+                    //やらない
+
                     break;
                 case _010_Enum.FlagPowerFix.home:
 
@@ -1255,6 +1258,9 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     break;
                 case _010_Enum.FlagPowerFix.hold:
+
+                    //やらない
+
                     break;
                 case _010_Enum.FlagPowerFix.warlike:
                     break;
