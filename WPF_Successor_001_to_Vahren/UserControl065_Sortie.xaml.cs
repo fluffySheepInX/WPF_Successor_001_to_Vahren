@@ -828,11 +828,21 @@ namespace WPF_Successor_001_to_Vahren
                     mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Add(itemTroop);
                 }
 
-                mainWindow.FadeOut = true;
+                mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.Sortie;
+
+                if (mainWindow.ClassConfigCommon.LookOtherLandBattle == false
+                    && mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+                {
+
+                }
+                else
+                {
+                    mainWindow.FadeOut = true;
+                    mainWindow.FadeIn = true;
+                }
 
                 mainWindow.delegateBattleMap = mainWindow.SetBattleMap;
 
-                mainWindow.FadeIn = true;
 
                 mainWindow.IsBattle = true;
             }

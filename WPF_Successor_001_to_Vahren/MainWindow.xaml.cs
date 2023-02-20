@@ -1370,13 +1370,22 @@ namespace WPF_Successor_001_to_Vahren
                     }
                 }
 
-                this.canvasMain.Children.Add(
-                    SetAndGetCanvasBattleBack(canvas,
+                var aaaa = SetAndGetCanvasBattleBack(canvas,
                                         this._sizeClientWinWidth,
                                         this._sizeClientWinHeight,
                                         this.CanvasMainWidth,
-                                        this.CanvasMainHeight)
-                    );
+                                        this.CanvasMainHeight);
+                if (ClassConfigCommon.LookOtherLandBattle == false 
+                    && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+                {
+                    Canvas.SetZIndex(aaaa, -99);
+                }
+                else
+                {
+                    Canvas.SetZIndex(aaaa, 99);
+                }
+
+                this.canvasMain.Children.Add(aaaa);
             }
 
             ////出撃ユニット
@@ -1960,37 +1969,46 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             //ウィンドウ
+            if (ClassConfigCommon.LookOtherLandBattle == false
+                && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
             {
-                Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
-                Frame frame = new Frame();
-                frame.Source = uri;
-                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 310 - 60, 0, 0);
-                frame.Name = StringName.windowBattleCommand;
-                Canvas.SetZIndex(frame, 99);
-                this.canvasMain.Children.Add(frame);
+
             }
+            else
             {
-                Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
-                Frame frame = new Frame();
-                frame.Source = uri;
-                frame.Margin = new Thickness(0, this._sizeClientWinHeight - 120, 0, 0);
-                frame.Name = StringName.windowBattleCommand;
-                Canvas.SetZIndex(frame, 99);
-                this.canvasMain.Children.Add(frame);
-            }
-            {
-                if (this.ClassGameStatus.IsDebugBattle == true)
                 {
-                    Button button = new Button();
-                    button.Content = "プレイヤー強制勝利";
-                    button.Height = 45;
-                    button.Width = 90;
-                    button.Margin = new Thickness(0, 0, 0, 0);
-                    button.Click += btnDebugWin_Click;
-                    Canvas.SetZIndex(button, 99);
-                    this.canvasMain.Children.Add(button);
+                    Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
+                    Frame frame = new Frame();
+                    frame.Source = uri;
+                    frame.Margin = new Thickness(0, this._sizeClientWinHeight - 310 - 60, 0, 0);
+                    frame.Name = StringName.windowBattleCommand;
+                    Canvas.SetZIndex(frame, 99);
+                    this.canvasMain.Children.Add(frame);
+                }
+                {
+                    Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
+                    Frame frame = new Frame();
+                    frame.Source = uri;
+                    frame.Margin = new Thickness(0, this._sizeClientWinHeight - 120, 0, 0);
+                    frame.Name = StringName.windowBattleCommand;
+                    Canvas.SetZIndex(frame, 99);
+                    this.canvasMain.Children.Add(frame);
+                }
+                {
+                    if (this.ClassGameStatus.IsDebugBattle == true)
+                    {
+                        Button button = new Button();
+                        button.Content = "プレイヤー強制勝利";
+                        button.Height = 45;
+                        button.Width = 90;
+                        button.Margin = new Thickness(0, 0, 0, 0);
+                        button.Click += btnDebugWin_Click;
+                        Canvas.SetZIndex(button, 99);
+                        this.canvasMain.Children.Add(button);
+                    }
                 }
             }
+
             Application.Current.Properties["window"] = this;
 
             timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);

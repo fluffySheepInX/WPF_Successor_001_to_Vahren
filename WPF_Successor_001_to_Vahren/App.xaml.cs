@@ -79,7 +79,7 @@ namespace WPF_Successor_001_to_Vahren
 
                         //ファイル毎に繰り返し
                         List<ClassTestBattle> classTestBattle = new List<ClassTestBattle>();
-                        ClassGameStatus classGameStatus = new ClassGameStatus();
+                        ClassGameStatus classGameStatus = new ClassGameStatus(new ClassConfigCommon());
 
                         foreach (var item in files)
                         {

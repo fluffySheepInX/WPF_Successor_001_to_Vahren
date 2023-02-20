@@ -20,7 +20,7 @@ namespace WPF_Successor_001_to_Vahren._030_Evaluator
         public BooleanObject True = new BooleanObject(true);
         public BooleanObject False = new BooleanObject(false);
         public NullObject Null = new NullObject();
-        public ClassGameStatus ClassGameStatus { get; set; } = new ClassGameStatus();
+        public ClassGameStatus ClassGameStatus { get; set; } = new ClassGameStatus(new ClassConfigCommon());
 
         public IObject? Eval(INode? node, Enviroment enviroment)
         {

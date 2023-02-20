@@ -210,14 +210,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                 {
                                     targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
-                                    targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                    targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
-                                    classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
-                                    if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
-                                        == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                    while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                        && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                     {
-                                        counterUnitGroup++;
+                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                     }
+
+                                    counterUnitGroup++;
                                 }
                             }
                             else
@@ -250,14 +252,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                     {
                                         targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
-                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
-                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
-                                        if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
-                                            == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                        while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                            && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                            != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                         {
-                                            counterUnitGroup++;
+                                            targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                            targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                            classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                         }
+
+                                        counterUnitGroup++;
                                     }
                                 }
 
@@ -373,14 +377,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                 {
                                     targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
-                                    targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                    targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
-                                    classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
-                                    if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
-                                        == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                    while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                        && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                     {
-                                        counterUnitGroup++;
+                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                     }
+
+                                    counterUnitGroup++;
                                 }
                             }
 
@@ -542,12 +548,13 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             item.FlagDisplay = false;
                         }
 
-                        //防衛ユニット設定
+                        //他国都市の最初の一つを取得
                         var defSpot = spotOtherLand.Where(x => x.NameTag == intersect).FirstOrDefault();
                         if (defSpot == null)
                         {
                             break;
                         }
+                        //防衛ユニット設定
                         foreach (var item in defSpot.UnitGroup)
                         {
                             if (mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Count()
@@ -561,7 +568,25 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
 
-                        mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.None;
+                        // 攻め込む都市がプレイヤー都市かどうかチェック
+                        {
+                            var getPo = classGameStatus.NowListPower.Where(x => x.NameTag == defSpot.PowerNameTag).FirstOrDefault();
+                            if (getPo == null)
+                            {
+                                mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.None;
+                            }
+                            else
+                            {
+                                if (getPo.NameTag == classGameStatus.SelectionPowerAndCity.ClassPower.NameTag)
+                                {
+                                    mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.Def;
+                                }
+                                else
+                                {
+                                    mainWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer = _010_Enum.BattleWhichIsThePlayer.None;
+                                }
+                            }
+                        }
 
                         //map設定
                         var extractMap = mainWindow
@@ -762,14 +787,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                 {
                                     targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
-                                    targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                    targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
-                                    classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
-                                    if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
-                                        == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                    while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                        && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                     {
-                                        counterUnitGroup++;
+                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                     }
+
+                                    counterUnitGroup++;
                                 }
                             }
                             else
@@ -1242,14 +1269,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                 {
                                     targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
-                                    targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                    targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
-                                    classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
-                                    if (targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
-                                        == classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
+                                    while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
+                                        && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                     {
-                                        counterUnitGroup++;
+                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                     }
+                                    counterUnitGroup++;
                                 }
                             }
 

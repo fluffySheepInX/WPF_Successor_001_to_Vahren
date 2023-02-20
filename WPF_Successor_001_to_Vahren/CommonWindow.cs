@@ -56,8 +56,16 @@ namespace WPF_Successor_001_to_Vahren
             }
         }
         #endregion
+        #region ClassConfigCommon
+        private ClassConfigCommon classConfigCommon = new ClassConfigCommon();
+        public ClassConfigCommon ClassConfigCommon
+        {
+            get { return classConfigCommon; }
+            set { classConfigCommon = value; }
+        }
+        #endregion
         #region ClassGameStatus
-        private ClassGameStatus _classGameStatus = new ClassGameStatus();
+        private ClassGameStatus _classGameStatus = new ClassGameStatus(new ClassConfigCommon());
         public ClassGameStatus ClassGameStatus
         {
             get { return _classGameStatus; }
@@ -73,14 +81,6 @@ namespace WPF_Successor_001_to_Vahren
                 return _classConfigGameTitle;
             }
             set { _classConfigGameTitle = value; }
-        }
-        #endregion
-        #region ClassConfigCommon
-        private ClassConfigCommon classConfigCommon = new ClassConfigCommon();
-        public ClassConfigCommon ClassConfigCommon
-        {
-            get { return classConfigCommon; }
-            set { classConfigCommon = value; }
         }
         #endregion
         #region Dir001_Warehouse

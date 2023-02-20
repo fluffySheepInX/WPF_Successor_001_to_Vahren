@@ -8,6 +8,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassGameStatus
     {
+        public ClassConfigCommon classConfigCommon { get; set; }
+        public ClassGameStatus(ClassConfigCommon classConfigCommon)
+        {
+            this.classConfigCommon = classConfigCommon;
+        }
+
         #region NowSituation
         private _010_Enum.Situation _nowSituation = _010_Enum.Situation.Title;
         public _010_Enum.Situation NowSituation
@@ -29,9 +35,9 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         public long IDCount
         {
             get { return iDCount; }
-            set 
-            { 
-                iDCount = value; 
+            set
+            {
+                iDCount = value;
             }
         }
         #endregion
@@ -67,7 +73,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region GridCityWidthAndHeight
-        private Point _gridCityWidthAndHeight = new Point(100,100);
+        private Point _gridCityWidthAndHeight = new Point(100, 100);
         public Point GridCityWidthAndHeight
         {
             get { return _gridCityWidthAndHeight; }
@@ -282,7 +288,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 
         #region AiRoot
         private Dictionary<long, List<Point>> aiRoot = new Dictionary<long, List<Point>>();
-        public Dictionary<long,List<Point>> AiRoot
+        public Dictionary<long, List<Point>> AiRoot
         {
             get { return aiRoot; }
             set { aiRoot = value; }
@@ -299,10 +305,24 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         }
         #endregion
         #region NumberSleep
+        /// <summary>
+        /// 33.3333333333
+        /// </summary>
         private int numberSleep = (int)(Math.Floor(((double)1 / 30) * 1000));
         public int NumberSleep
         {
-            get { return numberSleep; }
+            get 
+            {
+                if (classConfigCommon.LookOtherLandBattle == false 
+                    && this.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return numberSleep;
+                }
+            }
             set { numberSleep = value; }
         }
         #endregion

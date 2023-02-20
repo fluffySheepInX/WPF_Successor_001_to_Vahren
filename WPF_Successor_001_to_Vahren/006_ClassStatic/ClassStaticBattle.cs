@@ -1585,11 +1585,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
 
                     //画面戻る
-                    commonWindow.FadeOut = true;
+                    if (commonWindow.ClassConfigCommon.LookOtherLandBattle == false
+                        && commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+                    {
+
+                    }
+                    else
+                    {
+                        commonWindow.FadeOut = true;
+                        commonWindow.FadeIn = true;
+                    }
 
                     commonWindow.delegateMapRenderedFromBattle = action;
-
-                    commonWindow.FadeIn = true;
 
                     //部隊所属領地変更
                     {
@@ -1715,11 +1722,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
 
                     //画面戻る
-                    commonWindow.FadeOut = true;
+                    if (commonWindow.ClassConfigCommon.LookOtherLandBattle == false
+                        && commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+                    {
+
+                    }
+                    else
+                    {
+                        commonWindow.FadeOut = true;
+                        commonWindow.FadeIn = true;
+                    }
 
                     commonWindow.delegateMapRenderedFromBattle = action;
-
-                    commonWindow.FadeIn = true;
 
                     //片付け
                     classGameStatus.ClassBattle.SortieUnitGroup.Clear();
@@ -1752,7 +1766,254 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             commonWindow.AfterFadeIn = false;
             commonWindow.timerAfterFadeIn.Stop();
 
-            Thread.Sleep(100);
+            if (commonWindow.ClassConfigCommon.LookOtherLandBattle == false
+                && commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.None)
+            {
+                //AI同士の戦いはスレッドだけ実行
+
+                //開戦スレッド実行
+                commonWindow.timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
+                commonWindow.timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
+                commonWindow.timerAfterFadeIn.Tick -= (x, s) =>
+                {
+                    TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvasMain, actionMapRenderedFromBattle);
+                    ClassStaticCommonMethod.KeepInterval(commonWindow.timerAfterFadeIn);
+                };
+                commonWindow.timerAfterFadeIn.Tick += (x, s) =>
+                {
+                    ClassStaticBattle.TimerAction60FPSBattle(commonWindow, commonWindow.ClassGameStatus, actionMapRenderedFromBattle);
+                    ClassStaticCommonMethod.KeepInterval(commonWindow.timerAfterFadeIn);
+                };
+                commonWindow.timerAfterFadeIn.Start();
+
+                Application.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;
+
+                for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                {
+                    ////スキルスレッド開始
+                    switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+                    {
+                        case BattleWhichIsThePlayer.Sortie:
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            break;
+                        case BattleWhichIsThePlayer.Def:
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            break;
+                        case BattleWhichIsThePlayer.None:
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleSkill(token,
+                                                                        canvasMain,
+                                                                        commonWindow.ClassGameStatus,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                        commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ////移動スレッド開始
+                switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+                {
+                    case BattleWhichIsThePlayer.Sortie:
+                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        {
+                            //出撃ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                            }
+                            //防衛(AI)ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            canvasMain,
+                                                                            listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                            listEnemy: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            listTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup
+                                                                            )
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                        }
+                        break;
+                    case BattleWhichIsThePlayer.Def:
+                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        {
+                            //出撃(AI)ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            canvasMain,
+                                                                            listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                            listEnemy: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                            }
+                            //防衛ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleMoveAsync(token, commonWindow.ClassGameStatus, commonWindow)), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            listTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                        }
+                        break;
+                    case BattleWhichIsThePlayer.None:
+                        for (int i = 0; i < commonWindow.ClassGameStatus.BattleThread; i++)
+                        {
+                            //出撃(AI)ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            canvasMain,
+                                                                            listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                            listEnemy: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            listTarget: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveAsync.Add(a);
+                            }
+                            //防衛(AI)ユニット
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAStar(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            canvasMain,
+                                                                            listMoveTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                            listEnemy: commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                            {
+                                var tokenSource = new CancellationTokenSource();
+                                var token = tokenSource.Token;
+                                (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                    ClassStaticBattle.TaskBattleMoveAIAsync(token,
+                                                                            commonWindow.ClassGameStatus,
+                                                                            commonWindow,
+                                                                            listTarget: commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                    ), tokenSource);
+                                commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Add(a);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                return;
+            }
 
             //自軍へ視点移動
             bool flag1 = true;
@@ -1809,8 +2070,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 switch (commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
                 {
                     case BattleWhichIsThePlayer.Sortie:
-
-                        //出撃ユニット
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
@@ -1823,17 +2082,32 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 ), tokenSource);
                             commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
                         }
-                        ////防衛ユニット
-                        //{
-                        //    var tokenSource = new CancellationTokenSource();
-                        //    var token = tokenSource.Token;
-                        //    (Task, CancellationTokenSource) a = new(Task.Run(() => ClassStaticBattle.TaskBattleSkill(token, canvasMain, commonWindow.ClassGameStatus)), tokenSource);
-                        //    commonWindow.ClassGameStatus.TaskBattleSkillDef = a;
-                        //}
-
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
                         break;
                     case BattleWhichIsThePlayer.Def:
-                        //出撃ユニット
+                        {
+                            var tokenSource = new CancellationTokenSource();
+                            var token = tokenSource.Token;
+                            (Task, CancellationTokenSource) a = new(Task.Run(() =>
+                                ClassStaticBattle.TaskBattleSkill(token,
+                                                                    canvasMain,
+                                                                    commonWindow.ClassGameStatus,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.SortieUnitGroup,
+                                                                    commonWindow.ClassGameStatus.ClassBattle.DefUnitGroup)
+                                ), tokenSource);
+                            commonWindow.ClassGameStatus.TaskBattleSkill.Add(a);
+                        }
                         {
                             var tokenSource = new CancellationTokenSource();
                             var token = tokenSource.Token;
@@ -2026,6 +2300,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         /// <param name="canvas"></param>
         public static void SetTimerBattle(bool test, DispatcherTimer timerAfterFadeIn, CommonWindow commonWindow, Canvas canvas)
         {
+            //共通化する際にこのメソッドを使う
+
             timerAfterFadeIn = new DispatcherTimer(DispatcherPriority.Background);
             timerAfterFadeIn.Interval = TimeSpan.FromSeconds((double)1 / 60);
             if (test == true)
