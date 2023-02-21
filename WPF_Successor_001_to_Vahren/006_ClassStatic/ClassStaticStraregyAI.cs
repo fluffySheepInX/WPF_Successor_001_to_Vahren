@@ -918,16 +918,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot
+                                var abc = classGameStatus.NowListSpot
                                             .Where(x => x.NameTag == itemListLinkSpot.Item2
                                                     && x.PowerNameTag != classPower.NameTag)
                                             .FirstOrDefault();
-                                if (ch == null)
+                                if (abc == null)
                                 {
                                     continue;
                                 }
                                 //リストへ格納
-                                spotOtherLand.Add(ch);
+                                spotOtherLand.Add(abc);
                                 continue;
                             }
                             //自国領土かチェック
@@ -935,16 +935,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 ////リンクしている領土が他国の領土かチェック
                                 //リンクしている領土を取得
-                                var ch = classGameStatus.NowListSpot
+                                var abc = classGameStatus.NowListSpot
                                             .Where(x => x.NameTag == itemListLinkSpot.Item1
                                                     && x.PowerNameTag != classPower.NameTag)
                                             .FirstOrDefault();
-                                if (ch == null)
+                                if (abc == null)
                                 {
                                     continue;
                                 }
                                 //リストへ格納
-                                spotOtherLand.Add(ch);
+                                spotOtherLand.Add(abc);
                                 continue;
                             }
                         }
@@ -1025,10 +1025,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             Random randomTwo = new Random(DateTime.Now.Second);
                             var abc = absTargetPowerList.OrderBy(x => randomTwo.Next()).FirstOrDefault();
-                            var ch = classGameStatus.ListPower.Where(x => x.NameTag == abc.Key).FirstOrDefault();
-                            if (ch != null)
+                            var aaaa = classGameStatus.ListPower.Where(x => x.NameTag == abc.Key).FirstOrDefault();
+                            if (aaaa != null)
                             {
-                                targetPowers.Add(ch);
+                                targetPowers.Add(aaaa);
                             }
                         }
 
@@ -1037,13 +1037,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             ////ターゲットが無い
                             //適当な都市で徴兵や内政
-                            int cou = mySpot.Count();
-                            int targetNum = random.Next(0, cou);
-                            var targetSpot = mySpot.ToList()[targetNum];
+                            int abc = random.Next(0, mySpot.Count());
+                            var targetSpotWarLike = mySpot.ToList()[abc];
 
                             ////徴兵・内政
                             //空都市かチェック
-                            if (targetSpot.UnitGroup.Count == 0)
+                            if (targetSpotWarLike.UnitGroup.Count == 0)
                             {
                                 var unitBase = classGameStatus.ListUnit
                                                 .Where(x => classPower.ListCommonConscription.Contains(x.NameTag))
@@ -1052,15 +1051,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                 int counterUnitGroup = 0;
                                 while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
-                                        && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
+                                        && targetSpotWarLike.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                 {
-                                    targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
+                                    targetSpotWarLike.UnitGroup.Add(new ClassHorizontalUnit());
                                     while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
-                                        && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                        && targetSpotWarLike.UnitGroup[counterUnitGroup].ListClassUnit.Count()
                                         != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                     {
-                                        targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                        targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                        targetSpotWarLike.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                        targetSpotWarLike.UnitGroup[counterUnitGroup].Spot = targetSpotWarLike;
                                         classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                     }
 
@@ -1070,7 +1069,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             else
                             {
                                 //同系統徴兵
-                                foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                                foreach (var itemUnitGroup in targetSpotWarLike.UnitGroup)
                                 {
                                     var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
                                     if (unitBase == null)
@@ -1092,17 +1091,17 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                     .ToList();
                                     int targetNumunitBase = random.Next(0, unitBase.Count());
 
-                                    int counterUnitGroup = targetSpot.UnitGroup.Count();
+                                    int counterUnitGroup = targetSpotWarLike.UnitGroup.Count();
                                     while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
-                                            && targetSpot.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
+                                            && targetSpotWarLike.UnitGroup.Count() < classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].SpotCapacity)
                                     {
-                                        targetSpot.UnitGroup.Add(new ClassHorizontalUnit());
+                                        targetSpotWarLike.UnitGroup.Add(new ClassHorizontalUnit());
                                         while (classPower.Money - unitBase[targetNumunitBase].Cost > 0
-                                            && targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Count()
+                                            && targetSpotWarLike.UnitGroup[counterUnitGroup].ListClassUnit.Count()
                                             != classGameStatus.ListClassScenarioInfo[classGameStatus.NumberScenarioSelection].MemberCapacity)
                                         {
-                                            targetSpot.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
-                                            targetSpot.UnitGroup[counterUnitGroup].Spot = targetSpot;
+                                            targetSpotWarLike.UnitGroup[counterUnitGroup].ListClassUnit.Add(unitBase[targetNumunitBase].DeepCopy());
+                                            targetSpotWarLike.UnitGroup[counterUnitGroup].Spot = targetSpotWarLike;
                                             classPower.Money = classPower.Money - unitBase[targetNumunitBase].Cost;
                                         }
 
