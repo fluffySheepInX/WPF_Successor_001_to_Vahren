@@ -37,7 +37,7 @@
 	
 	//クリア判定
 	if ((isPlayer(sc_a_p_b))){
-		if ((npp == 3) && (isAlive(pp))){
+		if ((npp == 2) && (isAlive(pp))){
 			dialog("――ローガントゥーガ・デモ――$０１．東アイディオール株式会社　ＥＮＤ");
 			displayGameResult();
 			return -1;
