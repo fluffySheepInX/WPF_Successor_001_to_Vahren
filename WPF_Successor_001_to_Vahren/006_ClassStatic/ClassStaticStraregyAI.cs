@@ -693,6 +693,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         var targetSpot = ch;
 
                         //出撃
+                        if (targetSpot.UnitGroup.Where(x => x.FlagDisplay == true).Count() == 0)
+                        {
+                            break;
+                        }
+
                         foreach (var item in targetSpot.UnitGroup.Where(x => x.FlagDisplay == true))
                         {
                             //出撃クラスにunit追加
@@ -1542,6 +1547,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         var targetSpot = ch;
 
                         //出撃
+                        if (targetSpot.UnitGroup.Where(x => x.FlagDisplay == true).Count() == 0)
+                        {
+                            break;
+                        }
+
                         foreach (var item in targetSpot.UnitGroup.Where(x => x.FlagDisplay == true))
                         {
                             //出撃クラスにunit追加

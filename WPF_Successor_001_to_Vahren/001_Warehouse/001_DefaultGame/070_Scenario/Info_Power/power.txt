@@ -24,6 +24,8 @@
 ";
 	member = "spot0006,spot0005,spot0011";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
+	#fix = (on/off/home/hold/warlike/freeze)
+	fix = "hold";
 }
 NewFormatPower sc_a_p_b
 {
