@@ -470,6 +470,72 @@ namespace WPF_Successor_001_to_Vahren
             thickness.Top = ri.Margin.Top + (pt.Y - cw.ClassGameStatus.StartPoint.Y);
             ri.Margin = thickness;
         }
+
+        //範囲選択
+        /// <summary>
+        /// 範囲選択を開始する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            cw.ClassGameStatus.IsRightDrag = true;
+            cw.ClassGameStatus.StartPointRight = e.GetPosition(el);
+            el.CaptureMouse();
+            el.MouseRightButtonUp += CanvasMapBattle_MouseRightButtonUp;
+            el.MouseMove += CanvasMapBattle_MouseMoveRight;
+        }
+        /// <summary>
+        /// 範囲選択中なら終了する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            if (cw.ClassGameStatus.IsRightDrag == false) return;
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            el.ReleaseMouseCapture();
+            el.MouseRightButtonUp -= CanvasMapBattle_MouseRightButtonUp;
+            el.MouseMove -= CanvasMapBattle_MouseMoveRight;
+            this.ClassGameStatus.IsRightDrag = false;
+
+            //部隊を選択状態にする
+            var st = cw.ClassGameStatus.StartPointRight;
+            var end = e.GetPosition(el);
+
+        }
+        /// <summary>
+        /// 範囲選択中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CanvasMapBattle_MouseMoveRight(object sender, MouseEventArgs e)
+        {
+            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
+            if (cw == null) return;
+            if (cw.ClassGameStatus.IsDrag == false) return;
+
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            var ri2 = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<Canvas>().Where(x => x.Name == StringName.canvasMain).FirstOrDefault();
+            if (ri2 == null) return;
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
+
+            Point pt = e.GetPosition(el);
+
+            //図形出す。赤い四角形
+        }
+
         /// <summary>
         /// 移動フラグを立てたり、枠の色を消したり
         /// </summary>

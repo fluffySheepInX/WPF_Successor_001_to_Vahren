@@ -58,6 +58,8 @@ NewFormatPower sc_a_p_c
 	home = "spot0004";
 	head = "賊長";
 	diff = "高";
+	enable_select = "off";
+
 	text ="
 	家族が村になり、村が市になり、市が県となった。$
 	そして最後に、$
@@ -68,6 +70,6 @@ NewFormatPower sc_a_p_c
 	member = "spot0003,spot0007";
 	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
 	#fix = (on/off/home/hold/warlike/freeze)
-	fix = "off";
+	fix = "freeze";
 }
 

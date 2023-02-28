@@ -344,6 +344,22 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _startPoint = value; }
         }
         #endregion
+        #region IsRightDrag
+        private bool _isRightDrag = false;
+        public bool IsRightDrag
+        {
+            get { return _isRightDrag; }
+            set { _isRightDrag = value; }
+        }
+        #endregion
+        #region StartPointRight
+        private Point _startPointRight;
+        public Point StartPointRight
+        {
+            get { return _startPointRight; }
+            set { _startPointRight = value; }
+        }
+        #endregion
 
         #region WorldMap
         private UserControl060_WorldMap? _worldMap = null;
