@@ -964,6 +964,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 adjacentPowers.Add(result);
                             }
                         }
+                        //無所属
+                        adjacentPowers.Add(new ClassPower());
 
                         ////ランダム(補正有り)でターゲットとなる国を選ぶ
                         //友好度50のリストを作る
@@ -1030,9 +1032,15 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 targetPowers.Add(aaaa);
                             }
+                            else
+                            {
+                                //無所属
+                                targetPowers.Add(new ClassPower());
+                            }
                         }
 
                         //ターゲット勢力がいない
+                        //基本的にはここには来ないと考える
                         if (targetPowers.Count == 0)
                         {
                             ////ターゲットが無い
