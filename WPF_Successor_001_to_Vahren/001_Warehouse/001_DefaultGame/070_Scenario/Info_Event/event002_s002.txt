@@ -7,7 +7,37 @@
 		return -1;
 	}
 
-	dialog("戦場の砂が荒ぶる──。");
+	talk(VictodyRoyle,"「提督ーッ」");
+	talk(AbelIrijhorn,"「どうしたどうした」");
+	talk(VictodyRoyle,"「本格的な軍事行動を起こすなんて久しぶりじゃないですか？$
+						ちょっと説明をしようかと思いまして」");
+	talk(AbelIrijhorn,"「ん、ありがたい」");
+	talk(VictodyRoyle,"「ではまず我々らに関係する勢力について説明します」");
+	talk(VictodyRoyle,"「一つ目。我らのスポンサーであり祖国、館エレイル帝国」");
+	talk(VictodyRoyle,"「西のほうでもドンパチやってると聞いてますが、そこは触れないでおきましょう」");
+	talk(VictodyRoyle,"「基本的に軍を動かすことはないはずです。資金面、人材面での支援で帝国は動きます」");
+	talk(AbelIrijhorn,"「……」");
+	talk(VictodyRoyle,"「二つ目。目の上のたん瘤、ヤイバ王国」");
+	talk(VictodyRoyle,"「私たちが当面相手にするのはここです。$
+							事前調査では兵の練度や装備は大したことありませんが、しかし……」");
+	talk(AbelIrijhorn,"「しかし？」");
+	talk(VictodyRoyle,"「魔術師がおります。彼らは精霊使いと自称していますが」");
+	talk(AbelIrijhorn,"「そこだな。脅威とするならば……我々の兵は精神的には屈強とは言えん。$
+							燃え盛る戦場にどうやって混乱無く並べるか」");
+	talk(VictodyRoyle,"「逆に考えましょう。混乱はするものだと。$
+						そして提督のスキルで混乱状態を治せば良い」");
+	talk(AbelIrijhorn,"「簡単に言ってくれるね」");
+	talk(VictodyRoyle,"「ふふん」");
+	talk(AbelIrijhorn,"「三つ目は？」");
+	talk(VictodyRoyle,"「ヤイバ王国の奥、テラー共和国」");
+	talk(AbelIrijhorn,"「情報をどうぞ」");
+	talk(VictodyRoyle,"「ありません」");
+	talk(AbelIrijhorn,"「……？」");
+	talk(VictodyRoyle,"「密使を放ったばかりで、まだ成果があがっていない状況です。$
+						しかし噂によると……」");
+	talk(AbelIrijhorn,"「よると？」");
+	talk(VictodyRoyle,"「音と火薬の国だそうです。楽しみですね」");
+	talk(AbelIrijhorn,"（厄介そうな……私はどこまで戦ったら良いんだ）");
 
 	msg("──────$────");
 

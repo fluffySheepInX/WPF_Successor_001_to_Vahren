@@ -28,13 +28,20 @@
 		return -1;
 	}
 
-	//テスト用
-	let c = yet(world_first_sc_b);
-	if (c && isPlayer(sc_a_p_b)) {
+	//東アイディオール株式会社2ターン目
+	let ev_a = yet(world_first_sc_b);
+	if (ev_a && isPlayer(sc_a_p_b)) {
 		event(world_first_sc_b);
 		return -1;
 	}
 	
+	//東アイディオール株式会社3ターン目
+	let ev_b = yet(world_first_sc_c);
+	if (ev_b && isPlayer(sc_a_p_b)) {
+		event(world_first_sc_c);
+		return -1;
+	}
+
 	//クリア判定
 	if ((isPlayer(sc_a_p_b))){
 		if ((npp == 2) && (isAlive(pp))){
