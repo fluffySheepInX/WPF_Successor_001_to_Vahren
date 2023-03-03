@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,9 @@ using System.Windows.Threading;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
 
 namespace WPF_Successor_001_to_Vahren
 {
@@ -473,24 +477,6 @@ namespace WPF_Successor_001_to_Vahren
 
         //範囲選択
         /// <summary>
-        /// 範囲選択を開始する
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void CanvasMapBattle_MouseRightButtonDown(object sender, MouseEventArgs e)
-        {
-            var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
-            if (cw == null) return;
-            UIElement? el = sender as UIElement;
-            if (el == null) return;
-
-            cw.ClassGameStatus.IsRightDrag = true;
-            cw.ClassGameStatus.StartPointRight = e.GetPosition(el);
-            el.CaptureMouse();
-            el.MouseRightButtonUp += CanvasMapBattle_MouseRightButtonUp;
-            el.MouseMove += CanvasMapBattle_MouseMoveRight;
-        }
-        /// <summary>
         /// 範囲選択中なら終了する
         /// </summary>
         /// <param name="sender"></param>
@@ -508,6 +494,12 @@ namespace WPF_Successor_001_to_Vahren
             el.MouseMove -= CanvasMapBattle_MouseMoveRight;
             this.ClassGameStatus.IsRightDrag = false;
 
+            var riRect = (System.Windows.Shapes.Rectangle)LogicalTreeHelper.FindLogicalNode(((Canvas)sender), "rangeUnitBattle");
+            if (riRect != null)
+            {
+                ((Canvas)sender).Children.Remove(riRect);
+            }
+
             //部隊を選択状態にする
             var st = cw.ClassGameStatus.StartPointRight;
             var end = e.GetPosition(el);
@@ -522,7 +514,7 @@ namespace WPF_Successor_001_to_Vahren
         {
             var cw = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<CommonWindow>().FirstOrDefault();
             if (cw == null) return;
-            if (cw.ClassGameStatus.IsDrag == false) return;
+            if (cw.ClassGameStatus.IsRightDrag == false) return;
 
             UIElement? el = sender as UIElement;
             if (el == null) return;
@@ -532,8 +524,60 @@ namespace WPF_Successor_001_to_Vahren
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
 
             Point pt = e.GetPosition(el);
+            var st = cw.ClassGameStatus.StartPointRight;
 
             //図形出す。赤い四角形
+            var riRect = (System.Windows.Shapes.Rectangle)LogicalTreeHelper.FindLogicalNode(ri, "rangeUnitBattle");
+            if (riRect != null)
+            {
+                ri.Children.Remove(riRect);
+
+                System.Windows.Shapes.Rectangle rect = new System.Windows.Shapes.Rectangle();
+                rect.Name = "rangeUnitBattle";
+                rect.Height = Math.Abs(pt.Y - st.Y);
+                rect.Width = Math.Abs(pt.X - st.X);
+
+                if (pt.X - st.X > 0)
+                {
+                    //右に伸びる
+                    rect.Margin = new Thickness() { Left = st.X, Top = 0 };
+                }
+                else
+                {
+                    //左に伸びる
+                    rect.Margin = new Thickness() { Left = st.X - (rect.Width), Top = 0 };
+                }
+                if (pt.Y - st.Y > 0)
+                {
+                    //下に伸びる
+                    rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = st.Y };
+                }
+                else
+                {
+                    //上に伸びる
+                    rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = pt.Y };
+                }
+                rect.Fill = new SolidColorBrush(Colors.Transparent);
+                rect.Stroke = new SolidColorBrush(Colors.Red);
+                rect.StrokeThickness = 5;
+
+                Canvas.SetZIndex(rect, 999);
+                ri.Children.Add(rect);
+            }
+            else
+            {
+                System.Windows.Shapes.Rectangle rect = new System.Windows.Shapes.Rectangle();
+                rect.Name = "rangeUnitBattle";
+                rect.Height = Math.Abs(pt.Y - st.Y);
+                rect.Width = Math.Abs(pt.Y - st.Y);
+                rect.Margin = new Thickness() { Left = pt.X, Top = pt.Y };
+                rect.Fill = new SolidColorBrush(Color.FromRgb(190, 178, 175));
+                rect.Stroke = new SolidColorBrush(Colors.Red);
+                rect.StrokeThickness = 5;
+
+                Canvas.SetZIndex(rect, 999);
+                ri.Children.Add(rect);
+            }
         }
 
         /// <summary>
@@ -591,6 +635,15 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 break;
             }
+
+            UIElement? el = sender as UIElement;
+            if (el == null) return;
+
+            cw.ClassGameStatus.IsRightDrag = true;
+            cw.ClassGameStatus.StartPointRight = e.GetPosition(el);
+            el.CaptureMouse();
+            el.MouseRightButtonUp += CanvasMapBattle_MouseRightButtonUp;
+            el.MouseMove += CanvasMapBattle_MouseMoveRight;
 
         }
         /// <summary>
