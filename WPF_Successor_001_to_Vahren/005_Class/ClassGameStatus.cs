@@ -174,6 +174,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _listClassScenarioInfo = value; }
         }
         #endregion
+        private List<ClassInternalAffairsDetail> _ListClassInternalAffairsDetail = new List<ClassInternalAffairsDetail>();
+        public List<ClassInternalAffairsDetail> ListClassInternalAffairsDetail
+        {
+            get { return _ListClassInternalAffairsDetail; }
+            set { _ListClassInternalAffairsDetail = value; }
+        }
         #endregion
 
         #region 元データからシナリオ用にコピーして使うデータ
@@ -209,6 +215,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { nowClassDiplomacy = value; }
         }
         #endregion
+        private List<ClassInternalAffairsDetail> _NowListClassInternalAffairsDetail = new List<ClassInternalAffairsDetail>();
+        public List<ClassInternalAffairsDetail> NowListClassInternalAffairsDetail
+        {
+            get { return _NowListClassInternalAffairsDetail; }
+            set { _NowListClassInternalAffairsDetail = value; }
+        }
         #endregion
 
         #region NowTurn

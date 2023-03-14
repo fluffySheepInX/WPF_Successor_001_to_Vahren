@@ -3258,6 +3258,58 @@ namespace WPF_Successor_001_to_Vahren
                 }
                 //object 終わり
 
+                // InternalAffairsDetail
+                {
+                    string targetString = "internalAffairsDetail";
+                    // 大文字かっこも入るが、上でチェックしている
+                    // \sは空行や改行など
+                    var newFormatScenarioMatches = new Regex(targetString + @"[\s]+?.*[\s]+?\{([\s\S\n]+?)\}", RegexOptions.IgnoreCase).Matches(readAllLines);
+                    var scenarioMatches = new Regex(@"Skill[\s]+?.*[\s]+?\{([\s\S\n]+?)\}").Matches(readAllLines);
+
+                    var listMatches = newFormatScenarioMatches.Where(x => x != null).ToList();
+                    listMatches.AddRange(scenarioMatches.Where(x => x != null).ToList());
+
+                    if (listMatches == null)
+                    {
+                        // データがない！
+                        throw new Exception();
+                    }
+                    if (listMatches.Count < 1)
+                    {
+                        // データがないので次
+                    }
+                    else
+                    {
+                        foreach (var getData in listMatches)
+                        {
+                            //enumを使うべき？
+                            int kind = 0;
+                            {
+                                //このコードだとNewFormatUnitTest等が通るのでよくない
+                                string join = string.Join(String.Empty, getData.Value.Take(targetString.Length));
+                                if (String.Compare(join, targetString, true) == 0)
+                                {
+                                    kind = 0;
+                                }
+                                else
+                                {
+                                    kind = 1;
+                                }
+                            }
+
+                            if (kind == 0)
+                            {
+                                ClassGameStatus.ListClassInternalAffairsDetail.Add(ClassStaticCommonMethod.GetClassInternalAffairsDetail(getData.Value));
+                            }
+                            else
+                            {
+                                //ClassGameStatus.ListUnit.Add(GetClassUnit(getData.Value));
+                            }
+                        }
+                    }
+                }
+                // InternalAffairsDetail 終わり
+
                 //正規表現終わり
 
                 //インデックスを張っておく

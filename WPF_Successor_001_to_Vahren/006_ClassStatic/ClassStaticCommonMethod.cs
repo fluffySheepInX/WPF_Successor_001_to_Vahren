@@ -851,6 +851,243 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             return classSkill;
         }
 
+        public static ClassInternalAffairsDetail GetClassInternalAffairsDetail(string value)
+        {
+            ClassInternalAffairsDetail classInternalAffairsDetail = new ClassInternalAffairsDetail();
+
+            // コメント行を取り除く
+            {
+                string[] line = value.Split(Environment.NewLine).ToArray();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    if (line[i].Contains("#") == true)
+                    {
+                        var data = line[i].Split("#");
+                        line[i] = String.Concat(data[0], Environment.NewLine);
+                    }
+                }
+                value = String.Join(Environment.NewLine, line);
+            }
+
+            //nameTag
+            {
+                var nameTag = new Regex(GetPatTag("internalAffairsDetail"), RegexOptions.IgnoreCase)
+                                .Matches(value);
+                var first = CheckMatchElement(nameTag);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                classInternalAffairsDetail.NameTag = first.Value.Replace(Environment.NewLine, "");
+            }
+            //title
+            {
+                var title =
+                    new Regex(GetPat("title"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(title);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Title = re;
+                }
+            }
+            //Image
+            {
+                var Image =
+                    new Regex(GetPat("Image"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Image);
+                if (first == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Image = re;
+                }
+            }
+            //Premise
+            {
+                var Premise =
+                    new Regex(GetPat("Premise"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Premise);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Premise = "-1";
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Premise = re;
+                }
+            }
+            //PremiseNumber
+            {
+                var PremiseNumber =
+                    new Regex(GetPat("PremiseNumber"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(PremiseNumber);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.PremiseNumber = -1;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.PremiseNumber = int.Parse(re);
+                }
+            }
+            //IncomeCorrection
+            {
+                var IncomeCorrection =
+                    new Regex(GetPat("IncomeCorrection"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(IncomeCorrection);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.IncomeCorrection = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.IncomeCorrection = double.Parse(re);
+                }
+            }
+            //Income
+            {
+                var Income =
+                    new Regex(GetPat("Income"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Income);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Income = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Income = int.Parse(re);
+                }
+            }
+            //skill
+            {
+                var skill =
+                    new Regex(GetPat("skill"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(skill);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Skill = string.Empty;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    if (re == "-1")
+                    {
+                        classInternalAffairsDetail.Skill = string.Empty;
+                    }
+                    else
+                    {
+                        classInternalAffairsDetail.Skill = re;
+                    }
+                }
+            }
+            //unit
+            {
+                var unit =
+                    new Regex(GetPat("unit"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(unit);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Unit = string.Empty;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    if (re == "-1")
+                    {
+                        classInternalAffairsDetail.Unit = string.Empty;
+                    }
+                    else
+                    {
+                        classInternalAffairsDetail.Unit = re;
+                    }
+                }
+            }
+            //ability
+            {
+                var ability =
+                    new Regex(GetPat("ability"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(ability);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Ability = string.Empty;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    if (re == "-1")
+                    {
+                        classInternalAffairsDetail.Ability = string.Empty;
+                    }
+                    else
+                    {
+                        classInternalAffairsDetail.Ability = re;
+                    }
+                }
+            }
+            //abilityTiming
+            {
+                var abilityTiming =
+                    new Regex(GetPat("abilityTiming"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(abilityTiming);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.AbilityTiming = string.Empty;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    if (re == "-1")
+                    {
+                        classInternalAffairsDetail.AbilityTiming = string.Empty;
+                    }
+                    else
+                    {
+                        classInternalAffairsDetail.AbilityTiming = re;
+                    }
+                }
+            }
+            //abilityUp
+            {
+                var abilityUp =
+                    new Regex(GetPat("abilityUp"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(abilityUp);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.AbilityUp = 0;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.AbilityUp = int.Parse(re);
+                }
+            }
+
+            return classInternalAffairsDetail;
+        }
+
         public static void GetClassEvent(string value, ClassGameStatus classGameStatus)
         {
             // コメント行を取り除く
@@ -1817,7 +2054,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 }
                 else
                 {
-                    FlagPowerFix sEnum = (FlagPowerFix)Enum.Parse(typeof(FlagPowerFix), first.Value,true);
+                    FlagPowerFix sEnum = (FlagPowerFix)Enum.Parse(typeof(FlagPowerFix), first.Value, true);
                     classPower.Fix = sEnum;
                 }
             }
