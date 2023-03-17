@@ -54,7 +54,7 @@
                         MouseEnter="btnMercenary_MouseEnter" />
                 <Button Name="btnPolitics" Width="85" Height="35" Margin="0,0,5,0" FontSize="20" Focusable="False" Content="内政"
                         PreviewMouseLeftButtonDown="Raise_ZOrder"
-                        MouseRightButtonDown="Disable_MouseEvent" />
+                        MouseRightButtonDown="Disable_MouseEvent" Click="btnPolitics_Click" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Canvas.Left="10" Canvas.Top="95">

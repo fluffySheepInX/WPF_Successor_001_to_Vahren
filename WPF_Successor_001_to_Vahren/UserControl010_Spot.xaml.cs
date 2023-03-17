@@ -2916,6 +2916,23 @@ namespace WPF_Successor_001_to_Vahren
             helpWindow.SetText("全てのキャラをドラッグ＆ドロップできるボタンです。\n部隊単位で目的地に入る分だけ移動します。");
             mainWindow.canvasUI.Children.Add(helpWindow);
         }
+
+        private void btnPolitics_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Application.Current.MainWindow;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            var itemWindow = new UserControl080_InternalAffairs();
+            //itemWindow.Tag = classPowerAndCity;
+            //itemWindow.Name = StringName.windowSpot + window_id.ToString();
+            //itemWindow.Margin = posWindow;
+            //itemWindow.SetData();
+            mainWindow.canvasUI.Children.Add(itemWindow);
+        }
+
         private void btnSelectAll_MouseLeave(object sender, MouseEventArgs e)
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
