@@ -1165,7 +1165,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
                                                 if (re2 == null)
                                                 {
-                                                    throw new Exception();
+                                                    //throw new Exception();
                                                 }
                                                 else
                                                 {

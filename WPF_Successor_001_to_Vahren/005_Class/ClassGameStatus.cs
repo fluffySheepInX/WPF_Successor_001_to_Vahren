@@ -372,7 +372,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { _startPointRight = value; }
         }
         #endregion
-
+        #region IsBattleMove
+        private bool isBattleMove = false;
+        public bool IsBattleMove
+        {
+            get { return isBattleMove; }
+            set { isBattleMove = value; }
+        }
+        #endregion
         #region WorldMap
         private UserControl060_WorldMap? _worldMap = null;
         public UserControl060_WorldMap? WorldMap

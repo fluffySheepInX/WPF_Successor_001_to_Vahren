@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
@@ -492,7 +493,7 @@ namespace WPF_Successor_001_to_Vahren
             el.ReleaseMouseCapture();
             el.MouseRightButtonUp -= CanvasMapBattle_MouseRightButtonUp;
             el.MouseMove -= CanvasMapBattle_MouseMoveRight;
-            this.ClassGameStatus.IsRightDrag = false;
+            cw.ClassGameStatus.IsRightDrag = false;
 
             var riRect = (System.Windows.Shapes.Rectangle)LogicalTreeHelper.FindLogicalNode(((Canvas)sender), "rangeUnitBattle");
             if (riRect != null)
@@ -500,9 +501,80 @@ namespace WPF_Successor_001_to_Vahren
                 ((Canvas)sender).Children.Remove(riRect);
             }
 
-            //部隊を選択状態にする
+            //部隊を選択状態にする。もしくは既に選択状態なら移動させる
+            List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
+            switch (cw.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer)
+            {
+                case BattleWhichIsThePlayer.Sortie:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.SortieUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.Def:
+                    lisClassHorizontalUnit = ClassGameStatus.ClassBattle.DefUnitGroup;
+                    break;
+                case BattleWhichIsThePlayer.None:
+                    //AI同士の戦いにフラグは立てない
+                    break;
+                default:
+                    break;
+            }
             var st = cw.ClassGameStatus.StartPointRight;
             var end = e.GetPosition(el);
+            var ri2 = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<Canvas>().Where(x => x.Name == StringName.canvasMain).FirstOrDefault();
+            if (ri2 == null) return;
+            var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
+
+            if (cw.ClassGameStatus.IsBattleMove == true)
+            {
+                foreach (var item in lisClassHorizontalUnit)
+                {
+                    var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
+                    if (re == null) continue;
+
+                    var nowOrderPosi = end;
+                    if (re.FlagMoving == true && re.OrderPosiLeft != nowOrderPosi)
+                    {
+                        re.FlagMoveDispose = true;
+                    }
+                    re.OrderPosiLeft = nowOrderPosi;
+                    re.FlagMove = false;
+                    re.FlagMoving = false;
+
+                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
+                    re2.BorderThickness = new Thickness()
+                    {
+                        Left = 0,
+                        Top = 0,
+                        Right = 0,
+                        Bottom = 0
+                    };
+                }
+                cw.ClassGameStatus.IsBattleMove = false;
+                return;
+            }
+
+            foreach (var item in lisClassHorizontalUnit)
+            {
+                var re = item.ListClassUnit
+                            .Where(x => x.NowPosiCenter.X >= st.X && x.NowPosiCenter.Y >= st.Y
+                                    && x.NowPosiCenter.X <= end.X && x.NowPosiCenter.Y <= end.Y)
+                            .FirstOrDefault();
+                if (re == null) continue;
+
+                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
+                re2.BorderThickness = new Thickness()
+                {
+                    Left = 3,
+                    Top = 3,
+                    Right = 3,
+                    Bottom = 3
+                };
+                re2.BorderBrush = Brushes.DarkRed;
+                re.FlagMove = true;
+
+                cw.ClassGameStatus.IsBattleMove = true;
+
+            }
+
 
         }
         /// <summary>
@@ -581,7 +653,7 @@ namespace WPF_Successor_001_to_Vahren
         }
 
         /// <summary>
-        /// 移動フラグを立てたり、枠の色を消したり
+        /// 移動フラグを閉じたり、枠の色を消したり
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -611,30 +683,30 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
 
-            foreach (var item in lisClassHorizontalUnit)
-            {
-                var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
-                if (re == null) continue;
+            //foreach (var item in lisClassHorizontalUnit)
+            //{
+            //    var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
+            //    if (re == null) continue;
 
-                var nowOrderPosi = e.GetPosition(ri);
-                if (re.FlagMoving = true && re.OrderPosiLeft != nowOrderPosi)
-                {
-                    re.FlagMoveDispose = true;
-                }
-                re.OrderPosiLeft = nowOrderPosi;
-                re.FlagMove = false;
-                re.FlagMoving = false;
+            //    var nowOrderPosi = e.GetPosition(ri);
+            //    if (re.FlagMoving = true && re.OrderPosiLeft != nowOrderPosi)
+            //    {
+            //        re.FlagMoveDispose = true;
+            //    }
+            //    re.OrderPosiLeft = nowOrderPosi;
+            //    re.FlagMove = false;
+            //    re.FlagMoving = false;
 
-                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
-                re2.BorderThickness = new Thickness()
-                {
-                    Left = 0,
-                    Top = 0,
-                    Right = 0,
-                    Bottom = 0
-                };
-                break;
-            }
+            //    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
+            //    re2.BorderThickness = new Thickness()
+            //    {
+            //        Left = 0,
+            //        Top = 0,
+            //        Right = 0,
+            //        Bottom = 0
+            //    };
+            //    //break;
+            //}
 
             UIElement? el = sender as UIElement;
             if (el == null) return;
@@ -691,9 +763,13 @@ namespace WPF_Successor_001_to_Vahren
                 };
                 bor.BorderBrush = Brushes.DarkRed;
                 re.FlagMove = true;
+
+                cw.ClassGameStatus.IsBattleMove = true;
+
                 break;
             }
         }
+
         public void btnDebugWin_Click(object sender, RoutedEventArgs e)
         {
             var cw = ClassStaticCommonMethod.FindAncestors((Button)sender).OfType<CommonWindow>().FirstOrDefault();
