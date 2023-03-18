@@ -36,10 +36,10 @@ namespace WPF_Successor_001_to_Vahren
 
             InitializeComponent();
 
-            _internalAffairsList.AddRange(mainWindow.ClassGameStatus.ListClassInternalAffairsDetail);
-            _internalAffairsList.AddRange(CreateInternalAffairsList());
+            //_internalAffairsList.AddRange(CreateInternalAffairsList());
 
-            AddTreeViewItems();
+            _internalAffairsList.AddRange(mainWindow.ClassGameStatus.ListClassInternalAffairsDetail);
+            AddTreeViewItems(mainWindow.GetPathDirectoryGameTitleFullName());
         }
 
         private List<ClassInternalAffairsDetail> CreateInternalAffairsList()
@@ -48,23 +48,45 @@ namespace WPF_Successor_001_to_Vahren
             //ここでは、適当なリストを返すだけに留める
             return new List<ClassInternalAffairsDetail>()
             {
-                new ClassInternalAffairsDetail() { NameTag = "1", Title = "内政1", Image = "image1.jpg" },
+                new ClassInternalAffairsDetail() { NameTag = "1", Title = "内政aaaa", Image = "image1.jpg" },
                 new ClassInternalAffairsDetail() { NameTag = "2", Title = "内政2", Image = "image2.jpg" },
                 new ClassInternalAffairsDetail() { NameTag = "3", Title = "内政3", Image = "image3.jpg" }
             };
         }
 
-        private void AddTreeViewItems()
+        private void AddTreeViewItems(string pathDirectoryGameTitleFullName)
         {
             foreach (var item in _internalAffairsList)
             {
                 var treeViewItem = new TreeViewItem();
-                treeViewItem.Header = item.Title;
+
+                StackPanel stackPanel = new StackPanel();
+                stackPanel.Orientation = Orientation.Horizontal;
+
+                List<string> strings = new List<string>();
+                strings.Add(pathDirectoryGameTitleFullName);
+                strings.Add("007_InternalAffairsDetail");
+                strings.Add(item.Image);
+                string path = System.IO.Path.Combine(strings.ToArray());
+
+                var bi = new BitmapImage(new Uri(path));
+                Image image = new Image();
+                image.Stretch = Stretch.Fill;
+                image.Source = bi;
+                image.Margin = new Thickness(0, 0, 0, 0);
+                image.Height = 104;
+                image.Width = 512;
+                image.HorizontalAlignment = HorizontalAlignment.Left;
+                image.VerticalAlignment = VerticalAlignment.Top;
+
+                stackPanel.Children.Add(image);
+                stackPanel.Children.Add(new TextBlock() { FontSize = 32, Height = 96, Text = item.Title });
+                treeViewItem.Header = stackPanel;
                 treeViewItem.Tag = item;
                 //TreeViewItemに対するクリックイベントを設定する場合
                 treeViewItem.MouseLeftButtonUp += TreeViewItem_MouseLeftButtonUp;
 
-                tvInternalAffairs.Items.Add(treeViewItem);
+                this.tvInternalAffairs.Items.Add(treeViewItem);
             }
         }
 

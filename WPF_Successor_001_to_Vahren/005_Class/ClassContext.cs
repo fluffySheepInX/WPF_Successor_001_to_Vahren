@@ -27,8 +27,8 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region GainPer
-        private int gain_per = 200;
-		public int GainPer
+        private double gain_per = 200;
+		public double GainPer
         {
 			get { return gain_per; }
 			set { gain_per = value; }

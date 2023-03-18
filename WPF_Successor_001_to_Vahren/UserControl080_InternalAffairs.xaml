@@ -43,7 +43,7 @@
                 <TabItem Header="都市内政" Height="40" FontSize="30">
                     <Canvas Margin="10,10,10,10">
                         <TreeView x:Name="tvInternalAffairs" FontSize="20" Margin="10,10">
-                            <TreeViewItem IsExpanded="True">
+                            <!--<TreeViewItem IsExpanded="True">
                                 <TreeViewItem.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="./001_Warehouse/001_DefaultGame/005_BackgroundImage/005_MenuImage/sc.png" 
@@ -71,7 +71,7 @@
                                         </StackPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
-                            </TreeViewItem>
+                            </TreeViewItem>-->
                         </TreeView>
                     </Canvas>
                 </TabItem>

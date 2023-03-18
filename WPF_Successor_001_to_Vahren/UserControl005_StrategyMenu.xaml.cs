@@ -753,11 +753,16 @@ namespace WPF_Successor_001_to_Vahren
                 worldMap.canvasMap.IsHitTestVisible = false;
             }
 
+            //内政処理
+            int countMoney = 0;
+            var inter = mainWindow.ClassGameStatus.NowListClassInternalAffairsDetail;
+            countMoney += inter.Sum(x => x.Income);
+            mainWindow.ClassGameStatus.ClassContext.GainPer += (inter.Sum(x => x.IncomeCorrection) * 100);
+
             //お金増やす
             {
                 var listSpotMoney = mainWindow.ClassGameStatus.NowListSpot
                                 .Where(x => x.PowerNameTag == mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag);
-                int countMoney = 0;
                 int addMoney = 0; // 維持費と財政値による増減
                 foreach (var itemSpot in listSpotMoney)
                 {

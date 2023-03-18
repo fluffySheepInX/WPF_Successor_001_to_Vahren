@@ -1,0 +1,8 @@
+﻿internalAffairsDetail aaa
+{
+	title = "コンテナの規格化";
+	image = "002.png";
+	premise = "-1";
+	premiseNumber = "-1";
+	incomeCorrection = "5";
+}
