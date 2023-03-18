@@ -75,7 +75,7 @@ namespace WPF_Successor_001_to_Vahren
                 image.Source = bi;
                 image.Margin = new Thickness(0, 0, 0, 0);
                 image.Height = 104;
-                image.Width = 512;
+                image.Width = 104;
                 image.HorizontalAlignment = HorizontalAlignment.Left;
                 image.VerticalAlignment = VerticalAlignment.Top;
 
