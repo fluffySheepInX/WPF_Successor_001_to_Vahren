@@ -16,6 +16,11 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         // 100px*512pxで画面上に表示
         public string Image { get; set; } = string.Empty;
 
+        // help
+        public string Help { get; set; } = "-1";
+        // cost
+        public int Cost { get; set; } = -1;
+
         // 前提とする内政（これが実行されてなければ、この内政は実行不可能
         public string Premise { get; set; } = "-1";
         // 前提とする内政の必要回数（5なら5回実行が必要

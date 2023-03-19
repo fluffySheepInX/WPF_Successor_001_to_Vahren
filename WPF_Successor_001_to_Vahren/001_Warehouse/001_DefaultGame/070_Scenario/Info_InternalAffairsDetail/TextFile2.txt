@@ -2,6 +2,8 @@
 {
 	title = "コンテナの規格化";
 	image = "002.png";
+	help = "毎ターンの収入を5%上昇させます。";
+	cost = "20000";
 	premise = "-1";
 	premiseNumber = "-1";
 	incomeCorrection = "5";

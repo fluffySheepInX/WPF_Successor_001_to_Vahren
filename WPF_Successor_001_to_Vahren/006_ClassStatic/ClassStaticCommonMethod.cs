@@ -912,6 +912,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classInternalAffairsDetail.Image = re;
                 }
             }
+            //Help
+            {
+                var Help =
+                    new Regex(GetPat("Help"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Help);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Help = "-1";
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Help = re;
+                }
+            }
             //Premise
             {
                 var Premise =
@@ -926,6 +942,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 {
                     var re = first.Value.Replace(Environment.NewLine, "");
                     classInternalAffairsDetail.Premise = re;
+                }
+            }
+            //Cost
+            {
+                var Cost =
+                    new Regex(GetPat("Cost"), RegexOptions.IgnoreCase)
+                    .Matches(value);
+                var first = CheckMatchElement(Cost);
+                if (first == null)
+                {
+                    classInternalAffairsDetail.Cost = -1;
+                }
+                else
+                {
+                    var re = first.Value.Replace(Environment.NewLine, "");
+                    classInternalAffairsDetail.Cost = int.Parse(re);
                 }
             }
             //PremiseNumber

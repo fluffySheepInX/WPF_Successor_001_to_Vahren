@@ -113,7 +113,17 @@ namespace WPF_Successor_001_to_Vahren
 
             {
                 var dialog = new Win025_Select();
-                dialog.SetText(ClassStaticCommonMethod.MoldingText(selectedInternalAffairs.Title + "を実行しますか？", "$"));
+                string tex = selectedInternalAffairs.Title + "を実行しますか？"
+                    + "$$" +
+                    "効果："
+                    + "$" +
+                    selectedInternalAffairs.Help
+                    + "$" +
+                    "Cost："
+                    + "$" +
+                    selectedInternalAffairs.Cost
+                    ;
+                dialog.SetText(ClassStaticCommonMethod.MoldingText(tex, "$"));
                 bool? result = dialog.ShowDialog();
                 if (result == false)
                 {
@@ -123,11 +133,30 @@ namespace WPF_Successor_001_to_Vahren
 
             mainWindow.ClassGameStatus.NowListClassInternalAffairsDetail.Add(selectedInternalAffairs);
 
+            //cost支払い
+            mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.Money -= selectedInternalAffairs.Cost;
+
             {
                 var dialog = new Win020_Dialog();
                 dialog.SetText(ClassStaticCommonMethod.MoldingText(selectedInternalAffairs.Title + "を実行しました", "$"));
                 dialog.ShowDialog();
             }
+
+            //再表示
+            if (mainWindow.ClassGameStatus.WindowStrategyMenu == null)
+            {
+                mainWindow.ClassGameStatus.WindowStrategyMenu = new UserControl005_StrategyMenu();
+            }
+            else
+            {
+                mainWindow.canvasUIRightBottom.Children.Remove(mainWindow.ClassGameStatus.WindowStrategyMenu);
+            }
+
+            // 右下の隅に配置する
+            mainWindow.ClassGameStatus.WindowStrategyMenu.SetData();
+            mainWindow.canvasUIRightBottom.Children.Add(mainWindow.ClassGameStatus.WindowStrategyMenu);
+            Canvas.SetLeft(mainWindow.ClassGameStatus.WindowStrategyMenu, mainWindow.canvasUIRightBottom.Width - mainWindow.ClassGameStatus.WindowStrategyMenu.Width);
+            Canvas.SetTop(mainWindow.ClassGameStatus.WindowStrategyMenu, mainWindow.canvasUIRightBottom.Height - mainWindow.ClassGameStatus.WindowStrategyMenu.Height);
 
         }
 
