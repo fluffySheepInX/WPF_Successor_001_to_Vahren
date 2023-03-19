@@ -16,21 +16,21 @@
 	medical = "0";
 	hasExp  = "0";
 	hp      = "1500";
-	mp      = "500";
-	attack  = "70";
-	defense = "70";
-	magic   = "100";
-	magDef  = "100";
+	mp      = "100";
+	attack  = "55";
+	defense = "25";
+	magic   = "30";
+	magDef  = "20";
 	speed   = "5";
 	dext    = "50";
-	move    = "200";
-	hprec   = "100";
-	mprec   = "100";
+	move    = "150";
+	hprec   = "0";
+	mprec   = "5";
 	exp     = "100";
 	exp_mul = "100";
 	heal_max = "500";
 	summon_max = "5";
-	no_knock = "30";
+	no_knock = "0";
 	escape_range = "-1";
 
 	movetype = "草原";
@@ -53,7 +53,7 @@ NewFormatUnit HowitzerC11
 	cost    = "10";
 	medical = "0";
 	hasExp  = "0";
-	hp      = "1500";
+	hp      = "1200";
 	mp      = "500";
 	attack  = "70";
 	defense = "70";
@@ -92,8 +92,8 @@ NewFormatUnit DragoonFrancesca
 	cost    = "10";
 	medical = "0";
 	hasExp  = "0";
-	hp      = "1500";
-	mp      = "500";
+	hp      = "1400";
+	mp      = "50";
 	attack  = "70";
 	defense = "70";
 	magic   = "100";
@@ -108,6 +108,84 @@ NewFormatUnit DragoonFrancesca
 	heal_max = "500";
 	summon_max = "5";
 	no_knock = "30";
+	escape_range = "-1";
+
+	movetype = "草原";
+}
+
+NewFormatUnit IlkayWarrior
+{
+	name = "イルケイ戦士";
+	race = "human";
+	image = "chipGene005.png";
+	friend = "IlkayWarrior";
+	merce = "IlkayWarrior";
+	staff = "IlkayWarrior";
+	formation = "0";
+	skill = "gunLaphroaig";
+	class = "IlkayWarrior";	
+
+	level = "1";
+	level_max = "100";
+	price   = "200";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "2500";
+	mp      = "50";
+	attack  = "70";
+	defense = "30";
+	magic   = "30";
+	magDef  = "15";
+	speed   = "1.2";
+	dext    = "60";
+	move    = "170";
+	hprec   = "5";
+	mprec   = "5";
+	exp     = "100";
+	exp_mul = "121";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "40";
+	escape_range = "-1";
+
+	movetype = "草原";
+}
+
+NewFormatUnit IlkaySpellcaster
+{
+	name = "イルケイ呪術師";
+	race = "human";
+	image = "chipGene005.png";
+	friend = "IlkaySpellcaster";
+	merce = "IlkaySpellcaster";
+	staff = "IlkaySpellcaster";
+	formation = "2";
+	skill = "gunLaphroaig";
+	class = "IlkaySpellcaster";	
+
+	level = "1";
+	level_max = "100";
+	price   = "200";
+	cost    = "10";
+	medical = "0";
+	hasExp  = "0";
+	hp      = "900";
+	mp      = "100";
+	attack  = "10";
+	defense = "5";
+	magic   = "80";
+	magDef  = "40";
+	speed   = "10";
+	dext    = "60";
+	move    = "130";
+	hprec   = "5";
+	mprec   = "15";
+	exp     = "100";
+	exp_mul = "125";
+	heal_max = "500";
+	summon_max = "5";
+	no_knock = "40";
 	escape_range = "-1";
 
 	movetype = "草原";

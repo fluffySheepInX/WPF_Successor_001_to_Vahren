@@ -292,23 +292,23 @@ NewFormatUnit YaibaDagest
 	name = "ヤイバ・ダゲースト";
 	help = "俺が来た！意味はわかるな！？";
 	race = "human";
-	class = "DragoonFrancesca";	
-	image = "chip003.png";
-	dead    = "……！";
-	retreat = "……！";
-	join    = "……！";
+	class = "IlkayWarrior";	
+	image = "chip005.png";
+	dead    = "こんなところで死ぬ俺じゃねえんだよな";
+	retreat = "俺はまだ冷静だ！";
+	join    = "はっはっは！世話になるぜ！";
 	face = "face010.png";
 	gender = "male";
 	talent = "on";
 	
 	#部下に出来る種類
-	friend = "DragoonFrancesca";
+	friend = "IlkayWarrior";
 	
-	merce = "DragoonFrancesca";
-	staff = "DragoonFrancesca";
-	initMember = "DragoonFrancesca*7";
+	merce = "IlkayWarrior";
+	staff = "IlkayWarrior";
+	initMember = "IlkayWarrior*7";
 
-	formation = "1";
+	formation = "0";
 	skill = "gunLaphroaig";
 
 	level = "3";
@@ -346,23 +346,23 @@ NewFormatUnit Gagot
 	name = "ガゴット";
 	help = "過ぎ去る季節。そして……";
 	race = "machine";
-	class = "DragoonFrancesca";	
-	image = "chip003.png";
-	dead    = "……！";
-	retreat = "……！";
-	join    = "……！";
+	class = "IlkaySpellcaster";	
+	image = "chip006.png";
+	dead    = "僕の仲間はまだいるよ";
+	retreat = "ふうん。こういうこともあるよねえ";
+	join    = "ここが僕の新しい職場かあ～";
 	face = "face030.png";
 	gender = "infertile";
 	talent = "on";
 	
 	#部下に出来る種類
-	friend = "DragoonFrancesca";
+	friend = "IlkaySpellcaster";
 	
-	merce = "DragoonFrancesca";
-	staff = "DragoonFrancesca";
-	initMember = "DragoonFrancesca*7";
+	merce = "IlkaySpellcaster";
+	staff = "IlkaySpellcaster";
+	initMember = "IlkaySpellcaster*7";
 
-	formation = "1";
+	formation = "2";
 	skill = "gunLaphroaig";
 
 	level = "3";
@@ -391,7 +391,7 @@ NewFormatUnit Gagot
 	alive_per = "100";
 	escape_range = "-1";
 	#財政値
-	finance = "1000";
+	finance = "2000";
 	#移動タイプ
 	movetype = "草原";
 }

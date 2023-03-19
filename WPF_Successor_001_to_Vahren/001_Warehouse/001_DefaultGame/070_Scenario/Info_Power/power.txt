@@ -68,8 +68,8 @@ NewFormatPower sc_a_p_c
 	ま、名乗るのはご自由に……。
 ";
 	member = "spot0003,spot0007";
-	commonConscription = "LineInfantryM14,HowitzerC11,DragoonFrancesca";
+	commonConscription = "IlkayWarrior,IlkaySpellcaster";
 	#fix = (on/off/home/hold/warlike/freeze)
-	fix = "freeze";
+	fix = "home";
 }
 
