@@ -527,26 +527,29 @@ namespace WPF_Successor_001_to_Vahren
             {
                 foreach (var item in lisClassHorizontalUnit)
                 {
-                    var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
+                    var re = item.ListClassUnit.Where(x => x.FlagMove == true);
                     if (re == null) continue;
 
-                    var nowOrderPosi = end;
-                    if (re.FlagMoving == true && re.OrderPosiLeft != nowOrderPosi)
+                    foreach (var itemRe in re)
                     {
-                        re.FlagMoveDispose = true;
-                    }
-                    re.OrderPosiLeft = nowOrderPosi;
-                    re.FlagMove = false;
-                    re.FlagMoving = false;
+                        var nowOrderPosi = end;
+                        if (itemRe.FlagMoving == true && itemRe.OrderPosiLeft != nowOrderPosi)
+                        {
+                            itemRe.FlagMoveDispose = true;
+                        }
+                        itemRe.OrderPosiLeft = nowOrderPosi;
+                        itemRe.FlagMove = false;
+                        itemRe.FlagMoving = false;
 
-                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
-                    re2.BorderThickness = new Thickness()
-                    {
-                        Left = 0,
-                        Top = 0,
-                        Right = 0,
-                        Bottom = 0
-                    };
+                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + itemRe.ID.ToString());
+                        re2.BorderThickness = new Thickness()
+                        {
+                            Left = 0,
+                            Top = 0,
+                            Right = 0,
+                            Bottom = 0
+                        };
+                    }
                 }
                 cw.ClassGameStatus.IsBattleMove = false;
                 return;
@@ -557,25 +560,24 @@ namespace WPF_Successor_001_to_Vahren
                 var re = item.ListClassUnit
                             .Where(x => x.NowPosiCenter.X >= st.X && x.NowPosiCenter.Y >= st.Y
                                     && x.NowPosiCenter.X <= end.X && x.NowPosiCenter.Y <= end.Y)
-                            .FirstOrDefault();
+                            ;
                 if (re == null) continue;
 
-                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
-                re2.BorderThickness = new Thickness()
+                foreach (var itemRe in re)
                 {
-                    Left = 3,
-                    Top = 3,
-                    Right = 3,
-                    Bottom = 3
-                };
-                re2.BorderBrush = Brushes.DarkRed;
-                re.FlagMove = true;
-
+                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + itemRe.ID.ToString());
+                    re2.BorderThickness = new Thickness()
+                    {
+                        Left = 3,
+                        Top = 3,
+                        Right = 3,
+                        Bottom = 3
+                    };
+                    re2.BorderBrush = Brushes.DarkRed;
+                    itemRe.FlagMove = true;
+                }
                 cw.ClassGameStatus.IsBattleMove = true;
-
             }
-
-
         }
         /// <summary>
         /// 範囲選択中
