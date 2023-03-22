@@ -549,7 +549,7 @@ namespace WPF_Successor_001_to_Vahren
 
 
 
-                        selectedUnit.OrderPosiLeft = new Point() { X = 0, Y = 0 };
+                        selectedUnit.OrderPosiLeft = new Point() { X = resultGetPosition.X, Y = resultGetPosition.Y };
 
 
 
