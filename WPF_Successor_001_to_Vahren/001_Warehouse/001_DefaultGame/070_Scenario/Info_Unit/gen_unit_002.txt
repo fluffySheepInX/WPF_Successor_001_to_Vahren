@@ -156,7 +156,7 @@ NewFormatUnit IlkaySpellcaster
 {
 	name = "イルケイ呪術師";
 	race = "human";
-	image = "chipGene005.png";
+	image = "chipGene004.png";
 	friend = "IlkaySpellcaster";
 	merce = "IlkaySpellcaster";
 	staff = "IlkaySpellcaster";

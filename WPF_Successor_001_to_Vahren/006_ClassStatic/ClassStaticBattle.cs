@@ -567,7 +567,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         if (itemGroupBy.NowPosiLeft != itemGroupBy.OrderPosiLeft)
                         {
-                            //移動スレッド開始
+                            //移動スレッド開始  
                             var calc0 = ClassCalcVec.ReturnVecDistance(
                                 from: new Point(itemGroupBy.NowPosiLeft.X, itemGroupBy.NowPosiLeft.Y),
                                 to: itemGroupBy.OrderPosiLeft

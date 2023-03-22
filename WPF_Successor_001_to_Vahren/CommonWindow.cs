@@ -500,6 +500,11 @@ namespace WPF_Successor_001_to_Vahren
             {
                 ((Canvas)sender).Children.Remove(riRect);
             }
+            var riLine = (System.Windows.Shapes.Line)LogicalTreeHelper.FindLogicalNode(((Canvas)sender), "lineRangeUnitBattle");
+            if (riLine != null)
+            {
+                ((Canvas)sender).Children.Remove(riLine);
+            }
 
             //部隊を選択状態にする。もしくは既に選択状態なら移動させる
             List<ClassHorizontalUnit> lisClassHorizontalUnit = new List<ClassHorizontalUnit>();
@@ -518,30 +523,40 @@ namespace WPF_Successor_001_to_Vahren
                     break;
             }
             var st = cw.ClassGameStatus.StartPointRight;
-            var end = e.GetPosition(el);
+            var resultGetPosition = e.GetPosition(el);
             var ri2 = ClassStaticCommonMethod.FindAncestors((Canvas)sender).OfType<Canvas>().Where(x => x.Name == StringName.canvasMain).FirstOrDefault();
             if (ri2 == null) return;
             var ri = (Canvas)LogicalTreeHelper.FindLogicalNode(ri2, StringName.windowMapBattle);
 
             if (cw.ClassGameStatus.IsBattleMove == true)
             {
+                //縦
                 foreach (var item in lisClassHorizontalUnit)
                 {
+                    //縦の中で、移動フラグが立っているものを抽出
                     var re = item.ListClassUnit.Where(x => x.FlagMove == true);
                     if (re == null) continue;
 
-                    foreach (var itemRe in re)
-                    {
-                        var nowOrderPosi = end;
-                        if (itemRe.FlagMoving == true && itemRe.OrderPosiLeft != nowOrderPosi)
-                        {
-                            itemRe.FlagMoveDispose = true;
-                        }
-                        itemRe.OrderPosiLeft = nowOrderPosi;
-                        itemRe.FlagMove = false;
-                        itemRe.FlagMoving = false;
+                    int unitCount = re.Count();
 
-                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + itemRe.ID.ToString());
+                    //移動フラグが立っているユニットだけ、繰り返す
+                    foreach (var selectedUnit in re)
+                    {
+                        if (selectedUnit.FlagMoving == true && selectedUnit.OrderPosiLeft != resultGetPosition)
+                        {
+                            selectedUnit.FlagMoveDispose = true;
+                        }
+
+
+
+                        selectedUnit.OrderPosiLeft = new Point() { X = 0, Y = 0 };
+
+
+
+                        selectedUnit.FlagMove = false;
+                        selectedUnit.FlagMoving = false;
+
+                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.ID.ToString());
                         re2.BorderThickness = new Thickness()
                         {
                             Left = 0,
@@ -559,7 +574,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 var re = item.ListClassUnit
                             .Where(x => x.NowPosiCenter.X >= st.X && x.NowPosiCenter.Y >= st.Y
-                                    && x.NowPosiCenter.X <= end.X && x.NowPosiCenter.Y <= end.Y)
+                                    && x.NowPosiCenter.X <= resultGetPosition.X && x.NowPosiCenter.Y <= resultGetPosition.Y)
                             ;
                 if (re == null) continue;
 
@@ -576,7 +591,11 @@ namespace WPF_Successor_001_to_Vahren
                     re2.BorderBrush = Brushes.DarkRed;
                     itemRe.FlagMove = true;
                 }
-                cw.ClassGameStatus.IsBattleMove = true;
+
+                if (re.Count() > 0)
+                {
+                    cw.ClassGameStatus.IsBattleMove = true;
+                }
             }
         }
         /// <summary>
@@ -600,43 +619,65 @@ namespace WPF_Successor_001_to_Vahren
             Point pt = e.GetPosition(el);
             var st = cw.ClassGameStatus.StartPointRight;
 
-            //図形出す。赤い四角形
+            //図形出す。赤い四角形もしくは矢印
             var riRect = (System.Windows.Shapes.Rectangle)LogicalTreeHelper.FindLogicalNode(ri, "rangeUnitBattle");
-            if (riRect != null)
+            var riLine = (System.Windows.Shapes.Line)LogicalTreeHelper.FindLogicalNode(ri, "lineRangeUnitBattle");
+
+            if (riRect != null || riLine != null)
             {
-                ri.Children.Remove(riRect);
-
-                System.Windows.Shapes.Rectangle rect = new System.Windows.Shapes.Rectangle();
-                rect.Name = "rangeUnitBattle";
-                rect.Height = Math.Abs(pt.Y - st.Y);
-                rect.Width = Math.Abs(pt.X - st.X);
-
-                if (pt.X - st.X > 0)
+                if (cw.ClassGameStatus.IsBattleMove == true)
                 {
-                    //右に伸びる
-                    rect.Margin = new Thickness() { Left = st.X, Top = 0 };
+                    ri.Children.Remove(riLine);
+
+                    System.Windows.Shapes.Line line = new System.Windows.Shapes.Line();
+                    line.Name = "lineRangeUnitBattle";
+                    line.X1 = st.X;
+                    line.Y1 = st.Y;
+                    line.X2 = pt.X;
+                    line.Y2 = pt.Y;
+                    line.Fill = new SolidColorBrush(Colors.Transparent);
+                    line.Stroke = new SolidColorBrush(Colors.Red);
+                    line.StrokeThickness = 5;
+
+                    Canvas.SetZIndex(line, 999);
+                    ri.Children.Add(line);
                 }
                 else
                 {
-                    //左に伸びる
-                    rect.Margin = new Thickness() { Left = st.X - (rect.Width), Top = 0 };
-                }
-                if (pt.Y - st.Y > 0)
-                {
-                    //下に伸びる
-                    rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = st.Y };
-                }
-                else
-                {
-                    //上に伸びる
-                    rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = pt.Y };
-                }
-                rect.Fill = new SolidColorBrush(Colors.Transparent);
-                rect.Stroke = new SolidColorBrush(Colors.Red);
-                rect.StrokeThickness = 5;
+                    ri.Children.Remove(riRect);
 
-                Canvas.SetZIndex(rect, 999);
-                ri.Children.Add(rect);
+                    System.Windows.Shapes.Rectangle rect = new System.Windows.Shapes.Rectangle();
+                    rect.Name = "rangeUnitBattle";
+                    rect.Height = Math.Abs(pt.Y - st.Y);
+                    rect.Width = Math.Abs(pt.X - st.X);
+
+                    if (pt.X - st.X > 0)
+                    {
+                        //右に伸びる
+                        rect.Margin = new Thickness() { Left = st.X, Top = 0 };
+                    }
+                    else
+                    {
+                        //左に伸びる
+                        rect.Margin = new Thickness() { Left = st.X - (rect.Width), Top = 0 };
+                    }
+                    if (pt.Y - st.Y > 0)
+                    {
+                        //下に伸びる
+                        rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = st.Y };
+                    }
+                    else
+                    {
+                        //上に伸びる
+                        rect.Margin = new Thickness() { Left = rect.Margin.Left, Top = pt.Y };
+                    }
+                    rect.Fill = new SolidColorBrush(Colors.Transparent);
+                    rect.Stroke = new SolidColorBrush(Colors.Red);
+                    rect.StrokeThickness = 5;
+
+                    Canvas.SetZIndex(rect, 999);
+                    ri.Children.Add(rect);
+                }
             }
             else
             {
