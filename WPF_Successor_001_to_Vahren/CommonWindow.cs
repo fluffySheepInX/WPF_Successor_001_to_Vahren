@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using WPF_Successor_001_to_Vahren._005_Class;
 using WPF_Successor_001_to_Vahren._006_ClassStatic;
 using WPF_Successor_001_to_Vahren._010_Enum;
+using static System.Windows.Forms.AxHost;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
@@ -530,40 +531,169 @@ namespace WPF_Successor_001_to_Vahren
 
             if (cw.ClassGameStatus.IsBattleMove == true)
             {
-                //縦
+                List<ClassUnit> lisUnit = new List<ClassUnit>();
                 foreach (var item in lisClassHorizontalUnit)
                 {
-                    //縦の中で、移動フラグが立っているものを抽出
-                    var re = item.ListClassUnit.Where(x => x.FlagMove == true);
-                    if (re == null) continue;
+                    lisUnit.AddRange(item.ListClassUnit.Where(x => x.FlagMove == true).ToList());
+                }
+                if (lisUnit.Count == 1)
+                {
+                    if (lisUnit[0].FlagMoving == true && lisUnit[0].OrderPosiLeft != resultGetPosition)
+                    {
+                        lisUnit[0].FlagMoveDispose = true;
+                    }
+                    lisUnit[0].OrderPosiLeft = new Point()
+                    {
+                        X = resultGetPosition.X,
+                        Y = resultGetPosition.Y
+                    };
 
+                    lisUnit[0].FlagMove = false;
+                    lisUnit[0].FlagMoving = false;
+
+                    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + lisUnit[0].ID.ToString());
+                    re2.BorderThickness = new Thickness()
+                    {
+                        Left = 0,
+                        Top = 0,
+                        Right = 0,
+                        Bottom = 0
+                    };
+
+                    cw.ClassGameStatus.IsBattleMove = false;
+
+                    return;
+                }
+
+
+                //d
+                int DistanceBetweenUnit = 128;
+                //d'
+                int DistanceBetweenUnitTate = 128;
+
+                //縦
+                foreach (var item in lisClassHorizontalUnit.Select((value, index) => (value, index)))
+                {
+                    //縦の中で、移動フラグが立っているものを抽出
+                    var re = item.value.ListClassUnit.Where(x => x.FlagMove == true);
+                    if (re == null) continue;
+                    if (re.Count() == 0) continue;
+
+                    //その部隊の人数を取得
                     int unitCount = re.Count();
 
-                    //移動フラグが立っているユニットだけ、繰り返す
-                    foreach (var selectedUnit in re)
+                    //商の数
+                    int result = unitCount / 2;
+
+                    //角度
+                    // X軸との角度を計算
+                    //θ'=直線とx軸のなす角度
+                    double angle2 = Math.Atan2(resultGetPosition.Y - st.Y
+                                            , resultGetPosition.X - st.X) * (180 / Math.PI);
+                    // 始点と終点の位置関係によって正確な角度を計算
+                    if (angle2 < 0)
                     {
-                        if (selectedUnit.FlagMoving == true && selectedUnit.OrderPosiLeft != resultGetPosition)
+                        angle2 = Math.Abs(angle2);
+                    }
+                    //θ＝90-θ'
+                    double angle = 90 - angle2;
+
+                    //移動フラグが立っているユニットだけ、繰り返す
+                    //偶奇判定
+                    if (unitCount % 2 == 1)
+                    {
+                        ////奇数の場合
+                        foreach (var selectedUnit in re.Select((value, index) => (value, index)))
                         {
-                            selectedUnit.FlagMoveDispose = true;
+                            if (selectedUnit.value.FlagMoving == true && selectedUnit.value.OrderPosiLeft != resultGetPosition)
+                            {
+                                selectedUnit.value.FlagMoveDispose = true;
+                            }
+
+                            //px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+                            double xPos = resultGetPosition.X
+                                        + (
+                                            (selectedUnit.index - (result))
+                                            * (DistanceBetweenUnit * Math.Cos(angle))
+                                            )
+                                        +
+                                        (item.index * (DistanceBetweenUnitTate * Math.Cos(angle2)));
+                            //py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+                            double yPos = resultGetPosition.Y
+                                        + (
+                                        (selectedUnit.index - (result))
+                                        * (DistanceBetweenUnit * Math.Sin(angle))
+
+                                        )
+                                        -
+                                        (item.index * (DistanceBetweenUnitTate * Math.Sin(angle2)));
+
+                            selectedUnit.value.OrderPosiLeft = new Point()
+                            {
+                                X = xPos,
+                                Y = yPos
+                            };
+
+                            selectedUnit.value.FlagMove = false;
+                            selectedUnit.value.FlagMoving = false;
+
+                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.value.ID.ToString());
+                            re2.BorderThickness = new Thickness()
+                            {
+                                Left = 0,
+                                Top = 0,
+                                Right = 0,
+                                Bottom = 0
+                            };
                         }
 
-
-
-                        selectedUnit.OrderPosiLeft = new Point() { X = resultGetPosition.X, Y = resultGetPosition.Y };
-
-
-
-                        selectedUnit.FlagMove = false;
-                        selectedUnit.FlagMoving = false;
-
-                        var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.ID.ToString());
-                        re2.BorderThickness = new Thickness()
+                    }
+                    else
+                    {
+                        foreach (var selectedUnit in re.Select((value, index) => (value, index)))
                         {
-                            Left = 0,
-                            Top = 0,
-                            Right = 0,
-                            Bottom = 0
-                        };
+                            if (selectedUnit.value.FlagMoving == true && selectedUnit.value.OrderPosiLeft != resultGetPosition)
+                            {
+                                selectedUnit.value.FlagMoveDispose = true;
+                            }
+
+                            //px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+                            double xPos = resultGetPosition.X
+                                        + (
+                                        (selectedUnit.index - (unitCount / 2))
+                                        * (DistanceBetweenUnit * Math.Cos(angle))
+
+                                        )
+                                        +
+                                        (item.index * (DistanceBetweenUnitTate * Math.Cos(angle2)));
+                            //py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+                            double yPos = resultGetPosition.Y
+                                        + (
+                                        (selectedUnit.index - (unitCount / 2))
+                                        * (DistanceBetweenUnit * Math.Sin(angle))
+
+                                        )
+                                        -
+                                        (item.index * (DistanceBetweenUnitTate * Math.Sin(angle2)));
+
+                            selectedUnit.value.OrderPosiLeft = new Point()
+                            {
+                                X = xPos,
+                                Y = yPos
+                            };
+
+                            selectedUnit.value.FlagMove = false;
+                            selectedUnit.value.FlagMoving = false;
+
+                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.value.ID.ToString());
+                            re2.BorderThickness = new Thickness()
+                            {
+                                Left = 0,
+                                Top = 0,
+                                Right = 0,
+                                Bottom = 0
+                            };
+                        }
                     }
                 }
                 cw.ClassGameStatus.IsBattleMove = false;
@@ -725,31 +855,6 @@ namespace WPF_Successor_001_to_Vahren
                 default:
                     break;
             }
-
-            //foreach (var item in lisClassHorizontalUnit)
-            //{
-            //    var re = item.ListClassUnit.Where(x => x.FlagMove == true).FirstOrDefault();
-            //    if (re == null) continue;
-
-            //    var nowOrderPosi = e.GetPosition(ri);
-            //    if (re.FlagMoving = true && re.OrderPosiLeft != nowOrderPosi)
-            //    {
-            //        re.FlagMoveDispose = true;
-            //    }
-            //    re.OrderPosiLeft = nowOrderPosi;
-            //    re.FlagMove = false;
-            //    re.FlagMoving = false;
-
-            //    var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + re.ID.ToString());
-            //    re2.BorderThickness = new Thickness()
-            //    {
-            //        Left = 0,
-            //        Top = 0,
-            //        Right = 0,
-            //        Bottom = 0
-            //    };
-            //    //break;
-            //}
 
             UIElement? el = sender as UIElement;
             if (el == null) return;
