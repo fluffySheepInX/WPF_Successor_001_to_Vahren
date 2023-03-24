@@ -1355,6 +1355,24 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                         Environment.Exit(1);
                                                     }
 
+                                                    //二点間の角度を求める
+                                                    var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
+                                                                                (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
+                                                    var degree = radian * (180 / Math.PI);
+
+                                                    List<string> strings = new List<string>();
+                                                    strings.Add(fP);
+                                                    strings.Add("042_ChipImageSkillEffect");
+                                                    if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
+                                                    {
+                                                        strings.Add(itemSkill.Image + "N.png");
+                                                    }
+                                                    else
+                                                    {
+                                                        strings.Add(itemSkill.Image + "NW.png");
+                                                    }
+                                                    string path = System.IO.Path.Combine(strings.ToArray());
+
                                                     Application.Current.Dispatcher.Invoke((Action)(() =>
                                                     {
                                                         //後始末
@@ -1373,24 +1391,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                                                         //スキル画像
                                                         {
-                                                            //二点間の角度を求める
-                                                            var radian = MathF.Atan2((float)(itemDefUnitList.NowPosiCenter.Y - itemGroupBy.NowPosiSkill[singleAttackNumber].Y),
-                                                                                        (float)(itemDefUnitList.NowPosiCenter.X - itemGroupBy.NowPosiSkill[singleAttackNumber].X));
-                                                            var degree = radian * (180 / Math.PI);
-
-                                                            List<string> strings = new List<string>();
-                                                            strings.Add(fP);
-                                                            strings.Add("042_ChipImageSkillEffect");
-                                                            if (degree == 0 || degree == 90 || degree == 180 || degree == 270)
-                                                            {
-                                                                strings.Add(itemSkill.Image + "N.png");
-                                                            }
-                                                            else
-                                                            {
-                                                                strings.Add(itemSkill.Image + "NW.png");
-                                                            }
-                                                            string path = System.IO.Path.Combine(strings.ToArray());
-
                                                             var bi = new BitmapImage(new Uri(path));
                                                             Image image = new Image();
                                                             image.Stretch = Stretch.Fill;
