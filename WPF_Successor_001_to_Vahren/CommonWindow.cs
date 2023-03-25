@@ -571,10 +571,10 @@ namespace WPF_Successor_001_to_Vahren
                 //d'
                 int DistanceBetweenUnitTate = 128;
 
-                //縦
+                //縦で繰り返し
                 foreach (var item in lisClassHorizontalUnit.Select((value, index) => (value, index)))
                 {
-                    //縦の中で、移動フラグが立っているものを抽出
+                    //横の中で、移動フラグが立っているものを抽出
                     var re = item.value.ListClassUnit.Where(x => x.FlagMove == true);
                     if (re == null) continue;
                     if (re.Count() == 0) continue;
@@ -660,7 +660,7 @@ namespace WPF_Successor_001_to_Vahren
                             //px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
                             double xPos = resultGetPosition.X
                                         + (
-                                        (selectedUnit.index - (unitCount / 2))
+                                        (selectedUnit.index - (result))
                                         * (DistanceBetweenUnit * Math.Cos(angle))
 
                                         )
@@ -669,7 +669,7 @@ namespace WPF_Successor_001_to_Vahren
                             //py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
                             double yPos = resultGetPosition.Y
                                         + (
-                                        (selectedUnit.index - (unitCount / 2))
+                                        (selectedUnit.index - (result))
                                         * (DistanceBetweenUnit * Math.Sin(angle))
 
                                         )
