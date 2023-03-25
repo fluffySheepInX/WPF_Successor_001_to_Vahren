@@ -1279,6 +1279,19 @@ namespace WPF_Successor_001_to_Vahren
                     );
             }
 
+            //AI同士かつ見ない設定の戦闘はこれで非表示
+            var aaaa = SetAndGetCanvasBattleBack(canvas,
+                                    this._sizeClientWinWidth,
+                                    this._sizeClientWinHeight,
+                                    this.CanvasMainWidth,
+                                    this.CanvasMainHeight);
+            if (ClassConfigCommon.LookOtherLandBattle == false
+                && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
+            {
+                Canvas.SetZIndex(aaaa, -99);
+            }
+
+
             if (ClassGameStatus.ClassBattle.ClassMapBattle == null)
             {
                 return;
