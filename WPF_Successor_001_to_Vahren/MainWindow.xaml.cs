@@ -1213,183 +1213,108 @@ namespace WPF_Successor_001_to_Vahren
             this.canvasUI.Children.Clear();
             this.canvasUIRightBottom.Children.Clear();
 
-            //マップそのもの
-            Canvas canvas = new Canvas();
             int takasaMapTip = ClassStaticBattle.TakasaMapTip;
             int yokoMapTip = ClassStaticBattle.yokoMapTip;
-            canvas.Name = StringName.windowMapBattle;
-            canvas.Background = Brushes.Black;
-            canvas.MouseLeftButtonDown += CanvasMapBattle_MouseLeftButtonDown;
-            canvas.MouseRightButtonDown += windowMapBattle_MouseRightButtonDown;
+            //マップそのもの
+            Canvas canvas = ClassStaticBattle.CreateCanvasBattle(ClassGameStatus.ClassBattle.ClassMapBattle,
+                                                takasaMapTip, yokoMapTip, this._sizeClientWinHeight,
+                                                this.CanvasMainWidth, this._sizeClientWinWidth,
+                                                CanvasMapBattle_MouseLeftButtonDown,
+                                                windowMapBattle_MouseRightButtonDown);
+
+            //建築物描写
             {
-                if (ClassGameStatus.ClassBattle.ClassMapBattle == null)
+                // get files.
+                IEnumerable<string> files = ClassStaticBattle.GetFiles015_BattleMapCellImage(ClassConfigGameTitle.DirectoryGameTitle[NowNumberGameTitle].FullName);
+                Dictionary<string, string> map = new Dictionary<string, string>();
+                foreach (var item in files)
                 {
-                    //キャンバス設定
-                    {
-                        int BaseNum = 600;
-                        canvas.Width = BaseNum
-                                        + (BaseNum / 2);
-                        canvas.Height = BaseNum;
-                        canvas.Margin = new Thickness()
-                        {
-                            Left = BaseNum / 2,
-                            Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
-                        };
-                    }
-                }
-                else
-                {
-                    //キャンバス設定
-                    {
-                        canvas.Width = this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData[0].Count * yokoMapTip;
-                        canvas.Height = this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData.Count * takasaMapTip;
-                        canvas.Margin = new Thickness()
-                        {
-                            Left = ((
-                                    (this.CanvasMainWidth / 2) - (this._sizeClientWinWidth / 2)
-                                    ))
-                                        +
-                                    (this._sizeClientWinWidth / 2) - ((this.ClassGameStatus.ClassBattle.ClassMapBattle.MapData[0].Count * 32) / 2),
-                            Top = (this._sizeClientWinHeight / 2) - (canvas.Height / 2)
-                        };
-                        //RotateTransform rotateTransform2 = new RotateTransform(0);
-                        ////rotateTransform2.CenterX = 25;
-                        ////rotateTransform2.CenterY = 50;
-                        //canvas.RenderTransform = rotateTransform2;
-                    }
-
-                    // get files.
-                    IEnumerable<string> files = ClassStaticBattle.GetFiles015_BattleMapCellImage(ClassConfigGameTitle.DirectoryGameTitle[NowNumberGameTitle].FullName);
-                    Dictionary<string, string> map = new Dictionary<string, string>();
-                    foreach (var item in files)
-                    {
-                        map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
-                    }
-
-                    //Path描写
-                    //double naname = Math.Sqrt((48 / 2) * (48 / 2)) + ((16) * (16));
-                    List<(BitmapImage, int, int)> listTakaiObj = new List<(BitmapImage, int, int)>();
-                    foreach (var itemCol in ClassGameStatus.ClassBattle.ClassMapBattle.MapData
-                                            .Select((value, index) => (value, index)))
-                    {
-                        foreach (var itemRow in itemCol.value.Select((value, index) => (value, index)))
-                        {
-                            map.TryGetValue(itemRow.value.Tip, out string? value);
-                            if (value == null) continue;
-
-                            //RotateTransform rotateTransform2 = new RotateTransform(45);
-                            //rotateTransform2.CenterX = 25;
-                            //rotateTransform2.CenterY = 50;
-                            //image.RelativeTransform = rotateTransform2;
-
-                            if (itemRow.value.Building.Count != 0)
-                            {
-                                foreach (var building in itemRow.value.Building)
-                                {
-                                    map.TryGetValue(building, out string? value2);
-                                    if (value2 != null)
-                                    {
-                                        var build = new BitmapImage(new Uri(value2));
-                                        listTakaiObj.Add(new(build, itemCol.index, itemRow.index));
-                                    }
-                                }
-                            }
-
-                            var bi = new BitmapImage(new Uri(value));
-                            ImageBrush image = new ImageBrush();
-                            image.Stretch = Stretch.Fill;
-                            image.ImageSource = bi;
-                            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
-                            path.Fill = image;
-                            ClassBattleMapPath classBattleMapPath = new ClassBattleMapPath();
-                            classBattleMapPath.Col = itemCol.index;
-                            classBattleMapPath.Row = itemRow.index;
-                            if (itemRow.value.BoueiButaiNoIti == true)
-                            {
-                                classBattleMapPath.KougekiOrBouei = "Bouei";
-                                path.Tag = classBattleMapPath;
-                            }
-                            if (itemRow.value.KougekiButaiNoIti == true)
-                            {
-                                classBattleMapPath.KougekiOrBouei = "Kougeki";
-                                path.Tag = classBattleMapPath;
-                            }
-                            path.Name = "a" + itemCol.index + "a" + itemRow.index;
-                            path.Stretch = Stretch.Fill;
-                            path.StrokeThickness = 0;
-                            path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
-                                                    + " L " + yokoMapTip / 2 + "," + takasaMapTip
-                                                    + " L " + yokoMapTip + "," + takasaMapTip / 2
-                                                    + " L " + yokoMapTip / 2 + ",0 Z");
-                            path.Margin = new Thickness()
-                            {
-                                Left = (itemCol.index * (yokoMapTip / 2)) + (itemRow.index * (yokoMapTip / 2)),
-                                Top =
-                                    ((canvas.Height / 2) // マップ半分の高さ
-                                    + (itemCol.index * (takasaMapTip / 2))
-                                    + (itemRow.index * (-(takasaMapTip / 2)))) // マイナスになる 
-                                    - takasaMapTip / 2
-                            };
-                            canvas.Children.Add(path);
-                            itemRow.value.MapPath = path;
-                        }
-                    }
-
-                    //建築物描写
-                    ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, ClassGameStatus.ClassBattle.ListBuildingAlive);
-
-                    //建築物論理描写
-                    //こちらを後でやる。クリックで爆破が出来るように
-                    var bui = ClassGameStatus.ClassBattle.DefUnitGroup
-                                .Where(x => x.FlagBuilding == true)
-                                .First();
-                    foreach (var item in bui.ListClassUnit)
-                    {
-                        ClassUnitBuilding classUnitBuilding = (ClassUnitBuilding)item;
-                        var target = listTakaiObj.Where(x => x.Item2 == classUnitBuilding.X && x.Item3 == classUnitBuilding.Y).FirstOrDefault();
-                        if (target == (null, null, null)) continue;
-
-                        System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
-                        path.Stretch = Stretch.Fill;
-                        path.StrokeThickness = 0;
-                        path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
-                                                + " L " + yokoMapTip / 2 + "," + takasaMapTip
-                                                + " L " + yokoMapTip + "," + takasaMapTip / 2
-                                                + " L " + yokoMapTip / 2 + ",0 Z");
-                        path.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
-                        path.Name = "Chip" + item.ID.ToString();
-                        path.Tag = item.ID.ToString();
-
-                        path.Margin = new Thickness()
-                        {
-                            Left = (target.Item2 * (yokoMapTip / 2)) + (target.Item3 * (yokoMapTip / 2)),
-                            Top = ((canvas.Height / 2) + (target.Item2 * (takasaMapTip / 2)) + (target.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
-                        };
-                        classUnitBuilding.NowPosiLeft = new Point(path.Margin.Left, path.Margin.Top);
-                        canvas.Children.Add(path);
-                    }
+                    map.Add(System.IO.Path.GetFileNameWithoutExtension(item), item);
                 }
 
-                var aaaa = SetAndGetCanvasBattleBack(canvas,
+                //Path描写
+                List<(BitmapImage, int, int)> listTakaiObj;
+                ClassStaticBattle.CreatePathIntoCanvas(canvas, takasaMapTip, yokoMapTip, map, ClassGameStatus, out listTakaiObj);
+
+                //建築物描写
+                ClassStaticBattle.DisplayBuilding(canvas, takasaMapTip, yokoMapTip, listTakaiObj, ClassGameStatus.ClassBattle.ListBuildingAlive);
+
+                //建築物論理描写
+                //こちらを後でやる。クリックで爆破が出来るように
+                var bui = ClassGameStatus.ClassBattle.DefUnitGroup
+                            .Where(x => x.FlagBuilding == true)
+                            .First();
+                foreach (var item in bui.ListClassUnit)
+                {
+                    ClassUnitBuilding classUnitBuilding = (ClassUnitBuilding)item;
+                    var target = listTakaiObj.Where(x => x.Item2 == classUnitBuilding.X && x.Item3 == classUnitBuilding.Y).FirstOrDefault();
+                    if (target == (null, null, null)) continue;
+
+                    System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
+                    path.Stretch = Stretch.Fill;
+                    path.StrokeThickness = 0;
+                    path.Data = Geometry.Parse("M 0," + takasaMapTip / 2
+                                            + " L " + yokoMapTip / 2 + "," + takasaMapTip
+                                            + " L " + yokoMapTip + "," + takasaMapTip / 2
+                                            + " L " + yokoMapTip / 2 + ",0 Z");
+                    path.PreviewMouseLeftButtonDown += WindowMapBattleUnit_MouseLeftButtonDown;
+                    path.Name = "Chip" + item.ID.ToString();
+                    path.Tag = item.ID.ToString();
+
+                    path.Margin = new Thickness()
+                    {
+                        Left = (target.Item2 * (yokoMapTip / 2)) + (target.Item3 * (yokoMapTip / 2)),
+                        Top = ((canvas.Height / 2) + (target.Item2 * (takasaMapTip / 2)) + (target.Item3 * (-(takasaMapTip / 2)))) - takasaMapTip / 2
+                    };
+                    classUnitBuilding.NowPosiLeft = new Point(path.Margin.Left, path.Margin.Top);
+                    canvas.Children.Add(path);
+                }
+
+                this.canvasMain.Children.Add(
+                    SetAndGetCanvasBattleBack(canvas,
                                         this._sizeClientWinWidth,
                                         this._sizeClientWinHeight,
                                         this.CanvasMainWidth,
-                                        this.CanvasMainHeight);
-                if (ClassConfigCommon.LookOtherLandBattle == false 
-                    && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
-                {
-                    Canvas.SetZIndex(aaaa, -99);
-                }
-                else
-                {
-                    Canvas.SetZIndex(aaaa, 99);
-                }
+                                        this.CanvasMainHeight)
+                    );
+            }
 
-                this.canvasMain.Children.Add(aaaa);
+            if (ClassGameStatus.ClassBattle.ClassMapBattle == null)
+            {
+                return;
+            }
+
+            //新並び替え
+            int count = 0;
+            System.Windows.Shapes.Path pathKougeki = new System.Windows.Shapes.Path();
+            System.Windows.Shapes.Path pathBouei = new System.Windows.Shapes.Path();
+            Random random = new System.Random(DateTime.Now.Minute);
+            foreach (var item in canvas.Children.OfType<System.Windows.Shapes.Path>())
+            {
+                var target = item.Tag as ClassBattleMapPath;
+                if (target != null)
+                {
+                    count++;
+
+                    if (target.KougekiOrBouei == "Kougeki")
+                    {
+                        pathKougeki = item;
+                    }
+                    else
+                    {
+                        pathBouei = item;
+                    }
+
+                    if (count == 2)
+                    {
+                        break;
+                    }
+                }
             }
 
             ////出撃ユニット
             {
+                ////旧並び替え
                 //中点
                 decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
                 //線の端
@@ -1492,22 +1417,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top - 192
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 192
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 192
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top - 192
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 192
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 192
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -1571,22 +1510,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top - 86
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 86
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 86
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top - 86
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 86
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 86
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -1650,22 +1603,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -1786,20 +1753,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top + 192
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 192
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 192
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top + 192
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 192
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 192
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);
@@ -1866,20 +1848,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top + 86
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 86
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 86
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top + 86
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 86
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 86
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);
@@ -1946,20 +1943,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);
@@ -1976,24 +1988,8 @@ namespace WPF_Successor_001_to_Vahren
             }
             else
             {
-                {
-                    Uri uri = new Uri("/Page025_Battle_Command.xaml", UriKind.Relative);
-                    Frame frame = new Frame();
-                    frame.Source = uri;
-                    frame.Margin = new Thickness(0, this._sizeClientWinHeight - 310 - 60, 0, 0);
-                    frame.Name = StringName.windowBattleCommand;
-                    Canvas.SetZIndex(frame, 99);
-                    this.canvasMain.Children.Add(frame);
-                }
-                {
-                    Uri uri = new Uri("/Page026_Battle_SelectUnit.xaml", UriKind.Relative);
-                    Frame frame = new Frame();
-                    frame.Source = uri;
-                    frame.Margin = new Thickness(0, this._sizeClientWinHeight - 120, 0, 0);
-                    frame.Name = StringName.windowBattleCommand;
-                    Canvas.SetZIndex(frame, 99);
-                    this.canvasMain.Children.Add(frame);
-                }
+                ClassStaticBattle.CreatePageBattle(this.canvasMain, this._sizeClientWinHeight, this);
+
                 {
                     if (this.ClassGameStatus.IsDebugBattle == true)
                     {

@@ -198,8 +198,42 @@ namespace WPF_Successor_001_to_Vahren
                     );
             }
 
+            if (ClassGameStatus.ClassBattle.ClassMapBattle == null)
+            {
+                return;
+            }
+
+            //新並び替え
+            int count = 0;
+            System.Windows.Shapes.Path pathKougeki = new System.Windows.Shapes.Path();
+            System.Windows.Shapes.Path pathBouei = new System.Windows.Shapes.Path();
+            Random random = new System.Random(DateTime.Now.Minute);
+            foreach (var item in canvas.Children.OfType<System.Windows.Shapes.Path>())
+            {
+                var target = item.Tag as ClassBattleMapPath;
+                if (target != null)
+                {
+                    count++;
+
+                    if (target.KougekiOrBouei == "Kougeki")
+                    {
+                        pathKougeki = item;
+                    }
+                    else
+                    {
+                        pathBouei = item;
+                    }
+
+                    if (count == 2)
+                    {
+                        break;
+                    }
+                }
+            }
+
             ////出撃ユニット
             {
+                ////旧並び替え
                 //中点
                 decimal countMeHalf = Math.Floor((decimal)ClassGameStatus.ClassBattle.SortieUnitGroup.Count / 2);
                 //線の端
@@ -302,22 +336,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top - 192
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 192
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 192
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top - 192
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 192
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 192
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -381,22 +429,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top - 86
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 86
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top - 86
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top - 86
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 86
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top - 86
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -460,22 +522,36 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top
+                            Left = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Top = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathKougeki.Margin.Left + random.Next(-5, 5),
+                            Y = pathKougeki.Margin.Top + random.Next(-5, 5)
                         };
-
                         Canvas.SetZIndex(border, 99);
                         canvas.Children.Add(border);
                     }
@@ -596,20 +672,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top + 192
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 192
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 192
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top + 192
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 192
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 192
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);
@@ -676,20 +767,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top + 86
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 86
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top + 86
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top + 86
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 86
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top + 86
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);
@@ -756,20 +862,35 @@ namespace WPF_Successor_001_to_Vahren
                         border.Name = "border" + itemListClassUnit.value.ID.ToString();
                         border.BorderThickness = new Thickness();
                         border.Child = canvasChip;
+                        //border.Margin = new Thickness()
+                        //{
+                        //    Left = left,
+                        //    Top = top
+                        //};
+                        //itemListClassUnit.value.NowPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
+                        //itemListClassUnit.value.OrderPosiLeft = new Point()
+                        //{
+                        //    X = left,
+                        //    Y = top
+                        //};
                         border.Margin = new Thickness()
                         {
-                            Left = left,
-                            Top = top
+                            Left = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Top = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.NowPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
                         itemListClassUnit.value.OrderPosiLeft = new Point()
                         {
-                            X = left,
-                            Y = top
+                            X = pathBouei.Margin.Left + random.Next(-5, 5),
+                            Y = pathBouei.Margin.Top + random.Next(-5, 5)
                         };
 
                         Canvas.SetZIndex(border, 99);

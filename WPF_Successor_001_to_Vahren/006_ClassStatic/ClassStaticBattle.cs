@@ -2314,7 +2314,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             }
             else
             {
-                //後で直す
+                //後で直す。そのまま使おうとすると、ダブる
                 timerAfterFadeIn.Tick += (x, s) =>
                 {
                     ClassStaticBattle.TimerAction60FPSAfterFadeInBattleStart(commonWindow, canvas, null);
