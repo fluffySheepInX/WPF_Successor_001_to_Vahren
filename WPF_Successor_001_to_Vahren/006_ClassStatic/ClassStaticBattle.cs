@@ -686,19 +686,21 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     Application.Current.Dispatcher.Invoke((Action)(() =>
                                     {
                                         moveUnit.OrderPosiLeft = new Point(aaaaa.Margin.Left, aaaaa.Margin.Top);
-                                    }));
-                                    var calc0 = ClassCalcVec.ReturnVecDistance(
-                                        from: new Point(moveUnit.NowPosiLeft.X, moveUnit.NowPosiLeft.Y),
-                                        to: moveUnit.OrderPosiLeft
-                                    );
-                                    moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                                    moveUnit.FlagMoving = true;
+                                        //以下を外に出すと、moveUnit.OrderPosiLeftがおかしくなって死ぬ
+                                        var calc0 = ClassCalcVec.ReturnVecDistance(
+                                            from: new Point(moveUnit.NowPosiCenter.X, moveUnit.NowPosiCenter.Y),
+                                            to: moveUnit.OrderPosiLeft
+                                        );
+                                        moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                                        moveUnit.FlagMoving = true;
 
-                                    var tokenSource = new CancellationTokenSource();
-                                    var token = tokenSource.Token;
-                                    (Task, CancellationTokenSource) aaa =
-                                        new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
-                                    t.Add(moveUnit.ID, aaa);
+                                        var tokenSource = new CancellationTokenSource();
+                                        var token = tokenSource.Token;
+                                        (Task, CancellationTokenSource) aaa =
+                                            new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                        t.Add(moveUnit.ID, aaa);
+
+                                    }),DispatcherPriority.Send);
                                 }
                             }
                             catch (Exception)
@@ -973,29 +975,29 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     }
 
                                     #region 移動経路を見たい時用に
-                                    //if (listRoot.Count != 0)
-                                    //{
-                                    //    foreach (var itemResultAStarRev in listRoot)
-                                    //    {
-                                    //        _ = Application.Current.Dispatcher.InvokeAsync((Action)(() =>
-                                    //        {
-                                    //            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                    if (listRoot.Count != 0)
+                                    {
+                                        foreach (var itemResultAStarRev in listRoot)
+                                        {
+                                            _ = Application.Current.Dispatcher.InvokeAsync((Action)(() =>
+                                            {
+                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
 
-                                    //            Canvas canvas = new Canvas();
-                                    //            canvas.Background = Brushes.Yellow;
-                                    //            canvas.Height = TakasaMapTip;
-                                    //            canvas.Width = yokoMapTip;
-                                    //            var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
-                                    //            if (aaaaa == null) return;
-                                    //            canvas.Margin = new Thickness()
-                                    //            {
-                                    //                Left = aaaaa.Margin.Left,
-                                    //                Top = aaaaa.Margin.Top
-                                    //            };
-                                    //            re1.Children.Add(canvas);
-                                    //        }));
-                                    //    }
-                                    //}
+                                                Canvas canvas = new Canvas();
+                                                canvas.Background = Brushes.Yellow;
+                                                canvas.Height = TakasaMapTip;
+                                                canvas.Width = yokoMapTip;
+                                                var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemResultAStarRev.X][(int)itemResultAStarRev.Y].MapPath;
+                                                if (aaaaa == null) return;
+                                                canvas.Margin = new Thickness()
+                                                {
+                                                    Left = aaaaa.Margin.Left,
+                                                    Top = aaaaa.Margin.Top
+                                                };
+                                                re1.Children.Add(canvas);
+                                            }));
+                                        }
+                                    }
                                     #endregion
 
                                     if (listRoot.Count != 0)
