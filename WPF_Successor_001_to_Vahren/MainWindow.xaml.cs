@@ -1269,14 +1269,6 @@ namespace WPF_Successor_001_to_Vahren
                     classUnitBuilding.NowPosiLeft = new Point(path.Margin.Left, path.Margin.Top);
                     canvas.Children.Add(path);
                 }
-
-                this.canvasMain.Children.Add(
-                    SetAndGetCanvasBattleBack(canvas,
-                                        this._sizeClientWinWidth,
-                                        this._sizeClientWinHeight,
-                                        this.CanvasMainWidth,
-                                        this.CanvasMainHeight)
-                    );
             }
 
             //AI同士かつ見ない設定の戦闘はこれで非表示
@@ -1289,6 +1281,11 @@ namespace WPF_Successor_001_to_Vahren
                 && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
             {
                 Canvas.SetZIndex(aaaa, -99);
+                this.canvasMain.Children.Add(aaaa);
+            }
+            else
+            {
+                this.canvasMain.Children.Add(aaaa);
             }
 
 
