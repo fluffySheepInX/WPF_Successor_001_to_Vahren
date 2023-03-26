@@ -698,6 +698,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         var token = tokenSource.Token;
                                         (Task, CancellationTokenSource) aaa =
                                             new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                        if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
+                                        {
+                                            t.Remove(moveUnit.ID);
+                                        }
                                         t.Add(moveUnit.ID, aaa);
 
                                     }),DispatcherPriority.Send);
