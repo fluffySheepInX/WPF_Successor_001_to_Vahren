@@ -2319,6 +2319,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             //同系統徴兵
                             foreach (var itemUnitGroup in targetSpot.UnitGroup)
                             {
+                                if (itemUnitGroup.ListClassUnit.Count() == 0)
+                                {
+                                    //本質的ではない解決な気がする
+                                    continue;
+                                }
                                 var unitBase = classGameStatus.ListUnit.Where(x => x.NameTag == itemUnitGroup.ListClassUnit[0].Friend).FirstOrDefault();
                                 if (unitBase == null)
                                 {

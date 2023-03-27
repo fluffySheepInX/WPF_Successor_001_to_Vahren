@@ -20,7 +20,7 @@ TestBattle ca2
 	#出撃
 	memberKougeki = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 	#防衛
-	memberBouei = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
+	memberBouei = "YaibaDagest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
 	#プレイヤー
 	#Sortie
 	#Def
@@ -35,7 +35,7 @@ TestBattle testMap002
 	#出撃
 	memberKougeki = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5";
 	#防衛
-	memberBouei = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
+	memberBouei = "YaibaDagest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest";
 	#プレイヤー
 	#Sortie
 	#Def

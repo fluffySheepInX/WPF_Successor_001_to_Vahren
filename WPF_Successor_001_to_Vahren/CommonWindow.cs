@@ -567,9 +567,9 @@ namespace WPF_Successor_001_to_Vahren
 
 
                 //d
-                int DistanceBetweenUnit = 128;
+                int DistanceBetweenUnit = 32;
                 //d'
-                int DistanceBetweenUnitTate = 128;
+                int DistanceBetweenUnitTate = 32;
 
                 //縦で繰り返し
                 foreach (var item in lisClassHorizontalUnit.Select((value, index) => (value, index)))
@@ -588,12 +588,12 @@ namespace WPF_Successor_001_to_Vahren
                     //角度
                     // X軸との角度を計算
                     //θ'=直線とx軸のなす角度
-                    double angle2 = Math.Atan2(resultGetPosition.Y - st.Y
-                                            , resultGetPosition.X - st.X) * (180 / Math.PI);
+                    double angle2 = Math.Atan2(Math.Abs(resultGetPosition.Y - st.Y)
+                                            , Math.Abs(resultGetPosition.X - st.X)) * (180 / Math.PI);
                     // 始点と終点の位置関係によって正確な角度を計算
                     if (angle2 < 0)
                     {
-                        angle2 = Math.Abs(angle2);
+                        //angle2 = Math.Abs(angle2);
                     }
                     //θ＝90-θ'
                     double angle = 90 - angle2;
@@ -660,10 +660,9 @@ namespace WPF_Successor_001_to_Vahren
                             //px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
                             double xPos = resultGetPosition.X
                                         + (
-                                        (selectedUnit.index - (result))
-                                        * (DistanceBetweenUnit * Math.Cos(angle))
-
-                                        )
+                                            (selectedUnit.index - (result))
+                                            * (DistanceBetweenUnit * Math.Cos(angle))
+                                            )
                                         +
                                         (item.index * (DistanceBetweenUnitTate * Math.Cos(angle2)));
                             //py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
@@ -757,7 +756,7 @@ namespace WPF_Successor_001_to_Vahren
             {
                 if (cw.ClassGameStatus.IsBattleMove == true)
                 {
-                    ri.Children.Remove(riLine);
+                    //ri.Children.Remove(riLine);
 
                     System.Windows.Shapes.Line line = new System.Windows.Shapes.Line();
                     line.Name = "lineRangeUnitBattle";
