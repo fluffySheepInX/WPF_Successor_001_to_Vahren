@@ -117,10 +117,10 @@ NewFormatScenario sc1
 	war_capacity = "24";
 	
 	#省略時は8。領地のデフォルト駐留数
-	spot_capacity = "16";
+	spot_capacity = "6";
 	
 	#省略時は8。部隊のデフォルト定員数
-	member_capacity = "8";
+	member_capacity = "6";
 
 	#訓練時の最大上昇値
 	training_up = "2";
