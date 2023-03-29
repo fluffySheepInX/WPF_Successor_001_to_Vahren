@@ -99,7 +99,7 @@ NewFormatSpot spot0003
 	x = "2700";
 	y = "400";
 	map = "testMap002";
-	member = "YaibaDagest,Gagot";
+	member = "YaibaDagest,Gagot,IlkayWarrior*2,IlkaySpellcaster";
 	capacity = "8";
 }
 NewFormatSpot spot0007
