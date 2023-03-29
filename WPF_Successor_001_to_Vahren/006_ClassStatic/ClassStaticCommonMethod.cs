@@ -146,7 +146,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 foreach (var item in spBuild)
                                 {
                                     map.TryGetValue(item, out string? mapValue2);
-                                    if (mapValue2 != null) mapDetail.Building.Add(mapValue2);
+                                    if (mapValue2 != null) mapDetail.Building.Add(new(mapValue2, -1));
                                 }
                             }
 

@@ -110,7 +110,7 @@ NewFormatSpot spot0007
 	y = "300";
 	map = "testMap002";
 
-	member = "LineInfantryM14*2,DragoonFrancesca,HowitzerC11";
+	member = "IlkayWarrior*2,IlkaySpellcaster";
 
 	gain = "50";
 	castle = "5";

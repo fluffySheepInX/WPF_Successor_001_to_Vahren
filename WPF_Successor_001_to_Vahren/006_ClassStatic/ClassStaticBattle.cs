@@ -31,24 +31,25 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         {
             if (classGameStatus == null) return;
             if (classGameStatus.ClassBattle.ClassMapBattle == null) return;
-
+            if (classGameStatus.ClassBattle.ClassMapBattle.MapData == null) return;
             //建築物設定
 
             List<(string, int, int)> bui = new List<(string, int, int)>();
-            foreach (var battle in classGameStatus.ClassBattle.ClassMapBattle.MapData.Select((value, index) => (value, index)))
+            foreach (var row in classGameStatus.ClassBattle.ClassMapBattle.MapData.Select((value, index) => (value, index)))
             {
-                foreach (var item in battle.value.Select((value, index) => (value, index)))
+                foreach (var column in row.value.Select((value, index) => (value, index)))
                 {
-                    if (item.value.Building.Count != 0)
+                    if (column.value.Building.Count != 0)
                     {
-                        foreach (var building in item.value.Building)
+                        foreach (var building in column.value.Building)
                         {
-                            bui.Add(new(building, battle.index, item.index));
+                            bui.Add(new(building.Item1, row.index, column.index));
                         }
                     }
                 }
             }
 
+            //ここで建物にIDを振っているので、直後にMapData.mapDetailにもIDを振る
             List<ClassUnit> uni = new List<ClassUnit>();
             ClassHorizontalUnit classHorizontalUnit = new ClassHorizontalUnit();
             classHorizontalUnit.FlagBuilding = true;
@@ -75,6 +76,11 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     ,
                     Type = MapTipObjectType.GATE
                 });
+
+                classGameStatus.ClassBattle.ClassMapBattle.MapData[item.Item2][item.Item3]
+                .Building[0] = 
+                new(classGameStatus.ClassBattle.ClassMapBattle.MapData[item.Item2][item.Item3]
+                    .Building[0].Item1, id);
             }
             classHorizontalUnit.ListClassUnit = uni;
             classGameStatus.ClassBattle.DefUnitGroup.Add(classHorizontalUnit);
@@ -238,7 +244,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         foreach (var building in itemRow.value.Building)
                         {
-                            map.TryGetValue(building, out string? value2);
+                            map.TryGetValue(building.Item1, out string? value2);
                             if (value2 != null)
                             {
                                 var build = new BitmapImage(new Uri(value2));
@@ -683,28 +689,38 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         Environment.Exit(1);
                                     }
-                                    Application.Current.Dispatcher.Invoke((Action)(() =>
+                                    System.Windows.Thickness res = Application.Current.Dispatcher.Invoke((Func<System.Windows.Thickness>)(() =>
                                     {
-                                        moveUnit.OrderPosiLeft = new Point(aaaaa.Margin.Left, aaaaa.Margin.Top);
-                                        //以下を外に出すと、moveUnit.OrderPosiLeftがおかしくなって死ぬ
-                                        var calc0 = ClassCalcVec.ReturnVecDistance(
-                                            from: new Point(moveUnit.NowPosiCenter.X, moveUnit.NowPosiCenter.Y),
-                                            to: moveUnit.OrderPosiLeft
-                                        );
-                                        moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
-                                        moveUnit.FlagMoving = true;
+                                        return aaaaa.Margin;
 
-                                        var tokenSource = new CancellationTokenSource();
-                                        var token = tokenSource.Token;
-                                        (Task, CancellationTokenSource) aaa =
-                                            new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
-                                        if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) value))
-                                        {
-                                            t.Remove(moveUnit.ID);
-                                        }
+                                    }), DispatcherPriority.Send);
+
+                                    moveUnit.OrderPosiLeft = new Point(res.Left, res.Top);
+                                    var calc0 = ClassCalcVec.ReturnVecDistance(
+                                        from: new Point(moveUnit.NowPosiCenter.X, moveUnit.NowPosiCenter.Y),
+                                        to: moveUnit.OrderPosiLeft
+                                    );
+                                    moveUnit.VecMove = ClassCalcVec.ReturnNormalize(calc0);
+                                    moveUnit.FlagMoving = true;
+
+                                    var tokenSource = new CancellationTokenSource();
+                                    var token = tokenSource.Token;
+                                    (Task, CancellationTokenSource) aaa =
+                                        new(Task.Run(() => ClassStaticBattle.TaskBattleMoveExecuteAsync(moveUnit, token, classGameStatus, window)), tokenSource);
+                                    if (t.TryGetValue(moveUnit.ID, out (Task, CancellationTokenSource) valueTask))
+                                    {
+                                        t.Remove(moveUnit.ID);
+                                    }
+                                    try
+                                    {
                                         t.Add(moveUnit.ID, aaa);
+                                    }
+                                    catch (Exception)
+                                    {
 
-                                    }),DispatcherPriority.Send);
+                                        throw;
+                                    }
+
                                 }
                             }
                             catch (Exception)
@@ -769,18 +785,18 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             Dictionary<long, (Task, CancellationTokenSource)> t = new Dictionary<long, (Task, CancellationTokenSource)>();
 
             //アスターアルゴリズムの為
-            List<Path> listPath = new List<Path>(); ;
+            List<Path> listPath = new List<Path>();
             if (Application.Current == null)
             {
                 Environment.Exit(1);
             }
 
-            Application.Current.Dispatcher.Invoke((Action)(() =>
+            listPath = Application.Current.Dispatcher.Invoke(new Func<List<Path>>(() =>
             {
                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                if (re1 == null) return;
+                if (re1 == null) return new List<Path>();
 
-                listPath = re1.Children.OfType<Path>().ToList();
+                return re1.Children.OfType<Path>().ToList();
             }));
 
             int counter = 90;
@@ -1164,7 +1180,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             if (itemRe is ClassUnitBuilding building)
                                             {
                                                 //建築物破壊
-                                                item.ListClassUnit.Remove(building);
+                                                //ここで破壊すると、見分けが付かなくなる
+                                                //item.ListClassUnit.Remove(building);
 
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                                                 if (re1 == null) Environment.Exit(1);
@@ -1175,6 +1192,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 }
                                                 else
                                                 {
+                                                    building.IsEnable = false;
                                                     re1.Children.Remove(re2);
                                                     classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
                                                 }
@@ -1188,7 +1206,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                                 if (re1 == null) Environment.Exit(1);
                                                 var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
                                                 if (re2 != null) re1.Children.Remove(re2);
-
                                             }
                                         }));
                                     }
@@ -1289,6 +1306,19 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
                                         {
+                                            //スキル発動条件確認
+                                            if (itemDefUnitList is ClassUnitBuilding obj)
+                                            {
+                                                if (obj.IsEnable == true) 
+                                                {
+                                                    //有効なら攻撃対象                                                    
+                                                }
+                                                else
+                                                {
+                                                    continue;
+                                                }
+                                            }
+
                                             //三平方の定理から射程内か確認
                                             {
                                                 var xB = itemDefUnitList.NowPosiLeft;

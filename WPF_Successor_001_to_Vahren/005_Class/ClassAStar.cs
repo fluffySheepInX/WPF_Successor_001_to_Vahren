@@ -211,33 +211,39 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                         switch (classUnitBuilding.Type)
                         {
                             case MapTipObjectType.WALL2:
-                                break;
+                                //ここに来ることは無い
+                                continue;
                             case MapTipObjectType.GATE:
-                                Application.Current.Dispatcher.Invoke((Action)(() =>
-                                {
-                                    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                #region オブジェクトが見たかったらこれ
+                                //Application.Current.Dispatcher.Invoke((Action)(() =>
+                                //{
+                                //    var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
 
-                                    Canvas canvas = new Canvas();
-                                    canvas.Background = Brushes.DarkRed;
-                                    canvas.Height = 32;
-                                    canvas.Width = 32;
-                                    if (classGameStatus.ClassBattle.ClassMapBattle == null)
-                                    {
-                                        throw new Exception("OpenAround error 001...");
-                                    }
-                                    var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[x + i][y + j].MapPath;
-                                    if (aaaaa == null)
-                                    {
-                                        throw new Exception("OpenAround error 002...");
-                                    }
-                                    canvas.Margin = new Thickness()
-                                    {
-                                        Left = aaaaa.Margin.Left,
-                                        Top = aaaaa.Margin.Top
-                                    };
-                                    re1.Children.Add(canvas);
-                                }));
-                                //OpenOne(x + i, y + j, cost, parent);
+                                //    Canvas canvas = new Canvas();
+                                //    canvas.Background = Brushes.DarkRed;
+                                //    canvas.Height = 32;
+                                //    canvas.Width = 32;
+                                //    if (classGameStatus.ClassBattle.ClassMapBattle == null)
+                                //    {
+                                //        throw new Exception("OpenAround error 001...");
+                                //    }
+                                //    var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[x + i][y + j].MapPath;
+                                //    if (aaaaa == null)
+                                //    {
+                                //        throw new Exception("OpenAround error 002...");
+                                //    }
+                                //    canvas.Margin = new Thickness()
+                                //    {
+                                //        Left = aaaaa.Margin.Left,
+                                //        Top = aaaaa.Margin.Top
+                                //    };
+                                //    re1.Children.Add(canvas);
+                                //}));
+                                #endregion
+                                if (classUnitBuilding.IsEnable == false)
+                                {
+                                    OpenOne(x + i, y + j, cost, parent);
+                                }
                                 break;
                             default:
                                 break;
@@ -246,14 +252,14 @@ namespace WPF_Successor_001_to_Vahren._005_Class
                     }
 
 
-                    if (MapData[x + i][y + j].Building.Count == 0)
+                    if (MapData[x + i][y + j].Building.Count <= 0)
                     {
                         OpenOne(x + i, y + j, cost, parent);
                         continue;
                     }
 
                     // WALL2系の壊せないオブジェクトが存在するかチェック
-                    var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building[0]).FirstOrDefault();
+                    var ob = classGameStatus.ListObject.Where(tar => tar.NameTag == MapData[x + i][y + j].Building[0].Item1).FirstOrDefault();
                     if (ob != null)
                     {
                         switch (ob.Type)
