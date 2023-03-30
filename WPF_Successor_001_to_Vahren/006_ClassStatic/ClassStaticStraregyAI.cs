@@ -772,27 +772,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             classGameStatus.Camera = new Point(Canvas.GetLeft(worldMap), Canvas.GetTop(worldMap));
                         }
 
-                        // 戦闘後に防衛側の情報を参照できるよう記録しておく
-                        ClassPowerAndCity classPowerAndCity;
-                        if (defSpot.PowerNameTag == string.Empty)
-                        {
-                            // 中立領地
-                            classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                        }
-                        else
-                        {
-                            // 勢力の領地
-                            var getPo = classGameStatus.NowListPower.Where(x => x.NameTag == defSpot.PowerNameTag).FirstOrDefault();
-                            if (getPo != null)
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(getPo, defSpot);
-                            }
-                            else
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                            }
-                        }
-                        Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
+                        // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        mainWindow.ClassGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
+                        mainWindow.ClassGameStatus.ClassBattle.AttackPower = classPower.NameTag;
+                        mainWindow.ClassGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
 
                         // 攻め込むのは次の関数で実行する（全ての準備を終えておくこと）
                         return true;
@@ -993,27 +976,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             classGameStatus.Camera = new Point(Canvas.GetLeft(worldMap), Canvas.GetTop(worldMap));
                         }
 
-                        // 戦闘後に防衛側の情報を参照できるよう記録しておく
-                        ClassPowerAndCity classPowerAndCity;
-                        if (defSpot.PowerNameTag == string.Empty)
-                        {
-                            // 中立領地
-                            classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                        }
-                        else
-                        {
-                            // 勢力の領地
-                            var getPo = classGameStatus.NowListPower.Where(x => x.NameTag == defSpot.PowerNameTag).FirstOrDefault();
-                            if (getPo != null)
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(getPo, defSpot);
-                            }
-                            else
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                            }
-                        }
-                        Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
+                        // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        classGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
+                        classGameStatus.ClassBattle.AttackPower = classPower.NameTag;
+                        classGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
 
                         // 攻め込むのは次の関数で実行する（全ての準備を終えておくこと）
                         return true;
@@ -1626,27 +1592,10 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             classGameStatus.Camera = new Point(Canvas.GetLeft(worldMap), Canvas.GetTop(worldMap));
                         }
 
-                        // 戦闘後に防衛側の情報を参照できるよう記録しておく
-                        ClassPowerAndCity classPowerAndCity;
-                        if (defSpot.PowerNameTag == string.Empty)
-                        {
-                            // 中立領地
-                            classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                        }
-                        else
-                        {
-                            // 勢力の領地
-                            var getPo = classGameStatus.NowListPower.Where(x => x.NameTag == defSpot.PowerNameTag).FirstOrDefault();
-                            if (getPo != null)
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(getPo, defSpot);
-                            }
-                            else
-                            {
-                                classPowerAndCity = new ClassPowerAndCity(new ClassPower(), defSpot);
-                            }
-                        }
-                        Application.Current.Properties["defensePowerAndCity"] = classPowerAndCity;
+                        // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        classGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
+                        classGameStatus.ClassBattle.AttackPower = classPower.NameTag;
+                        classGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
 
                         // 攻め込むのは次の関数で実行する（全ての準備を終えておくこと）
                         return true;
@@ -1666,14 +1615,79 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
         // 戦闘を開始する
         public static void StartBattle(MainWindow mainWindow)
         {
-            //攻め入る
-            mainWindow.IsBattle = true;
-            Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
+            // 記録しておいた戦闘場所と双方の勢力
+            string spotNameTag = mainWindow.ClassGameStatus.ClassBattle.BattleSpot;
+            string attackNameTag = mainWindow.ClassGameStatus.ClassBattle.AttackPower;
+            var defSpot = mainWindow.ClassGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+            if (defSpot == null)
             {
-                mainWindow.SetBattleMap();
+                MessageBox.Show("戦場が記録されてません");
+                return;
+            }
 
-                return true;
-            }));
+            // 空の領地なら戦闘無しに占領する
+            if (defSpot.UnitGroup.Count == 0)
+            {
+                // 初期値が false のはずだけど、念のため false にしておく
+                mainWindow.IsBattle = false;
+
+                // COM勢力の戦闘でも占領エフェクトを表示する？
+                // とりあえず、メッセージを表示しておく。将来的には占領エフェクトに変更すること
+                var dialog2 = new Win020_Dialog();
+                dialog2.SetText(defSpot.Name + " に守備兵がいないので戦闘を省略します。");
+                dialog2.SetTime(1.2); // 待ち時間を1.2秒に短縮する
+                dialog2.ShowDialog();
+
+                // ワールドマップ領地の所属勢力を変更する
+                var worldMap = mainWindow.ClassGameStatus.WorldMap;
+                if (worldMap != null)
+                {
+                    worldMap.ChangeSpotPower(defSpot.NameTag, attackNameTag);
+                }
+
+                // 出撃先の領地は空なので、守備隊をどうするかは考慮しなくていい。
+                // 出撃先に入る数だけ、部隊を移動させる
+                int spot_capacity = defSpot.Capacity;
+                foreach (var itemTroop in mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup)
+                {
+                    if (spot_capacity > 0)
+                    {
+                        // 出撃元から取り除く
+                        var srcSpot = itemTroop.Spot;
+                        if (srcSpot != null)
+                        {
+                            srcSpot.UnitGroup.Remove(itemTroop);
+                        }
+
+                        // 出撃先に追加する
+                        defSpot.UnitGroup.Add(itemTroop);
+                        itemTroop.Spot = defSpot;
+
+                        // 空きを減らす
+                        spot_capacity--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                mainWindow.ClassGameStatus.ClassBattle.SortieUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.DefUnitGroup.Clear();
+                mainWindow.ClassGameStatus.ClassBattle.NeutralUnitGroup.Clear();
+            }
+            // 攻め込んだ先にユニットが存在する時だけ戦闘が発生する
+            else
+            {
+                // 攻め入る
+                mainWindow.IsBattle = true;
+                Application.Current.Dispatcher.Invoke(new Func<bool>(() =>
+                {
+                    mainWindow.SetBattleMap();
+
+                    return true;
+                }));
+            }
         }
 
         // 戦闘終了後に徴兵・再配置・別の戦闘などを行う
@@ -2025,7 +2039,6 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     break;
                 case _010_Enum.FlagPowerFix.home:
-
                     {
                         ////他国との国境都市を取得
                         //自国領土を取得

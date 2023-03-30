@@ -1280,7 +1280,7 @@ namespace WPF_Successor_001_to_Vahren
             if (ClassConfigCommon.LookOtherLandBattle == false
                 && ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == _010_Enum.BattleWhichIsThePlayer.None)
             {
-                Canvas.SetZIndex(aaaa, -99);
+                //Canvas.SetZIndex(aaaa, -99);
                 this.canvasMain.Children.Add(aaaa);
             }
             else

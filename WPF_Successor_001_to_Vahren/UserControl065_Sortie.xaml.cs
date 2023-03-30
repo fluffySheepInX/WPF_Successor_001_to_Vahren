@@ -751,6 +751,11 @@ namespace WPF_Successor_001_to_Vahren
                 }
             }
 
+            // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+            mainWindow.ClassGameStatus.ClassBattle.BattleSpot = targetSpot.NameTag;
+            mainWindow.ClassGameStatus.ClassBattle.AttackPower = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
+            mainWindow.ClassGameStatus.ClassBattle.DefensePower = targetSpot.PowerNameTag;
+
             // 空の領地なら戦闘無しに占領する
             if (targetSpot.UnitGroup.Count == 0)
             {

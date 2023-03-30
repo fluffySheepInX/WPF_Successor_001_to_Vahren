@@ -1636,36 +1636,26 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     //部隊所属領地変更
                     {
-                        // 出撃先領地と防衛側勢力
-                        var spots = Application.Current.Properties["defensePowerAndCity"];
-                        if (spots == null)
+                        // 記録しておいた戦闘場所と双方の勢力
+                        string spotNameTag = classGameStatus.ClassBattle.BattleSpot;
+                        string attackNameTag = classGameStatus.ClassBattle.AttackPower;
+                        string defenseNameTag = classGameStatus.ClassBattle.DefensePower;
+                        var targetSpot = classGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+                        if (targetSpot == null)
                         {
-                            MessageBox.Show("defensePowerAndCity が設定されてません");
+                            MessageBox.Show("戦場が記録されてません");
                             return;
                         }
-
-                        var convSpots = spots as ClassPowerAndCity;
-                        if (convSpots == null)
-                        {
-                            MessageBox.Show("防衛側の領地が設定されてません");
-                            return;
-                        }
-                        var targetSpot = convSpots.ClassSpot;
-                        var defensePower = convSpots.ClassPower;
-
-                        // 出撃元領地は部隊ごとに異なるけど、勢力は同じなはず。（共同軍や傭兵はどうなる？）
-                        // とりあえず、先頭の部隊の所属を参照する
-                        string powerNameTag = classGameStatus.ClassBattle.SortieUnitGroup[0].Spot.PowerNameTag;
 
                         // ワールドマップ領地の所属勢力を変更する
                         var worldMap = classGameStatus.WorldMap;
                         if (worldMap != null)
                         {
-                            worldMap.ChangeSpotPower(targetSpot.NameTag, powerNameTag);
+                            worldMap.ChangeSpotPower(targetSpot.NameTag, attackNameTag);
                         }
 
                         // 中立領地なら退却先が無いので一般兵は全て消える。
-                        if (defensePower.NameTag == string.Empty)
+                        if (defenseNameTag == string.Empty)
                         {
                             // 本来は人材かチェックして放浪させないといけない。
                             targetSpot.UnitGroup.Clear();
@@ -1678,6 +1668,22 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             // とりあえず、全て消してるけど、後で修正すること！
                             targetSpot.UnitGroup.Clear();
                         }
+
+                        /*
+                        // 攻撃側のユニットも戦闘中に死亡した場合はどうする？
+                        // 一般兵は消去して、人材は資金を減らす。Level と Medical で治療費が決まるんだっけ？
+                        foreach (var itemTroop in classGameStatus.ClassBattle.SortieUnitGroup)
+                        {
+                            var listUnit = itemTroop.ListClassUnit;
+                            int unit_index = 0;
+                            while (unit_index < listUnit.Count)
+                            {
+                                var itemUnit = listUnit[unit_index];
+
+                                unit_index++;
+                            }
+                        }
+                        */
 
                         // 出撃先の領地を空にした後で、攻撃側の部隊を入れること！
                         // 出撃先に入る数だけ、部隊を移動させる
@@ -1711,6 +1717,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classGameStatus.ClassBattle.SortieUnitGroup.Clear();
                     classGameStatus.ClassBattle.DefUnitGroup.Clear();
                     classGameStatus.ClassBattle.NeutralUnitGroup.Clear();
+                    classGameStatus.AiRoot.Clear();
 
                     commonWindow.IsBattle = false;
 
@@ -1730,7 +1737,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 if (flgaAttackHp == false)
                 {
-                    ////defの負け
+                    ////atkの負け
 
                     commonWindow.timerAfterFadeIn.Stop();
 
@@ -1775,6 +1782,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     classGameStatus.ClassBattle.SortieUnitGroup.Clear();
                     classGameStatus.ClassBattle.DefUnitGroup.Clear();
                     classGameStatus.ClassBattle.NeutralUnitGroup.Clear();
+                    classGameStatus.AiRoot.Clear();
 
                     commonWindow.IsBattle = false;
 
@@ -1801,6 +1809,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
             //この位置でなければダメ？
             commonWindow.AfterFadeIn = false;
             commonWindow.timerAfterFadeIn.Stop();
+
+            // 戦闘終了時に消去してるはずだけど、念のため初期化する（不要なら消してください）
+            commonWindow.ClassGameStatus.TaskBattleSkill.Clear();
+            commonWindow.ClassGameStatus.TaskBattleMoveAsync.Clear();
+            commonWindow.ClassGameStatus.TaskBattleMoveDefAsync.Clear();
+            commonWindow.ClassGameStatus.AiRoot.Clear();
 
             if (commonWindow.ClassConfigCommon.LookOtherLandBattle == false
                 && commonWindow.ClassGameStatus.ClassBattle.BattleWhichIsThePlayer == BattleWhichIsThePlayer.None)
