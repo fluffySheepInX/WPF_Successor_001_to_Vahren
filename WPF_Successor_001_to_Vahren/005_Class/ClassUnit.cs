@@ -82,11 +82,32 @@ namespace WPF_Successor_001_to_Vahren._005_Class
         #endregion
 
         #region IsDone
+        /// <summary>
+        /// 行動済みかどうか
+        /// </summary>
         private bool _isDone = false;
+        /// <summary>
+        /// 行動済みかどうか
+        /// </summary>
         public bool IsDone
         {
             get { return _isDone; }
             set { _isDone = value; }
+        }
+        #endregion
+
+        #region IsBattleEnable
+        /// <summary>
+        /// 戦闘中、有効かどうか
+        /// </summary>
+        private bool _isBattleEnable = true;
+        /// <summary>
+        /// 戦闘中、有効かどうか
+        /// </summary>
+        public bool IsBattleEnable
+        {
+            get { return _isBattleEnable; }
+            set { _isBattleEnable = value; }
         }
         #endregion
 
@@ -503,15 +524,6 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { flagMoveDispose = value; }
         }
         #endregion
-        //#region FlagMoveDisposeOK
-        //private bool flagMoveDisposeOK = false;
-
-        //public bool FlagMoveDisposeOK
-        //{
-        //    get { return flagMoveDisposeOK; }
-        //    set { flagMoveDisposeOK = value; }
-        //}
-        //#endregion
         #region NowPosiLeft
         private Point nowPosiLeft;
 
@@ -521,10 +533,12 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { nowPosiLeft = value; }
         }
         #endregion
+        #region GetNowPosiCenter
         public Point GetNowPosiCenter()
         {
             return new Point(NowPosiLeft.X + (ClassStaticBattle.yokoUnit / 2), NowPosiLeft.Y + (ClassStaticBattle.TakasaUnit / 2));
         }
+        #endregion
         #region OrderPosiLeft
         private Point orderPosiLeft;
 
@@ -573,7 +587,7 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             set { flagMovingSkill = value; }
         }
         #endregion
-        #region NowPosi
+        #region NowPosiSkill
         private Dictionary<int, Point> nowPosiSkill = new Dictionary<int, Point>();
 
         public Dictionary<int, Point> NowPosiSkill

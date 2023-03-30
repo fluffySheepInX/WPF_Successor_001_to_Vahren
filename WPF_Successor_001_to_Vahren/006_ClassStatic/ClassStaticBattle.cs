@@ -569,7 +569,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                 foreach (var item in listClassHorizontalUnits)
                 {
-                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false))
+                    foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMoving == false && x.IsBattleEnable == true))
                     {
                         if (itemGroupBy.NowPosiLeft != itemGroupBy.OrderPosiLeft)
                         {
@@ -640,7 +640,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             try
                             {
-                                var moveUnit = list.Where(x => x.ID == item.Key && x.FlagMoving == false).FirstOrDefault();
+                                var moveUnit = list.Where(x => x.ID == item.Key && x.FlagMoving == false && x.IsBattleEnable == true).FirstOrDefault();
                                 if (moveUnit == null) { return; }
                                 //Value = Point(経路
                                 foreach (var itemNext in item.Value)
@@ -814,7 +814,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         {
                             try
                             {
-                                foreach (var itemListClassUnit in itemTarget.ListClassUnit.Where(x => x.FlagMoving == false))
+                                foreach (var itemListClassUnit in itemTarget.ListClassUnit.Where(x => x.FlagMoving == false && x.IsBattleEnable == true))
                                 {
                                     var listRoot = new List<Point>();
 
@@ -1200,7 +1200,8 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             else
                                             {
                                                 //通常ユニット破壊
-                                                item.ListClassUnit.Remove(itemRe);
+                                                itemRe.IsBattleEnable = false;
+                                                //item.ListClassUnit.Remove(itemRe);
 
                                                 var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
                                                 if (re1 == null) Environment.Exit(1);
@@ -1292,7 +1293,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     foreach (var item in listExecuter)
                     {
                         //スキル発動中でないユニットを抽出
-                        foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false))
+                        foreach (var itemGroupBy in item.ListClassUnit.Where(x => x.FlagMovingSkill == false && x.IsBattleEnable == true))
                         {
                             //スキル優先順位確認
                             foreach (var itemSkill in itemGroupBy.Skill.OrderBy(x => x.SortKey))
@@ -1304,7 +1305,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 {
                                     foreach (var itemDefUnitGroup in listTargetOfSkill)
                                     {
-                                        foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit)
+                                        foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit.Where(x=>x.IsBattleEnable == true))
                                         {
                                             //スキル発動条件確認
                                             if (itemDefUnitList is ClassUnitBuilding obj)
@@ -1585,7 +1586,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         continue;
                     }
-                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
+                    if (itemDefUnitGroup.ListClassUnit.Where(x=>x.IsBattleEnable == true).Count() > 0)
                     {
                         flgaDefHp = true;
                     }
@@ -1729,7 +1730,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 bool flgaAttackHp = false;
                 foreach (var itemDefUnitGroup in classGameStatus.ClassBattle.SortieUnitGroup)
                 {
-                    if (itemDefUnitGroup.ListClassUnit.Count != 0)
+                    if (itemDefUnitGroup.ListClassUnit.Where(x => x.IsBattleEnable == true).Count() > 0)
                     {
                         flgaAttackHp = true;
                     }

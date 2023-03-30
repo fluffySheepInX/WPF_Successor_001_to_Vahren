@@ -79,6 +79,23 @@
     }
     #endregion
 
+    #region StatusNumber
+    /// <summary>
+    /// StatusNumber
+    /// </summary>
+    public enum StatusNumber
+    {
+        //素のステータス
+        plane = 0
+            ,
+        //変化後のステータス
+        AfterChange = 1
+            ,
+        //戦闘中のステータス
+        Battle = 2
+    }
+    #endregion
+
     #region aStarStatus
     /// <summary>
     /// A*アルゴリズムで使用
