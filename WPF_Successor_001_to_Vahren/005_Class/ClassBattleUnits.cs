@@ -10,6 +10,31 @@ namespace WPF_Successor_001_to_Vahren._005_Class
 {
     public class ClassBattle
     {
+        #region BattleSpot
+        // ヴァーレントゥーガの storeBattleSpot, storeAttackPower, storeDefensePower を参考にする
+        // 直前に侵攻された「領地の識別子」
+        private string _BattleSpot = string.Empty;
+        public string BattleSpot
+        {
+            get { return _BattleSpot; }
+            set { _BattleSpot = value; }
+        }
+        // 直前の侵攻先の攻撃側ホストの「勢力の識別子」
+        private string _AttackPower = string.Empty;
+        public string AttackPower
+        {
+            get { return _AttackPower; }
+            set { _AttackPower = value; }
+        }
+        // 直前の侵攻先の防衛側ホストの「勢力の識別子」
+        private string _DefensePower = string.Empty;
+        public string DefensePower
+        {
+            get { return _DefensePower; }
+            set { _DefensePower = value; }
+        }
+        #endregion
+
         #region SortieUnitGroup
         private List<ClassHorizontalUnit> _sortieUnitGroup = new List<ClassHorizontalUnit>();
         public List<ClassHorizontalUnit> SortieUnitGroup
