@@ -685,10 +685,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     //移動スレッド開始
                                     var aaaaa = classGameStatus.ClassBattle.ClassMapBattle.MapData[(int)itemNext.X][(int)itemNext.Y].MapPath;
                                     if (aaaaa == null) return;
-                                    if (Application.Current == null)
-                                    {
-                                        Environment.Exit(1);
-                                    }
+                                    if (Application.Current == null) Environment.Exit(1);
                                     System.Windows.Thickness res = Application.Current.Dispatcher.Invoke((Func<System.Windows.Thickness>)(() =>
                                     {
                                         return aaaaa.Margin;
@@ -711,6 +708,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                     {
                                         t.Remove(moveUnit.ID);
                                     }
+
                                     try
                                     {
                                         t.Add(moveUnit.ID, aaa);
@@ -1297,7 +1295,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             {
                                 //ターゲットとなるユニットを抽出し、
                                 //スキル射程範囲を確認
-                                var xA = itemGroupBy.NowPosiLeft;
+                                var xA = itemGroupBy.NowPosiCenter;
                                 try
                                 {
                                     foreach (var itemDefUnitGroup in listTargetOfSkill)
