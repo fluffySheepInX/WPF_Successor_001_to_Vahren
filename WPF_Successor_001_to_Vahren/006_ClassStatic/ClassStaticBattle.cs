@@ -1171,43 +1171,40 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 foreach (var itemRe in re)
                                 {
                                     itemRe.Hp = (int)(itemRe.Hp - (Math.Floor((classSkill.Str.Item2 * 0.1) * classUnit.Attack)));
-                                    if (itemRe.Hp <= 0)
+                                    if (itemRe.Hp >= 1) continue;
+
+                                    if (Application.Current == null) Environment.Exit(1);
+                                    if (itemRe is ClassUnitBuilding building)
                                     {
-                                        if (Application.Current == null) Environment.Exit(1);
+                                        //建築物破壊
+                                        //ここで破壊すると、見分けが付かなくなる
+                                        //item.ListClassUnit.Remove(building);
 
                                         Application.Current.Dispatcher.Invoke((Action)(() =>
                                         {
-                                            if (itemRe is ClassUnitBuilding building)
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                            if (re1 == null) Environment.Exit(1);
+                                            var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
+                                            if (re2 != null)
                                             {
-                                                //建築物破壊
-                                                //ここで破壊すると、見分けが付かなくなる
-                                                //item.ListClassUnit.Remove(building);
-
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                if (re1 == null) Environment.Exit(1);
-                                                var re2 = (Rectangle)LogicalTreeHelper.FindLogicalNode(re1, "Bui" + building.X + "a" + building.Y);
-                                                if (re2 == null)
-                                                {
-                                                    //throw new Exception();
-                                                }
-                                                else
-                                                {
-                                                    building.IsEnable = false;
-                                                    re1.Children.Remove(re2);
-                                                    classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
-                                                }
+                                                re1.Children.Remove(re2);
+                                                classGameStatus.ClassBattle.ListBuildingAlive.Remove(re2);
                                             }
-                                            else
-                                            {
-                                                //通常ユニット破壊
-                                                itemRe.IsBattleEnable = false;
-                                                //item.ListClassUnit.Remove(itemRe);
 
-                                                var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
-                                                if (re1 == null) Environment.Exit(1);
-                                                var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
-                                                if (re2 != null) re1.Children.Remove(re2);
-                                            }
+                                        }));
+                                        building.IsEnable = false;
+                                    }
+                                    else
+                                    {
+                                        //通常ユニット破壊
+                                        itemRe.IsBattleEnable = false;
+                                        //item.ListClassUnit.Remove(itemRe);
+                                        Application.Current.Dispatcher.Invoke((Action)(() =>
+                                        {
+                                            var re1 = (Canvas)LogicalTreeHelper.FindLogicalNode(canvasMain, StringName.windowMapBattle);
+                                            if (re1 == null) Environment.Exit(1);
+                                            var re2 = (Border)LogicalTreeHelper.FindLogicalNode(re1, "border" + itemRe.ID.ToString());
+                                            if (re2 != null) re1.Children.Remove(re2);
                                         }));
                                     }
                                 }
