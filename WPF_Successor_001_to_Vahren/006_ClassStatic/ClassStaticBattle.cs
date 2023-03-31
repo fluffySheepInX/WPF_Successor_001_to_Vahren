@@ -1704,7 +1704,14 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         */
                         foreach (var itemUnitGroup in SortieSpot.UnitGroup)
                         {
-                            itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                            itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false && x.Talent != "on");
+                            foreach (var item in itemUnitGroup.ListClassUnit)
+                            {
+                                if (item.Talent == "on" && item.IsBattleEnable == false)
+                                {
+                                    //治療費を引く
+                                }
+                            }
                         }
 
                         SortieSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
@@ -1819,14 +1826,28 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
 
                     foreach (var itemUnitGroup in targetSpot.UnitGroup)
                     {
-                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false && x.Talent != "on");
+                        foreach (var item in itemUnitGroup.ListClassUnit)
+                        {
+                            if (item.Talent == "on" && item.IsBattleEnable == false)
+                            {
+                                //治療費を引く
+                            }
+                        }
                     }
 
                     targetSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
 
                     foreach (var itemUnitGroup in SortieSpot.UnitGroup)
                     {
-                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false && x.Talent != "on");
+                        foreach (var item in itemUnitGroup.ListClassUnit)
+                        {
+                            if (item.Talent == "on" && item.IsBattleEnable == false)
+                            {
+                                //治療費を引く
+                            }
+                        }
                     }
 
                     SortieSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
