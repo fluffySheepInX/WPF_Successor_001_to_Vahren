@@ -19,6 +19,19 @@ namespace WPF_Successor_001_to_Vahren._005_Class
             get { return _BattleSpot; }
             set { _BattleSpot = value; }
         }
+        /// <summary>
+        /// 出撃元領地
+        /// </summary>
+        private string _sortieSpot = string.Empty;
+        /// <summary>
+        /// 出撃元領地
+        /// </summary>
+        public string SortieSpot
+        {
+            get { return _sortieSpot; }
+            set { _sortieSpot = value; }
+        }
+
         // 直前の侵攻先の攻撃側ホストの「勢力の識別子」
         private string _AttackPower = string.Empty;
         public string AttackPower

@@ -401,7 +401,10 @@ namespace WPF_Successor_001_to_Vahren
             }
 
         }
-
+        public ClassPowerAndCity GetClassPowerAndCity()
+        {
+            return (ClassPowerAndCity)this.Tag;
+        }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {

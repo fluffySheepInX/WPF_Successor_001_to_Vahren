@@ -633,6 +633,10 @@ namespace WPF_Successor_001_to_Vahren
                             selectedUnit.value.FlagMoving = false;
 
                             var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.value.ID.ToString());
+                            if (re2 == null)
+                            {
+                                continue;
+                            }
                             re2.BorderThickness = new Thickness()
                             {
                                 Left = 0,
@@ -680,6 +684,10 @@ namespace WPF_Successor_001_to_Vahren
                             selectedUnit.value.FlagMoving = false;
 
                             var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + selectedUnit.value.ID.ToString());
+                            if (re2 == null)
+                            {
+                                continue;
+                            }
                             re2.BorderThickness = new Thickness()
                             {
                                 Left = 0,
@@ -705,6 +713,10 @@ namespace WPF_Successor_001_to_Vahren
                 foreach (var itemRe in re)
                 {
                     var re2 = (Border)LogicalTreeHelper.FindLogicalNode(ri, "border" + itemRe.ID.ToString());
+                    if (re2 == null)
+                    {
+                        continue;
+                    }
                     re2.BorderThickness = new Thickness()
                     {
                         Left = 3,

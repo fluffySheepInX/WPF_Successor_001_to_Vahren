@@ -703,6 +703,7 @@ namespace WPF_Successor_001_to_Vahren
                 return;
             }
 
+            List<string> sorList = new List<string>();
             // 開いてる出撃選択用領地ウィンドウを全て閉じる
             for (int i = mainWindow.canvasUI.Children.Count - 1; i >= 0; i += -1)
             {
@@ -711,6 +712,7 @@ namespace WPF_Successor_001_to_Vahren
                 if (Child is UserControl012_SpotSortie)
                 {
                     var itemWindow = (UserControl012_SpotSortie)Child;
+                    sorList.Add(itemWindow.GetClassPowerAndCity().ClassSpot.NameTag);
                     if (itemWindow.Name.StartsWith(StringName.windowSpotSortie))
                     {
                         mainWindow.canvasUI.Children.Remove(itemWindow);
@@ -752,6 +754,11 @@ namespace WPF_Successor_001_to_Vahren
             }
 
             // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+            if (sorList.Count == 0)
+            {
+                return;
+            }
+            mainWindow.ClassGameStatus.ClassBattle.SortieSpot = sorList[0];//将来的に変える。複数の領地から攻めるパターンがある為
             mainWindow.ClassGameStatus.ClassBattle.BattleSpot = targetSpot.NameTag;
             mainWindow.ClassGameStatus.ClassBattle.AttackPower = mainWindow.ClassGameStatus.SelectionPowerAndCity.ClassPower.NameTag;
             mainWindow.ClassGameStatus.ClassBattle.DefensePower = targetSpot.PowerNameTag;

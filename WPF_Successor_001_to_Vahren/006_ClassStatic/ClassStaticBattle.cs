@@ -78,7 +78,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                 });
 
                 classGameStatus.ClassBattle.ClassMapBattle.MapData[item.Item2][item.Item3]
-                .Building[0] = 
+                .Building[0] =
                 new(classGameStatus.ClassBattle.ClassMapBattle.MapData[item.Item2][item.Item3]
                     .Building[0].Item1, id);
             }
@@ -1305,12 +1305,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                 {
                                     foreach (var itemDefUnitGroup in listTargetOfSkill)
                                     {
-                                        foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit.Where(x=>x.IsBattleEnable == true))
+                                        foreach (var itemDefUnitList in itemDefUnitGroup.ListClassUnit.Where(x => x.IsBattleEnable == true))
                                         {
                                             //スキル発動条件確認
                                             if (itemDefUnitList is ClassUnitBuilding obj)
                                             {
-                                                if (obj.IsEnable == true) 
+                                                if (obj.IsEnable == true)
                                                 {
                                                     //有効なら攻撃対象                                                    
                                                 }
@@ -1586,7 +1586,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     {
                         continue;
                     }
-                    if (itemDefUnitGroup.ListClassUnit.Where(x=>x.IsBattleEnable == true).Count() > 0)
+                    if (itemDefUnitGroup.ListClassUnit.Where(x => x.IsBattleEnable == true).Count() > 0)
                     {
                         flgaDefHp = true;
                     }
@@ -1638,9 +1638,16 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     //部隊所属領地変更
                     {
                         // 記録しておいた戦闘場所と双方の勢力
-                        string spotNameTag = classGameStatus.ClassBattle.BattleSpot;
                         string attackNameTag = classGameStatus.ClassBattle.AttackPower;
                         string defenseNameTag = classGameStatus.ClassBattle.DefensePower;
+                        string spotNameTagSortieSpot = classGameStatus.ClassBattle.SortieSpot;
+                        var SortieSpot = classGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTagSortieSpot).FirstOrDefault();
+                        if (SortieSpot == null)
+                        {
+                            MessageBox.Show("出撃元が記録されてません");
+                            return;
+                        }
+                        string spotNameTag = classGameStatus.ClassBattle.BattleSpot;
                         var targetSpot = classGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
                         if (targetSpot == null)
                         {
@@ -1659,7 +1666,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         if (defenseNameTag == string.Empty)
                         {
                             // 本来は人材かチェックして放浪させないといけない。
-                            targetSpot.UnitGroup.Clear();
+                            foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                            {
+                                itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                            }
+
+                            targetSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
                         }
                         // 勢力に所属してる場合がややこしい
                         else
@@ -1667,7 +1679,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             // 防衛部隊を削除、又は他都市へ移動。隣接都市が無ければ放浪する。
                             // 戦闘で生き残った一般兵と人材だけ。死亡した一般兵は消える。
                             // とりあえず、全て消してるけど、後で修正すること！
-                            targetSpot.UnitGroup.Clear();
+                            foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                            {
+                                itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                            }
+
+                            targetSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
                         }
 
                         /*
@@ -1685,6 +1702,12 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                             }
                         }
                         */
+                        foreach (var itemUnitGroup in SortieSpot.UnitGroup)
+                        {
+                            itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                        }
+
+                        SortieSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
 
                         // 出撃先の領地を空にした後で、攻撃側の部隊を入れること！
                         // 出撃先に入る数だけ、部隊を移動させる
@@ -1778,6 +1801,35 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                     }
 
                     commonWindow.delegateMapRenderedFromBattle = action;
+
+                    string spotNameTagSortieSpot = classGameStatus.ClassBattle.SortieSpot;
+                    var SortieSpot = classGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTagSortieSpot).FirstOrDefault();
+                    if (SortieSpot == null)
+                    {
+                        MessageBox.Show("出撃元が記録されてません");
+                        return;
+                    }
+                    string spotNameTag = classGameStatus.ClassBattle.BattleSpot;
+                    var targetSpot = classGameStatus.NowListSpot.Where(x => x.NameTag == spotNameTag).FirstOrDefault();
+                    if (targetSpot == null)
+                    {
+                        MessageBox.Show("戦場が記録されてません");
+                        return;
+                    }
+
+                    foreach (var itemUnitGroup in targetSpot.UnitGroup)
+                    {
+                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                    }
+
+                    targetSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
+
+                    foreach (var itemUnitGroup in SortieSpot.UnitGroup)
+                    {
+                        itemUnitGroup.ListClassUnit.RemoveAll(x => x.IsBattleEnable == false);
+                    }
+
+                    SortieSpot.UnitGroup.RemoveAll(x => x.ListClassUnit.Count == 0);
 
                     //片付け
                     classGameStatus.ClassBattle.SortieUnitGroup.Clear();

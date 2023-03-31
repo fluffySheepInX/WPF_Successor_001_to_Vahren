@@ -773,6 +773,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        mainWindow.ClassGameStatus.ClassBattle.SortieSpot = targetSpot.NameTag;
                         mainWindow.ClassGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
                         mainWindow.ClassGameStatus.ClassBattle.AttackPower = classPower.NameTag;
                         mainWindow.ClassGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
@@ -977,6 +978,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        classGameStatus.ClassBattle.SortieSpot = selectSpot.NameTag;
                         classGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
                         classGameStatus.ClassBattle.AttackPower = classPower.NameTag;
                         classGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
@@ -1593,6 +1595,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                         }
 
                         // 後で参照できるように、戦闘場所と双方の勢力を記録しておく
+                        classGameStatus.ClassBattle.SortieSpot = targetSpot.NameTag;
                         classGameStatus.ClassBattle.BattleSpot = defSpot.NameTag;
                         classGameStatus.ClassBattle.AttackPower = classPower.NameTag;
                         classGameStatus.ClassBattle.DefensePower = defSpot.PowerNameTag;
