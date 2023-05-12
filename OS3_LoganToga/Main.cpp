@@ -1,4 +1,6 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.9
+# include "ClassUnit.h" 
+# include "Enum.h" 
 
 const bool debug = true;
 const String newlineCode = U"\r\n";
@@ -10,11 +12,6 @@ const String PathImage = U"image0001";
 const String PathMusic = U"music001";
 const String PathSound = U"sound001";
 
-enum class Language {
-	English,
-	Japan,
-	C
-};
 Language language;
 
 // フェードイン・フェードアウトの描画をするクラス
@@ -23,7 +20,20 @@ struct IFade
 	virtual ~IFade() = default;
 	virtual void fade(double t) = 0;
 };
-
+struct structTestBattle
+{
+	String name = U"";
+	String map = U"";
+	Array<String> memberKougeki;
+	Array<String> memberBouei;
+	Zinei player = Zinei::None;
+};
+struct structMap
+{
+	String name = U"";
+	Array<std::pair<String, String>> ele;
+	Array<Array<String>> data;
+};
 
 struct Fade4 : public IFade
 {
@@ -290,6 +300,186 @@ private:
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
+class TestBattle : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	TestBattle(const InitData& init)
+		: IScene{ init }
+	{
+		// TOML ファイルからデータを読み込む
+		const TOMLReader toml{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
+
+		if (not toml) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `testBattle.toml`" };
+		}
+
+		Array<structTestBattle> arrayStructTestBattle;
+		{
+			for (const auto& table : toml[U"TestBattle"].tableArrayView()) {
+				structTestBattle tb;
+				tb.name = table[U"name"].get<String>();
+				tb.map = table[U"map"].get<String>();
+				{
+					const String str = table[U"memberKougeki"].get<String>();
+					const Array<String> strArray = str.split(U',');
+					for (auto& s : strArray)
+					{
+						tb.memberKougeki.push_back(s);
+					}
+				}
+				{
+					const String str = table[U"memberBouei"].get<String>();
+					const Array<String> strArray = str.split(U',');
+					for (auto& s : strArray)
+					{
+						tb.memberBouei.push_back(s);
+					}
+				}
+				{
+					const String str = table[U"player"].get<String>();
+					Zinei z;
+					if (str == U"Def")
+					{
+						z = Zinei::Def;
+					}
+					else if (str == U"Sortie")
+					{
+						z = Zinei::Sortie;
+					}
+					else
+					{
+						z = Zinei::None;
+					}
+					tb.player = z;
+				}
+
+				arrayStructTestBattle << tb;
+			}
+		}
+
+		// TOML ファイルからデータを読み込む
+		const TOMLReader tomlTestMap{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testMap.toml" };
+
+		if (not tomlTestMap) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `testMap.toml`" };
+		}
+
+		structMap sM;
+		{
+			for (const auto& table : tomlTestMap[U"Map"].tableArrayView()) {
+				{
+					const String name = table[U"name"].get<String>();
+				}
+				int32 counter = 0;
+				while (true)
+				{
+					String aaa = U"ele{}"_fmt(counter);
+					const String ele = table[aaa].get<String>();
+					sM.ele.push_back(std::make_pair(aaa, ele));
+					counter++;
+					if (ele == U"")
+					{
+						break;
+					}
+				}
+				{
+					const String str = table[U"data"].get<String>();
+					const Array<String> strArray = str.split(U'@');
+					sM.data.push_back(strArray);
+					//for (auto& s : strArray)
+					//{
+					//}
+				}
+			}
+		}
+
+		// TOML ファイルからデータを読み込む
+		const TOMLReader tomlUnit{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoUnit/genUnit002.toml" };
+
+		if (not tomlUnit) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `gen_unit_002.toml`" };
+		}
+
+		Array<ClassUnit> arrayClassUnit;
+		{
+			for (const auto& table : tomlUnit[U"Unit"].tableArrayView()) {
+				ClassUnit cu;
+				cu.NameTag = table[U"name_tag"].get<String>();
+				cu.Name = table[U"name"].get<String>();
+
+				arrayClassUnit.push_back(std::move(cu));
+			}
+
+		}
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class common : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	common(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+
+
 
 void Main()
 {
@@ -315,7 +505,18 @@ void Main()
 	// シーンマネージャーを作成
 	// ここで GameData が初期化される
 	App manager;
+	// シーンを登録
+	manager.add<SelectLang>(U"SelectLang");
+	manager.add<TestBattle>(U"TestBattle");
 
+	if (System::GetCommandLineArgs().size() == 0)
+	{
+
+	}
+	else
+	{
+		manager.init(U"TestBattle");
+	}
 
 	while (System::Update())
 	{

@@ -273,7 +273,10 @@
     <Text Include="App\example\LICENSE.txt">
       <Filter>Resource Files\example</Filter>
     </Text>
-    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">
@@ -775,6 +778,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassSkill.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

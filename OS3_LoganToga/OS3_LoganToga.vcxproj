@@ -149,7 +149,10 @@
     <ResourceCompile Include="App\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
     <Text Include="App\dll\soundtouch\COPYING.TXT" />
     <Text Include="App\engine\font\fontawesome\LICENSE.txt" />
     <Text Include="App\engine\soundfont\GMGSx.sf2.txt" />
@@ -314,7 +317,10 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassSkill.h" />
+    <ClInclude Include="Enum.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ClassUnit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\example\obj\blacksmith.obj">
