@@ -227,7 +227,7 @@ public:
 	Point nowPosiLeft;
 
 	// NowPosiCenter
-	Point GetNowPosiCenter() const
+	Point GetNowPosiCenter()
 	{
 		return Point(nowPosiLeft.x + (yokoUnit / 2), nowPosiLeft.y + (TakasaUnit / 2));
 	}
@@ -235,7 +235,7 @@ public:
 	Point orderPosiLeft;
 
 	// OrderPosiCenter
-	Point GetOrderPosiCenter() const
+	Point GetOrderPosiCenter()
 	{
 		return Point(orderPosiLeft.x + (yokoUnit / 2), orderPosiLeft.y + (TakasaUnit / 2));
 	}
@@ -250,11 +250,11 @@ public:
 	bool FlagMovingSkill = false;
 
 	// NowPosiSkill
-	std::unique_ptr<HashTable<int32, Point>> NowPosiSkill;
+	HashTable<int32, Point> NowPosiSkill;
 
 	// OrderPosiSkill
-	std::unique_ptr<HashTable<int32, Point>> OrderPosiSkill;
+	HashTable<int32, Point> OrderPosiSkill;
 
 	// VecMoveSkill
-	std::unique_ptr<HashTable<int32, Point>> VecMoveSkill;
+	HashTable<int32, Point> VecMoveSkill;
 };

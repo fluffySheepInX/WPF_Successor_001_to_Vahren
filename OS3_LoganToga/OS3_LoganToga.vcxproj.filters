@@ -736,6 +736,10 @@
     <None Include="App\engine\font\min\siv3d-min.woff">
       <Filter>Resource Files\engine\font\min</Filter>
     </None>
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\Unit.json" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -787,6 +791,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassSkill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassObjectMapTip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassGameStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassTestBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

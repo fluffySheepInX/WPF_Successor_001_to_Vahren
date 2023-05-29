@@ -1,7 +1,10 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.9
+# include "ClassGameStatus.h" 
+# include "ClassMap.h" 
+# include "ClassTestBattle.h" 
 # include "ClassUnit.h" 
+# include "ClassObjectMapTip.h" 
 # include "Enum.h" 
-
 const bool debug = true;
 const String newlineCode = U"\r\n";
 // ウィンドウの幅
@@ -19,20 +22,6 @@ struct IFade
 {
 	virtual ~IFade() = default;
 	virtual void fade(double t) = 0;
-};
-struct structTestBattle
-{
-	String name = U"";
-	String map = U"";
-	Array<String> memberKougeki;
-	Array<String> memberBouei;
-	Zinei player = Zinei::None;
-};
-struct structMap
-{
-	String name = U"";
-	Array<std::pair<String, String>> ele;
-	Array<Array<String>> data;
 };
 
 struct Fade4 : public IFade
@@ -79,6 +68,8 @@ struct GameData
 	Font fontHeadline = Font{ 80, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	/// @brief 
 	Font fontTitle = Font{ 80, U"font/DotGothic16-Regular.ttf",FontStyle::BoldItalic };
+
+	ClassGameStatus classGameStatus;
 };
 
 using App = SceneManager<String, GameData>;
@@ -307,18 +298,23 @@ public:
 	TestBattle(const InitData& init)
 		: IScene{ init }
 	{
-		// TOML ファイルからデータを読み込む
-		const TOMLReader toml{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
-
-		if (not toml) // もし読み込みに失敗したら
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+		if (execute == false)
 		{
-			throw Error{ U"Failed to load `testBattle.toml`" };
-		}
+			// TOML ファイルからデータを読み込む
+			const TOMLReader tomlTestBattle{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
 
-		Array<structTestBattle> arrayStructTestBattle;
-		{
-			for (const auto& table : toml[U"TestBattle"].tableArrayView()) {
-				structTestBattle tb;
+			if (not tomlTestBattle) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `testBattle.toml`" };
+			}
+
+			Array<ClassTestBattle> arrayStructTestBattle;
+			for (const auto& table : tomlTestBattle[U"TestBattle"].tableArrayView()) {
+				ClassTestBattle tb;
 				tb.name = table[U"name"].get<String>();
 				tb.map = table[U"map"].get<String>();
 				{
@@ -357,64 +353,174 @@ public:
 
 				arrayStructTestBattle << tb;
 			}
-		}
 
-		// TOML ファイルからデータを読み込む
-		const TOMLReader tomlTestMap{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testMap.toml" };
+			// TOML ファイルからデータを読み込む
+			const TOMLReader tomlTestMap{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testMap.toml" };
 
-		if (not tomlTestMap) // もし読み込みに失敗したら
-		{
-			throw Error{ U"Failed to load `testMap.toml`" };
-		}
+			if (not tomlTestMap) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `testMap.toml`" };
+			}
 
-		structMap sM;
-		{
+			ClassMap sM;
 			for (const auto& table : tomlTestMap[U"Map"].tableArrayView()) {
+				const String name = table[U"name"].get<String>();
+
 				{
-					const String name = table[U"name"].get<String>();
-				}
-				int32 counter = 0;
-				while (true)
-				{
-					String aaa = U"ele{}"_fmt(counter);
-					const String ele = table[aaa].get<String>();
-					sM.ele.push_back(std::make_pair(aaa, ele));
-					counter++;
-					if (ele == U"")
+					int32 counter = 0;
+					while (true)
 					{
-						break;
+						String aaa = U"ele{}"_fmt(counter);
+						const String ele = table[aaa].get<String>();
+						sM.ele.push_back(std::make_pair(aaa, ele));
+						counter++;
+						if (ele == U"")
+						{
+							break;
+						}
 					}
 				}
 				{
+					namespace views = std::views;
 					const String str = table[U"data"].get<String>();
-					const Array<String> strArray = str.split(U'@');
-					sM.data.push_back(strArray);
-					//for (auto& s : strArray)
-					//{
-					//}
+					for (const auto sv : str | views::split(U",@,"_sv))
+					{
+						sM.data.push_back(String(sv.begin(), sv.end()));
+					}
 				}
 			}
-		}
 
-		// TOML ファイルからデータを読み込む
-		const TOMLReader tomlUnit{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoUnit/genUnit002.toml" };
+			// TOML ファイルからデータを読み込む
+			const JSON jsonUnit = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/InfoUnit/Unit.json");
 
-		if (not tomlUnit) // もし読み込みに失敗したら
-		{
-			throw Error{ U"Failed to load `gen_unit_002.toml`" };
-		}
+			if (not jsonUnit) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `Unit.json`" };
+			}
 
-		Array<ClassUnit> arrayClassUnit;
-		{
-			for (const auto& table : tomlUnit[U"Unit"].tableArrayView()) {
+			Array<ClassUnit> arrayClassUnit;
+			for (const auto& [key, value] : jsonUnit[U"Unit"]) {
 				ClassUnit cu;
-				cu.NameTag = table[U"name_tag"].get<String>();
-				cu.Name = table[U"name"].get<String>();
-
+				cu.NameTag = value[U"name_tag"].getString();
+				cu.Name = value[U"name"].getString();
+				String sNa = value[U"skill"].getString();
+				if (sNa.contains(',') == true)
+				{
+					cu.SkillName = sNa.split(',');
+				}
+				else
+				{
+					cu.SkillName.push_back(sNa);
+				}
 				arrayClassUnit.push_back(std::move(cu));
 			}
 
+			// TOML ファイルからデータを読み込む
+			const JSON skillData = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/InfoSkill/skill.json");
+
+			if (not skillData) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `skill.json`" };
+			}
+
+			Array<ClassSkill> arrayClassSkill;
+			for (const auto& [key, value] : skillData[U"Skill"]) {
+				ClassSkill cu;
+				cu.nameTag = value[U"name_tag"].get<String>();
+				cu.name = value[U"name"].get<String>();
+
+				arrayClassSkill.push_back(std::move(cu));
+			}
+
+			// TOML ファイルからデータを読み込む
+			const JSON objData = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/Info_Object/obj.json");
+
+			if (not objData) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `obj.json`" };
+			}
+
+			Array<ClassObjectMapTip> arrayClassObj;
+			for (const auto& [key, value] : objData[U"obj"]) {
+				ClassObjectMapTip cu;
+				cu.nameTag = value[U"name"].get<String>();
+				String ty = value[U"type"].get<String>();
+				if (ty == U"wall2")
+				{
+					cu.type = MapTipObjectType::WALL2;
+				}
+				else if (ty == U"gate")
+				{
+					cu.type = MapTipObjectType::GATE;
+				}
+				cu.noWall2 = value[U"no_wall2"].get<int32>();
+				cu.castle = value[U"castle"].get<int32>();
+				cu.castleDefense = value[U"castle_defense"].get<int32>();
+				cu.castleMagdef = value[U"castle_magdef"].get<int32>();
+
+				arrayClassObj.push_back(std::move(cu));
+			}
+
+			//unitのスキル名からスキルクラスを探し、unitに格納
+			for (auto& itemUnit : arrayClassUnit)
+			{
+				for (const auto& itemSkillName : itemUnit.SkillName)
+				{
+					for (const auto& skill : arrayClassSkill)
+					{
+						if (skill.nameTag == itemSkillName)
+						{
+							itemUnit.Skill.emplace_back(skill);
+							break;
+						}
+					}
+				}
+			}
+
+			ClassGameStatus cgs;
+			cgs.classTestBattle = arrayStructTestBattle[0];
+			cgs.arrayClassMap = Array{ sM };
+			cgs.arrayClassUnit = arrayClassUnit;
+			cgs.arrayClassSkill = arrayClassSkill;
+
+			getData().classGameStatus = cgs;
+			execute = true;
 		}
+		else
+		{
+		}
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	bool execute = false;
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class Battle : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	Battle(const InitData& init)
+		: IScene{ init }
+	{
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -443,11 +549,11 @@ private:
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
-class common : public App::Scene
+class common001 : public App::Scene
 {
 public:
 	// コンストラクタ（必ず実装）
-	common(const InitData& init)
+	common001(const InitData& init)
 		: IScene{ init }
 	{
 	}

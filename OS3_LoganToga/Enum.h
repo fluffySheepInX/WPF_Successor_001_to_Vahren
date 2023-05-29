@@ -21,3 +21,9 @@ enum class Gender
 	,
 	infertile = 4
 };
+enum class MapTipObjectType
+{
+	None
+	, WALL2
+	, GATE
+};

@@ -1,0 +1,41 @@
+{
+  "Skill": [
+    {
+      "name_tag": "gunLaphroaig",
+      "fkey": "gun*1",
+      "sortkey": "1",
+      "func": "missile",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun010.png",
+      "name": "【ニードルガン・ラフロイグ式lv1】",
+      "help": "\t\tさすがは帝国と言わざるを得ない、先進的ボルトアクション小銃$\n\t\tアレクサンド歴1850年時点での銃と言えば、前装式滑腔式歩兵銃のことだが、$\n\t\t帝国は既にこのような画期的兵器を作り出していた。$\n\t\tしかしその価値を理解していたのは少数の人間で、$\n\t\t多くの、例えば第一方面軍司令部ですら、$\n\t\t帝国が戦場で優位に立っていた理由を誤解している。$\n\t\tその為、「よくわからん」という理由で東アイディオール株式会社のような、$\n\t\t試験的あるいは犠牲的存在に多く回されている。幸か不幸か──。\n\t\t",
+      "center": "on",
+      "mp": "0",
+      "slow_per": "100",
+      "slow_time": "-1",
+      "sound": "gun19, gun21, gun30",
+      "image": "a_bullet",
+      "direct": "on",
+      "w": "12",
+      "h": "12",
+      "a": "200",
+      "force_fire": "on",
+      "attr": "taiho",
+      "str": "attack_dext * 120",
+      "range": "550",
+      "damage_range_adjust": "0",
+      "range_min": "145",
+      "speed": "4500",
+      "gun_delay": "gunLaphroaig*1",
+      "pair_next": "b_kemuri_eff02",
+      "next": "m_hit_eff01",
+      "random_space": "10",
+      "offset": "on",
+      "ray": "185, 255, 255, 255",
+      "ray_strokeThickness": "3",
+      "force_ray": "on",
+      "rush": "-1",
+      "rush_interval": "-1",
+      "rush_random_degree": "-1"
+    }
+  ]
+}
