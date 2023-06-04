@@ -321,6 +321,10 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassBattle.h" />
+    <ClInclude Include="ClassHorizontalUnit.h" />
+    <ClInclude Include="ClassStaticCommonMethod.h" />
+    <ClInclude Include="ClassMapBattle.h" />
     <ClInclude Include="ClassMap.h" />
     <ClInclude Include="ClassTestBattle.h" />
     <ClInclude Include="ClassGameStatus.h" />

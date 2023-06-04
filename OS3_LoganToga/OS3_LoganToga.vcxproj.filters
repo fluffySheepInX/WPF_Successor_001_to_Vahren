@@ -805,5 +805,17 @@
     <ClInclude Include="ClassMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClassMapBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassStaticCommonMethod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassHorizontalUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

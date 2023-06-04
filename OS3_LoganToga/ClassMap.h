@@ -2,6 +2,6 @@
 struct ClassMap
 {
 	String name = U"";
-	Array<std::pair<String, String>> ele;
+	HashTable<String, String> ele;
 	Array<String> data;
 };

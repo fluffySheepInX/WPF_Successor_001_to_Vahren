@@ -3,7 +3,10 @@
 # include "ClassMap.h" 
 # include "ClassTestBattle.h" 
 # include "ClassUnit.h" 
-# include "ClassObjectMapTip.h" 
+# include "ClassObjectMapTip.h"
+# include "ClassBattle.h" 
+# include "ClassStaticCommonMethod.h" 
+
 # include "Enum.h" 
 const bool debug = true;
 const String newlineCode = U"\r\n";
@@ -335,18 +338,18 @@ public:
 				}
 				{
 					const String str = table[U"player"].get<String>();
-					Zinei z;
+					BattleWhichIsThePlayer z;
 					if (str == U"Def")
 					{
-						z = Zinei::Def;
+						z = BattleWhichIsThePlayer::Def;
 					}
 					else if (str == U"Sortie")
 					{
-						z = Zinei::Sortie;
+						z = BattleWhichIsThePlayer::Sortie;
 					}
 					else
 					{
-						z = Zinei::None;
+						z = BattleWhichIsThePlayer::None;
 					}
 					tb.player = z;
 				}
@@ -372,7 +375,7 @@ public:
 					{
 						String aaa = U"ele{}"_fmt(counter);
 						const String ele = table[aaa].get<String>();
-						sM.ele.push_back(std::make_pair(aaa, ele));
+						sM.ele.emplace(aaa, ele);
 						counter++;
 						if (ele == U"")
 						{
@@ -385,7 +388,8 @@ public:
 					const String str = table[U"data"].get<String>();
 					for (const auto sv : str | views::split(U",@,"_sv))
 					{
-						sM.data.push_back(String(sv.begin(), sv.end()));
+						String re = String(sv.begin(), sv.end());
+						sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
 					}
 				}
 			}
@@ -482,6 +486,12 @@ public:
 			cgs.arrayClassMap = Array{ sM };
 			cgs.arrayClassUnit = arrayClassUnit;
 			cgs.arrayClassSkill = arrayClassSkill;
+			{
+				ClassBattle cb;
+				cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
+				cb.battleWhichIsThePlayer = arrayStructTestBattle[0].player;
+				cgs.classBattle = cb;
+			}
 
 			getData().classGameStatus = cgs;
 			execute = true;

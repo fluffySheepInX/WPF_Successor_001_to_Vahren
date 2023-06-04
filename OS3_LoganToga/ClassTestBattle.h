@@ -6,5 +6,5 @@ struct ClassTestBattle
 	String map = U"";
 	Array<String> memberKougeki;
 	Array<String> memberBouei;
-	Zinei player = Zinei::None;
+	BattleWhichIsThePlayer player = BattleWhichIsThePlayer::None;
 };
