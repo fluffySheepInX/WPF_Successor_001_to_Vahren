@@ -2,55 +2,85 @@
 # include "Enum.h" 
 # include "ClassSkill.h" 
 
-struct ClassFormation
-{
-	// ClassFormation のメンバ変数
-};
-
 class ClassUnit
 {
 public:
-	//ClassUnit ShallowCopy() const
-	//{
-	//	return *this;
-	//}
-
-	//ClassUnit DeepCopy() const
-	//{
-	//	ClassUnit cu = *this;
-
-	//	if (cu.Formation)
-	//	{
-	//		ClassFormation fo;
-	//		fo.Formation = cu.Formation->Formation;
-	//		fo.Id = cu.Formation->Id;
-	//		cu.Formation = std::make_unique<ClassFormation>(std::move(fo));
-	//	}
-
-	//	// 配列など参照型のデータを新規作成して元の値をコピーする
-	//	cu.SkillName = std::vector<String>(cu.SkillName);
-	//	cu.Skill = std::vector<ClassSkill>(cu.Skill);
-
-	//	if (cu.OrderPosiSkill)
-	//	{
-	//		cu.OrderPosiSkill = std::make_unique<HashTable<int32, Point>>(*cu.OrderPosiSkill);
-	//	}
-
-	//	if (cu.VecMoveSkill)
-	//	{
-	//		cu.VecMoveSkill = std::make_unique<HashTable<int32, Point>>(*cu.VecMoveSkill);
-	//	}
-
-	//	if (cu.NowPosiSkill)
-	//	{
-	//		cu.NowPosiSkill = std::make_unique<HashTable<int32, Point>>(*cu.NowPosiSkill);
-	//	}
-
-	//	return cu;
-	//}
+	ClassUnit() = default;
+	ClassUnit& operator=(const ClassUnit& other) {
+		if (this != &other) {
+			Formation = other.Formation; // 前提：ClassFormationが適切なコピーコンストラクタを持つ
+			ID = other.ID;
+			IsLeader = other.IsLeader;
+			IsSelect = other.IsSelect;
+			IsDone = other.IsDone;
+			IsBattleEnable = other.IsBattleEnable;
+			NameTag = other.NameTag;
+			Name = other.Name;
+			Help = other.Help;
+			Text = other.Text;
+			Race = other.Race;
+			Class = other.Class;
+			Image = other.Image;
+			Dead = other.Dead;
+			Retreat = other.Retreat;
+			Join = other.Join;
+			Face = other.Face;
+			Voice_type = other.Voice_type;
+			gender = other.gender;
+			Talent = other.Talent;
+			Friend = other.Friend;
+			Merce = other.Merce;
+			Staff = other.Staff;
+			InitMember = other.InitMember;
+			Enemy = other.Enemy;
+			Level = other.Level;
+			Level_max = other.Level_max;
+			Price = other.Price;
+			Cost = other.Cost;
+			Medical = other.Medical;
+			HasExp = other.HasExp;
+			Hp = other.Hp;
+			Mp = other.Mp;
+			Attack = other.Attack;
+			Defense = other.Defense;
+			Magic = other.Magic;
+			MagDef = other.MagDef;
+			Speed = other.Speed;
+			Dext = other.Dext;
+			Move = other.Move;
+			Hprec = other.Hprec;
+			Mprec = other.Mprec;
+			Exp = other.Exp;
+			Exp_mul = other.Exp_mul;
+			Heal_max = other.Heal_max;
+			Summon_max = other.Summon_max;
+			No_knock = other.No_knock;
+			Loyal = other.Loyal;
+			Alive_per = other.Alive_per;
+			Escape_range = other.Escape_range;
+			SkillName = other.SkillName; // コピーされるStringの各要素は新しいメモリを確保します
+			Skill = other.Skill; // 前提：ClassSkillが適切なコピーコンストラクタを持つ
+			Finance = other.Finance;
+			MoveType = other.MoveType;
+			FlagMove = other.FlagMove;
+			FlagMoving = other.FlagMoving;
+			FlagMoveDispose = other.FlagMoveDispose;
+			yokoUnit = other.yokoUnit;
+			TakasaUnit = other.TakasaUnit;
+			nowPosiLeft = other.nowPosiLeft;
+			orderPosiLeft = other.orderPosiLeft;
+			vecMove = other.vecMove;
+			FlagMoveSkill = other.FlagMoveSkill;
+			FlagMovingSkill = other.FlagMovingSkill;
+			NowPosiSkill = other.NowPosiSkill; // コピーされるPointの各要素は新しいメモリを確保します
+			OrderPosiSkill = other.OrderPosiSkill; // コピーされるPointの各要素は新しいメモリを確保します
+			VecMoveSkill = other.VecMoveSkill; // コピーされるPointの各要素は新しいメモリを確保します
+		}
+		return *this;
+	}
 
 	// Formation
-	ClassFormation Formation;
+	BattleFormation Formation;
 
 	// ID
 	long long ID = 0;
@@ -200,10 +230,10 @@ public:
 	int32 Escape_range = 0;
 
 	// SkillName
-	std::vector<String> SkillName;
+	Array<String> SkillName;
 
 	// Skill
-	std::vector<ClassSkill> Skill;
+	Array<ClassSkill> Skill;
 
 	// Finance
 	int32 Finance = 0;
@@ -224,12 +254,12 @@ public:
 	int32 TakasaUnit = 32;
 
 	// NowPosiLeft
-	Point nowPosiLeft;
+	Vec2 nowPosiLeft;
 
 	// NowPosiCenter
-	Point GetNowPosiCenter()
+	Vec2 GetNowPosiCenter()
 	{
-		return Point(nowPosiLeft.x + (yokoUnit / 2), nowPosiLeft.y + (TakasaUnit / 2));
+		return Vec2(nowPosiLeft.x + (yokoUnit / 2), nowPosiLeft.y + (TakasaUnit / 2));
 	}
 	// OrderPosiLeft
 	Point orderPosiLeft;

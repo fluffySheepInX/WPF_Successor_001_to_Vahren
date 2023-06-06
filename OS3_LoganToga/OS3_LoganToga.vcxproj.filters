@@ -218,6 +218,63 @@
     <Image Include="App\example\obj\siv3d-kun-eye.png">
       <Filter>Resource Files\example\obj</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\4.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\6.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip001.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip002.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip003.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip004.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip005.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip006.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene001.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene002.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene003.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene004.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene005.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\ghostFire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -815,6 +872,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleClick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

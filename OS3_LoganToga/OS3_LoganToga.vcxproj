@@ -120,6 +120,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\2.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\3.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\4.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\6.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip001.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip002.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip003.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip004.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip005.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip006.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene001.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene002.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene003.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene004.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene005.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\ghostFire.png" />
     <Image Include="App\engine\texture\box-shadow\128.png" />
     <Image Include="App\engine\texture\box-shadow\16.png" />
     <Image Include="App\engine\texture\box-shadow\256.png" />
@@ -330,7 +349,9 @@
     <ClInclude Include="ClassGameStatus.h" />
     <ClInclude Include="ClassObjectMapTip.h" />
     <ClInclude Include="ClassSkill.h" />
+    <ClInclude Include="DoubleClick.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="MapCreator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ClassUnit.h" />
   </ItemGroup>

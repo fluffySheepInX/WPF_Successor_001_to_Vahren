@@ -53,3 +53,11 @@ enum class FlagBattleMapUnit
 	,
 	Spe
 };
+enum class BattleFormation
+{
+	F
+	,
+	M
+	,
+	B
+};

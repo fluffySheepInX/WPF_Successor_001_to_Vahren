@@ -20,7 +20,7 @@ public:
 				//field(床画像
 				md.tip = cm.ele[splitA[0]];
 				//build(城壁や矢倉など
-				if (splitA.size() > 1)
+				if (splitA.size() >= 1)
 				{
 					Array splitB = splitA[0].split(U'$');
 					for (String item : splitB)
@@ -35,7 +35,7 @@ public:
 					}
 				}
 				//flag(部隊チップの種別
-				if (splitA.size() > 2)
+				if (splitA.size() >= 2)
 				{
 					int32 re = -1;
 					try
@@ -65,7 +65,7 @@ public:
 					}
 				}
 				//部隊
-				if (splitA.size() > 3)
+				if (splitA.size() >= 3)
 				{
 					md.unit = splitA[3];
 					if (md.unit == U"@@")
@@ -78,16 +78,16 @@ public:
 					}
 				}
 				//方向
-				if (splitA.size() > 4)
+				if (splitA.size() >= 4)
 				{
 					md.houkou = splitA[4];
 				}
 				//陣形
-				if (splitA.size() > 5)
+				if (splitA.size() >= 5)
 				{
 					md.zinkei = splitA[5];
 				}
-				aMd.push_back(md);
+				aMd.push_back(std::move(md));
 			}
 			cmb.mapData.push_back(std::move(aMd));
 		}
@@ -99,6 +99,7 @@ public:
 		return target.replaced(U"\r\n", U"")
 			.replaced(U"\r", U"")
 			.replaced(U"\n", U"")
+			.replaced(U" ", U"")
 			.replaced(U"\t", U"");
 	}
 private:

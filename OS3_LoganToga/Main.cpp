@@ -6,6 +6,8 @@
 # include "ClassObjectMapTip.h"
 # include "ClassBattle.h" 
 # include "ClassStaticCommonMethod.h" 
+# include "MapCreator.h" 
+# include "DoubleClick.h" 
 
 # include "Enum.h" 
 const bool debug = true;
@@ -388,8 +390,11 @@ public:
 					const String str = table[U"data"].get<String>();
 					for (const auto sv : str | views::split(U",@,"_sv))
 					{
-						String re = String(sv.begin(), sv.end());
-						sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
+						String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
+						if (re != U"")
+						{
+							sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
+						}
 					}
 				}
 			}
@@ -407,6 +412,7 @@ public:
 				ClassUnit cu;
 				cu.NameTag = value[U"name_tag"].getString();
 				cu.Name = value[U"name"].getString();
+				cu.Image = value[U"image"].getString();
 				String sNa = value[U"skill"].getString();
 				if (sNa.contains(',') == true)
 				{
@@ -490,6 +496,70 @@ public:
 				ClassBattle cb;
 				cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
 				cb.battleWhichIsThePlayer = arrayStructTestBattle[0].player;
+
+				for (String var : arrayStructTestBattle[0].memberKougeki)
+				{
+					Array re = var.split(U'*');
+					if (re.size() == 1)
+					{
+						ClassHorizontalUnit chu;
+						auto it = std::find_if(cgs.arrayClassUnit.begin(), cgs.arrayClassUnit.end(),
+							[&](const ClassUnit& unit) { return unit.NameTag == re[0]; });
+						if (it == cgs.arrayClassUnit.end())
+						{
+							continue;
+						}
+						chu.ListClassUnit.push_back(*it);
+						cb.sortieUnitGroup.push_back(chu);
+					}
+					else
+					{
+						ClassHorizontalUnit chu;
+						auto it = std::find_if(cgs.arrayClassUnit.begin(), cgs.arrayClassUnit.end(),
+							[&](const ClassUnit& unit) { return unit.NameTag == re[0]; });
+						if (it == cgs.arrayClassUnit.end())
+						{
+							continue;
+						}
+						for (size_t i = 0; i < Parse<int32>(re[1]); i++)
+						{
+							chu.ListClassUnit.push_back(*it);
+						}
+						cb.sortieUnitGroup.push_back(chu);
+					}
+				}
+				for (String var : arrayStructTestBattle[0].memberBouei)
+				{
+					Array re = var.split(U'*');
+					if (re.size() == 1)
+					{
+						ClassHorizontalUnit chu;
+						auto it = std::find_if(cgs.arrayClassUnit.begin(), cgs.arrayClassUnit.end(),
+							[&](const ClassUnit& unit) { return unit.NameTag == re[0]; });
+						if (it == cgs.arrayClassUnit.end())
+						{
+							continue;
+						}
+						chu.ListClassUnit.push_back(*it);
+						cb.defUnitGroup.push_back(chu);
+					}
+					else
+					{
+						ClassHorizontalUnit chu;
+						auto it = std::find_if(cgs.arrayClassUnit.begin(), cgs.arrayClassUnit.end(),
+							[&](const ClassUnit& unit) { return unit.NameTag == re[0]; });
+						if (it == cgs.arrayClassUnit.end())
+						{
+							continue;
+						}
+						for (size_t i = 0; i < Parse<int32>(re[1]); i++)
+						{
+							chu.ListClassUnit.push_back(*it);
+						}
+						cb.defUnitGroup.push_back(chu);
+					}
+				}
+
 				cgs.classBattle = cb;
 			}
 
@@ -498,6 +568,7 @@ public:
 		}
 		else
 		{
+			changeScene(U"Battle", 0.9s);
 		}
 	}
 	// 描画関数（オプション）
@@ -531,15 +602,201 @@ public:
 	Battle(const InitData& init)
 		: IScene{ init }
 	{
+		////マップ
+		// maptip フォルダ内のファイルを列挙する
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/015_BattleMapCellImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			TextureAsset::Register(filename, filePath);
+		}
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/040_ChipImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			TextureAsset::Register(filename, filePath);
+		}
+
+		mapCreator.N = getData().classGameStatus.classBattle.classMapBattle.value().mapData.size();
+
+		// 各列の四角形
+		columnQuads = mapCreator.MakeColumnQuads(mapCreator.N);
+		// 各行の四角形
+		rowQuads = mapCreator.MakeRowQuads(mapCreator.N);
+
+		Grid<int32> gridWork(Size{ mapCreator.N, mapCreator.N });
+		mapCreator.grid = gridWork;
+
+		//始点設定
+		viewPos = { 0,0 };
+
+		int32 counterXSor = 0;
+		int32 counterYSor = 0;
+		bool flagSor = false;
+		for (const auto target : getData().classGameStatus.classBattle.classMapBattle.value().mapData)
+		{
+			for (const auto wid : target)
+			{
+				if (wid.kougekiButaiNoIti == true)
+				{
+					flagSor = true;
+					break;
+				}
+				else
+				{
+					counterYSor++;
+				}
+			}
+
+			if (flagSor == true)
+			{
+				break;
+			}
+			counterYSor = 0;
+			counterXSor++;
+		}
+		int32 counterXDef = 0;
+		int32 counterYDef = 0;
+		bool flagDef = false;
+		for (const auto target : getData().classGameStatus.classBattle.classMapBattle.value().mapData)
+		{
+			for (const auto wid : target)
+			{
+				if (wid.boueiButaiNoIti == true)
+				{
+					flagDef = true;
+					break;
+				}
+				else
+				{
+					counterYDef++;
+				}
+			}
+
+			if (flagDef == true)
+			{
+				break;
+			}
+			counterYDef = 0;
+			counterXDef++;
+		}
+
+		//ユニットの初期位置設定
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty() &&
+				item.ListClassUnit[0].Formation == BattleFormation::F)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					itemUnit.nowPosiLeft = Vec2(counterXSor * (mapCreator.TileOffset.x), counterYSor * (mapCreator.TileOffset.y));
+				}
+			}
+		}
+		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty() &&
+				item.ListClassUnit[0].Formation == BattleFormation::F)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					itemUnit.nowPosiLeft = Vec2(counterXDef * (mapCreator.TileOffset.x), counterYDef * (mapCreator.TileOffset.y));
+				}
+			}
+		}
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		const auto t = camera.createTransformer();
+
+		if (MouseL.pressed() == true)
+		{
+			viewPos.moveBy(-Cursor::Delta());
+			camera.jumpTo(viewPos, 1.0);
+		}
+		if (MouseR.pressed() == false)
+		{
+			cursPos = Cursor::Pos();
+		}
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		const auto t = camera.createTransformer();
 
+		//// マップを描く | Draw the map
+		// 上から順にタイルを描く
+		for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
+		{
+			// x の開始インデックス
+			const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+
+			// y の開始インデックス
+			const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+
+			// 左から順にタイルを描く
+			for (int32 k = 0; k < (mapCreator.N - Abs(mapCreator.N - i - 1)); ++k)
+			{
+				// タイルのインデックス
+				const Point index{ (xi + k), (yi - k) };
+
+				// そのタイルの底辺中央の座標
+				const int32 i = index.manhattanLength();
+				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				const double posY = (i * mapCreator.TileOffset.y);
+				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				// 底辺中央を基準にタイルを描く
+				String tip = getData().classGameStatus.classBattle.classMapBattle.value().mapData[index.x][index.y].tip;
+				TextureAsset(tip + U".png").draw(Arg::bottomCenter = pos);
+			}
+		}
+
+		//建築物
+
+		//unit
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty() &&
+				item.ListClassUnit[0].Formation == BattleFormation::F)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+				}
+			}
+		}
+		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty() &&
+				item.ListClassUnit[0].Formation == BattleFormation::F)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+				}
+			}
+		}
+
+		if (MouseR.pressed())
+		{
+			const double thickness = 3.0;
+			double offset = 0.0;
+
+			offset += (Scene::DeltaTime() * 10);
+
+			const Rect rect{ cursPos, Cursor::Pos() - cursPos };
+			rect.top().draw(LineStyle::SquareDot(offset), thickness);
+			rect.right().draw(LineStyle::SquareDot(offset), thickness);
+			rect.bottom().draw(LineStyle::SquareDot(offset), thickness);
+			rect.left().draw(LineStyle::SquareDot(offset), thickness);
+		}
 	}
 
 	void drawFadeIn(double t) const override
@@ -556,8 +813,14 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Vec2 viewPos;
+	Point cursPos;
+	MapCreator mapCreator;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+	Camera2D camera;
+	Array<Quad> columnQuads;
+	Array<Quad> rowQuads;
 };
 class common001 : public App::Scene
 {
@@ -624,6 +887,7 @@ void Main()
 	// シーンを登録
 	manager.add<SelectLang>(U"SelectLang");
 	manager.add<TestBattle>(U"TestBattle");
+	manager.add<Battle>(U"Battle");
 
 	if (System::GetCommandLineArgs().size() == 0)
 	{
