@@ -12,5 +12,7 @@ public:
 	ClassBattle classBattle;
 	Array<ClassUnit> arrayClassUnit;
 	Array<ClassSkill> arrayClassSkill;
-
+	bool IsBattleMove = false;
+	int32 DistanceBetweenUnit = 0;
+	int32 DistanceBetweenUnitTate = 0;
 };

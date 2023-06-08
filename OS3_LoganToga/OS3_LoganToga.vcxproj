@@ -121,12 +121,16 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\2.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\3.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\4.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\m_grass2.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\snow.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\6.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\ucwall.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip001.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip002.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip003.png" />
@@ -169,7 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.toml" />
-    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
     <Text Include="App\dll\soundtouch\COPYING.TXT" />
@@ -193,8 +197,10 @@
     <None Include=".editorconfig" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\Unit.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
+    <None Include="App\001_Warehouse\001_DefaultGame\config.toml" />
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll" />
     <None Include="App\engine\font\fontawesome\fontawesome-brands.otf.zstdcmp" />
     <None Include="App\engine\font\fontawesome\fontawesome-solid.otf.zstdcmp" />

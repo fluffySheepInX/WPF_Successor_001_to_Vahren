@@ -262,16 +262,16 @@ public:
 		return Vec2(nowPosiLeft.x + (yokoUnit / 2), nowPosiLeft.y + (TakasaUnit / 2));
 	}
 	// OrderPosiLeft
-	Point orderPosiLeft;
+	Vec2 orderPosiLeft;
 
 	// OrderPosiCenter
-	Point GetOrderPosiCenter()
+	Vec2 GetOrderPosiCenter()
 	{
-		return Point(orderPosiLeft.x + (yokoUnit / 2), orderPosiLeft.y + (TakasaUnit / 2));
+		return Vec2(orderPosiLeft.x + (yokoUnit / 2), orderPosiLeft.y + (TakasaUnit / 2));
 	}
 
 	// VecMove
-	Point vecMove;
+	Vec2 vecMove;
 
 	// FlagMoveSkill
 	bool FlagMoveSkill = false;

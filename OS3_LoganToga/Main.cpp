@@ -310,6 +310,16 @@ public:
 		if (execute == false)
 		{
 			// TOML ファイルからデータを読み込む
+			const TOMLReader tomlConfig{ U"001_Warehouse/001_DefaultGame/config.toml" };
+
+			if (not tomlConfig) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `config.toml`" };
+			}
+
+
+
+			// TOML ファイルからデータを読み込む
 			const TOMLReader tomlTestBattle{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
 
 			if (not tomlTestBattle) // もし読み込みに失敗したら
@@ -413,6 +423,7 @@ public:
 				cu.NameTag = value[U"name_tag"].getString();
 				cu.Name = value[U"name"].getString();
 				cu.Image = value[U"image"].getString();
+				cu.Speed = Parse<double>(value[U"speed"].getString());
 				String sNa = value[U"skill"].getString();
 				if (sNa.contains(',') == true)
 				{
@@ -563,6 +574,8 @@ public:
 				cgs.classBattle = cb;
 			}
 
+			cgs.DistanceBetweenUnit = tomlConfig[U"config.DistanceBetweenUnit"].get<int32>();
+			cgs.DistanceBetweenUnitTate = tomlConfig[U"config.DistanceBetweenUnitTate"].get<int32>();
 			getData().classGameStatus = cgs;
 			execute = true;
 		}
@@ -683,24 +696,26 @@ public:
 		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 		{
 			if (!item.FlagBuilding &&
-				!item.ListClassUnit.empty() &&
-				item.ListClassUnit[0].Formation == BattleFormation::F)
+				!item.ListClassUnit.empty())
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					itemUnit.nowPosiLeft = Vec2(counterXSor * (mapCreator.TileOffset.x), counterYSor * (mapCreator.TileOffset.y));
+					Point pt = Point(counterXSor, counterYSor);
+					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
+					itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
 				}
 			}
 		}
 		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 		{
 			if (!item.FlagBuilding &&
-				!item.ListClassUnit.empty() &&
-				item.ListClassUnit[0].Formation == BattleFormation::F)
+				!item.ListClassUnit.empty())
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					itemUnit.nowPosiLeft = Vec2(counterXDef * (mapCreator.TileOffset.x), counterYDef * (mapCreator.TileOffset.y));
+					Point pt = Point(counterXDef, counterYDef);
+					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
+					itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
 				}
 			}
 		}
@@ -715,10 +730,270 @@ public:
 			viewPos.moveBy(-Cursor::Delta());
 			camera.jumpTo(viewPos, 1.0);
 		}
-		if (MouseR.pressed() == false)
+		if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
+		{
+			if (MouseR.up() == false)
+			{
+				cursPos = Cursor::Pos();
+			}
+		}
+		else if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == true)
+		{
+			if (MouseR.up() == false)
+			{
+				cursPos = Cursor::Pos();
+			}
+		}
+		else if (MouseR.down() == true && getData().classGameStatus.IsBattleMove == true)
 		{
 			cursPos = Cursor::Pos();
 		}
+
+		if (MouseR.up() == true)
+		{
+			Point start = cursPos;
+			Point end = Cursor::Pos();
+			//部隊を選択状態にする。もしくは既に選択状態なら移動させる
+			Array<ClassHorizontalUnit>* lisClassHorizontalUnit;
+			switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
+			{
+			case BattleWhichIsThePlayer::Sortie:
+				lisClassHorizontalUnit = &getData().classGameStatus.classBattle.sortieUnitGroup;
+				break;
+			case BattleWhichIsThePlayer::Def:
+				lisClassHorizontalUnit = &getData().classGameStatus.classBattle.defUnitGroup;
+				break;
+			case BattleWhichIsThePlayer::None:
+				//AI同士の戦いにフラグは立てない
+				return;
+			default:
+				return;
+			}
+
+			if (getData().classGameStatus.IsBattleMove == true)
+			{
+				Array<ClassUnit*> lisUnit;
+				for (auto& target : *lisClassHorizontalUnit)
+				{
+					for (auto& unit : target.ListClassUnit)
+					{
+						if (unit.FlagMove == true)
+						{
+							lisUnit.push_back(&unit);
+						}
+					}
+				}
+
+				if (lisUnit.size() == 1)
+				{
+					ClassUnit* cu = lisUnit[0];
+					// 移動先の座標算出
+					cu->orderPosiLeft = end;
+					Vec2 nor = Vec2(end - start).normalized();
+					Vec2 moved = cu->nowPosiLeft + Vec2(nor.x * cu->Speed, nor.y * cu->Speed);
+					//マップチップ座標に変換している
+					auto index = mapCreator.ToIndex(moved, columnQuads, rowQuads);
+					if (not index.has_value())
+					{
+						cu->FlagMove = false;
+						return;
+					}
+
+					//移動
+					cu->vecMove = Vec2(cu->orderPosiLeft - cu->nowPosiLeft).normalized();
+					cu->orderPosiLeft = end;
+					cu->FlagMove = false;
+					cu->FlagMoving = true;
+				}
+
+				int32 counterLisClassHorizontalUnit = 0;
+				for (auto& target : *lisClassHorizontalUnit)
+				{
+					Array<ClassUnit*> re;
+					for (auto& unit : target.ListClassUnit)
+					{
+						if (unit.FlagMove == true)
+						{
+							re.push_back(&unit);
+						}
+					}
+					if (re.size() == 0)
+					{
+						counterLisClassHorizontalUnit++;
+						continue;
+					}
+
+					//その部隊の人数を取得
+					int32 unitCount = re.size();
+
+					//商の数
+					int32 result = unitCount / 2;
+
+					//角度
+					// X軸との角度を計算
+					//θ'=直線とx軸のなす角度
+					double angle2 = Math::Atan2(end.y - start.y,
+										   end.x - start.x);
+					//θ
+					double angle = Math::Pi / 2 - angle2;
+
+					//移動フラグが立っているユニットだけ、繰り返す
+					//偶奇判定
+					if (unitCount % 2 == 1)
+					{
+						////奇数の場合
+						int32 counter = 0;
+						for (auto& unit : re)
+						{
+							//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+							double xPos = end.x
+								+ (
+									(counter - (result))
+									* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+									)
+								-
+								(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+							//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+							double yPos = end.y
+								- (
+								(counter - (result))
+								* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+								)
+								-
+								(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+							//移動
+							unit->orderPosiLeft = Vec2(xPos, yPos);
+							unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
+							unit->FlagMove = false;
+							unit->FlagMoving = true;
+
+							counter++;
+						}
+					}
+					else
+					{
+
+					}
+
+					counterLisClassHorizontalUnit++;
+				}
+				getData().classGameStatus.IsBattleMove = false;
+			}
+			else
+			{
+				//範囲選択
+				for (auto& target : *lisClassHorizontalUnit)
+				{
+					for (auto& unit : target.ListClassUnit)
+					{
+						Vec2 gnpc = unit.GetNowPosiCenter();
+						if (start.x > end.x)
+						{
+							//左
+							if (start.y > end.y)
+							{
+								//上
+								if (gnpc.x >= end.x && gnpc.x <= start.x
+									&& gnpc.y >= end.y && gnpc.y <= start.y)
+								{
+									unit.FlagMove = true;
+									getData().classGameStatus.IsBattleMove = true;
+								}
+								else
+								{
+									unit.FlagMove = false;
+								}
+							}
+							else
+							{
+								//下
+								if (gnpc.x >= end.x && gnpc.x <= start.x
+									&& gnpc.y >= start.y && gnpc.y <= end.y)
+								{
+									unit.FlagMove = true;
+									getData().classGameStatus.IsBattleMove = true;
+								}
+								else
+								{
+									unit.FlagMove = false;
+								}
+							}
+						}
+						else
+						{
+							//右
+							if (start.y > end.y)
+							{
+								//上
+								if (gnpc.x >= start.x && gnpc.x <= end.x
+									&& gnpc.y >= end.y && gnpc.y <= start.y)
+								{
+									unit.FlagMove = true;
+									getData().classGameStatus.IsBattleMove = true;
+								}
+								else
+								{
+									unit.FlagMove = false;
+								}
+							}
+							else
+							{
+								//下
+								if (gnpc.x >= start.x && gnpc.x <= end.x
+									&& gnpc.y >= start.y && gnpc.y <= end.y)
+								{
+									unit.FlagMove = true;
+									getData().classGameStatus.IsBattleMove = true;
+								}
+								else
+								{
+									unit.FlagMove = false;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//移動処理
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				if (itemUnit.FlagMoving == false)
+				{
+					continue;
+				}
+
+				itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + itemUnit.vecMove;
+				if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
+					&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
+				{
+					itemUnit.FlagMoving = false;
+				}
+			}
+		}
+		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				if (itemUnit.FlagMoving == false)
+				{
+					continue;
+				}
+
+				itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + itemUnit.vecMove;
+				if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
+					&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
+				{
+					itemUnit.FlagMoving = false;
+				}
+			}
+		}
+
 	}
 	// 描画関数（オプション）
 	void draw() const override
@@ -767,7 +1042,14 @@ public:
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+					if (itemUnit.FlagMove == true)
+					{
+						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
+					}
+					else
+					{
+						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+					}
 				}
 			}
 		}
@@ -779,23 +1061,38 @@ public:
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+					if (itemUnit.FlagMove == true)
+					{
+						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
+					}
+					else
+					{
+						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+					}
 				}
 			}
 		}
 
 		if (MouseR.pressed())
 		{
-			const double thickness = 3.0;
-			double offset = 0.0;
+			if (getData().classGameStatus.IsBattleMove == false)
+			{
+				const double thickness = 3.0;
+				double offset = 0.0;
 
-			offset += (Scene::DeltaTime() * 10);
+				offset += (Scene::DeltaTime() * 10);
 
-			const Rect rect{ cursPos, Cursor::Pos() - cursPos };
-			rect.top().draw(LineStyle::SquareDot(offset), thickness);
-			rect.right().draw(LineStyle::SquareDot(offset), thickness);
-			rect.bottom().draw(LineStyle::SquareDot(offset), thickness);
-			rect.left().draw(LineStyle::SquareDot(offset), thickness);
+				const Rect rect{ cursPos, Cursor::Pos() - cursPos };
+				rect.top().draw(LineStyle::SquareDot(offset), thickness);
+				rect.right().draw(LineStyle::SquareDot(offset), thickness);
+				rect.bottom().draw(LineStyle::SquareDot(offset), thickness);
+				rect.left().draw(LineStyle::SquareDot(offset), thickness);
+			}
+			else
+			{
+				Line{ cursPos, Cursor::Pos() }
+				.drawArrow(10, Vec2{ 40, 80 }, Palette::Orange);
+			}
 		}
 	}
 

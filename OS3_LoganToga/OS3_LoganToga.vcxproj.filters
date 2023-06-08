@@ -275,6 +275,18 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\ghostFire.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\m_grass2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\snow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\ucwall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -331,7 +343,7 @@
       <Filter>Resource Files\example</Filter>
     </Text>
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.toml" />
-    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
   </ItemGroup>
@@ -797,6 +809,8 @@
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\Unit.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\config.toml" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
