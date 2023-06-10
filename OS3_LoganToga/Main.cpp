@@ -1,4 +1,5 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.9
+# include "ClassConfigString.h" 
 # include "ClassGameStatus.h" 
 # include "ClassMap.h" 
 # include "ClassTestBattle.h" 
@@ -8,6 +9,8 @@
 # include "ClassStaticCommonMethod.h" 
 # include "MapCreator.h" 
 # include "DoubleClick.h" 
+# include "SasaGUI.h" 
+# include "ClassExecutedSkillInBattle.h" 
 
 # include "Enum.h" 
 const bool debug = true;
@@ -75,6 +78,7 @@ struct GameData
 	Font fontTitle = Font{ 80, U"font/DotGothic16-Regular.ttf",FontStyle::BoldItalic };
 
 	ClassGameStatus classGameStatus;
+	ClassConfigString classConfigString;
 };
 
 using App = SceneManager<String, GameData>;
@@ -169,6 +173,9 @@ public:
 		{
 			AudioAsset(U"click").play();
 			language = Language::English;
+
+			getData().classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+
 			// 遷移
 			changeScene(U"Title", 0.9s);
 		}
@@ -176,6 +183,9 @@ public:
 		{
 			AudioAsset(U"click").play();
 			language = Language::Japan;
+
+			getData().classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"jp");
+
 			// 遷移
 			changeScene(U"Title", 0.9s);
 		}
@@ -316,8 +326,6 @@ public:
 			{
 				throw Error{ U"Failed to load `config.toml`" };
 			}
-
-
 
 			// TOML ファイルからデータを読み込む
 			const TOMLReader tomlTestBattle{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
@@ -874,7 +882,35 @@ public:
 					}
 					else
 					{
+						int32 counter = 0;
+						for (auto& unit : re)
+						{
+							//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+							double xPos = end.x
+								+ (
+									(counter - (result))
+									* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+									)
+								-
+								(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+							//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+							double yPos = end.y
+								- (
+								(counter - (result))
+								* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
 
+								)
+								-
+								(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+							//移動
+							unit->orderPosiLeft = Vec2(xPos, yPos);
+							unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
+							unit->FlagMove = false;
+							unit->FlagMoving = true;
+
+							counter++;
+						}
 					}
 
 					counterLisClassHorizontalUnit++;
@@ -993,6 +1029,8 @@ public:
 				}
 			}
 		}
+
+		//skill処理
 
 	}
 	// 描画関数（オプション）
@@ -1118,6 +1156,183 @@ private:
 	Camera2D camera;
 	Array<Quad> columnQuads;
 	Array<Quad> rowQuads;
+	Array<std::unique_ptr<ISkill>> skills;
+
+};
+class Title : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	Title(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class ScenarioMenu : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	ScenarioMenu(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class SelectChar : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	SelectChar(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class Novel : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	Novel(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+class Buy : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	Buy(const InitData& init)
+		: IScene{ init }
+	{
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
 class common001 : public App::Scene
 {
@@ -1155,8 +1370,6 @@ private:
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
 
-
-
 void Main()
 {
 	// ウィンドウのタイトル | Window title
@@ -1185,6 +1398,11 @@ void Main()
 	manager.add<SelectLang>(U"SelectLang");
 	manager.add<TestBattle>(U"TestBattle");
 	manager.add<Battle>(U"Battle");
+	manager.add<Title>(U"Title");
+	manager.add<ScenarioMenu>(U"ScenarioMenu");
+	manager.add<SelectChar>(U"SelectChar");
+	manager.add<SelectChar>(U"Novel");
+	manager.add<SelectChar>(U"Buy");
 
 	if (System::GetCommandLineArgs().size() == 0)
 	{

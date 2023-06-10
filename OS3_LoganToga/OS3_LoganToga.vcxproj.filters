@@ -287,6 +287,24 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\ucwall.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0001_easy.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0002_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0003_hard.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0004_luna.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\continue.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\tool.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -346,6 +364,7 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\SystemString.toml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">
@@ -892,6 +911,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DoubleClick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassExecutedSkillInBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SasaGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassConfigString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

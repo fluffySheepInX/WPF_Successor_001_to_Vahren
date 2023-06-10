@@ -120,6 +120,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0001_easy.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0002_normal.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0003_hard.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0004_luna.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\continue.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\tool.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
@@ -176,6 +182,7 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\SystemString.toml" />
     <Text Include="App\dll\soundtouch\COPYING.TXT" />
     <Text Include="App\engine\font\fontawesome\LICENSE.txt" />
     <Text Include="App\engine\soundfont\GMGSx.sf2.txt" />
@@ -346,6 +353,8 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassConfigString.h" />
+    <ClInclude Include="ClassExecutedSkillInBattle.h" />
     <ClInclude Include="ClassBattle.h" />
     <ClInclude Include="ClassHorizontalUnit.h" />
     <ClInclude Include="ClassStaticCommonMethod.h" />
@@ -358,6 +367,7 @@
     <ClInclude Include="DoubleClick.h" />
     <ClInclude Include="Enum.h" />
     <ClInclude Include="MapCreator.h" />
+    <ClInclude Include="SasaGUI.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ClassUnit.h" />
   </ItemGroup>

@@ -1,0 +1,14 @@
+[[SystemString]]
+	lang = "ja"
+	configSave = "セーブ"
+	configLoad = "ロード"
+	selectScenario = "シナリオ"
+	selectScenario2 = "その他"
+	DoYouWantToQuitTheGame = "ゲームを終了しますか？"
+[[SystemString]]
+	lang = "en"
+	configSave = "save"
+	configLoad = "load"
+	selectScenario = "scenario"
+	selectScenario2 = "other"
+	DoYouWantToQuitTheGame = "Do you want to quit the game"

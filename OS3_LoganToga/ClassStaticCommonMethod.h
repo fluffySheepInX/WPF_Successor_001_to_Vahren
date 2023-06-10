@@ -4,6 +4,31 @@
 
 class ClassStaticCommonMethod {
 public:
+	static ClassConfigString GetClassConfigString(String lan)
+	{
+		// TOML ファイルからデータを読み込む
+		const TOMLReader tomlSystemString{ U"001_Warehouse/001_DefaultGame/SystemString.toml" };
+
+		if (not tomlSystemString) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `SystemString.toml`" };
+		}
+
+		ClassConfigString ccs;
+		for (const auto& table : tomlSystemString[U"SystemString"].tableArrayView()) {
+			String lan = table[U"lang"].get<String>();
+			if (lan == U"en")
+			{
+				ccs.configSave = table[U"configSave"].get<String>();
+				ccs.configLoad = table[U"configLoad"].get<String>();
+				ccs.selectScenario = table[U"selectScenario"].get<String>();
+				ccs.selectScenario2 = table[U"selectScenario2"].get<String>();
+				ccs.DoYouWantToQuitTheGame = table[U"DoYouWantToQuitTheGame"].get<String>();
+			}
+		}
+
+		return ccs;
+	}
 	static ClassMapBattle GetClassMapBattle(ClassMap cm)
 	{
 		ClassMapBattle cmb;

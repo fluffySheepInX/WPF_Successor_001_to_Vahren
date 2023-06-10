@@ -5,7 +5,7 @@
 	#Sortie unit
 	memberKougeki = "ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest,ghostFireTest"
 	#Def unit
-	memberBouei = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5"
+	memberBouei = "AbelIrijhorn,VictodyRoyle,JothianRoarcy,MabateRoarcy,LineInfantryM14*5,LineInfantryM14*4,LineInfantryM14*3,DragoonFrancesca*7"
 	#player
 	player = "Def"
 [[TestBattle]]
