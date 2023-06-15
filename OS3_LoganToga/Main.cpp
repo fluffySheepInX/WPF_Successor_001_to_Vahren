@@ -6,12 +6,15 @@
 # include "ClassUnit.h" 
 # include "ClassObjectMapTip.h"
 # include "ClassBattle.h" 
+# include "ClassScenario.h" 
 # include "ClassStaticCommonMethod.h" 
 # include "MapCreator.h" 
 # include "DoubleClick.h" 
 # include "SasaGUI.h" 
 # include "ClassExecutedSkillInBattle.h" 
-
+# include "ClassPower.h" 
+# include "GameUIToolkit.h" 
+#include <ranges>
 # include "Enum.h" 
 const bool debug = true;
 const String newlineCode = U"\r\n";
@@ -76,9 +79,21 @@ struct GameData
 	Font fontHeadline = Font{ 80, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	/// @brief 
 	Font fontTitle = Font{ 80, U"font/DotGothic16-Regular.ttf",FontStyle::BoldItalic };
+	/// @brief 
+	Font fontSelectChar1 = Font{ 50, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
+	Font fontSelectChar2 = Font{ 30, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
+	Font fontScenarioMenu = Font{ 40, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
+	const Slice9 slice9{ U"001_Warehouse/001_DefaultGame/001_SystemImage/wnd0.png", Slice9::Style{
+	.backgroundRect = Rect{ 0, 0, 64, 64 },
+	.frameRect = Rect{ 64, 0, 64, 64 },
+	.cornerSize = 8,
+	.backgroundRepeat = false
+} };
 
 	ClassGameStatus classGameStatus;
 	ClassConfigString classConfigString;
+	ClassScenario selectClassScenario;
+	ClassPower selectClassPower;
 };
 
 using App = SceneManager<String, GameData>;
@@ -286,10 +301,10 @@ private:
 	//下横
 	Array<Rect> rectWaku002Shita;
 	////ボタン情報
-	String text1;
+	String text1 = U"en";
 	int32 buttonEngX = -1;
 	int32 buttonEngY = -1;
-	String text2;
+	String text2 = U"jp";
 	int32 buttonJaX = -1;
 	int32 buttonJaY = -1;
 	String text3;
@@ -326,6 +341,32 @@ public:
 			{
 				throw Error{ U"Failed to load `config.toml`" };
 			}
+
+			// TOML ファイルからデータを読み込む
+			const TOMLReader tomlSystemString{ U"001_Warehouse/001_DefaultGame/SystemString.toml" };
+
+			if (not tomlSystemString) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `SystemString.toml`" };
+			}
+
+			Array<ClassConfigString> arrayClassConfigString;
+			for (const auto& table : tomlSystemString[U"SystemString"].tableArrayView()) {
+				ClassConfigString ccs;
+
+				ccs.lang = table[U"lang"].get<String>();
+				ccs.configSave = table[U"configSave"].get<String>();
+				ccs.configLoad = table[U"configLoad"].get<String>();
+				ccs.selectScenario = table[U"selectScenario"].get<String>();
+				ccs.selectScenario2 = table[U"selectScenario2"].get<String>();
+				ccs.selectChara1 = table[U"selectChara1"].get<String>();
+				ccs.DoYouWantToQuitTheGame = table[U"DoYouWantToQuitTheGame"].get<String>();
+
+				arrayClassConfigString << ccs;
+			}
+
+			//TODO
+			getData().classConfigString = arrayClassConfigString[0];
 
 			// TOML ファイルからデータを読み込む
 			const TOMLReader tomlTestBattle{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testBattle.toml" };
@@ -1166,15 +1207,60 @@ public:
 	Title(const InitData& init)
 		: IScene{ init }
 	{
+		// TOML ファイルからデータを読み込む
+		const TOMLReader tomlConfig{ U"001_Warehouse/001_DefaultGame/config.toml" };
+
+		if (not tomlConfig) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `config.toml`" };
+		}
+
+		TitleMenuX = tomlConfig[U"config.TitleMenuX"].get<int32>();
+		TitleMenuY = tomlConfig[U"config.TitleMenuY"].get<int32>();
+		space = tomlConfig[U"config.TitleMenuSpace"].get<int32>();
+
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/001_SystemImage/015_TitleMenuImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			TextureAsset::Register(filename, filePath);
+		}
+		easyRect = Rect(TitleMenuX, TitleMenuY, 160, 40);
+		normalRect = Rect(TitleMenuX, (TitleMenuY + (40 * 1)) + space * 1, 160, 40);
+		hardRect = Rect(TitleMenuX, (TitleMenuY + (40 * 2)) + space * 2, 160, 40);
+		lunaRect = Rect(TitleMenuX, (TitleMenuY + (40 * 3)) + space * 3, 160, 40);
+
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		if (easyRect.leftClicked() == true)
+		{
+			changeScene(U"ScenarioMenu", 0.9s);
+		}
+		if (normalRect.leftClicked() == true)
+		{
+			changeScene(U"ScenarioMenu", 0.9s);
+		}
+		if (hardRect.leftClicked() == true)
+		{
+			changeScene(U"ScenarioMenu", 0.9s);
+		}
+		if (lunaRect.leftClicked() == true)
+		{
+			changeScene(U"ScenarioMenu", 0.9s);
+		}
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
-
+		TextureAsset(U"0001_easy.png").draw(TitleMenuX, TitleMenuY);
+		TextureAsset(U"0002_normal.png").draw(TitleMenuX, (TitleMenuY + (40 * 1)) + space * 1);
+		TextureAsset(U"0003_hard.png").draw(TitleMenuX, (TitleMenuY + (40 * 2)) + space * 2);
+		TextureAsset(U"0004_luna.png").draw(TitleMenuX, (TitleMenuY + (40 * 3)) + space * 3);
+		easyRect.draw(ColorF{ 0, 0, 0, 0 });
+		normalRect.draw(ColorF{ 0, 0, 0, 0 });
+		hardRect.draw(ColorF{ 0, 0, 0, 0 });
+		lunaRect.draw(ColorF{ 0, 0, 0, 0 });
 	}
 
 	void drawFadeIn(double t) const override
@@ -1183,7 +1269,6 @@ public:
 
 		m_fadeInFunction->fade(1 - t);
 	}
-
 	void drawFadeOut(double t) const override
 	{
 		draw();
@@ -1191,6 +1276,13 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	int32 TitleMenuX = 0;
+	int32 TitleMenuY = 0;
+	int32 space = 30;
+	Rect easyRect;
+	Rect normalRect;
+	Rect hardRect;
+	Rect lunaRect;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
@@ -1201,15 +1293,222 @@ public:
 	ScenarioMenu(const InitData& init)
 		: IScene{ init }
 	{
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/070_Scenario/Info_Scenario/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			const JSON jsonScenario = JSON::Load(filePath);
+			if (not jsonScenario) // もし読み込みに失敗したら
+			{
+				continue;
+			}
+
+			for (const auto& [key, value] : jsonScenario[U"Scenario"]) {
+				ClassScenario cs;
+				cs.ButtonType = value[U"ButtonType"].getString();
+				cs.ScenarioName = value[U"ScenarioName"].getString();
+				cs.SortKey = Parse<int32>(value[U"Sortkey"].getString());
+				if (value.hasElement(U"power") == true)
+				{
+					String sPower = value[U"power"].getString();
+					if (sPower.contains(',') == true)
+					{
+						cs.ArrayPower = sPower.split(',');
+					}
+					else
+					{
+						cs.ArrayPower.push_back(sPower);
+					}
+				}
+				if (value.hasElement(U"HelpString") == true)
+				{
+					cs.HelpString = value[U"HelpString"].getString();
+				}
+				if (value.hasElement(U"Mail") == true)
+				{
+					cs.Mail = value[U"Mail"].getString();
+				}
+				if (value.hasElement(U"Internet") == true)
+				{
+					cs.Internet = value[U"Internet"].getString();
+				}
+				cs.Text = ClassStaticCommonMethod::MoldingScenarioText(value[U"Text"].getString());
+				arrayClassScenario.push_back(std::move(cs));
+			}
+		}
+
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/001_SystemImage/020_ScenarioBackImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			if (filename = U"pre0.jpg")
+			{
+				TextureAsset::Register(filename, filePath);
+			}
+		}
+
+		vbar001.emplace(SasaGUI::Orientation::Vertical);;
+		vbar002.emplace(SasaGUI::Orientation::Vertical);;
+		Scenario1X = Scene::Size().x / 2;
+		Scenario1Y = 200;
+		Scenario2X = Scene::Size().x / 2;
+		Scenario2Y = Scene::Size().y / 2;
+		ScenarioTextX = Scene::Size().x / 2;
+		ScenarioTextY = 200;
+		auto max_it = std::max_element(arrayClassScenario.begin(), arrayClassScenario.end(),
+									   [](const ClassScenario& a, const ClassScenario& b) {
+										   return a.ScenarioName.size() < b.ScenarioName.size();
+									   });
+		if (max_it != arrayClassScenario.end())
+		{
+			ClassScenario& scenario_with_longest_name = *max_it;
+			RectF re = getData().fontScenarioMenu(scenario_with_longest_name.ScenarioName).region();
+			re.w = re.w + (50 * 2);
+			re.h = Scenario1Y + 50 * 2;
+			re.x = Scenario1X - (static_cast<int32>(re.w) + 150);
+			re.y = Scenario1Y - 50;
+
+			rectFScenario1X = re.asRect();
+			rectFScenario2X = { (int32)re.x ,Scenario2Y ,(int32)re.w ,(int32)re.h };
+
+			vbar001.value().updateLayout({
+				(int32)(re.x + re.w + SasaGUI::ScrollBar::Thickness), (int32)re.y,
+				SasaGUI::ScrollBar::Thickness,
+				(int32)re.h
+			});
+			vbar001.value().updateConstraints(0.0, 2000.0, Scene::Height());
+
+			vbar002.value().updateLayout({
+				(int32)(re.x + re.w + SasaGUI::ScrollBar::Thickness), (int32)Scenario2Y,
+				SasaGUI::ScrollBar::Thickness,
+				(int32)re.h
+			});
+			vbar002.value().updateConstraints(0.0, 2000.0, Scene::Height());
+
+			rectFScenarioTextX = Rect{ (int32)(re.x + re.w + SasaGUI::ScrollBar::Thickness) + 30,(int32)re.y ,ScenarioTextX - 100,650 };
+		}
+
+		int32 counterScenario1 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey < 0; }))
+		{
+			RectF re = getData().fontScenarioMenu(e.ScenarioName).region();
+			re.x = Scenario1X - (static_cast<int32>(re.w) + 200);
+
+			int32 yyy = Scenario1Y + (counterScenario1 * 80) - vbar001.value().value();
+			re.y = yyy;
+			e.btnRectF = re;
+
+			counterScenario1++;
+		}
+		int32 counterScenario2 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey >= 0; }))
+		{
+			RectF re = getData().fontScenarioMenu(e.ScenarioName).region();
+			re.x = Scenario2X - (static_cast<int32>(re.w) + 200);
+
+			int32 yyy = Scenario2Y + (counterScenario2 * 80) - vbar002.value().value() + 50;
+			re.y = yyy;
+			e.btnRectF = re;
+
+			counterScenario2++;
+		}
+
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		int32 counterScenario1 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey < 0; }))
+		{
+			int32 yyy = Scenario1Y + (counterScenario1 * 80) - vbar001.value().value();
+			e.btnRectF.y = yyy;
+			counterScenario1++;
+		}
+		int32 counterScenario2 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey >= 0; }))
+		{
+			int32 yyy = Scenario2Y + (counterScenario2 * 80) - vbar002.value().value() + 50;
+			e.btnRectF.y = yyy;
+			counterScenario2++;
+		}
+
+		for (auto&& e : arrayClassScenario)
+		{
+			if (e.btnRectF.leftClicked() == true)
+			{
+				if (e.ButtonType == U"Scenario")
+				{
+					getData().selectClassScenario = e;
+					changeScene(U"SelectChar", 0.9s);
+				}
+				else if (e.ButtonType == U"Mail")
+				{
+					String ttt = U"start \"aaa\" \"https://mail.google.com/mail/u/0/?tf=cm&fs=1&to";
+					ttt += e.Mail;
+					ttt += U"&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0\"";
+					std::system(ttt.narrow().c_str());
+					//process = ChildProcess{ U"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe", U"https://mail.google.com/mail/u/0/?tf=cm&fs=1&to" + e.Mail + U"&su=game%E3%81%AE%E4%BB%B6&body=%E3%81%B5%E3%82%8F%E3%81%B5%E3%82%8F%EF%BD%9E%E3%80%82%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%AE%E4%BB%B6%E3%81%A7%E8%81%9E%E3%81%8D%E3%81%9F%E3%81%84%E3%81%AE%E3%81%A7%E3%81%99%E3%81%8C%E4%BB%A5%E4%B8%8B%E8%A8%98%E8%BF%B0" };
+				}
+				else if (e.ButtonType == U"Internet")
+				{
+					System::LaunchBrowser(e.Internet);
+				}
+			}
+		}
+
+		if (rectFScenario1X.mouseOver() == true)
+		{
+			vbar001.value().scroll(Mouse::Wheel() * 60);
+		}
+		if (rectFScenario2X.mouseOver() == true)
+		{
+			vbar002.value().scroll(Mouse::Wheel() * 60);
+		}
+		vbar001.value().update();
+		vbar002.value().update();
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		TextureAsset(U"pre0.jpg").resized(WindowSizeWidth, WindowSizeHeight).draw(Arg::center = Scene::Center());
 
+		getData().slice9.draw(rectFScenario1X);
+		getData().slice9.draw(rectFScenario2X);
+		getData().slice9.draw(rectFScenarioTextX);
+
+		int32 counterScenario1 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey < 0; }))
+		{
+			int32 yyy = Scenario1Y + (counterScenario1 * 80) - vbar001.value().value();
+			if (yyy > rectFScenario1X.y)
+			{
+				getData().slice9.draw(e.btnRectF.asRect());
+				getData().fontScenarioMenu(e.ScenarioName).draw(e.btnRectF.stretched(1), ColorF{ 0.85 });
+			}
+
+			counterScenario1++;
+		}
+		int32 counterScenario2 = 0;
+		for (auto&& e : arrayClassScenario | std::views::filter([](auto&& e) { return e.SortKey >= 0; }))
+		{
+			int32 yyy = Scenario2Y + (counterScenario2 * 80) - vbar002.value().value() + 50;
+			if (yyy > rectFScenario2X.y)
+			{
+				getData().slice9.draw(e.btnRectF.asRect());
+				getData().fontScenarioMenu(e.ScenarioName).draw(e.btnRectF.stretched(1), ColorF{ 0.85 });
+			}
+
+			counterScenario2++;
+		}
+
+		for (auto&& e : arrayClassScenario)
+		{
+			if (e.btnRectF.mouseOver() == true)
+			{
+				getData().fontScenarioMenu(e.Text).draw(rectFScenarioTextX.stretched(1), ColorF{ 0.85 });
+			}
+		}
+
+		vbar001.value().draw();
+		vbar002.value().draw();
 	}
 
 	void drawFadeIn(double t) const override
@@ -1218,7 +1517,6 @@ public:
 
 		m_fadeInFunction->fade(1 - t);
 	}
-
 	void drawFadeOut(double t) const override
 	{
 		draw();
@@ -1226,8 +1524,23 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Optional<SasaGUI::ScrollBar> vbar001;
+	Optional<SasaGUI::ScrollBar> vbar002;
+	//SasaGUI::ScrollBar vbar002;
+	//SasaGUI::ScrollBar vbar003;
+	int32 Scenario1X;
+	int32 Scenario1Y;
+	int32 Scenario2X;
+	int32 Scenario2Y;
+	int32 ScenarioTextX;
+	int32 ScenarioTextY;
+	Rect rectFScenario1X;
+	Rect rectFScenario2X;
+	Rect rectFScenarioTextX;
+	Array <ClassScenario> arrayClassScenario;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+	Optional<ChildProcess> process;
 };
 class SelectChar : public App::Scene
 {
@@ -1236,15 +1549,90 @@ public:
 	SelectChar(const InitData& init)
 		: IScene{ init }
 	{
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/070_Scenario/Info_Power/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			const JSON jsonPower = JSON::Load(filePath);
+			if (not jsonPower) // もし読み込みに失敗したら
+			{
+				continue;
+			}
+
+			for (const auto& [key, value] : jsonPower[U"Power"])
+			{
+				ClassPower cp;
+				cp.PowerTag = value[U"PowerTag"].getString();
+				cp.PowerName = value[U"PowerName"].getString();
+				cp.HelpString = value[U"Help"].getString();
+				cp.SortKey = Parse<int32>(value[U"SortKey"].getString());
+				cp.Image = value[U"Image"].getString();
+				cp.Text = value[U"Text"].getString();
+				cp.Diff = value[U"Diff"].getString();
+				getData().classGameStatus.arrayClassPower.push_back(std::move(cp));
+			}
+		}
+		for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/030_SelectCharaImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			TextureAsset::Register(filename, filePath);
+		}
+
+		String sc = getData().classConfigString.selectChara1;
+		RectF re1 = getData().fontSelectChar1(sc).region();
+		re1.x = Scene::Center().x - (re1.w / 2);
+		re1.y = basePointY;
+		arrayRectFSystem.push_back(re1);
+		Rect re2 = { 0,0,1600,300 };
+		re2.x = Scene::Center().x - (800);
+		re2.y = (re1.h + basePointY + 20) + 550 + 20;
+		arrayRectSystem.push_back(re2);
+
+		int32 arrayPowerSize = getData().selectClassScenario.ArrayPower.size();
+		int32 xxx = 0;
+		xxx = ((arrayPowerSize * 206) / 2);
+		int32 counter = 0;
+		for (auto ttt : getData().selectClassScenario.ArrayPower)
+		{
+			for (auto&& e : getData().classGameStatus.arrayClassPower | std::views::filter([&](auto&& e) { return e.PowerTag == ttt; }))
+			{
+				RectF rrr = {};
+				rrr = { (Scene::Center().x - xxx) + counter * 206,re1.h + basePointY + 20,206,550 };
+				e.RectF = rrr;
+			}
+			counter++;
+		}
+
+		//Scene::SetBackground(Color{ 126,87,194,255 });
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		getData().slice9.draw(arrayRectSystem[0]);
+
+		for (const auto ttt : getData().classGameStatus.arrayClassPower)
+		{
+			if (ttt.RectF.mouseOver() == true)
+			{
+				getData().fontSelectChar2(ttt.Text).draw(arrayRectSystem[0].stretched(-10), ColorF{ 0.85 });
+			}
+			if (ttt.RectF.leftClicked() == true)
+			{
+
+				changeScene(U"Novel", 0.9s);
+			}
+		}
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		arrayRectFSystem[0].draw();
+		getData().fontSelectChar1(getData().classConfigString.selectChara1).draw(arrayRectFSystem[0], ColorF{ 0.25 });
+		arrayRectFSystem[0].drawFrame(3, 0, Palette::Orange);
 
+		for (const auto ttt : getData().classGameStatus.arrayClassPower)
+		{
+			ttt.RectF(TextureAsset(ttt.Image)).draw();
+		}
 	}
 
 	void drawFadeIn(double t) const override
@@ -1253,7 +1641,6 @@ public:
 
 		m_fadeInFunction->fade(1 - t);
 	}
-
 	void drawFadeOut(double t) const override
 	{
 		draw();
@@ -1261,6 +1648,9 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	int32 basePointY = 50;
+	Array<Rect> arrayRectSystem;
+	Array<RectF> arrayRectFSystem;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
@@ -1410,7 +1800,10 @@ void Main()
 	}
 	else
 	{
-		manager.init(U"TestBattle");
+		manager.init(U"SelectLang");
+
+		//manager.init(U"TestBattle");
+		//manager.init(U"Title");
 	}
 
 	while (System::Update())

@@ -2,11 +2,13 @@
 # include "ClassMap.h" 
 # include "ClassTestBattle.h" 
 # include "ClassUnit.h" 
+# include "ClassPower.h" 
 # include "ClassBattle.h" 
 
 class ClassGameStatus
 {
 public:
+	Array<ClassPower> arrayClassPower;
 	Array<ClassMap> arrayClassMap;
 	ClassTestBattle classTestBattle;
 	ClassBattle classBattle;

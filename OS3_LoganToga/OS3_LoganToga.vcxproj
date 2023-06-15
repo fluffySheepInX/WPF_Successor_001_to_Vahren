@@ -126,6 +126,8 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0004_luna.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\continue.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\tool.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\020_ScenarioBackImage\pre0.jpg" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\wnd0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
@@ -137,6 +139,9 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\6.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\ucwall.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face001_new.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face002_new.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face003_new.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip001.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip002.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip003.png" />
@@ -182,7 +187,9 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Power\power.json" />
     <Text Include="App\001_Warehouse\001_DefaultGame\SystemString.toml" />
+    <Text Include="App\001_Warehouse\memo.txt" />
     <Text Include="App\dll\soundtouch\COPYING.TXT" />
     <Text Include="App\engine\font\fontawesome\LICENSE.txt" />
     <Text Include="App\engine\soundfont\GMGSx.sf2.txt" />
@@ -199,6 +206,7 @@
     <Text Include="App\example\txt\kr.txt" />
     <Text Include="App\example\txt\sc.txt" />
     <Text Include="App\example\video\river.txt" />
+    <Text Include="App\font\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -207,6 +215,8 @@
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\Unit.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Scenario\AnyNameWillDo.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Scenario\AnyNameWillDo.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\config.toml" />
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll" />
     <None Include="App\engine\font\fontawesome\fontawesome-brands.otf.zstdcmp" />
@@ -334,6 +344,8 @@
     <None Include="App\example\toml\config.toml" />
     <None Include="App\example\toml\test.toml" />
     <None Include="App\example\zip\zip_test.zip" />
+    <None Include="App\font\README-JP.md" />
+    <None Include="App\font\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\shot.mp3" />
@@ -343,6 +355,7 @@
   <ItemGroup>
     <Font Include="App\example\font\DotGothic16\DotGothic16-Regular.ttf" />
     <Font Include="App\example\font\RocknRoll\RocknRollOne-Regular.ttf" />
+    <Font Include="App\font\DotGothic16-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="App\example\objdetect\haarcascade\eye.xml" />
@@ -353,6 +366,8 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassPower.h" />
+    <ClInclude Include="ClassScenario.h" />
     <ClInclude Include="ClassConfigString.h" />
     <ClInclude Include="ClassExecutedSkillInBattle.h" />
     <ClInclude Include="ClassBattle.h" />
@@ -366,6 +381,7 @@
     <ClInclude Include="ClassSkill.h" />
     <ClInclude Include="DoubleClick.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="GameUIToolkit.h" />
     <ClInclude Include="MapCreator.h" />
     <ClInclude Include="SasaGUI.h" />
     <ClInclude Include="stdafx.h" />

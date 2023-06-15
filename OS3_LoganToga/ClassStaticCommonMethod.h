@@ -23,6 +23,7 @@ public:
 				ccs.configLoad = table[U"configLoad"].get<String>();
 				ccs.selectScenario = table[U"selectScenario"].get<String>();
 				ccs.selectScenario2 = table[U"selectScenario2"].get<String>();
+				ccs.selectChara1 = table[U"selectChara1"].get<String>();
 				ccs.DoYouWantToQuitTheGame = table[U"DoYouWantToQuitTheGame"].get<String>();
 			}
 		}
@@ -126,6 +127,20 @@ public:
 			.replaced(U"\n", U"")
 			.replaced(U" ", U"")
 			.replaced(U"\t", U"");
+	}
+	static String MoldingScenarioText(String target)
+	{
+		return target
+			.replaced(U" ", U"")
+			.replaced(U"\t", U"")
+			.replaced(U"@", U" ");
+	}
+	static String MoldingPowerText(String target)
+	{
+		return target
+			.replaced(U" ", U"")
+			.replaced(U"\t", U"")
+			.replaced(U"@", U" ");
 	}
 private:
 	ClassStaticCommonMethod();

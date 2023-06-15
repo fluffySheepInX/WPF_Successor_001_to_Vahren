@@ -305,6 +305,21 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\tool.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\020_ScenarioBackImage\pre0.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face001_new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face002_new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face003_new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\wnd0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -365,6 +380,9 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\テキスト.txt" />
     <Text Include="App\001_Warehouse\001_DefaultGame\SystemString.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Power\power.json" />
+    <Text Include="App\001_Warehouse\memo.txt" />
+    <Text Include="App\font\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">
@@ -830,6 +848,10 @@
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\config.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Scenario\AnyNameWillDo.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Scenario\AnyNameWillDo.json" />
+    <None Include="App\font\README.md" />
+    <None Include="App\font\README-JP.md" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -849,6 +871,7 @@
     <Font Include="App\example\font\RocknRoll\RocknRollOne-Regular.ttf">
       <Filter>Resource Files\example\font\RocknRoll</Filter>
     </Font>
+    <Font Include="App\font\DotGothic16-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="App\example\objdetect\haarcascade\face_anime.xml">
@@ -920,6 +943,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassConfigString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassScenario.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassPower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUIToolkit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

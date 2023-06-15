@@ -1,3 +1,6 @@
 [config]
 	DistanceBetweenUnit = 32
 	DistanceBetweenUnitTate = 32
+	TitleMenuX = 50
+	TitleMenuY = 40
+	TitleMenuSpace = 32
