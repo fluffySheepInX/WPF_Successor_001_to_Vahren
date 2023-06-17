@@ -86,6 +86,15 @@ public:
 	long long ID = 0;
 
 	// IsLeader
+	bool IsBuilding = false;
+	int32 rowBuilding = 0;
+	int32 colBuilding = 0;
+	MapTipObjectType mapTipObjectType = MapTipObjectType::None;
+	int32 HPCastle = 0;
+	int32 CastleDefense = 0;
+	int32 CastleMagdef = 0;
+
+	// IsLeader
 	bool IsLeader = false;
 
 	// IsSelect

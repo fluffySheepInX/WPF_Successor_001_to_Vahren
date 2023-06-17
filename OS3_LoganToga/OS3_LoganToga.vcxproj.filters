@@ -320,6 +320,12 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\wnd0.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\waku001.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\waku002.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">

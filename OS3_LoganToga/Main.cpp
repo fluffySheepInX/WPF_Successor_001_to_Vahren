@@ -34,7 +34,6 @@ struct IFade
 	virtual ~IFade() = default;
 	virtual void fade(double t) = 0;
 };
-
 struct Fade4 : public IFade
 {
 	Array<int> rectPos;
@@ -60,6 +59,7 @@ struct Fade4 : public IFade
 		}
 	}
 };
+
 // フェード描画クラスのインスタンスをランダムに返す
 auto randomFade()
 {
@@ -552,6 +552,7 @@ public:
 			cgs.arrayClassMap = Array{ sM };
 			cgs.arrayClassUnit = arrayClassUnit;
 			cgs.arrayClassSkill = arrayClassSkill;
+			cgs.arrayClassObjectMapTip = arrayClassObj;
 			{
 				ClassBattle cb;
 				cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
@@ -625,6 +626,7 @@ public:
 
 			cgs.DistanceBetweenUnit = tomlConfig[U"config.DistanceBetweenUnit"].get<int32>();
 			cgs.DistanceBetweenUnitTate = tomlConfig[U"config.DistanceBetweenUnitTate"].get<int32>();
+			ClassStaticCommonMethod::AddBuilding(&cgs);
 			getData().classGameStatus = cgs;
 			execute = true;
 		}
@@ -766,6 +768,14 @@ public:
 					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
 					itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
 				}
+			}
+		}
+		//建築物
+		for (const auto& x : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			if (x.FlagBuilding == true)
+			{
+				bui.push_back(x);
 			}
 		}
 	}
@@ -1110,7 +1120,28 @@ public:
 			}
 		}
 
-		//建築物
+
+		// 底辺中央を基準にタイルを描く
+		for (auto ttt : bui)
+		{
+			for (auto aaa : ttt.ListClassUnit)
+			{
+				// タイルのインデックス
+				const Point index{ aaa.rowBuilding, aaa.colBuilding };
+
+				// そのタイルの底辺中央の座標
+				const int32 i = index.manhattanLength();
+				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
+				const double posY = (i * mapCreator.TileOffset.y);
+				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				TextureAsset(aaa.Image + U".png").draw(Arg::bottomCenter = pos);
+			}
+		}
 
 		//unit
 		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
@@ -1189,6 +1220,7 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
 	Point cursPos;
 	MapCreator mapCreator;
@@ -1318,6 +1350,14 @@ public:
 					{
 						cs.ArrayPower.push_back(sPower);
 					}
+				}
+				if (value.hasElement(U"SelectCharaFrameImageLeft") == true)
+				{
+					cs.SelectCharaFrameImageLeft = value[U"SelectCharaFrameImageLeft"].getString();
+				}
+				if (value.hasElement(U"SelectCharaFrameImageRight") == true)
+				{
+					cs.SelectCharaFrameImageRight = value[U"SelectCharaFrameImageRight"].getString();
 				}
 				if (value.hasElement(U"HelpString") == true)
 				{
@@ -1625,6 +1665,10 @@ public:
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		TextureAsset(getData().selectClassScenario.SelectCharaFrameImageLeft).draw();
+		TextureAsset(getData().selectClassScenario.SelectCharaFrameImageRight)
+			.draw(Scene::Size().x - TextureAsset(getData().selectClassScenario.SelectCharaFrameImageRight).width(), 0);
+
 		arrayRectFSystem[0].draw();
 		getData().fontSelectChar1(getData().classConfigString.selectChara1).draw(arrayRectFSystem[0], ColorF{ 0.25 });
 		arrayRectFSystem[0].drawFrame(3, 0, Palette::Orange);
@@ -1800,9 +1844,9 @@ void Main()
 	}
 	else
 	{
-		manager.init(U"SelectLang");
+		//manager.init(U"SelectLang");
 
-		//manager.init(U"TestBattle");
+		manager.init(U"TestBattle");
 		//manager.init(U"Title");
 	}
 

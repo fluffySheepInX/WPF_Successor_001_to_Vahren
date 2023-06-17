@@ -1,6 +1,10 @@
 ﻿#pragma once
 # include "ClassMap.h" 
 # include "ClassMapBattle.h" 
+# include "ClassGameStatus.h" 
+# include "ClassUnit.h" 
+# include "ClassHorizontalUnit.h" 
+# include "ClassObjectMapTip.h" 
 
 class ClassStaticCommonMethod {
 public:
@@ -48,7 +52,7 @@ public:
 				//build(城壁や矢倉など
 				if (splitA.size() > 1)
 				{
-					Array splitB = splitA[0].split(U'$');
+					Array splitB = splitA[1].split(U'$');
 					for (String item : splitB)
 					{
 						String re = cm.ele[item];
@@ -141,6 +145,58 @@ public:
 			.replaced(U" ", U"")
 			.replaced(U"\t", U"")
 			.replaced(U"@", U" ");
+	}
+	static void AddBuilding(ClassGameStatus* gameStatus)
+	{
+		if (gameStatus == nullptr) return;
+		if (gameStatus->classBattle.classMapBattle.has_value() == false) return;
+		if (gameStatus->classBattle.classMapBattle.value().mapData.size() == 0) return;
+
+		// Building settings
+		Array<std::tuple<String, int, int>> buildings;
+		for (int row = 0; row < gameStatus->classBattle.classMapBattle.value().mapData.size(); ++row)
+		{
+			for (int col = 0; col < gameStatus->classBattle.classMapBattle.value().mapData[row].size(); ++col)
+			{
+				if (gameStatus->classBattle.classMapBattle.value().mapData[row][col].building.size() != 0)
+				{
+					for (const auto& building : gameStatus->classBattle.classMapBattle.value().mapData[row][col].building)
+					{
+						for (auto [key, value] : building)
+						{
+							buildings.push_back({ key, row, col });
+						}
+					}
+				}
+			}
+		}
+
+		// Assign IDs to buildings and map details
+		Array<ClassUnit> units;
+		ClassHorizontalUnit horizontalUnit;
+		horizontalUnit.FlagBuilding = true;
+		for (const auto& item : buildings)
+		{
+			auto found = std::find_if(gameStatus->arrayClassObjectMapTip.begin(), gameStatus->arrayClassObjectMapTip.end(),
+									  [&item](const auto& object) { return object.nameTag == std::get<0>(item) && object.type == MapTipObjectType::GATE; });
+			if (found == gameStatus->arrayClassObjectMapTip.end()) continue;
+			long id = gameStatus->getIDCount();
+
+			ClassUnit cu;
+			cu.IsBuilding = true;
+			cu.rowBuilding = std::get<1>(item);
+			cu.colBuilding = std::get<2>(item);
+			cu.mapTipObjectType = MapTipObjectType::GATE;
+			cu.HPCastle = found->castle;
+			cu.CastleDefense = found->castleDefense;
+			cu.CastleMagdef = found->castleMagdef;
+			cu.Image = found->nameTag;
+			units.push_back(cu);
+
+			gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0][std::get<0>(item)] = id;
+		}
+		horizontalUnit.ListClassUnit = units;
+		gameStatus->classBattle.defUnitGroup.push_back(horizontalUnit);
 	}
 private:
 	ClassStaticCommonMethod();

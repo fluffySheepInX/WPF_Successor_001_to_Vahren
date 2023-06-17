@@ -6,6 +6,8 @@
       "Sortkey": "-9",
       "HelpString": "前哨戦",
       "power": "sc_a_p_a,sc_a_p_b,sc_a_p_c",
+      "SelectCharaFrameImageLeft": "waku001.png",
+      "SelectCharaFrameImageRight": "waku002.png",
       "Text": "\n\t\ttest\n\t\ttest2\n\t\ttest3\n\t  test4@@@test3"
     },
     {

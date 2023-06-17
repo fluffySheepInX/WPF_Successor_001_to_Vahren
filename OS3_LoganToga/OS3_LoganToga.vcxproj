@@ -142,6 +142,8 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face001_new.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face002_new.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face003_new.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\waku001.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\waku002.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip001.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip002.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chip003.png" />

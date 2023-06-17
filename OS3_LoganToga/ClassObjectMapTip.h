@@ -3,7 +3,7 @@
 class ClassObjectMapTip
 {
 public:
-	s3d::String nameTag;
+	String nameTag;
 	MapTipObjectType type = MapTipObjectType::None;
 	int noWall2 = 0;
 	int castle = 0;

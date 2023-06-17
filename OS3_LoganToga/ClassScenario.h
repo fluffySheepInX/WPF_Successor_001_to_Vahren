@@ -6,6 +6,8 @@ public:
 	String ScenarioName;
 	int32 SortKey;
 	String HelpString;
+	String SelectCharaFrameImageLeft;
+	String SelectCharaFrameImageRight;
 	String Text;
 	String Mail;
 	String Internet;
