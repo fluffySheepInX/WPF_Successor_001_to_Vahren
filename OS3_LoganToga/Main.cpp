@@ -83,6 +83,7 @@ struct GameData
 	Font fontSelectChar1 = Font{ 50, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	Font fontSelectChar2 = Font{ 30, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	Font fontScenarioMenu = Font{ 40, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
+	Font fontNovelHelp = Font{ 30, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	const Slice9 slice9{ U"001_Warehouse/001_DefaultGame/001_SystemImage/wnd0.png", Slice9::Style{
 	.backgroundRect = Rect{ 0, 0, 64, 64 },
 	.frameRect = Rect{ 64, 0, 64, 64 },
@@ -94,6 +95,8 @@ struct GameData
 	ClassConfigString classConfigString;
 	ClassScenario selectClassScenario;
 	ClassPower selectClassPower;
+	String NovelPower = U"";
+	String NovelNumber = U"";
 };
 
 using App = SceneManager<String, GameData>;
@@ -1136,7 +1139,7 @@ public:
 				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
 				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
 				const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
-				const double posY = (i * mapCreator.TileOffset.y);
+				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
 				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
 				TextureAsset(aaa.Image + U".png").draw(Arg::bottomCenter = pos);
@@ -1705,15 +1708,68 @@ public:
 	Novel(const InitData& init)
 		: IScene{ init }
 	{
+		String np = getData().NovelPower;
+		String nn = getData().NovelNumber;
+		getData().NovelPower = U"";
+		getData().NovelNumber = U"";
+
+		csv = CSV{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoStory/" + np + U"+" + nn + U".csv" };
+		if (not csv) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load " + np + U"+" + nn + U".csv" };
+		}
+
+		nowRow = 0;
+		if (csv[nowRow][0].c_str()[0] == '#')
+		{
+			nowRow++;
+		}
+
+		rectText = { 50,Scene::Size().y - 325,Scene::Size().x - 100,300 };
+		rectHelp = { 70,Scene::Size().y - 325 - 70,400,70 };
+		rectFace = { Scene::Size().x - 100 - 206 - 50,Scene::Size().y - 325 + 50,206,206 };
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		if (csv[nowRow][0].c_str()[0] == '#')
+		{
+			nowRow++;
+		}
+
+		if (MouseL.down() == true)
+		{
+			nowRow++;
+		}
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		if (csv[nowRow][4] == U"0")
+		{
+			Scene::SetBackground(ColorF{ U"#000000"});
+		}
+		if (csv[nowRow][4] != U"-1" && csv[nowRow][4] != U"0")
+		{
+			TextureAsset(csv[nowRow][4]).resized(WindowSizeWidth, WindowSizeHeight).drawAt(Scene::Center());
+		}
 
+		getData().slice9.draw(rectText);
+
+		if (csv[nowRow][3] != U"-1")
+		{
+			rectFace(TextureAsset(csv[nowRow][3])).draw();
+		}
+		if (csv[nowRow][0].c_str()[0] != '#')
+		{
+			getData().fontScenarioMenu(csv[nowRow][7]).draw(rectText.stretched(-10), ColorF{ 0.85 });
+		}
+		if (csv[nowRow][1] != U"-1")
+		{
+			getData().slice9.draw(rectHelp);
+			String he = csv[nowRow][1] + U" " + csv[nowRow][2];
+			getData().fontNovelHelp(he).draw(rectHelp.stretched(-10), ColorF{ 0.85 });
+		}
 	}
 
 	void drawFadeIn(double t) const override
@@ -1730,6 +1786,11 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Rect rectText;
+	Rect rectFace;
+	Rect rectHelp;
+	int32 nowRow;
+	CSV csv;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
@@ -1835,8 +1896,19 @@ void Main()
 	manager.add<Title>(U"Title");
 	manager.add<ScenarioMenu>(U"ScenarioMenu");
 	manager.add<SelectChar>(U"SelectChar");
-	manager.add<SelectChar>(U"Novel");
-	manager.add<SelectChar>(U"Buy");
+	manager.add<Novel>(U"Novel");
+	manager.add<Buy>(U"Buy");
+
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/010_FaceImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/005_BackgroundImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
 
 	if (System::GetCommandLineArgs().size() == 0)
 	{
@@ -1846,8 +1918,12 @@ void Main()
 	{
 		//manager.init(U"SelectLang");
 
-		manager.init(U"TestBattle");
+		//manager.init(U"TestBattle");
 		//manager.init(U"Title");
+
+		manager.get().get()->NovelPower = U"sc_a_p_b";
+		manager.get().get()->NovelNumber = U"0";
+		manager.init(U"Novel");
 	}
 
 	while (System::Update())

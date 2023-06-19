@@ -128,6 +128,8 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\tool.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\020_ScenarioBackImage\pre0.jpg" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\wnd0.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\005_BackgroundImage\world.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face000.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
@@ -214,6 +216,7 @@
     <None Include=".editorconfig" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.toml" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+0.csv" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\Unit.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Object\obj.json" />
@@ -377,6 +380,7 @@
     <ClInclude Include="ClassStaticCommonMethod.h" />
     <ClInclude Include="ClassMapBattle.h" />
     <ClInclude Include="ClassMap.h" />
+    <ClInclude Include="ClassStoryInfo.h" />
     <ClInclude Include="ClassTestBattle.h" />
     <ClInclude Include="ClassGameStatus.h" />
     <ClInclude Include="ClassObjectMapTip.h" />
