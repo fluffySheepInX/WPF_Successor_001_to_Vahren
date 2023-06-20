@@ -1732,6 +1732,14 @@ public:
 	// 更新関数（オプション）
 	void update() override
 	{
+		// 文字カウントを 0.1 秒ごとに増やす
+		length = static_cast<size_t>(Scene::Time() / 0.1);
+
+		if (csv[nowRow][0].substr(0, 3) == U"end")
+		{
+			changeScene(U"Buy", 0.9s);
+		}
+
 		if (csv[nowRow][0].c_str()[0] == '#')
 		{
 			nowRow++;
@@ -1740,6 +1748,7 @@ public:
 		if (MouseL.down() == true)
 		{
 			nowRow++;
+			length = 0;
 		}
 	}
 	// 描画関数（オプション）
@@ -1747,7 +1756,7 @@ public:
 	{
 		if (csv[nowRow][4] == U"0")
 		{
-			Scene::SetBackground(ColorF{ U"#000000"});
+			Scene::SetBackground(ColorF{ U"#000000" });
 		}
 		if (csv[nowRow][4] != U"-1" && csv[nowRow][4] != U"0")
 		{
@@ -1762,12 +1771,20 @@ public:
 		}
 		if (csv[nowRow][0].c_str()[0] != '#')
 		{
-			getData().fontScenarioMenu(csv[nowRow][7]).draw(rectText.stretched(-10), ColorF{ 0.85 });
+			getData().fontScenarioMenu(csv[nowRow][7].substr(0, length)).draw(rectText.stretched(-10), ColorF{ 0.85 });
 		}
 		if (csv[nowRow][1] != U"-1")
 		{
 			getData().slice9.draw(rectHelp);
-			String he = csv[nowRow][1] + U" " + csv[nowRow][2];
+			String he = U"";
+			if (csv[nowRow][2] != U"-1")
+			{
+				he = csv[nowRow][1] + U" " + csv[nowRow][2];
+			}
+			else
+			{
+				he = csv[nowRow][1];
+			}
 			getData().fontNovelHelp(he).draw(rectHelp.stretched(-10), ColorF{ 0.85 });
 		}
 	}
@@ -1790,6 +1807,7 @@ private:
 	Rect rectFace;
 	Rect rectHelp;
 	int32 nowRow;
+	int32 length;
 	CSV csv;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();

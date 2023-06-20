@@ -332,6 +332,9 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\005_BackgroundImage\world.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face001.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -865,6 +868,7 @@
     <None Include="App\font\README.md" />
     <None Include="App\font\README-JP.md" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+0.csv" />
+    <None Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\イラスト.clip" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">

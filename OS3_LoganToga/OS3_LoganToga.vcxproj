@@ -130,6 +130,7 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\wnd0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\005_BackgroundImage\world.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face000.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face001.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
@@ -214,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\イラスト.clip" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+0.csv" />
