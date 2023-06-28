@@ -84,6 +84,7 @@ struct GameData
 	Font fontSelectChar2 = Font{ 30, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	Font fontScenarioMenu = Font{ 40, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	Font fontNovelHelp = Font{ 30, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
+	Font fontBuyMenu = Font{ 20, U"font/DotGothic16-Regular.ttf" ,FontStyle::Bitmap };
 	const Slice9 slice9{ U"001_Warehouse/001_DefaultGame/001_SystemImage/wnd0.png", Slice9::Style{
 	.backgroundRect = Rect{ 0, 0, 64, 64 },
 	.frameRect = Rect{ 64, 0, 64, 64 },
@@ -1583,7 +1584,6 @@ private:
 	Array <ClassScenario> arrayClassScenario;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
-	Optional<ChildProcess> process;
 };
 class SelectChar : public App::Scene
 {
@@ -1728,13 +1728,12 @@ public:
 		rectText = { 50,Scene::Size().y - 325,Scene::Size().x - 100,300 };
 		rectHelp = { 70,Scene::Size().y - 325 - 70,400,70 };
 		rectFace = { Scene::Size().x - 100 - 206 - 50,Scene::Size().y - 325 + 50,206,206 };
+		stopwatch = Stopwatch{ StartImmediately::Yes };
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
-		// 文字カウントを 0.1 秒ごとに増やす
-		length = static_cast<size_t>(Scene::Time() / 0.1);
-
+		length = stopwatch.sF() / 0.05;
 		if (csv[nowRow][0].substr(0, 3) == U"end")
 		{
 			changeScene(U"Buy", 0.9s);
@@ -1747,8 +1746,9 @@ public:
 
 		if (MouseL.down() == true)
 		{
-			nowRow++;
+			stopwatch.restart();
 			length = 0;
+			nowRow++;
 		}
 	}
 	// 描画関数（オプション）
@@ -1809,6 +1809,7 @@ private:
 	int32 nowRow;
 	int32 length;
 	CSV csv;
+	Stopwatch stopwatch;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 };
@@ -1819,24 +1820,350 @@ public:
 	Buy(const InitData& init)
 		: IScene{ init }
 	{
+		//左上
+		arrayRectMenuBack.push_back(Rect{ 16,16,400,800 });
+		//中央上
+		arrayRectMenuBack.push_back(Rect{ 432,16,500,500 });
+		////中央下
+		//arrayRectMenuBack.push_back(Rect{ 432,516,500,500 });
+		//メニューボタン
+		{
+			int32 counter = 0;
+			if (getData().classGameStatus.strategyMenu000 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu001 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu002 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu003 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu004 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu005 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu006 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu007 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu008 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+			if (getData().classGameStatus.strategyMenu009 == true)
+			{
+				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+			}
+			counter++;
+		}
+
+		//初期化
+		for (auto ttt : htMenuBtnDisplay)
+		{
+			ttt.second = false;
+		}
+		{
+			int32 counter = 0;
+			for (auto& ttt : getData().classGameStatus.arrayClassUnit)
+			{
+				ttt.rectExecuteBtnStrategyMenu = Rect{ 448,548 + (counter * 64),300,64 };
+				counter++;
+			}
+		}
+		vbar001.emplace(SasaGUI::Orientation::Vertical);;
+		vbar002.emplace(SasaGUI::Orientation::Vertical);;
+		vbar001.value().updateLayout({
+			(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)(16),
+			SasaGUI::ScrollBar::Thickness,
+			(int32)500
+		});
+		vbar002.value().updateLayout({
+			(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)516,
+			SasaGUI::ScrollBar::Thickness,
+			(int32)500
+		});
+		vbar001.value().updateConstraints(0.0, 2000.0, Scene::Height());
+		vbar002.value().updateConstraints(0.0, 2000.0, Scene::Height());
+
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
+		for (auto& ttt : htMenuBtn)
+		{
+			if (ttt.second.mouseOver())
+			{
+				htMenuBtnDisplay[0] = false;
+				htMenuBtnDisplay[1] = false;
+				htMenuBtnDisplay[2] = false;
+				htMenuBtnDisplay[3] = false;
+				htMenuBtnDisplay[4] = false;
+				htMenuBtnDisplay[5] = false;
+				htMenuBtnDisplay[6] = false;
+				htMenuBtnDisplay[7] = false;
+				htMenuBtnDisplay[8] = false;
+				htMenuBtnDisplay[9] = false;
+				htMenuBtnDisplay[ttt.first] = true;
+			}
+			switch (ttt.first)
+			{
+			case 9:
+			{
+				if (ttt.second.leftClicked() == true)
+				{
+					// TOML ファイルからデータを読み込む
+					const TOMLReader tomlTestMap{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testMap.toml" };
+
+					if (not tomlTestMap) // もし読み込みに失敗したら
+					{
+						throw Error{ U"Failed to load `testMap.toml`" };
+					}
+
+					ClassMap sM;
+					for (const auto& table : tomlTestMap[U"Map"].tableArrayView()) {
+						const String name = table[U"name"].get<String>();
+
+						{
+							int32 counter = 0;
+							while (true)
+							{
+								String aaa = U"ele{}"_fmt(counter);
+								const String ele = table[aaa].get<String>();
+								sM.ele.emplace(aaa, ele);
+								counter++;
+								if (ele == U"")
+								{
+									break;
+								}
+							}
+						}
+						{
+							namespace views = std::views;
+							const String str = table[U"data"].get<String>();
+							for (const auto sv : str | views::split(U",@,"_sv))
+							{
+								String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
+								if (re != U"")
+								{
+									sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
+								}
+							}
+						}
+					}
+
+					ClassBattle cb;
+					cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
+					cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
+					cb.sortieUnitGroup = getData().classGameStatus.arrayPlayerUnit;
+					getData().classGameStatus.classBattle = cb;
+
+					changeScene(U"Battle", 0.9s);
+				}
+			}
+			break;
+			default:
+				break;
+			}
+		}
+		for (auto& ttt : htMenuBtnDisplay)
+		{
+			if (ttt.second == true)
+			{
+				rectExecuteBtn = Rect{ 432,516,500,500 };
+			}
+		}
+		for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
+		{
+			if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
+			{
+				ClassHorizontalUnit chu;
+				ClassUnit cu = nowHtRectPlusUnit;
+				bool check = true;
+				for (auto che : getData().classGameStatus.arrayPlayerUnit)
+				{
+					for (auto che2 : che.ListClassUnit)
+					{
+						if (che2.pressedDetailStrategyMenu == true)
+						{
+							check = false;
+						}
+					}
+				}
+				if (check == true)
+				{
+					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
+				}
+				else
+				{
+					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16,32,32 };
+				}
+				chu.ListClassUnit.push_back(cu);
+				getData().classGameStatus.arrayPlayerUnit.push_back(chu);
+			}
+			else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
+			{
+				ClassHorizontalUnit chu;
+				ClassUnit cu = nowHtRectPlusUnit;
+				cu.rectDetailStrategyMenu = Rect{ 0,0,0,0 };
+				chu.ListClassUnit.push_back(cu);
+				getData().classGameStatus.arrayPlayerUnit.push_back(chu);
+			}
+		}
+		//スクロール上
+		int32 counterUnit = 0;
+		for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+		{
+			int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
+			for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+			{
+				aaa.rectDetailStrategyMenu.y = yyy;
+			}
+			counterUnit++;
+		}
+
+		if (arrayRectMenuBack[1].mouseOver() == true)
+		{
+			vbar001.value().scroll(Mouse::Wheel() * 60);
+		}
+		if (rectExecuteBtn.mouseOver() == true)
+		{
+			vbar002.value().scroll(Mouse::Wheel() * 60);
+		}
+		vbar001.value().update();
+		vbar002.value().update();
 	}
 	// 描画関数（オプション）
 	void draw() const override
 	{
+		getData().slice9.draw(rectExecuteBtn);
+		for (auto& ttt : arrayRectMenuBack)
+		{
+			getData().slice9.draw(ttt);
+		}
+		for (auto& ttt : getData().classGameStatus.arrayPlayerUnit)
+		{
+			for (auto& aaa : ttt.ListClassUnit)
+			{
+				if (aaa.rectDetailStrategyMenu.y > (13 * 32) + 16 + 16 || aaa.rectDetailStrategyMenu.y < 16 + 15)
+				{
 
+				}
+				else
+				{
+					aaa.rectDetailStrategyMenu(TextureAsset(aaa.Image)).draw().drawFrame(0, 3, Palette::Orange);
+				}
+			}
+		}
+		for (auto& ttt : htMenuBtn)
+		{
+			getData().slice9.draw(ttt.second);
+			switch (ttt.first)
+			{
+			case 0:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu000).draw(ttt.second.stretched(-10));
+				break;
+			case 1:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu001).draw(ttt.second.stretched(-10));
+				break;
+			case 2:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu002).draw(ttt.second.stretched(-10));
+				break;
+			case 3:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu003).draw(ttt.second.stretched(-10));
+				break;
+			case 4:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu004).draw(ttt.second.stretched(-10));
+				break;
+			case 5:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu005).draw(ttt.second.stretched(-10));
+				break;
+			case 6:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu006).draw(ttt.second.stretched(-10));
+				break;
+			case 7:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu007).draw(ttt.second.stretched(-10));
+				break;
+			case 8:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu008).draw(ttt.second.stretched(-10));
+				break;
+			case 9:
+				getData().fontBuyMenu(getData().classConfigString.strategyMenu009).draw(ttt.second.stretched(-10));
+				break;
+			default:
+				break;
+			}
+		}
+		for (auto& ttt : htMenuBtnDisplay)
+		{
+			switch (ttt.first)
+			{
+			case 0:
+				if (ttt.second == true)
+				{
+					for (auto nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
+					{
+						getData().slice9.draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu);
+						getData().fontBuyMenu(nowHtRectPlusUnit.Name).draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.stretched(-10));
+						vbar002.value().draw();
+					}
+				}
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			default:
+				break;
+			}
+		}
+
+
+		vbar001.value().draw();
 	}
-
 	void drawFadeIn(double t) const override
 	{
 		draw();
 
 		m_fadeInFunction->fade(1 - t);
 	}
-
 	void drawFadeOut(double t) const override
 	{
 		draw();
@@ -1844,8 +2171,14 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Array <Rect> arrayRectMenuBack;
+	Rect rectExecuteBtn;
+	HashTable<int32, Rect> htMenuBtn;
+	HashTable<int32, bool> htMenuBtnDisplay;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+	Optional<SasaGUI::ScrollBar> vbar001;
+	Optional<SasaGUI::ScrollBar> vbar002;
 };
 class common001 : public App::Scene
 {
@@ -1886,7 +2219,7 @@ private:
 void Main()
 {
 	// ウィンドウのタイトル | Window title
-	Window::SetTitle(U"MagicArc-Ver0.1");
+	Window::SetTitle(U"R-Ver0.1");
 
 	// ウィンドウのサイズ | Window size
 	Window::Resize(WindowSizeWidth, WindowSizeHeight);
@@ -1927,6 +2260,62 @@ void Main()
 		String filename = FileSystem::FileName(filePath);
 		TextureAsset::Register(filename, filePath);
 	}
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/040_ChipImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	// config.tomlからデータを読み込む
+	{
+		const TOMLReader tomlConfig{ U"001_Warehouse/001_DefaultGame/config.toml" };
+
+		if (not tomlConfig) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `config.toml`" };
+		}
+		manager.get().get()->classGameStatus.DistanceBetweenUnit = tomlConfig[U"config.DistanceBetweenUnit"].get<int32>();
+		manager.get().get()->classGameStatus.DistanceBetweenUnitTate = tomlConfig[U"config.DistanceBetweenUnitTate"].get<int32>();
+		manager.get().get()->classGameStatus.strategyMenu000 = tomlConfig[U"config.strategyMenu000"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu001 = tomlConfig[U"config.strategyMenu001"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu002 = tomlConfig[U"config.strategyMenu002"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu003 = tomlConfig[U"config.strategyMenu003"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu004 = tomlConfig[U"config.strategyMenu004"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu005 = tomlConfig[U"config.strategyMenu005"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu006 = tomlConfig[U"config.strategyMenu006"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu007 = tomlConfig[U"config.strategyMenu007"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu008 = tomlConfig[U"config.strategyMenu008"].get<bool>();
+		manager.get().get()->classGameStatus.strategyMenu009 = tomlConfig[U"config.strategyMenu009"].get<bool>();
+	}
+	// Unit.jsonからデータを読み込む
+	{
+		const JSON jsonUnit = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/InfoUnit/Unit.json");
+
+		if (not jsonUnit) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `Unit.json`" };
+		}
+
+		Array<ClassUnit> arrayClassUnit;
+		for (const auto& [key, value] : jsonUnit[U"Unit"]) {
+			ClassUnit cu;
+			cu.NameTag = value[U"name_tag"].getString();
+			cu.Name = value[U"name"].getString();
+			cu.Image = value[U"image"].getString();
+			cu.Speed = Parse<double>(value[U"speed"].getString());
+			String sNa = value[U"skill"].getString();
+			if (sNa.contains(',') == true)
+			{
+				cu.SkillName = sNa.split(',');
+			}
+			else
+			{
+				cu.SkillName.push_back(sNa);
+			}
+			arrayClassUnit.push_back(std::move(cu));
+		}
+
+		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;
+	}
 
 	if (System::GetCommandLineArgs().size() == 0)
 	{
@@ -1939,9 +2328,12 @@ void Main()
 		//manager.init(U"TestBattle");
 		//manager.init(U"Title");
 
-		manager.get().get()->NovelPower = U"sc_a_p_b";
-		manager.get().get()->NovelNumber = U"0";
-		manager.init(U"Novel");
+		//manager.get().get()->NovelPower = U"sc_a_p_b";
+		//manager.get().get()->NovelNumber = U"0";
+		//manager.init(U"Novel");
+
+		manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+		manager.init(U"Buy");
 	}
 
 	while (System::Update())

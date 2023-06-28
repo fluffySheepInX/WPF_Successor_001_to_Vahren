@@ -85,6 +85,10 @@ public:
 	// ID
 	long long ID = 0;
 
+	Rect rectExecuteBtnStrategyMenu;
+	Rect rectDetailStrategyMenu;
+	bool pressedDetailStrategyMenu = false;
+
 	// IsLeader
 	bool IsBuilding = false;
 	int32 rowBuilding = 0;

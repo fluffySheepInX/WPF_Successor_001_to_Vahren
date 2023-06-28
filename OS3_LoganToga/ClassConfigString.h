@@ -9,4 +9,14 @@ public:
 	String selectScenario2;
 	String selectChara1;
 	String DoYouWantToQuitTheGame;
+	String strategyMenu000;
+	String strategyMenu001;
+	String strategyMenu002;
+	String strategyMenu003;
+	String strategyMenu004;
+	String strategyMenu005;
+	String strategyMenu006;
+	String strategyMenu007;
+	String strategyMenu008;
+	String strategyMenu009;
 };

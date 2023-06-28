@@ -29,6 +29,16 @@ public:
 				ccs.selectScenario2 = table[U"selectScenario2"].get<String>();
 				ccs.selectChara1 = table[U"selectChara1"].get<String>();
 				ccs.DoYouWantToQuitTheGame = table[U"DoYouWantToQuitTheGame"].get<String>();
+				ccs.strategyMenu000 = table[U"strategyMenu000"].get<String>();
+				ccs.strategyMenu001 = table[U"strategyMenu001"].get<String>();
+				ccs.strategyMenu002 = table[U"strategyMenu002"].get<String>();
+				ccs.strategyMenu003 = table[U"strategyMenu003"].get<String>();
+				ccs.strategyMenu004 = table[U"strategyMenu004"].get<String>();
+				ccs.strategyMenu005 = table[U"strategyMenu005"].get<String>();
+				ccs.strategyMenu006 = table[U"strategyMenu006"].get<String>();
+				ccs.strategyMenu007 = table[U"strategyMenu007"].get<String>();
+				ccs.strategyMenu008 = table[U"strategyMenu008"].get<String>();
+				ccs.strategyMenu009 = table[U"strategyMenu009"].get<String>();
 			}
 		}
 
