@@ -97,7 +97,8 @@ struct GameData
 	ClassScenario selectClassScenario;
 	ClassPower selectClassPower;
 	String NovelPower = U"";
-	String NovelNumber = U"";
+	int32 NovelNumber = 0;
+	int32 Wave = 0;
 };
 
 using App = SceneManager<String, GameData>;
@@ -1660,7 +1661,26 @@ public:
 			}
 			if (ttt.RectF.leftClicked() == true)
 			{
+				// TOML ファイルからデータを読み込む
+				const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + ttt.PowerTag + U".toml" };
 
+				if (not tomlInfoProcess) // もし読み込みに失敗したら
+				{
+					throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+				}
+
+				for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+					String map = table[U"map"].get<String>();
+					getData().classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+					for (auto& map : getData().classGameStatus.arrayInfoProcessSelectCharaMap)
+					{
+						String ene = table[map].get<String>();
+						getData().classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+					}
+				}
+				getData().classGameStatus.nowPowerTag = ttt.PowerTag;
+				getData().NovelPower = ttt.PowerTag;
+				getData().NovelNumber = 0;
 				changeScene(U"Novel", 0.9s);
 			}
 		}
@@ -1709,14 +1729,14 @@ public:
 		: IScene{ init }
 	{
 		String np = getData().NovelPower;
-		String nn = getData().NovelNumber;
+		int32 nn = getData().NovelNumber;
 		getData().NovelPower = U"";
-		getData().NovelNumber = U"";
-
-		csv = CSV{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoStory/" + np + U"+" + nn + U".csv" };
+		getData().NovelNumber = 0;
+		String path = U"001_Warehouse/001_DefaultGame/070_Scenario/InfoStory/" + np + U"+" + Format(nn) + U".csv";
+		csv = CSV{ path };
 		if (not csv) // もし読み込みに失敗したら
 		{
-			throw Error{ U"Failed to load " + np + U"+" + nn + U".csv" };
+			throw Error{ U"Failed to load " + np + U"+" + Format(nn) + U".csv" };
 		}
 
 		nowRow = 0;
@@ -1935,16 +1955,16 @@ public:
 			{
 				if (ttt.second.leftClicked() == true)
 				{
-					// TOML ファイルからデータを読み込む
-					const TOMLReader tomlTestMap{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoTestBattle/testMap.toml" };
+					String targetMap = getData().classGameStatus.arrayInfoProcessSelectCharaMap[getData().Wave];
 
-					if (not tomlTestMap) // もし読み込みに失敗したら
+					const TOMLReader tomlMap{ U"001_Warehouse/001_DefaultGame/016_BattleMap/" + targetMap };
+					if (not tomlMap) // もし読み込みに失敗したら
 					{
-						throw Error{ U"Failed to load `testMap.toml`" };
+						throw Error{ U"Failed to load `tomlMap`" };
 					}
 
 					ClassMap sM;
-					for (const auto& table : tomlTestMap[U"Map"].tableArrayView()) {
+					for (const auto& table : tomlMap[U"Map"].tableArrayView()) {
 						const String name = table[U"name"].get<String>();
 
 						{
@@ -1976,9 +1996,36 @@ public:
 					}
 
 					ClassBattle cb;
+					const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + getData().classGameStatus.nowPowerTag + U".toml" };
+					if (not tomlInfoProcess) // もし読み込みに失敗したら
+					{
+						throw Error{ U"Failed to load `tomlInfoProcess`" };
+					}
+					for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+						String mapUnit = table[targetMap].get<String>();
+						Array<String> arrayMapUnit = mapUnit.split(U',');
+						for (auto& unitYoko : arrayMapUnit)
+						{
+							ClassHorizontalUnit chu;
+							Array<String> unitInfo = unitYoko.split(U'*');
+							auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
+										[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
+							if (it == getData().classGameStatus.arrayClassUnit.end())
+							{
+								continue;
+							}
+							for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
+							{
+								chu.ListClassUnit.push_back(*it);
+							}
+							cb.defUnitGroup.push_back(chu);
+						}
+					}
+
 					cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
 					cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
 					cb.sortieUnitGroup = getData().classGameStatus.arrayPlayerUnit;
+
 					getData().classGameStatus.classBattle = cb;
 
 					changeScene(U"Battle", 0.9s);
@@ -1996,13 +2043,13 @@ public:
 				rectExecuteBtn = Rect{ 432,516,500,500 };
 			}
 		}
+		//徴兵処理
 		for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
 		{
 			if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
 			{
-				ClassHorizontalUnit chu;
-				ClassUnit cu = nowHtRectPlusUnit;
 				bool check = true;
+				int32 rowCounter = 0;
 				for (auto che : getData().classGameStatus.arrayPlayerUnit)
 				{
 					for (auto che2 : che.ListClassUnit)
@@ -2010,19 +2057,30 @@ public:
 						if (che2.pressedDetailStrategyMenu == true)
 						{
 							check = false;
+							ClassUnit cu = nowHtRectPlusUnit;
+							cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
+							getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
+							break;
 						}
 					}
+					if (check == false)
+					{
+						break;
+					}
+					rowCounter++;
 				}
 				if (check == true)
 				{
+					ClassHorizontalUnit chu;
+					ClassUnit cu = nowHtRectPlusUnit;
 					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
+					chu.ListClassUnit.push_back(cu);
+					getData().classGameStatus.arrayPlayerUnit.push_back(chu);
 				}
 				else
 				{
-					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16,32,32 };
+
 				}
-				chu.ListClassUnit.push_back(cu);
-				getData().classGameStatus.arrayPlayerUnit.push_back(chu);
 			}
 			else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
 			{
@@ -2034,15 +2092,36 @@ public:
 			}
 		}
 		//スクロール上
-		int32 counterUnit = 0;
+		{
+			int32 counterUnit = 0;
+			for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+			{
+				int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
+				for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+				{
+					aaa.rectDetailStrategyMenu.y = yyy;
+				}
+				counterUnit++;
+			}
+		}
+		//クリック処理
 		for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
 		{
-			int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
 			for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
 			{
-				aaa.rectDetailStrategyMenu.y = yyy;
+				if (aaa.rectDetailStrategyMenu.leftClicked() == true)
+				{
+					for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+					{
+						for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+						{
+							aaa.pressedDetailStrategyMenu = false;
+						}
+					}
+
+					aaa.pressedDetailStrategyMenu = true;
+				}
 			}
-			counterUnit++;
 		}
 
 		if (arrayRectMenuBack[1].mouseOver() == true)
@@ -2074,7 +2153,14 @@ public:
 				}
 				else
 				{
-					aaa.rectDetailStrategyMenu(TextureAsset(aaa.Image)).draw().drawFrame(0, 3, Palette::Orange);
+					if (aaa.pressedDetailStrategyMenu == true)
+					{
+						aaa.rectDetailStrategyMenu(TextureAsset(aaa.Image)).draw().drawFrame(0, 3, Palette::Red);
+					}
+					else
+					{
+						aaa.rectDetailStrategyMenu(TextureAsset(aaa.Image)).draw().drawFrame(0, 3, Palette::Orange);
+					}
 				}
 			}
 		}
@@ -2333,7 +2419,27 @@ void Main()
 		//manager.init(U"Novel");
 
 		manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+		const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
+
+		if (not tomlInfoProcess) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+		}
+
+		for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+			String map = table[U"map"].get<String>();
+			manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+			for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
+			{
+				String ene = table[map].get<String>();
+				manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+			}
+		}
+		manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
+		manager.get().get()->NovelPower = U"sc_a_p_b";
+		manager.get().get()->NovelNumber = 0;
 		manager.init(U"Buy");
+
 	}
 
 	while (System::Update())

@@ -120,6 +120,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\OS3D_0.6.71_MagicArchitect\OS3D_0.6.91_MagicArchitect\App\maptip\2.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0001_easy.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0002_normal.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\001_SystemImage\015_TitleMenuImage\0003_hard.png" />
@@ -133,14 +134,19 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face001.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\0.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\desert.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\doro.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\grass1.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\2.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\3.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\4.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\kusaNuma.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\m_grass2.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\snow.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\6.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall2.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall_bu.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall_buu.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\ucwall.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face001_new.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\030_SelectCharaImage\face002_new.png" />
@@ -188,6 +194,8 @@
     <ResourceCompile Include="App\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\map.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\map001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testBattle.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoTestBattle\testMap001.toml" />
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoUnit\genUnit002.toml" />
@@ -216,6 +224,7 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\イラスト.clip" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoProcess\sc_a_p_b.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.json" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoSkill\skill.toml" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+0.csv" />

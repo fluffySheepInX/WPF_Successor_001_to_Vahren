@@ -335,6 +335,24 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\face001.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall_bu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\testWall_buu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\OS3D_0.6.71_MagicArchitect\OS3D_0.6.91_MagicArchitect\App\maptip\2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\doro.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\kusaNuma.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -398,6 +416,8 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\070_Scenario\Info_Power\power.json" />
     <Text Include="App\001_Warehouse\memo.txt" />
     <Text Include="App\font\OFL.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\map001.toml" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\map.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">
@@ -869,6 +889,7 @@
     <None Include="App\font\README-JP.md" />
     <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+0.csv" />
     <None Include="App\001_Warehouse\001_DefaultGame\010_FaceImage\イラスト.clip" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoProcess\sc_a_p_b.toml" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">

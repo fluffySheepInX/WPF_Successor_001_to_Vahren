@@ -16,6 +16,7 @@ public:
 	}
 
 	Array<ClassPower> arrayClassPower;
+	String nowPowerTag;
 	Array<ClassMap> arrayClassMap;
 	Array<ClassObjectMapTip> arrayClassObjectMapTip;
 	ClassTestBattle classTestBattle;
@@ -26,6 +27,10 @@ public:
 	bool IsBattleMove = false;
 	int32 DistanceBetweenUnit = 0;
 	int32 DistanceBetweenUnitTate = 0;
+
+	Array<String> arrayInfoProcessSelectCharaMap;
+	Array<String> arrayInfoProcessSelectCharaEnemyUnit;
+
 	bool strategyMenu000 = true;
 	bool strategyMenu001 = true;
 	bool strategyMenu002 = true;
