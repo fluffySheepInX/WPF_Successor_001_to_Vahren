@@ -2,6 +2,14 @@
 # include "Enum.h" 
 # include "ClassSkill.h" 
 
+class ClassBullets
+{
+public:
+	int32 No;
+	Vec2 NowPosition;
+	ClassSkill classSkill;
+};
+
 class ClassUnit
 {
 public:
@@ -293,11 +301,12 @@ public:
 	bool FlagMovingSkill = false;
 
 	// NowPosiSkill
-	HashTable<int32, Point> NowPosiSkill;
+	Array<ClassBullets> NowPosiSkill;
 
 	// OrderPosiSkill
-	HashTable<int32, Point> OrderPosiSkill;
+	Array<ClassBullets> OrderPosiSkill;
 
 	// VecMoveSkill
-	HashTable<int32, Point> VecMoveSkill;
+	Array<ClassBullets> VecMoveSkill;
 };
+

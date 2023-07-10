@@ -28,6 +28,16 @@ enum class MapTipObjectType
 	, GATE
 };
 
+enum class SkillType
+{
+	missile,
+	sword,
+	heal,
+	summon,
+	charge,
+	status,
+};
+
 /// <summary>
 /// 部隊チップの種別
 /// flag = 0 なら「ユニットの識別名」として扱う。

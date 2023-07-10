@@ -4,6 +4,7 @@
 # include "ClassMap.h" 
 # include "ClassTestBattle.h" 
 # include "ClassUnit.h" 
+# include "ClassExecuteSkills.h" 
 # include "ClassObjectMapTip.h"
 # include "ClassBattle.h" 
 # include "ClassScenario.h" 
@@ -11,10 +12,9 @@
 # include "MapCreator.h" 
 # include "DoubleClick.h" 
 # include "SasaGUI.h" 
-# include "ClassExecutedSkillInBattle.h" 
 # include "ClassPower.h" 
 # include "GameUIToolkit.h" 
-#include <ranges>
+# include <ranges>
 # include "Enum.h" 
 const bool debug = true;
 const String newlineCode = U"\r\n";
@@ -789,11 +789,13 @@ public:
 	{
 		const auto t = camera.createTransformer();
 
+		//カメラ移動
 		if (MouseL.pressed() == true)
 		{
 			viewPos.moveBy(-Cursor::Delta());
 			camera.jumpTo(viewPos, 1.0);
 		}
+
 		if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
 		{
 			if (MouseR.up() == false)
@@ -813,11 +815,12 @@ public:
 			cursPos = Cursor::Pos();
 		}
 
+		//部隊を選択状態にする。もしくは既に選択状態なら移動させる
 		if (MouseR.up() == true)
 		{
 			Point start = cursPos;
 			Point end = Cursor::Pos();
-			//部隊を選択状態にする。もしくは既に選択状態なら移動させる
+
 			Array<ClassHorizontalUnit>* lisClassHorizontalUnit;
 			switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
 			{
@@ -1087,6 +1090,147 @@ public:
 		}
 
 		//skill処理
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				//発動中もしくは死亡ユニットはスキップ
+				if (itemUnit.FlagMovingSkill == true || itemUnit.IsBattleEnable == false)
+				{
+					continue;
+				}
+
+				//昇順（小さい値から大きい値へ）
+				for (const ClassSkill& itemSkill : itemUnit.Skill.sort_by([](const auto& item1, const auto& item2) { return  item1.sortKey < item2.sortKey; }))
+				{
+					//ターゲットとなるユニットを抽出し、
+					//スキル射程範囲を確認
+					const auto xA = itemUnit.GetNowPosiCenter();
+
+					for (auto& itemTargetHo : getData().classGameStatus.classBattle.defUnitGroup)
+					{
+						for (auto& itemTarget : itemTargetHo.ListClassUnit)
+						{
+							//スキル発動条件確認
+							if (itemTarget.IsBattleEnable == false)
+							{
+								continue;
+							}
+							if (itemTarget.IsBuilding == true)
+							{
+								continue;
+							}
+
+							//三平方の定理から射程内か確認
+							{
+								const Vec2 xB = itemTarget.GetNowPosiCenter();
+								const double teihen = xA.x - xB.x;
+								const double takasa = xA.y - xB.y;
+								const double syahen = (teihen * teihen) + (takasa * takasa);
+								const double kyori = std::sqrt(syahen);
+
+								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
+								const double xBHankei = itemTarget.yokoUnit / 2.0;
+
+								bool check = true;
+								if (kyori > (xAHankei + xBHankei))
+								{
+									check = false;
+								}
+								// チェック
+								if (!check)
+								{
+									continue;
+								}
+							}
+
+							int32 random = Random(-100000, 100000);
+							int singleAttackNumber = random;
+
+							ClassBullets cbItemUnit;
+							cbItemUnit.No = singleAttackNumber;
+							cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+							cbItemUnit.classSkill = itemSkill;
+							itemUnit.NowPosiSkill.push_back(cbItemUnit);
+							ClassBullets cbItemTarget;
+							cbItemTarget.No = singleAttackNumber;
+							cbItemTarget.NowPosition = itemTarget.GetNowPosiCenter();
+							cbItemTarget.classSkill = itemSkill;
+							itemUnit.OrderPosiSkill.push_back(cbItemTarget);
+
+							Vec2 ve = cbItemTarget.NowPosition - cbItemUnit.NowPosition;
+							ClassBullets cbVec;
+							cbVec.No = singleAttackNumber;
+							cbVec.NowPosition = ve.normalized();
+							cbVec.classSkill = itemSkill;
+							itemUnit.VecMoveSkill.push_back(cbVec);
+							itemUnit.FlagMovingSkill = true;
+
+							//rush数だけ実行する
+							int32 rushBase = 1;
+							if (itemSkill.rush > 1) rushBase = itemSkill.rush;
+
+							for (int iii = 0; iii < rushBase; iii++)
+							{
+								ClassExecuteSkills ces;
+								ces.No = Random(-10000, 10000);
+								ces.classSkill = itemSkill;
+								ces.classUnit = &itemUnit;
+								m_Battle_player_skills.push_back(ces);
+							}
+						}
+
+					}
+				}
+
+			}
+		}
+
+		//skill実行処理
+		Array<ClassExecuteSkills> deleteCES;
+		for (ClassExecuteSkills& skill : m_Battle_player_skills)
+		{
+			for (auto& vecTarget : skill.classUnit->VecMoveSkill)
+			{
+				auto itNow = std::find_if(skill.classUnit->NowPosiSkill.begin(), skill.classUnit->NowPosiSkill.end(),
+									[&](ClassBullets& cb) { return cb.No == vecTarget.No; });
+				if (itNow == skill.classUnit->NowPosiSkill.end())
+				{
+					continue;
+				}
+				auto itOrd = std::find_if(skill.classUnit->OrderPosiSkill.begin(), skill.classUnit->OrderPosiSkill.end(),
+									[&](ClassBullets& cb) { return cb.No == vecTarget.No; });
+				if (itOrd == skill.classUnit->OrderPosiSkill.end())
+				{
+					continue;
+				}
+
+				Circle cNow1 = Circle{ itNow[0].NowPosition.x,itNow[0].NowPosition.y,itNow[0].classSkill.w };
+				Circle cNow2 = Circle{ itOrd[0].NowPosition.x,itOrd[0].NowPosition.y,itOrd[0].classSkill.w };
+
+				if (cNow1.intersects(cNow2))
+				{
+					skill.classUnit->FlagMovingSkill = false;
+
+					//体力計算処理
+
+					skill.classUnit->OrderPosiSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
+					skill.classUnit->VecMoveSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
+					skill.classUnit->NowPosiSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
+					if (skill.classUnit->OrderPosiSkill.size() == 0)
+					{
+						deleteCES.push_back(skill);
+					}
+					break;
+				}
+				else
+				{
+					itNow[0].NowPosition = Vec2((itNow[0].NowPosition.x + (vecTarget.NowPosition.x * (itNow[0].classSkill.speed))),
+												(itNow[0].NowPosition.y + (vecTarget.NowPosition.y * (itNow[0].classSkill.speed))));
+				}
+			}
+		}
+		m_Battle_player_skills.remove_if([&](const ClassExecuteSkills& a) { return deleteCES.includes_if([&](const ClassExecuteSkills& b) {return a.No == b.No; }); });
 
 	}
 	// 描画関数（オプション）
@@ -1124,7 +1268,6 @@ public:
 				TextureAsset(tip + U".png").draw(Arg::bottomCenter = pos);
 			}
 		}
-
 
 		// 底辺中央を基準にタイルを描く
 		for (auto ttt : bui)
@@ -1188,6 +1331,7 @@ public:
 			}
 		}
 
+		//範囲指定もしくは移動先矢印
 		if (MouseR.pressed())
 		{
 			if (getData().classGameStatus.IsBattleMove == false)
@@ -1207,6 +1351,14 @@ public:
 			{
 				Line{ cursPos, Cursor::Pos() }
 				.drawArrow(10, Vec2{ 40, 80 }, Palette::Orange);
+			}
+		}
+
+		for (auto& skill : m_Battle_player_skills)
+		{
+			for (auto& vecSkill : skill.classUnit->NowPosiSkill)
+			{
+				Circle{ vecSkill.NowPosition.x,vecSkill.NowPosition.y,30 }.draw();
 			}
 		}
 	}
@@ -1234,7 +1386,23 @@ private:
 	Camera2D camera;
 	Array<Quad> columnQuads;
 	Array<Quad> rowQuads;
-	Array<std::unique_ptr<ISkill>> skills;
+
+	Array<ClassExecuteSkills> m_Battle_player_skills;
+	Array<ClassExecuteSkills> m_Battle_enemy_skills;
+	Array<ClassExecuteSkills> m_Battle_neutral_skills;
+
+	bool Hit(Vec2 current, Vec2 target, Vec2 vec, double speed)
+	{
+		s3d::Vec2 distance = target - current;
+		s3d::Vec2 nextPosition = current + vec * (speed / 100);
+
+		if (nextPosition.distanceFrom(target) >= current.distanceFrom(target))
+		{
+			return true;
+		}
+
+		return false;
+	}
 
 };
 class Title : public App::Scene
@@ -2351,6 +2519,7 @@ void Main()
 		String filename = FileSystem::FileName(filePath);
 		TextureAsset::Register(filename, filePath);
 	}
+
 	// config.tomlからデータを読み込む
 	{
 		const TOMLReader tomlConfig{ U"001_Warehouse/001_DefaultGame/config.toml" };
@@ -2398,6 +2567,42 @@ void Main()
 				cu.SkillName.push_back(sNa);
 			}
 			arrayClassUnit.push_back(std::move(cu));
+		}
+
+		// unitのスキルを読み込み
+		const JSON skillData = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/InfoSkill/skill.json");
+
+		if (not skillData) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `skill.json`" };
+		}
+
+		Array<ClassSkill> arrayClassSkill;
+		for (const auto& [key, value] : skillData[U"Skill"]) {
+			ClassSkill cu;
+			cu.nameTag = value[U"name_tag"].get<String>();
+			cu.name = value[U"name"].get<String>();
+			cu.range = Parse<int32>(value[U"range"].get<String>());
+			cu.w = Parse<int32>(value[U"w"].get<String>());
+			cu.speed = Parse<int32>(value[U"speed"].get<String>());
+
+			arrayClassSkill.push_back(std::move(cu));
+		}
+
+		//unitのスキル名からスキルクラスを探し、unitに格納
+		for (auto& itemUnit : arrayClassUnit)
+		{
+			for (const auto& itemSkillName : itemUnit.SkillName)
+			{
+				for (const auto& skill : arrayClassSkill)
+				{
+					if (skill.nameTag == itemSkillName)
+					{
+						itemUnit.Skill.emplace_back(skill);
+						break;
+					}
+				}
+			}
 		}
 
 		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;

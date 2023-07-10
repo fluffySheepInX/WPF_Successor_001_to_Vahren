@@ -24,7 +24,7 @@
       "range": "550",
       "damage_range_adjust": "0",
       "range_min": "145",
-      "speed": "4500",
+      "speed": "15",
       "gun_delay": "gunLaphroaig*1",
       "pair_next": "b_kemuri_eff02",
       "next": "m_hit_eff01",

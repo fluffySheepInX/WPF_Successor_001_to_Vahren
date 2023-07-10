@@ -353,6 +353,12 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\015_BattleMapCellImage\kusaNuma.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\042_ChipImageSkillEffect\a_bulletN.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\001_Warehouse\001_DefaultGame\042_ChipImageSkillEffect\a_bulletNW.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc">
@@ -974,9 +980,6 @@
     <ClInclude Include="DoubleClick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ClassExecutedSkillInBattle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SasaGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -993,6 +996,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassStoryInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassExecuteSkills.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

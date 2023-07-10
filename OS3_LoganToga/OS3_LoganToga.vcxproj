@@ -165,6 +165,8 @@
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene004.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\chipGene005.png" />
     <Image Include="App\001_Warehouse\001_DefaultGame\040_ChipImage\ghostFire.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\042_ChipImageSkillEffect\a_bulletN.png" />
+    <Image Include="App\001_Warehouse\001_DefaultGame\042_ChipImageSkillEffect\a_bulletNW.png" />
     <Image Include="App\engine\texture\box-shadow\128.png" />
     <Image Include="App\engine\texture\box-shadow\16.png" />
     <Image Include="App\engine\texture\box-shadow\256.png" />
@@ -382,10 +384,10 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassExecuteSkills.h" />
     <ClInclude Include="ClassPower.h" />
     <ClInclude Include="ClassScenario.h" />
     <ClInclude Include="ClassConfigString.h" />
-    <ClInclude Include="ClassExecutedSkillInBattle.h" />
     <ClInclude Include="ClassBattle.h" />
     <ClInclude Include="ClassHorizontalUnit.h" />
     <ClInclude Include="ClassStaticCommonMethod.h" />
