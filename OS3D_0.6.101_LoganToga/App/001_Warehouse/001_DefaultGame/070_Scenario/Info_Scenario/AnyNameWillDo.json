@@ -1,0 +1,37 @@
+{
+  "Scenario": [
+    {
+      "ButtonType": "Scenario",
+      "ScenarioName": "憂鬱なる提督達より愛をこめて",
+      "Sortkey": "-9",
+      "HelpString": "前哨戦",
+      "power": "sc_a_p_a,sc_a_p_b,sc_a_p_c",
+      "SelectCharaFrameImageLeft": "waku001.png",
+      "SelectCharaFrameImageRight": "waku002.png",
+      "Text": "\n\t\ttest\n\t\ttest2\n\t\ttest3\n\t  test4@@@test3"
+    },
+    {
+      "ButtonType": "Scenario",
+      "ScenarioName": "詰み手を誤った男たち",
+      "Sortkey": "-8",
+      "HelpString": "前哨戦",
+      "power": "",
+      "Text": "\n\t\ttest\n\t\ttest2\n\t\ttest3\n\t  test4@@@test3"
+    },
+    {
+      "ButtonType": "Mail",
+      "ScenarioName": "作者にメールを送る",
+      "Sortkey": "1",
+      "Text": "Gmailがすぐ送信出来る状態で開きます！",
+      "Mail": "fluffysheepinx@gmail.com"
+    },
+    {
+      "ButtonType": "Internet",
+      "ScenarioName": "作者のホームページへ行く",
+      "Sortkey": "2",
+      "Text": "押すと飛びます！",
+      "Internet": "http://lockedroom.uvs.jp/"
+    }
+
+  ]
+}
