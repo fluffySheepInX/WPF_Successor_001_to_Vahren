@@ -21,7 +21,7 @@
       "force_fire": "on",
       "attr": "taiho",
       "str": "attack_dext * 120",
-      "range": "550",
+      "range": "100",
       "damage_range_adjust": "0",
       "range_min": "145",
       "speed": "15",

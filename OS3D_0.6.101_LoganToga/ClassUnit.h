@@ -8,6 +8,10 @@ public:
 	int32 No;
 	Vec2 NowPosition;
 	ClassSkill classSkill;
+	/// @brief 寿命
+	double duration;
+	/// @brief 現生存時間
+	double lifeTime;
 };
 
 class ClassUnit

@@ -1151,7 +1151,10 @@ public:
 							cbItemUnit.No = singleAttackNumber;
 							cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
 							cbItemUnit.classSkill = itemSkill;
+							cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+							cbItemUnit.lifeTime = 0;
 							itemUnit.NowPosiSkill.push_back(cbItemUnit);
+
 							ClassBullets cbItemTarget;
 							cbItemTarget.No = singleAttackNumber;
 							cbItemTarget.NowPosition = itemTarget.GetNowPosiCenter();
@@ -1205,10 +1208,11 @@ public:
 					continue;
 				}
 
-				Circle cNow1 = Circle{ itNow[0].NowPosition.x,itNow[0].NowPosition.y,itNow[0].classSkill.w };
-				Circle cNow2 = Circle{ itOrd[0].NowPosition.x,itOrd[0].NowPosition.y,itOrd[0].classSkill.w };
+				itNow[0].lifeTime += Scene::DeltaTime();
+				//Circle cNow1 = Circle{ itNow[0].NowPosition.x,itNow[0].NowPosition.y,itNow[0].classSkill.w };
+				//Circle cNow2 = Circle{ itOrd[0].NowPosition.x,itOrd[0].NowPosition.y,itOrd[0].classSkill.w };
 
-				if (cNow1.intersects(cNow2))
+				if (itNow[0].lifeTime > itNow[0].duration)
 				{
 					skill.classUnit->FlagMovingSkill = false;
 
