@@ -14,6 +14,16 @@ public:
 		iDCount++;
 		return re;
 	}
+	long getBattleIDCount() {
+		long re = battleIDCount;
+		battleIDCount++;
+		return re;
+	}
+	long getDeleteCESIDCount() {
+		long re = deleteCESIDCount;
+		deleteCESIDCount++;
+		return re;
+	}
 
 	Array<ClassPower> arrayClassPower;
 	String nowPowerTag;
@@ -43,4 +53,6 @@ public:
 	bool strategyMenu009 = true;
 private:
 	long iDCount = 0;
+	long battleIDCount = 0;
+	long deleteCESIDCount = 0;
 };

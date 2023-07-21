@@ -20,8 +20,7 @@ public:
 
 		ClassConfigString ccs;
 		for (const auto& table : tomlSystemString[U"SystemString"].tableArrayView()) {
-			String lan = table[U"lang"].get<String>();
-			if (lan == U"en")
+			if (lan == table[U"lang"].get<String>())
 			{
 				ccs.configSave = table[U"configSave"].get<String>();
 				ccs.configLoad = table[U"configLoad"].get<String>();

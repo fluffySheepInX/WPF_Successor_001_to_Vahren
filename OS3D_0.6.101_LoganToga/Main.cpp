@@ -1144,43 +1144,39 @@ public:
 								}
 							}
 
-							int32 random = Random(-100000, 100000);
+							int32 random = getData().classGameStatus.getBattleIDCount();
 							int singleAttackNumber = random;
 
-							ClassBullets cbItemUnit;
-							cbItemUnit.No = singleAttackNumber;
-							cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
-							cbItemUnit.classSkill = itemSkill;
-							cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
-							cbItemUnit.lifeTime = 0;
-							itemUnit.NowPosiSkill.push_back(cbItemUnit);
-
-							ClassBullets cbItemTarget;
-							cbItemTarget.No = singleAttackNumber;
-							cbItemTarget.NowPosition = itemTarget.GetNowPosiCenter();
-							cbItemTarget.classSkill = itemSkill;
-							itemUnit.OrderPosiSkill.push_back(cbItemTarget);
-
-							Vec2 ve = cbItemTarget.NowPosition - cbItemUnit.NowPosition;
-							ClassBullets cbVec;
-							cbVec.No = singleAttackNumber;
-							cbVec.NowPosition = ve.normalized();
-							cbVec.classSkill = itemSkill;
-							itemUnit.VecMoveSkill.push_back(cbVec);
 							itemUnit.FlagMovingSkill = true;
 
 							//rush数だけ実行する
 							int32 rushBase = 1;
 							if (itemSkill.rush > 1) rushBase = itemSkill.rush;
 
+							ClassExecuteSkills ces;
+							ces.No = getData().classGameStatus.getDeleteCESIDCount();
+							ces.classSkill = itemSkill;
+							ces.classUnit = &itemUnit;
+
 							for (int iii = 0; iii < rushBase; iii++)
 							{
-								ClassExecuteSkills ces;
-								ces.No = Random(-10000, 10000);
-								ces.classSkill = itemSkill;
-								ces.classUnit = &itemUnit;
-								m_Battle_player_skills.push_back(ces);
+
+								ClassBullets cbItemUnit;
+								cbItemUnit.No = singleAttackNumber;
+								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
+								cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+								cbItemUnit.lifeTime = 0;
+
+								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
+								cbItemUnit.MoveVec = ve.normalized();
+								ces.ArrayClassBullet.push_back(cbItemUnit);
+
 							}
+
+							m_Battle_player_skills.push_back(ces);
+
+							break;
 						}
 
 					}
@@ -1191,51 +1187,45 @@ public:
 
 		//skill実行処理
 		Array<ClassExecuteSkills> deleteCES;
-		for (ClassExecuteSkills& skill : m_Battle_player_skills)
+		for (ClassExecuteSkills& loop_Battle_player_skills : m_Battle_player_skills)
 		{
-			for (auto& vecTarget : skill.classUnit->VecMoveSkill)
+			Array<int32> arrayNo;
+			for (auto& target : loop_Battle_player_skills.ArrayClassBullet)
 			{
-				auto itNow = std::find_if(skill.classUnit->NowPosiSkill.begin(), skill.classUnit->NowPosiSkill.end(),
-									[&](ClassBullets& cb) { return cb.No == vecTarget.No; });
-				if (itNow == skill.classUnit->NowPosiSkill.end())
+				target.lifeTime += Scene::DeltaTime();
+
+				if (target.lifeTime > target.duration)
 				{
-					continue;
-				}
-				auto itOrd = std::find_if(skill.classUnit->OrderPosiSkill.begin(), skill.classUnit->OrderPosiSkill.end(),
-									[&](ClassBullets& cb) { return cb.No == vecTarget.No; });
-				if (itOrd == skill.classUnit->OrderPosiSkill.end())
-				{
-					continue;
-				}
+					loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
 
-				itNow[0].lifeTime += Scene::DeltaTime();
-				//Circle cNow1 = Circle{ itNow[0].NowPosition.x,itNow[0].NowPosition.y,itNow[0].classSkill.w };
-				//Circle cNow2 = Circle{ itOrd[0].NowPosition.x,itOrd[0].NowPosition.y,itOrd[0].classSkill.w };
+					//消滅
+					arrayNo.push_back(target.No);
 
-				if (itNow[0].lifeTime > itNow[0].duration)
-				{
-					skill.classUnit->FlagMovingSkill = false;
-
-					//体力計算処理
-
-					skill.classUnit->OrderPosiSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
-					skill.classUnit->VecMoveSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
-					skill.classUnit->NowPosiSkill.remove_if([&](ClassBullets cb) { return itNow[0].No == cb.No; });
-					if (skill.classUnit->OrderPosiSkill.size() == 0)
-					{
-						deleteCES.push_back(skill);
-					}
 					break;
 				}
 				else
 				{
-					itNow[0].NowPosition = Vec2((itNow[0].NowPosition.x + (vecTarget.NowPosition.x * (itNow[0].classSkill.speed))),
-												(itNow[0].NowPosition.y + (vecTarget.NowPosition.y * (itNow[0].classSkill.speed))));
+					target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100))),
+												(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100))));
 				}
 			}
-		}
-		m_Battle_player_skills.remove_if([&](const ClassExecuteSkills& a) { return deleteCES.includes_if([&](const ClassExecuteSkills& b) {return a.No == b.No; }); });
 
+			loop_Battle_player_skills.ArrayClassBullet.remove_if([&](const ClassBullets& cb)
+				{
+					if (arrayNo.includes(cb.No))
+					{
+						Print << U"suc";
+						return true;
+					}
+					else
+					{
+						Print << U"no";
+						return false;
+					}
+				});
+			arrayNo.clear();
+		}
+		m_Battle_player_skills.remove_if([&](const ClassExecuteSkills& a) { return a.ArrayClassBullet.size() == 0; });
 	}
 	// 描画関数（オプション）
 	void draw() const override
@@ -1287,7 +1277,7 @@ public:
 				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
 				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
 				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-				const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
+				//const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
 				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
 				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
@@ -1360,9 +1350,9 @@ public:
 
 		for (auto& skill : m_Battle_player_skills)
 		{
-			for (auto& vecSkill : skill.classUnit->NowPosiSkill)
+			for (auto& acb : skill.ArrayClassBullet)
 			{
-				Circle{ vecSkill.NowPosition.x,vecSkill.NowPosition.y,30 }.draw();
+				Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
 			}
 		}
 	}
@@ -2018,6 +2008,7 @@ public:
 		arrayRectMenuBack.push_back(Rect{ 432,16,500,500 });
 		////中央下
 		//arrayRectMenuBack.push_back(Rect{ 432,516,500,500 });
+
 		//メニューボタン
 		{
 			int32 counter = 0;
@@ -2311,6 +2302,7 @@ public:
 	void draw() const override
 	{
 		getData().slice9.draw(rectExecuteBtn);
+
 		for (auto& ttt : arrayRectMenuBack)
 		{
 			getData().slice9.draw(ttt);
@@ -2413,7 +2405,6 @@ public:
 			}
 		}
 
-
 		vbar001.value().draw();
 	}
 	void drawFadeIn(double t) const override
@@ -2429,8 +2420,10 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	/// @brief 左上メニュー、画面上部ユニット群の強制表示枠
 	Array <Rect> arrayRectMenuBack;
-	Rect rectExecuteBtn;
+	/// @brief 画面下部の詳細実行枠
+	Rect rectExecuteBtn{ 0,0,0,0 };
 	HashTable<int32, Rect> htMenuBtn;
 	HashTable<int32, bool> htMenuBtnDisplay;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();

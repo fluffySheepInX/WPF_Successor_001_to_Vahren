@@ -2,18 +2,6 @@
 # include "Enum.h" 
 # include "ClassSkill.h" 
 
-class ClassBullets
-{
-public:
-	int32 No;
-	Vec2 NowPosition;
-	ClassSkill classSkill;
-	/// @brief 寿命
-	double duration;
-	/// @brief 現生存時間
-	double lifeTime;
-};
-
 class ClassUnit
 {
 public:
@@ -84,9 +72,6 @@ public:
 			vecMove = other.vecMove;
 			FlagMoveSkill = other.FlagMoveSkill;
 			FlagMovingSkill = other.FlagMovingSkill;
-			NowPosiSkill = other.NowPosiSkill; // コピーされるPointの各要素は新しいメモリを確保します
-			OrderPosiSkill = other.OrderPosiSkill; // コピーされるPointの各要素は新しいメモリを確保します
-			VecMoveSkill = other.VecMoveSkill; // コピーされるPointの各要素は新しいメモリを確保します
 		}
 		return *this;
 	}
@@ -303,14 +288,5 @@ public:
 
 	// FlagMovingSkill
 	bool FlagMovingSkill = false;
-
-	// NowPosiSkill
-	Array<ClassBullets> NowPosiSkill;
-
-	// OrderPosiSkill
-	Array<ClassBullets> OrderPosiSkill;
-
-	// VecMoveSkill
-	Array<ClassBullets> VecMoveSkill;
 };
 
