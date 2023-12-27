@@ -1,0 +1,10 @@
+[[Scenario]]
+	ButtonType = "Scenario"
+	ScenarioName = "‹l‚ÝŽè‚ðŒë‚Á‚½’j‚½‚¿"
+	Sortkey = "-9"
+	HelpString = ""
+	Text = """
+		test
+		test2
+		test3
+	"""

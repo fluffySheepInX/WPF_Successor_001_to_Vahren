@@ -1090,100 +1090,7 @@ public:
 		}
 
 		//skill処理
-		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
-		{
-			for (auto& itemUnit : item.ListClassUnit)
-			{
-				//発動中もしくは死亡ユニットはスキップ
-				if (itemUnit.FlagMovingSkill == true || itemUnit.IsBattleEnable == false)
-				{
-					continue;
-				}
-
-				//昇順（小さい値から大きい値へ）
-				for (const ClassSkill& itemSkill : itemUnit.Skill.sort_by([](const auto& item1, const auto& item2) { return  item1.sortKey < item2.sortKey; }))
-				{
-					//ターゲットとなるユニットを抽出し、
-					//スキル射程範囲を確認
-					const auto xA = itemUnit.GetNowPosiCenter();
-
-					for (auto& itemTargetHo : getData().classGameStatus.classBattle.defUnitGroup)
-					{
-						for (auto& itemTarget : itemTargetHo.ListClassUnit)
-						{
-							//スキル発動条件確認
-							if (itemTarget.IsBattleEnable == false)
-							{
-								continue;
-							}
-							if (itemTarget.IsBuilding == true)
-							{
-								continue;
-							}
-
-							//三平方の定理から射程内か確認
-							{
-								const Vec2 xB = itemTarget.GetNowPosiCenter();
-								const double teihen = xA.x - xB.x;
-								const double takasa = xA.y - xB.y;
-								const double syahen = (teihen * teihen) + (takasa * takasa);
-								const double kyori = std::sqrt(syahen);
-
-								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
-								const double xBHankei = itemTarget.yokoUnit / 2.0;
-
-								bool check = true;
-								if (kyori > (xAHankei + xBHankei))
-								{
-									check = false;
-								}
-								// チェック
-								if (!check)
-								{
-									continue;
-								}
-							}
-
-							int32 random = getData().classGameStatus.getBattleIDCount();
-							int singleAttackNumber = random;
-
-							itemUnit.FlagMovingSkill = true;
-
-							//rush数だけ実行する
-							int32 rushBase = 1;
-							if (itemSkill.rush > 1) rushBase = itemSkill.rush;
-
-							ClassExecuteSkills ces;
-							ces.No = getData().classGameStatus.getDeleteCESIDCount();
-							ces.classSkill = itemSkill;
-							ces.classUnit = &itemUnit;
-
-							for (int iii = 0; iii < rushBase; iii++)
-							{
-
-								ClassBullets cbItemUnit;
-								cbItemUnit.No = singleAttackNumber;
-								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
-								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
-								cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
-								cbItemUnit.lifeTime = 0;
-
-								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
-								cbItemUnit.MoveVec = ve.normalized();
-								ces.ArrayClassBullet.push_back(cbItemUnit);
-
-							}
-
-							m_Battle_player_skills.push_back(ces);
-
-							break;
-						}
-
-					}
-				}
-
-			}
-		}
+		SkillProcess(getData().classGameStatus.classBattle.sortieUnitGroup, getData().classGameStatus.classBattle.defUnitGroup, m_Battle_player_skills);
 
 		//skill実行処理
 		Array<ClassExecuteSkills> deleteCES;
@@ -1208,24 +1115,58 @@ public:
 					target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100))),
 												(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100))));
 				}
+
+				//衝突したらunitのHPを減らす
+				Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,30 };
+
+				for (auto& itemTargetHo : getData().classGameStatus.classBattle.defUnitGroup)
+				{
+					for (auto& itemTarget : itemTargetHo.ListClassUnit)
+					{
+
+					}
+				}
 			}
 
 			loop_Battle_player_skills.ArrayClassBullet.remove_if([&](const ClassBullets& cb)
 				{
 					if (arrayNo.includes(cb.No))
 					{
-						Print << U"suc";
+						//Print << U"suc";
 						return true;
 					}
 					else
 					{
-						Print << U"no";
+						//Print << U"no";
 						return false;
 					}
 				});
 			arrayNo.clear();
 		}
 		m_Battle_player_skills.remove_if([&](const ClassExecuteSkills& a) { return a.ArrayClassBullet.size() == 0; });
+
+		//体力が無くなったunit削除処理
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				if (itemUnit.Hp <= 0)
+				{
+
+				}
+			}
+		}
+		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				if (itemUnit.Hp <= 0)
+				{
+
+				}
+			}
+		}
+
 	}
 	// 描画関数（オプション）
 	void draw() const override
@@ -1397,7 +1338,104 @@ private:
 
 		return false;
 	}
+	void SkillProcess(Array<ClassHorizontalUnit> ach, Array<ClassHorizontalUnit> achTarget, Array<ClassExecuteSkills>& aces)
+	{
+		for (auto& item : ach)
+		{
+			for (auto& itemUnit : item.ListClassUnit)
+			{
+				//発動中もしくは死亡ユニットはスキップ
+				if (itemUnit.FlagMovingSkill == true || itemUnit.IsBattleEnable == false)
+				{
+					continue;
+				}
 
+				//昇順（小さい値から大きい値へ）
+				for (const ClassSkill& itemSkill : itemUnit.Skill.sort_by([](const auto& item1, const auto& item2) { return  item1.sortKey < item2.sortKey; }))
+				{
+					//ターゲットとなるユニットを抽出し、
+					//スキル射程範囲を確認
+					const auto xA = itemUnit.GetNowPosiCenter();
+
+					for (auto& itemTargetHo : achTarget)
+					{
+						for (auto& itemTarget : itemTargetHo.ListClassUnit)
+						{
+							//スキル発動条件確認
+							if (itemTarget.IsBattleEnable == false)
+							{
+								continue;
+							}
+							if (itemTarget.IsBuilding == true)
+							{
+								continue;
+							}
+
+							//三平方の定理から射程内か確認
+							{
+								const Vec2 xB = itemTarget.GetNowPosiCenter();
+								const double teihen = xA.x - xB.x;
+								const double takasa = xA.y - xB.y;
+								const double syahen = (teihen * teihen) + (takasa * takasa);
+								const double kyori = std::sqrt(syahen);
+
+								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
+								const double xBHankei = itemTarget.yokoUnit / 2.0;
+
+								bool check = true;
+								if (kyori > (xAHankei + xBHankei))
+								{
+									check = false;
+								}
+								// チェック
+								if (!check)
+								{
+									continue;
+								}
+							}
+
+							int32 random = getData().classGameStatus.getBattleIDCount();
+							int singleAttackNumber = random;
+
+							itemUnit.FlagMovingSkill = true;
+
+							//rush数だけ実行する
+							int32 rushBase = 1;
+							if (itemSkill.rush > 1) rushBase = itemSkill.rush;
+
+							ClassExecuteSkills ces;
+							ces.No = getData().classGameStatus.getDeleteCESIDCount();
+							ces.classSkill = itemSkill;
+							ces.classUnit = &itemUnit;
+
+							for (int iii = 0; iii < rushBase; iii++)
+							{
+
+								ClassBullets cbItemUnit;
+								cbItemUnit.No = singleAttackNumber;
+								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
+								cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+								cbItemUnit.lifeTime = 0;
+
+								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
+								cbItemUnit.MoveVec = ve.normalized();
+								ces.ArrayClassBullet.push_back(cbItemUnit);
+
+							}
+
+							aces.push_back(ces);
+
+							break;
+						}
+
+					}
+				}
+
+			}
+		}
+
+	}
 };
 class Title : public App::Scene
 {
@@ -2620,27 +2658,29 @@ void Main()
 		//manager.get().get()->NovelNumber = U"0";
 		//manager.init(U"Novel");
 
-		manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
-		const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
+		//{
+		//	manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+		//	const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
 
-		if (not tomlInfoProcess) // もし読み込みに失敗したら
-		{
-			throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
-		}
+		//	if (not tomlInfoProcess) // もし読み込みに失敗したら
+		//	{
+		//		throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+		//	}
 
-		for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-			String map = table[U"map"].get<String>();
-			manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
-			for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
-			{
-				String ene = table[map].get<String>();
-				manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
-			}
-		}
-		manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
-		manager.get().get()->NovelPower = U"sc_a_p_b";
-		manager.get().get()->NovelNumber = 0;
-		manager.init(U"Buy");
+		//	for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+		//		String map = table[U"map"].get<String>();
+		//		manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+		//		for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
+		//		{
+		//			String ene = table[map].get<String>();
+		//			manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+		//		}
+		//	}
+		//	manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
+		//	manager.get().get()->NovelPower = U"sc_a_p_b";
+		//	manager.get().get()->NovelNumber = 0;
+		//	manager.init(U"Buy");
+		//}
 
 	}
 
