@@ -36,4 +36,7 @@ public:
 	int32 rush = -1;
 	int32 rushInterval = -1;
 	int32 rushRandomDegree = -1;
+
+	float radian = 0;
+	float degree = 0;
 };

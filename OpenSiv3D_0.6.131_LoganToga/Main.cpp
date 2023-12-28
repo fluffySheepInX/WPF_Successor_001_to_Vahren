@@ -1312,6 +1312,43 @@ public:
 				}
 			}
 
+			//戦闘終了条件を確認
+			int32 countSortieUnitGroup = 0;
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				for (auto& itemListClassUnit : item.ListClassUnit)
+				{
+					if (itemListClassUnit.IsBattleEnable == true)
+					{
+						countSortieUnitGroup++;
+					}
+				}
+			}
+
+			if (countSortieUnitGroup == 0)
+			{
+				changeScene(U"Buy", 0.9s);
+			}
+
+			int32 countDefUnitGroup = 0;
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				for (auto& itemListClassUnit : item.ListClassUnit)
+				{
+					if (itemListClassUnit.IsBattleEnable == true)
+					{
+						countDefUnitGroup++;
+					}
+				}
+			}
+
+			if (countDefUnitGroup == 0)
+			{
+				getData().NovelNumber = getData().NovelNumber + 1;
+				getData().Wave = getData().Wave + 1;
+				changeScene(U"Novel", 0.9s);
+			}
+
 		}
 		break;
 		case BattleStatus::Message:
@@ -1467,7 +1504,22 @@ public:
 		{
 			for (auto& acb : skill.ArrayClassBullet)
 			{
-				Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
+				if (skill.classSkill.image == U"")
+				{
+					Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
+				}
+				else
+				{
+					if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
+					{
+						TextureAsset(skill.classSkill.image + U"N.png").rotated(acb.radian + Math::ToRadians(90)).draw(acb.NowPosition.x, acb.NowPosition.y);
+					}
+					else
+					{
+						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
+						TextureAsset(skill.classSkill.image + U"NW.png").rotated(acb.radian + Math::ToRadians(135)).draw(acb.NowPosition.x - (TextureAsset(skill.classSkill.image + U"NW.png").size().x / 2), acb.NowPosition.y - (TextureAsset(skill.classSkill.image + U"NW.png").size().y / 2));
+					}
+				}
 			}
 		}
 
@@ -1501,7 +1553,7 @@ public:
 private:
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
-	Point cursPos;
+	Point cursPos = Cursor::Pos();
 	MapCreator mapCreator;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
@@ -1561,26 +1613,24 @@ private:
 							}
 
 							//三平方の定理から射程内か確認
+							const Vec2 xB = itemTarget.GetNowPosiCenter();
+							const double teihen = xA.x - xB.x;
+							const double takasa = xA.y - xB.y;
+							const double syahen = (teihen * teihen) + (takasa * takasa);
+							const double kyori = std::sqrt(syahen);
+
+							const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
+							const double xBHankei = itemTarget.yokoUnit / 2.0;
+
+							bool check = true;
+							if (kyori > (xAHankei + xBHankei))
 							{
-								const Vec2 xB = itemTarget.GetNowPosiCenter();
-								const double teihen = xA.x - xB.x;
-								const double takasa = xA.y - xB.y;
-								const double syahen = (teihen * teihen) + (takasa * takasa);
-								const double kyori = std::sqrt(syahen);
-
-								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
-								const double xBHankei = itemTarget.yokoUnit / 2.0;
-
-								bool check = true;
-								if (kyori > (xAHankei + xBHankei))
-								{
-									check = false;
-								}
-								// チェック
-								if (!check)
-								{
-									continue;
-								}
+								check = false;
+							}
+							// チェック
+							if (!check)
+							{
+								continue;
 							}
 
 							int32 random = getData().classGameStatus.getBattleIDCount();
@@ -1599,31 +1649,33 @@ private:
 
 							for (int iii = 0; iii < rushBase; iii++)
 							{
-
 								ClassBullets cbItemUnit;
 								cbItemUnit.No = singleAttackNumber;
 								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+								cbItemUnit.StartPosition = itemUnit.GetNowPosiCenter();
 								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
 								cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
 								cbItemUnit.lifeTime = 0;
 
 								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
 								cbItemUnit.MoveVec = ve.normalized();
-								ces.ArrayClassBullet.push_back(cbItemUnit);
 
+								//二点間の角度を求める
+								cbItemUnit.radian = Math::Atan2((float)(cbItemUnit.OrderPosition.y - cbItemUnit.NowPosition.y),
+													(float)(cbItemUnit.OrderPosition.x - cbItemUnit.NowPosition.x));
+								cbItemUnit.degree = cbItemUnit.radian * (180 / Math::Pi);
+
+								ces.ArrayClassBullet.push_back(cbItemUnit);
 							}
 
 							aces.push_back(ces);
 
-							break;
+							return;
 						}
-
 					}
 				}
-
 			}
 		}
-
 	}
 };
 class Title : public App::Scene
@@ -2119,8 +2171,6 @@ public:
 	{
 		String np = getData().NovelPower;
 		int32 nn = getData().NovelNumber;
-		getData().NovelPower = U"";
-		getData().NovelNumber = 0;
 		String path = U"001_Warehouse/001_DefaultGame/070_Scenario/InfoStory/" + np + U"+" + Format(nn) + U".csv";
 		csv = CSV{ path };
 		if (not csv) // もし読み込みに失敗したら
@@ -2495,17 +2545,17 @@ public:
 			}
 		}
 		//クリック処理
-		for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+		for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
 		{
-			for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+			for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
 			{
 				if (aaa.rectDetailStrategyMenu.leftClicked() == true)
 				{
 					for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
 					{
-						for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+						for (auto& bbb : nowarrayPlayerUnit.ListClassUnit)
 						{
-							aaa.pressedDetailStrategyMenu = false;
+							bbb.pressedDetailStrategyMenu = false;
 						}
 					}
 
@@ -2811,6 +2861,9 @@ void Main()
 			cu.range = Parse<int32>(value[U"range"].get<String>());
 			cu.w = Parse<int32>(value[U"w"].get<String>());
 			cu.speed = Parse<int32>(value[U"speed"].get<String>());
+			cu.image = value[U"image"].get<String>();
+			TextureAsset::Register(cu.image + U"NW.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
+			TextureAsset::Register(cu.image + U"N.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"N.png");
 
 			arrayClassSkill.push_back(std::move(cu));
 		}
