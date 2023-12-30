@@ -315,6 +315,27 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassAStar.h" />
+    <ClInclude Include="ClassBattle.h" />
+    <ClInclude Include="ClassConfigString.h" />
+    <ClInclude Include="ClassExecuteSkills.h" />
+    <ClInclude Include="ClassGameStatus.h" />
+    <ClInclude Include="ClassHorizontalUnit.h" />
+    <ClInclude Include="ClassMap.h" />
+    <ClInclude Include="ClassMapBattle.h" />
+    <ClInclude Include="ClassObjectMapTip.h" />
+    <ClInclude Include="ClassPower.h" />
+    <ClInclude Include="ClassScenario.h" />
+    <ClInclude Include="ClassSkill.h" />
+    <ClInclude Include="ClassStaticCommonMethod.h" />
+    <ClInclude Include="ClassStoryInfo.h" />
+    <ClInclude Include="ClassTestBattle.h" />
+    <ClInclude Include="ClassUnit.h" />
+    <ClInclude Include="DoubleClick.h" />
+    <ClInclude Include="Enum.h" />
+    <ClInclude Include="GameUIToolkit.h" />
+    <ClInclude Include="MapCreator.h" />
+    <ClInclude Include="SasaGUI.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

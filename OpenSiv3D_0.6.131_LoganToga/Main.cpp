@@ -1,4 +1,5 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.9
+# include "ClassAStar.h" 
 # include "ClassConfigString.h" 
 # include "ClassGameStatus.h" 
 # include "ClassMap.h" 
@@ -15,7 +16,10 @@
 # include "ClassPower.h" 
 # include "GameUIToolkit.h" 
 # include <ranges>
-# include "Enum.h" 
+# include "Enum.h"
+#include <future>
+#include <functional> // std::ref を使用
+
 const bool debug = true;
 const String newlineCode = U"\r\n";
 // ウィンドウの幅
@@ -193,6 +197,151 @@ auto randomFade()
 	};
 
 	return Sample(makeFadeFuncs)();
+}
+MapCreator mapCreator;
+Array<Quad> columnQuads;
+Array<Quad> rowQuads;
+Optional<ClassAStar*> SearchMinScore(const Array<ClassAStar*>& ls) {
+	int minScore = std::numeric_limits<int>::max();
+	int minCost = std::numeric_limits<int>::max();
+	Optional<ClassAStar*> targetClassAStar;
+
+	for (const auto& itemClassAStar : ls) {
+		int score = itemClassAStar->GetCost() + itemClassAStar->GetHCost();
+		if (score > minScore) {
+			continue;
+		}
+
+		if (score == minScore && itemClassAStar->GetCost() >= minCost) {
+			continue;
+		}
+
+		minScore = score;
+		minCost = itemClassAStar->GetCost();
+		targetClassAStar = itemClassAStar;
+	}
+
+	return targetClassAStar;
+}
+
+int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, Camera2D camera, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus classGameStatus)
+{
+	const auto t = camera.createTransformer();
+
+	////アスターアルゴリズムで移動経路取得
+	for (auto& aaa : target)
+	{
+		for (auto& bbb : aaa.ListClassUnit)
+		{
+			if (bbb.IsBattleEnable == false)
+			{
+				continue;
+			}
+
+			Array<Point> listRoot;
+
+			//まず現在のマップチップを取得
+			s3d::Optional<Size> nowIndex = mapCreator.ToIndex(bbb.GetNowPosiCenter(), columnQuads, rowQuads);
+			if (nowIndex.has_value() == false)
+			{
+				continue;
+			}
+
+			//最寄りの敵の座標を取得
+			Vec2 xy1 = bbb.GetNowPosiCenter();
+			xy1.x = xy1.x * xy1.x;
+			xy1.y = xy1.y * xy1.y;
+			double disA = xy1.x + xy1.y;
+			HashTable<double, ClassUnit> dicDis;
+			for (auto& ccc : enemy)
+			{
+				for (auto& ddd : ccc.ListClassUnit)
+				{
+					Vec2 xy2 = ddd.GetNowPosiCenter();
+					xy2.x = xy2.x * xy2.x;
+					xy2.y = xy2.y * xy2.y;
+					double disB = xy2.x + xy2.y;
+					dicDis.emplace(disA - disB, ddd);
+				}
+			}
+
+			auto minElement = dicDis.begin();
+			for (auto it = dicDis.begin(); it != dicDis.end(); ++it) {
+				if (it->first < minElement->first) {
+					minElement = it;
+				}
+			}
+
+			//最寄りの敵のマップチップを取得
+			s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(minElement->second.GetNowPosiCenter(), columnQuads, rowQuads);
+			if (nowIndexEnemy.has_value() == false)
+			{
+				continue;
+			}
+
+			Array<Array<ClassAStar>> MapO;
+			for (size_t i = 0; i < mapData.size(); ++i) {
+				MapO.emplace_back(); // 新しい行を追加
+
+				for (size_t j = 0; j < mapData[i].size(); ++j) {
+					MapO.back().emplace_back(i, j); // 新しい ClassAStar を追加
+				}
+			}
+
+			//debugMap.emplace_back();
+			//debugMap.back().emplace_back(nowIndex.value().x, nowIndex.value().y);
+			//debugMap.back().emplace_back(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
+
+			////現在地を開く
+			ClassAStarManager classAStarManager(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
+			Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr);
+			if (startAstar.has_value() == true)
+			{
+				classAStarManager.GetListClassAStar().push_back(startAstar.value());
+			}
+
+			////移動経路取得
+			while (true)
+			{
+				if (startAstar.has_value() == false)
+				{
+					listRoot.clear();
+					break;
+				}
+
+				classAStarManager.RemoveClassAStar(startAstar.value());
+				classAStarManager.OpenAround(startAstar.value(),
+												mapData,
+												target,
+												classGameStatus
+				);
+				if (classAStarManager.GetListClassAStar().size() != 0)
+				{
+					startAstar = SearchMinScore(classAStarManager.GetListClassAStar());
+				}
+
+				if (startAstar.has_value() == false)
+				{
+					continue;
+				}
+
+				if (startAstar.value()->GetRow() == classAStarManager.GetEndX() && startAstar.value()->GetCol() == classAStarManager.GetEndY())
+				{
+					startAstar.value()->GetRoot(listRoot);
+					listRoot.reverse();
+					break;
+				}
+
+				if (listRoot.size() != 0)
+				{
+					classGameStatus.aiRoot.emplace(bbb.ID, listRoot);
+					//debugRoot.push_back(listRoot);
+				}
+			}
+		}
+	}
+
+	return -1;
 }
 
 /// @brief 共有するデータ構造体
@@ -908,6 +1057,7 @@ public:
 				bui.push_back(x);
 			}
 		}
+
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -920,6 +1070,18 @@ public:
 		{
 		case BattleStatus::Battle:
 		{
+			AsyncTask<int32> task;
+			if (SimpleGUI::Button(U"Call", Vec2{ 600, 20 }, unspecified, (not task.isValid())))
+			{
+				task = Async(BattleMoveAStar,
+								std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+								std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+									std::ref(camera),
+										std::ref(mapCreator),
+											std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+												std::ref(getData().classGameStatus));
+			}
+
 			//カメラ移動
 			if (MouseL.pressed() == true)
 			{
@@ -1194,24 +1356,7 @@ public:
 						continue;
 					}
 
-					itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + itemUnit.vecMove;
-					if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
-						&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
-					{
-						itemUnit.FlagMoving = false;
-					}
-				}
-			}
-			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
-			{
-				for (auto& itemUnit : item.ListClassUnit)
-				{
-					if (itemUnit.FlagMoving == false)
-					{
-						continue;
-					}
-
-					itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + itemUnit.vecMove;
+					itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
 					if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
 						&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
 					{
@@ -1346,6 +1491,7 @@ public:
 			{
 				getData().NovelNumber = getData().NovelNumber + 1;
 				getData().Wave = getData().Wave + 1;
+
 				changeScene(U"Novel", 0.9s);
 			}
 
@@ -1430,6 +1576,44 @@ public:
 				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
 				TextureAsset(aaa.Image + U".png").draw(Arg::bottomCenter = pos);
+			}
+		}
+
+		if (debugMap.size() != 0)
+		{
+			// タイルのインデックス
+			const Point index{ (debugMap.back().begin()->GetRow()),(debugMap.back().begin()->GetCol()) };
+
+			// そのタイルの底辺中央の座標
+			const int32 i = index.manhattanLength();
+			const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+			const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+			const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+			const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+			const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+			const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+			Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+			ccccc.draw();
+		}
+		if (debugRoot.size() != 0)
+		{
+			for (auto abcd : debugRoot.back())
+			{
+				// タイルのインデックス
+				const Point index{ abcd.x,abcd.y };
+
+				// そのタイルの底辺中央の座標
+				const int32 i = index.manhattanLength();
+				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+				ccccc.draw(Palette::Green);
 			}
 		}
 
@@ -1554,18 +1738,17 @@ private:
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
 	Point cursPos = Cursor::Pos();
-	MapCreator mapCreator;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 	Camera2D camera;
-	Array<Quad> columnQuads;
-	Array<Quad> rowQuads;
 	bool BattleMessage001 = true;
 	BattleStatus battleStatus = BattleStatus::Message;
 	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;
 	Array<ClassExecuteSkills> m_Battle_player_skills;
 	Array<ClassExecuteSkills> m_Battle_enemy_skills;
 	Array<ClassExecuteSkills> m_Battle_neutral_skills;
+	Array<Array<ClassAStar>> debugMap;
+	Array<Array<Point>> debugRoot;
 
 	bool Hit(Vec2 current, Vec2 target, Vec2 vec, double speed)
 	{
@@ -2053,6 +2236,7 @@ public:
 				cp.Image = value[U"Image"].getString();
 				cp.Text = value[U"Text"].getString();
 				cp.Diff = value[U"Diff"].getString();
+				cp.Wave = Parse<int32>(value[U"Wave"].getString());
 				getData().classGameStatus.arrayClassPower.push_back(std::move(cp));
 			}
 		}
@@ -2122,6 +2306,15 @@ public:
 				getData().classGameStatus.nowPowerTag = ttt.PowerTag;
 				getData().NovelPower = ttt.PowerTag;
 				getData().NovelNumber = 0;
+
+				for (auto& aaa : getData().classGameStatus.arrayClassPower)
+				{
+					if (aaa.PowerTag == ttt.PowerTag)
+					{
+						getData().selectClassPower = aaa;
+					}
+				}
+
 				changeScene(U"Novel", 0.9s);
 			}
 		}
@@ -2195,7 +2388,14 @@ public:
 		length = stopwatch.sF() / 0.05;
 		if (csv[nowRow][0].substr(0, 3) == U"end")
 		{
-			changeScene(U"Buy", 0.9s);
+			if (getData().Wave >= getData().selectClassPower.Wave)
+			{
+				changeScene(U"Title", 0.9s);
+			}
+			else
+			{
+				changeScene(U"Buy", 0.9s);
+			}
 		}
 
 		if (csv[nowRow][0].c_str()[0] == '#')
@@ -2793,6 +2993,29 @@ void Main()
 		String filename = FileSystem::FileName(filePath);
 		TextureAsset::Register(filename, filePath);
 	}
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/070_Scenario/Info_Power/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		const JSON jsonPower = JSON::Load(filePath);
+		if (not jsonPower) // もし読み込みに失敗したら
+		{
+			continue;
+		}
+
+		for (const auto& [key, value] : jsonPower[U"Power"])
+		{
+			ClassPower cp;
+			cp.PowerTag = value[U"PowerTag"].getString();
+			cp.PowerName = value[U"PowerName"].getString();
+			cp.HelpString = value[U"Help"].getString();
+			cp.SortKey = Parse<int32>(value[U"SortKey"].getString());
+			cp.Image = value[U"Image"].getString();
+			cp.Text = value[U"Text"].getString();
+			cp.Diff = value[U"Diff"].getString();
+			cp.Wave = Parse<int32>(value[U"Wave"].getString());
+			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
+		}
+	}
 
 	// config.tomlからデータを読み込む
 	{
@@ -2833,6 +3056,7 @@ void Main()
 			cu.Hp = Parse<int32>(value[U"hp"].getString());
 			cu.Attack = Parse<int32>(value[U"attack"].getString());
 			cu.Speed = Parse<double>(value[U"speed"].getString());
+			cu.Move = Parse<int32>(value[U"move"].getString());
 			String sNa = value[U"skill"].getString();
 			if (sNa.contains(',') == true)
 			{
@@ -2924,6 +3148,15 @@ void Main()
 			manager.get().get()->NovelPower = U"sc_a_p_b";
 			manager.get().get()->NovelNumber = 0;
 			manager.init(U"Buy");
+
+			for (auto& aaa : manager.get().get()->classGameStatus.arrayClassPower)
+			{
+				if (aaa.PowerTag == manager.get().get()->NovelPower)
+				{
+					manager.get().get()->selectClassPower = aaa;
+				}
+			}
+
 		}
 
 	}

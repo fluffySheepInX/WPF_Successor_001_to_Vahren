@@ -10,4 +10,5 @@ public:
 	String Text;
 	String Diff;
 	RectF RectF;
+	int32 Wave;
 };

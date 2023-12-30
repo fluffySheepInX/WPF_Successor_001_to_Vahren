@@ -88,6 +88,10 @@ public:
 
 	// IsLeader
 	bool IsBuilding = false;
+	bool isValidBuilding() const {
+		return IsBuilding;
+	}
+	bool IsBuildingEnable = false;
 	int32 rowBuilding = 0;
 	int32 colBuilding = 0;
 	MapTipObjectType mapTipObjectType = MapTipObjectType::None;

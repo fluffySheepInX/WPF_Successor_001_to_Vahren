@@ -25,6 +25,7 @@ public:
 		return re;
 	}
 
+	HashTable<int64, Array<Point>> aiRoot;
 	Array<ClassPower> arrayClassPower;
 	String nowPowerTag;
 	Array<ClassMap> arrayClassMap;
