@@ -224,9 +224,9 @@ Optional<ClassAStar*> SearchMinScore(const Array<ClassAStar*>& ls) {
 	return targetClassAStar;
 }
 
-int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, Camera2D camera, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus classGameStatus)
+int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus& classGameStatus, Array<Array<Point>>& debugRoot)
 {
-	const auto t = camera.createTransformer();
+	//const auto t = camera.createTransformer();
 
 	////アスターアルゴリズムで移動経路取得
 	for (auto& aaa : target)
@@ -331,12 +331,12 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalU
 					listRoot.reverse();
 					break;
 				}
+			}
 
-				if (listRoot.size() != 0)
-				{
-					classGameStatus.aiRoot.emplace(bbb.ID, listRoot);
-					//debugRoot.push_back(listRoot);
-				}
+			if (listRoot.size() != 0)
+			{
+				classGameStatus.aiRoot[bbb.ID] = listRoot;
+				debugRoot.push_back(listRoot);
 			}
 		}
 	}
@@ -1070,16 +1070,16 @@ public:
 		{
 		case BattleStatus::Battle:
 		{
-			AsyncTask<int32> task;
+			Print << getData().classGameStatus.aiRoot;
 			if (SimpleGUI::Button(U"Call", Vec2{ 600, 20 }, unspecified, (not task.isValid())))
 			{
 				task = Async(BattleMoveAStar,
 								std::ref(getData().classGameStatus.classBattle.defUnitGroup),
 								std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-									std::ref(camera),
 										std::ref(mapCreator),
 											std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-												std::ref(getData().classGameStatus));
+												std::ref(getData().classGameStatus),
+					std::ref(debugRoot));
 			}
 
 			//カメラ移動
@@ -1347,6 +1347,50 @@ public:
 			}
 
 			//移動処理
+
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					if (itemUnit.IsBattleEnable == false)
+					{
+						continue;
+					}
+					if (itemUnit.FlagMoving == true)
+					{
+						continue;
+					}
+					//auto rootPo = getData().classGameStatus.aiRoot;
+					//for (auto [key, value] : rootPo)
+					//{
+					//	Print << key << U": " << value;
+					//}
+					if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
+					{
+						continue;
+					}
+					auto iufbri = getData().classGameStatus.aiRoot[itemUnit.ID].begin();
+					// タイルのインデックス
+					const Point index{ (iufbri->x),(iufbri->y) };
+					Print << index;
+					Print << getData().classGameStatus.aiRoot[itemUnit.ID];
+
+					// そのタイルの底辺中央の座標
+					const int32 i = index.manhattanLength();
+					const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+					const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+					const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+					const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+					itemUnit.orderPosiLeft = pos;
+					Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
+					itemUnit.vecMove = hhh.normalized();
+					itemUnit.FlagMoving = true;
+				}
+			}
+
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
 				for (auto& itemUnit : item.ListClassUnit)
@@ -1361,6 +1405,25 @@ public:
 						&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
 					{
 						itemUnit.FlagMoving = false;
+					}
+				}
+			}
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					if (itemUnit.FlagMoving == false)
+					{
+						continue;
+					}
+
+					itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
+
+					if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + mapCreator.TileOffset.x && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - mapCreator.TileOffset.x
+						&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + mapCreator.TileOffset.y && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - mapCreator.TileOffset.y)
+					{
+						itemUnit.FlagMoving = false;
+						getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
 					}
 				}
 			}
@@ -1494,7 +1557,6 @@ public:
 
 				changeScene(U"Novel", 0.9s);
 			}
-
 		}
 		break;
 		case BattleStatus::Message:
@@ -1519,6 +1581,13 @@ public:
 			break;
 		default:
 			break;
+		}
+
+		// 非同期タスクが完了したら
+		if (task.isReady())
+		{
+			// 結果を取得する
+			Print << task.get();
 		}
 	}
 	// 描画関数（オプション）
@@ -1613,7 +1682,7 @@ public:
 				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
 				Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
-				ccccc.draw(Palette::Green);
+				ccccc.draw(Palette::Red);
 			}
 		}
 
@@ -1735,6 +1804,7 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	AsyncTask<int32> task;
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
 	Point cursPos = Cursor::Pos();
@@ -2656,6 +2726,7 @@ public:
 							}
 							for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
 							{
+								it->ID = getData().classGameStatus.getIDCount();
 								chu.ListClassUnit.push_back(*it);
 							}
 							cb.defUnitGroup.push_back(chu);
@@ -2698,6 +2769,7 @@ public:
 						{
 							check = false;
 							ClassUnit cu = nowHtRectPlusUnit;
+							cu.ID = getData().classGameStatus.getIDCount();
 							cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
 							getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
 							break;
@@ -2713,6 +2785,7 @@ public:
 				{
 					ClassHorizontalUnit chu;
 					ClassUnit cu = nowHtRectPlusUnit;
+					cu.ID = getData().classGameStatus.getIDCount();
 					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
 					chu.ListClassUnit.push_back(cu);
 					getData().classGameStatus.arrayPlayerUnit.push_back(chu);
