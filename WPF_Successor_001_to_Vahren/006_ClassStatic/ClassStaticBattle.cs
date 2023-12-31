@@ -956,7 +956,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                         if (classAStarManager.ListClassAStar != null)
                                         {
                                             startAstar = SearchMinScore(classAStarManager.ListClassAStar);
-                                            #region 開封範囲を見たい時用に
+                                            //#region 開封範囲を見たい時用に
                                             //if (startAstar != null)
                                             //{
                                             //    Application.Current.Dispatcher.Invoke((Action)(() =>
@@ -976,7 +976,7 @@ namespace WPF_Successor_001_to_Vahren._006_ClassStatic
                                             //        re1.Children.Add(canvas);
                                             //    }));
                                             //}
-                                            #endregion
+                                            //#endregion
                                         }
 
                                         if (startAstar == null)

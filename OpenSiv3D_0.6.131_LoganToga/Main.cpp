@@ -207,27 +207,26 @@ Optional<ClassAStar*> SearchMinScore(const Array<ClassAStar*>& ls) {
 	Optional<ClassAStar*> targetClassAStar;
 
 	for (const auto& itemClassAStar : ls) {
+		if (itemClassAStar->GetAStarStatus() != AStarStatus::Open)
+		{
+			continue;
+		}
 		int score = itemClassAStar->GetCost() + itemClassAStar->GetHCost();
-		if (score > minScore) {
-			continue;
-		}
 
-		if (score == minScore && itemClassAStar->GetCost() >= minCost) {
-			continue;
+		if (score < minScore || (score == minScore && itemClassAStar->GetCost() < minCost)) {
+			minScore = score;
+			minCost = itemClassAStar->GetCost();
+			targetClassAStar = itemClassAStar;
 		}
-
-		minScore = score;
-		minCost = itemClassAStar->GetCost();
-		targetClassAStar = itemClassAStar;
 	}
 
 	return targetClassAStar;
 }
 
-int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus& classGameStatus, Array<Array<Point>>& debugRoot)
+int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus& classGameStatus, Array<Array<Point>>& debugRoot, Array<ClassAStar*>& list)
 {
-	//const auto t = camera.createTransformer();
-
+	Array<ClassObjectMapTip> arrayClassObjectMapTip = classGameStatus.arrayClassObjectMapTip;
+	Array<ClassObjectMapTip> arrayClassObjectMapTip2;
 	////アスターアルゴリズムで移動経路取得
 	for (auto& aaa : target)
 	{
@@ -279,14 +278,14 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalU
 				continue;
 			}
 
-			Array<Array<ClassAStar>> MapO;
-			for (size_t i = 0; i < mapData.size(); ++i) {
-				MapO.emplace_back(); // 新しい行を追加
+			//Array<Array<ClassAStar>> MapO;
+			//for (size_t i = 0; i < mapData.size(); ++i) {
+			//	MapO.emplace_back(); // 新しい行を追加
 
-				for (size_t j = 0; j < mapData[i].size(); ++j) {
-					MapO.back().emplace_back(i, j); // 新しい ClassAStar を追加
-				}
-			}
+			//	for (size_t j = 0; j < mapData[i].size(); ++j) {
+			//		MapO.back().emplace_back(i, j); // 新しい ClassAStar を追加
+			//	}
+			//}
 
 			//debugMap.emplace_back();
 			//debugMap.back().emplace_back(nowIndex.value().x, nowIndex.value().y);
@@ -294,12 +293,8 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalU
 
 			////現在地を開く
 			ClassAStarManager classAStarManager(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
-			Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr);
-			if (startAstar.has_value() == true)
-			{
-				classAStarManager.GetListClassAStar().push_back(startAstar.value());
-			}
-
+			Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr, mapCreator.N);
+			MicrosecClock mc;
 			////移動経路取得
 			while (true)
 			{
@@ -309,12 +304,19 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalU
 					break;
 				}
 
-				classAStarManager.RemoveClassAStar(startAstar.value());
+				Print << U"AAAAAAAAAAAAAAAAA:" + Format(mc.us());
 				classAStarManager.OpenAround(startAstar.value(),
 												mapData,
 												target,
-												classGameStatus
+												arrayClassObjectMapTip2,
+												mapCreator.N
 				);
+				Print << U"BBBBBBBBBBBBBBBB:" + Format(mc.us());
+				list = classAStarManager.GetListClassAStar();
+				startAstar.value()->SetAStarStatus(AStarStatus::Closed);
+
+				classAStarManager.RemoveClassAStar(startAstar.value());
+
 				if (classAStarManager.GetListClassAStar().size() != 0)
 				{
 					startAstar = SearchMinScore(classAStarManager.GetListClassAStar());
@@ -1058,6 +1060,14 @@ public:
 			}
 		}
 
+		task = Async(BattleMoveAStar,
+std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+std::ref(mapCreator),
+std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+std::ref(getData().classGameStatus),
+std::ref(debugRoot), std::ref(debugAstar));
+
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -1070,16 +1080,8 @@ public:
 		{
 		case BattleStatus::Battle:
 		{
-			Print << getData().classGameStatus.aiRoot;
 			if (SimpleGUI::Button(U"Call", Vec2{ 600, 20 }, unspecified, (not task.isValid())))
 			{
-				task = Async(BattleMoveAStar,
-								std::ref(getData().classGameStatus.classBattle.defUnitGroup),
-								std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-										std::ref(mapCreator),
-											std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-												std::ref(getData().classGameStatus),
-					std::ref(debugRoot));
 			}
 
 			//カメラ移動
@@ -1347,7 +1349,6 @@ public:
 			}
 
 			//移動処理
-
 			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 			{
 				for (auto& itemUnit : item.ListClassUnit)
@@ -1372,8 +1373,8 @@ public:
 					auto iufbri = getData().classGameStatus.aiRoot[itemUnit.ID].begin();
 					// タイルのインデックス
 					const Point index{ (iufbri->x),(iufbri->y) };
-					Print << index;
-					Print << getData().classGameStatus.aiRoot[itemUnit.ID];
+					//Print << index;
+					//Print << getData().classGameStatus.aiRoot[itemUnit.ID];
 
 					// そのタイルの底辺中央の座標
 					const int32 i = index.manhattanLength();
@@ -1572,6 +1573,9 @@ public:
 					{
 						BattleMessage001 = false;
 						battleStatus = BattleStatus::Battle;
+
+
+
 					}
 				}
 			}
@@ -1586,8 +1590,8 @@ public:
 		// 非同期タスクが完了したら
 		if (task.isReady())
 		{
-			// 結果を取得する
-			Print << task.get();
+			//// 結果を取得する
+			//Print << task.get();
 		}
 	}
 	// 描画関数（オプション）
@@ -1650,40 +1654,60 @@ public:
 
 		if (debugMap.size() != 0)
 		{
-			// タイルのインデックス
-			const Point index{ (debugMap.back().begin()->GetRow()),(debugMap.back().begin()->GetCol()) };
+			//// タイルのインデックス
+			//const Point index{ (debugMap.back().begin()->GetRow()),(debugMap.back().begin()->GetCol()) };
 
-			// そのタイルの底辺中央の座標
-			const int32 i = index.manhattanLength();
-			const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-			const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-			const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-			const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-			const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-			const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+			//// そのタイルの底辺中央の座標
+			//const int32 i = index.manhattanLength();
+			//const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+			//const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+			//const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+			//const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+			//const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+			//const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
-			Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
-			ccccc.draw();
+			//Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+			//ccccc.draw();
 		}
 		if (debugRoot.size() != 0)
 		{
-			for (auto abcd : debugRoot.back())
-			{
-				// タイルのインデックス
-				const Point index{ abcd.x,abcd.y };
+			//for (auto abcd : debugRoot.back())
+			//{
+			//	// タイルのインデックス
+			//	const Point index{ abcd.x,abcd.y };
 
-				// そのタイルの底辺中央の座標
-				const int32 i = index.manhattanLength();
-				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+			//	// そのタイルの底辺中央の座標
+			//	const int32 i = index.manhattanLength();
+			//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+			//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+			//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+			//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+			//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+			//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
-				Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
-				ccccc.draw(Palette::Red);
-			}
+			//	Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+			//	ccccc.draw(Palette::Red);
+			//}
+		}
+		if (debugAstar.size() != 0)
+		{
+			//for (auto hfdfsjf : debugAstar)
+			//{
+			//	// タイルのインデックス
+			//	const Point index{ hfdfsjf->GetRow(),hfdfsjf->GetCol()};
+
+			//	// そのタイルの底辺中央の座標
+			//	const int32 i = index.manhattanLength();
+			//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+			//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+			//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+			//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+			//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+			//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+			//	Circle ccccc = Circle{ Arg::bottomCenter = pos,15 };
+			//	ccccc.draw(Palette::Yellow);
+			//}
 		}
 
 		//unit
@@ -1804,6 +1828,7 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	Array<ClassAStar*> debugAstar;
 	AsyncTask<int32> task;
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;

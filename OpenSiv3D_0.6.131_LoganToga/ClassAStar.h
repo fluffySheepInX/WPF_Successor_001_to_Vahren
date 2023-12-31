@@ -99,11 +99,11 @@ public:
 		: endX(x), endY(y), listClassAStar(Array<ClassAStar*>()) {}
 
 	// Pool のゲッターとセッター
-	const HashTable<String, ClassAStar>& GetPool() const {
+	const HashTable<Point, ClassAStar*>& GetPool() const {
 		return pool;
 	}
 
-	void SetPool(const HashTable<String, ClassAStar>& value) {
+	void SetPool(const HashTable<Point, ClassAStar*>& value) {
 		pool = value;
 	}
 
@@ -133,9 +133,15 @@ public:
 		endY = value;
 	}
 
-	ClassAStar CreateClassAStar(int x, int y) {
-		ClassAStar re(x, y);
-		re.SetHCost(HeuristicMethod(x, y, GetEndX(), GetEndY()));
+	ClassAStar* CreateClassAStar(int x, int y) {
+		Point abc = Point(x, y);
+		if (pool.contains(abc)) {
+			// 既に存在しているのでプーリングから取得.
+			return pool[abc];
+		}
+		ClassAStar* re = new ClassAStar(x, y);
+		re->SetHCost(HeuristicMethod(x, y, GetEndX(), GetEndY()));
+		pool[abc] = re;
 		return re;
 	}
 
@@ -146,31 +152,39 @@ public:
 		});
 	}
 
-	Optional<ClassAStar*> OpenOne(int x, int y, int cost, ClassAStar* parent) {
-		if (x < 0 || y < 0) {
+	Optional<ClassAStar*> OpenOne(int x, int y, int cost, ClassAStar* parent, int32 maxN) {
+		if (x < 0 || y < 0)
+		{
+			return none;
+		}
+		if (x > maxN || y > maxN)
+		{
 			return none;
 		}
 
-		String key = Format(x, U"/", y);
-		if (auto it = pool.find(key); it != pool.end()) {
-			return &(it->second);
+		Point key(x, y);
+
+		ClassAStar* getClassAStar = CreateClassAStar(x, y);
+		if (getClassAStar->GetAStarStatus() != AStarStatus::None)
+		{
+			return none;
 		}
 
-		ClassAStar* getClassAStar = new ClassAStar(CreateClassAStar(x, y));
 		getClassAStar->SetAStarStatus(AStarStatus::Open);
 		getClassAStar->SetCost(cost);
-		getClassAStar->SetRefClassAStar(parent);
 
-		if (parent != nullptr)
-		{
-			listClassAStar.push_back(getClassAStar);
+		if (parent == nullptr) {
 		}
-		pool.emplace(key, *getClassAStar);
+		else
+		{
+			getClassAStar->SetRefClassAStar(parent);
+		}
+		listClassAStar.push_back(getClassAStar);
 
 		return getClassAStar;
 	}
 
-	void OpenAround(ClassAStar* parent,Array<Array<MapDetail>> mapData, Array<ClassHorizontalUnit> listClassHorizontalUnits, ClassGameStatus classGameStatus)
+	void OpenAround(ClassAStar* parent, Array<Array<MapDetail>>& mapData, Array<ClassHorizontalUnit>& listClassHorizontalUnits, Array<ClassObjectMapTip>& arrayClassObjectMapTip, int32 maxN)
 	{
 		int32 x = parent->GetRow();
 		int32 y = parent->GetCol();
@@ -186,78 +200,85 @@ public:
 				}
 
 				// GATE系の壊せるオブジェクトが存在するかチェック
-				ClassUnit classUnitBuilding;
-				classUnitBuilding.IsBuilding = false;
-				for (auto bbb: listClassHorizontalUnits)
+				bool con = false;
+				if (listClassHorizontalUnits.begin()->FlagBuilding == true)
 				{
-					if (bbb.FlagBuilding == false)
+					for (auto aaa : listClassHorizontalUnits.begin()->ListClassUnit)
 					{
-						continue;
-					}
-					for (auto aaa: bbb.ListClassUnit)
-					{
-
 						if (aaa.rowBuilding == x + i && aaa.colBuilding == y + j)
 						{
+							ClassUnit classUnitBuilding;
 							classUnitBuilding = aaa;
 							classUnitBuilding.IsBuilding = true;
 							classUnitBuilding.IsBuildingEnable = true;
+
+							//オブジェクトがあったらコンティニュー
+							switch (classUnitBuilding.mapTipObjectType)
+							{
+							case MapTipObjectType::WALL2:
+								//ここに来ることは無い
+								break;
+							case MapTipObjectType::GATE:
+								if (classUnitBuilding.IsBuildingEnable == false)
+								{
+									OpenOne(x + i, y + j, cost, parent, maxN);
+								}
+								break;
+							default:
+								break;
+							}
+							con = true;
+
+							break;
+						}
+
+						if (con)
+						{
 							break;
 						}
 					}
-				}
-
-				//オブジェクトがあったらコンティニュー
-				if (classUnitBuilding.IsBuilding == true)
-				{
-					switch (classUnitBuilding.mapTipObjectType)
+					if (con)
 					{
-					case MapTipObjectType::WALL2:
-						//ここに来ることは無い
-						continue;
-					case MapTipObjectType::GATE:
-						if (classUnitBuilding.IsBuildingEnable == false)
-						{
-							OpenOne(x + i, y + j, cost, parent);
-						}
-						break;
-					default:
 						break;
 					}
+				}
+
+				if (con)
+				{
 					continue;
 				}
 
 				if (mapData[x + i][y + j].building.size() <= 0)
 				{
-					OpenOne(x + i, y + j, cost, parent);
+					OpenOne(x + i, y + j, cost, parent, maxN);
 					continue;
 				}
 
 				// WALL2系の壊せないオブジェクトが存在するかチェック
-				auto ob = std::find_if(classGameStatus.arrayClassObjectMapTip.begin(), classGameStatus.arrayClassObjectMapTip.end(),
+				auto ob = std::find_if(arrayClassObjectMapTip.begin(), arrayClassObjectMapTip.end(),
 									   [&](const auto& obj) {
-											   return obj.nameTag == mapData[x + i][y + j].building[0].begin()->first;
+										   return obj.nameTag == mapData[x + i][y + j].building[0].begin()->first;
 									   });
-				if (ob != classGameStatus.arrayClassObjectMapTip.end()) {
+				if (ob != arrayClassObjectMapTip.end()) {
 					switch (ob->type) {
 					case MapTipObjectType::WALL2:
 						break;
 					case MapTipObjectType::GATE:
-						OpenOne(x + i, y + j, cost, parent);
+						OpenOne(x + i, y + j, cost, parent, maxN);
 						break;
 					default:
 						break;
 					}
 				}
 				else {
-					OpenOne(x + i, y + j, cost, parent);
+					OpenOne(x + i, y + j, cost, parent, maxN);
 				}
 			}
 		}
 	}
 
 private:
-	HashTable<String, ClassAStar> pool;
+	HashTable<Point, ClassAStar*> pool;
 	Array<ClassAStar*> listClassAStar;
 	int endX;
 	int endY;
