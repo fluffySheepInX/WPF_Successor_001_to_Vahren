@@ -5,7 +5,8 @@ class MapDetail
 {
 public:
 	String tip;
-	Array<HashTable<String, long>> building;
+	/// @brief 種別、ClassUnitID、陣営
+	Array<HashTable<String, std::pair<long, BattleWhichIsThePlayer>>> building;
 	FlagBattleMapUnit flagBattleMapUnit;
 	String unit;
 	String houkou;

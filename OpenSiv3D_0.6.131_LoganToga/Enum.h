@@ -79,3 +79,11 @@ enum class BattleStatus
 	,
 	Event
 };
+enum class FormBuyDisplayStatus
+{
+	Normal
+	,
+	Message
+	,
+	Event
+};

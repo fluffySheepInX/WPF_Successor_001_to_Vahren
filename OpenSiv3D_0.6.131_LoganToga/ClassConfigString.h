@@ -19,5 +19,6 @@ public:
 	String strategyMenu007;
 	String strategyMenu008;
 	String strategyMenu009;
-	String BattleMessage001;;
+	String BattleMessage001;
+	String BuyMessage001;
 };

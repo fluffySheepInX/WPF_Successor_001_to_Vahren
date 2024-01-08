@@ -106,6 +106,15 @@ namespace s3dx
 			m_buttonR = RectF{ Arg::bottomCenter(m_messageBoxRect.bottomCenter().movedBy(80, -20)), MessageBoxButtonSize };
 			m_display = true;
 		}
+		void set()
+		{
+			m_pos = ((Scene::Center() - (MessageBoxSize * 0.5)));
+			m_messageBoxRect = { m_pos, MessageBoxSize };
+			m_buttonC = RectF{ Arg::bottomCenter(m_messageBoxRect.bottomCenter().movedBy(0, -20)), MessageBoxButtonSize };
+			m_buttonL = RectF{ Arg::bottomCenter(m_messageBoxRect.bottomCenter().movedBy(-80, -20)), MessageBoxButtonSize };
+			m_buttonR = RectF{ Arg::bottomCenter(m_messageBoxRect.bottomCenter().movedBy(80, -20)), MessageBoxButtonSize };
+			m_display = true;
+		}
 
 		void show(StringView text) const
 		{
@@ -374,6 +383,7 @@ struct GameData
 	ClassPower selectClassPower;
 	String NovelPower = U"";
 	int32 NovelNumber = 0;
+	int32 Money = 0;
 	int32 Wave = 0;
 };
 
@@ -1051,22 +1061,14 @@ public:
 				}
 			}
 		}
-		//建築物
-		for (const auto& x : getData().classGameStatus.classBattle.defUnitGroup)
-		{
-			if (x.FlagBuilding == true)
-			{
-				bui.push_back(x);
-			}
-		}
 
 		task = Async(BattleMoveAStar,
-std::ref(getData().classGameStatus.classBattle.defUnitGroup),
-std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-std::ref(mapCreator),
-std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-std::ref(getData().classGameStatus),
-std::ref(debugRoot), std::ref(debugAstar));
+						std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+						std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+						std::ref(mapCreator),
+						std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+						std::ref(getData().classGameStatus),
+						std::ref(debugRoot), std::ref(debugAstar));
 
 	}
 	// 更新関数（オプション）
@@ -1504,9 +1506,19 @@ std::ref(debugRoot), std::ref(debugAstar));
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					if (itemUnit.Hp <= 0)
+					if (itemUnit.isValidBuilding() == true)
 					{
-						itemUnit.IsBattleEnable = false;
+						if (itemUnit.HPCastle <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
+					}
+					else
+					{
+						if (itemUnit.Hp <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
 					}
 				}
 			}
@@ -1514,9 +1526,39 @@ std::ref(debugRoot), std::ref(debugAstar));
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
-					if (itemUnit.Hp <= 0)
+					if (itemUnit.isValidBuilding() == true)
 					{
-						itemUnit.IsBattleEnable = false;
+						if (itemUnit.HPCastle <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
+					}
+					else
+					{
+						if (itemUnit.Hp <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
+					}
+				}
+			}
+			for (auto& item : getData().classGameStatus.classBattle.neutralUnitGroup)
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					if (itemUnit.isValidBuilding() == true)
+					{
+						if (itemUnit.HPCastle <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
+					}
+					else
+					{
+						if (itemUnit.Hp <= 0)
+						{
+							itemUnit.IsBattleEnable = false;
+						}
 					}
 				}
 			}
@@ -1631,12 +1673,15 @@ std::ref(debugRoot), std::ref(debugAstar));
 		}
 
 		// 底辺中央を基準にタイルを描く
-		for (auto ttt : bui)
 		{
-			for (auto aaa : ttt.ListClassUnit)
+			for (auto& abc : getData().classGameStatus.classBattle.sortieUnitGroup[0].ListClassUnit)
 			{
+				if (abc.IsBattleEnable == false)
+				{
+					continue;
+				}
 				// タイルのインデックス
-				const Point index{ aaa.rowBuilding, aaa.colBuilding };
+				const Point index{ abc.rowBuilding, abc.colBuilding };
 
 				// そのタイルの底辺中央の座標
 				const int32 i = index.manhattanLength();
@@ -1648,7 +1693,49 @@ std::ref(debugRoot), std::ref(debugAstar));
 				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
 				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
-				TextureAsset(aaa.Image + U".png").draw(Arg::bottomCenter = pos);
+				TextureAsset(abc.Image + U".png").draw(Arg::bottomCenter = pos);
+			}
+			for (auto& abc : getData().classGameStatus.classBattle.defUnitGroup[0].ListClassUnit)
+			{
+				if (abc.IsBattleEnable == false)
+				{
+					continue;
+				}
+				// タイルのインデックス
+				const Point index{ abc.rowBuilding, abc.colBuilding };
+
+				// そのタイルの底辺中央の座標
+				const int32 i = index.manhattanLength();
+				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				//const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
+				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				TextureAsset(abc.Image + U".png").draw(Arg::bottomCenter = pos);
+			}
+			for (auto& abc : getData().classGameStatus.classBattle.neutralUnitGroup[0].ListClassUnit)
+			{
+				if (abc.IsBattleEnable == false)
+				{
+					continue;
+				}
+				// タイルのインデックス
+				const Point index{ abc.rowBuilding, abc.colBuilding };
+
+				// そのタイルの底辺中央の座標
+				const int32 i = index.manhattanLength();
+				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				//const double yyy = (TextureAsset(aaa.Image + U".png").height()) - ((mapCreator.TileOffset.y * 2) - (mapCreator.TileThickness));
+				const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				TextureAsset(abc.Image + U".png").draw(Arg::bottomCenter = pos);
 			}
 		}
 
@@ -2668,210 +2755,322 @@ public:
 	// 更新関数（オプション）
 	void update() override
 	{
-		for (auto& ttt : htMenuBtn)
+		Cursor::RequestStyle(U"MyCursor");
+
+		switch (formBuyDisplayStatus)
 		{
-			if (ttt.second.mouseOver())
+		case FormBuyDisplayStatus::Normal:
+		{
+			for (auto& ttt : htMenuBtn)
 			{
-				htMenuBtnDisplay[0] = false;
-				htMenuBtnDisplay[1] = false;
-				htMenuBtnDisplay[2] = false;
-				htMenuBtnDisplay[3] = false;
-				htMenuBtnDisplay[4] = false;
-				htMenuBtnDisplay[5] = false;
-				htMenuBtnDisplay[6] = false;
-				htMenuBtnDisplay[7] = false;
-				htMenuBtnDisplay[8] = false;
-				htMenuBtnDisplay[9] = false;
-				htMenuBtnDisplay[ttt.first] = true;
-			}
-			switch (ttt.first)
-			{
-			case 9:
-			{
-				if (ttt.second.leftClicked() == true)
+				if (ttt.second.mouseOver())
 				{
-					String targetMap = getData().classGameStatus.arrayInfoProcessSelectCharaMap[getData().Wave];
-
-					const TOMLReader tomlMap{ U"001_Warehouse/001_DefaultGame/016_BattleMap/" + targetMap };
-					if (not tomlMap) // もし読み込みに失敗したら
+					htMenuBtnDisplay[0] = false;
+					htMenuBtnDisplay[1] = false;
+					htMenuBtnDisplay[2] = false;
+					htMenuBtnDisplay[3] = false;
+					htMenuBtnDisplay[4] = false;
+					htMenuBtnDisplay[5] = false;
+					htMenuBtnDisplay[6] = false;
+					htMenuBtnDisplay[7] = false;
+					htMenuBtnDisplay[8] = false;
+					htMenuBtnDisplay[9] = false;
+					htMenuBtnDisplay[ttt.first] = true;
+				}
+				switch (ttt.first)
+				{
+				case 9:
+				{
+					if (ttt.second.leftClicked() == true)
 					{
-						throw Error{ U"Failed to load `tomlMap`" };
-					}
+						String targetMap = getData().classGameStatus.arrayInfoProcessSelectCharaMap[getData().Wave];
 
-					ClassMap sM;
-					for (const auto& table : tomlMap[U"Map"].tableArrayView()) {
-						const String name = table[U"name"].get<String>();
-
+						const TOMLReader tomlMap{ U"001_Warehouse/001_DefaultGame/016_BattleMap/" + targetMap };
+						if (not tomlMap) // もし読み込みに失敗したら
 						{
-							int32 counter = 0;
-							while (true)
+							throw Error{ U"Failed to load `tomlMap`" };
+						}
+
+						ClassMap sM;
+						for (const auto& table : tomlMap[U"Map"].tableArrayView()) {
+							const String name = table[U"name"].get<String>();
+
 							{
-								String aaa = U"ele{}"_fmt(counter);
-								const String ele = table[aaa].get<String>();
-								sM.ele.emplace(aaa, ele);
-								counter++;
-								if (ele == U"")
+								int32 counter = 0;
+								while (true)
 								{
+									String aaa = U"ele{}"_fmt(counter);
+									const String ele = table[aaa].get<String>();
+									sM.ele.emplace(aaa, ele);
+									counter++;
+									if (ele == U"")
+									{
+										break;
+									}
+								}
+							}
+							{
+								namespace views = std::views;
+								const String str = table[U"data"].get<String>();
+								for (const auto sv : str | views::split(U",@,"_sv))
+								{
+									String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
+									if (re != U"")
+									{
+										sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
+									}
+								}
+							}
+						}
+
+						ClassBattle cb;
+						const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + getData().classGameStatus.nowPowerTag + U".toml" };
+						if (not tomlInfoProcess) // もし読み込みに失敗したら
+						{
+							throw Error{ U"Failed to load `tomlInfoProcess`" };
+						}
+
+						//建物関係
+						cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
+						ClassHorizontalUnit chuSor;
+						ClassHorizontalUnit chuDef;
+						ClassHorizontalUnit chuNa;
+						chuSor.FlagBuilding = true;
+						chuDef.FlagBuilding = true;
+						chuNa.FlagBuilding = true;
+						for (size_t indexRow = 0; indexRow < cb.classMapBattle.value().mapData.size(); ++indexRow)
+						{
+							for (size_t indexCol = 0; indexCol < cb.classMapBattle.value().mapData[indexRow].size(); ++indexCol)
+							{
+								for (auto& bui : cb.classMapBattle.value().mapData[indexRow][indexCol].building)
+								{
+									for (auto& fir : bui)
+									{
+										String key = fir.first;
+										BattleWhichIsThePlayer bw = fir.second.second;
+
+										// arrayClassObjectMapTip から適切な ClassObjectMapTip オブジェクトを見つける
+										for (const auto& mapTip : getData().classGameStatus.arrayClassObjectMapTip)
+										{
+											if (mapTip.nameTag == key)
+											{
+												// ClassUnit の設定を行う
+												ClassUnit unitBui;
+												unitBui.IsBuilding = true;
+												unitBui.ID = getData().classGameStatus.getIDCount();
+												unitBui.mapTipObjectType = mapTip.type;
+												unitBui.NoWall2 = mapTip.noWall2;
+												unitBui.HPCastle = mapTip.castle;
+												unitBui.CastleDefense = mapTip.castleDefense;
+												unitBui.CastleMagdef = mapTip.castleMagdef;
+												unitBui.Image = mapTip.nameTag;
+												unitBui.rowBuilding = indexRow;
+												unitBui.colBuilding = indexCol;
+
+												if (fir.second.second == BattleWhichIsThePlayer::Sortie)
+												{
+													chuSor.ListClassUnit.push_back(unitBui);
+												}
+												else if (fir.second.second == BattleWhichIsThePlayer::Def)
+												{
+													chuDef.ListClassUnit.push_back(unitBui);
+												}
+												else
+												{
+													chuNa.ListClassUnit.push_back(unitBui);
+												}
+												break; // 適切なオブジェクトが見つかったのでループを抜ける
+											}
+										}
+									}
+								}
+							}
+						}
+						cb.sortieUnitGroup.push_back(chuSor);
+						cb.defUnitGroup.push_back(chuDef);
+						cb.neutralUnitGroup.push_back(chuNa);
+
+						for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+							String mapUnit = table[targetMap].get<String>();
+							Array<String> arrayMapUnit = mapUnit.split(U',');
+							for (auto& unitYoko : arrayMapUnit)
+							{
+								ClassHorizontalUnit chu;
+								Array<String> unitInfo = unitYoko.split(U'*');
+								auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
+											[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
+								if (it == getData().classGameStatus.arrayClassUnit.end())
+								{
+									continue;
+								}
+								for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
+								{
+									it->ID = getData().classGameStatus.getIDCount();
+									chu.ListClassUnit.push_back(*it);
+								}
+								cb.defUnitGroup.push_back(chu);
+							}
+						}
+
+						cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
+						//C++11以降では、std::move を使ってコピーを避け、効率的に要素を追加することもできます。
+						//これは特に大きな Array オブジェクトを扱う場合に有用です
+						cb.sortieUnitGroup.append(std::move(getData().classGameStatus.arrayPlayerUnit));
+
+						getData().classGameStatus.classBattle = cb;
+
+						changeScene(U"Battle", 0.9s);
+					}
+				}
+				break;
+				default:
+					break;
+				}
+			}
+			for (auto& ttt : htMenuBtnDisplay)
+			{
+				if (ttt.second == true)
+				{
+					rectExecuteBtn = Rect{ 432,516,500,500 };
+				}
+			}
+			//徴兵処理
+			for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
+			{
+				if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
+				{
+					bool check = true;
+					int32 rowCounter = 0;
+					for (auto che : getData().classGameStatus.arrayPlayerUnit)
+					{
+						for (auto che2 : che.ListClassUnit)
+						{
+							if (che2.pressedDetailStrategyMenu == true)
+							{
+								check = false;
+								if (nowHtRectPlusUnit.Price > getData().Money)
+								{
+									formBuyDisplayStatus = FormBuyDisplayStatus::Message;
+									Message001 = true;
 									break;
 								}
+
+								getData().Money = getData().Money - nowHtRectPlusUnit.Price;
+
+								ClassUnit cu = nowHtRectPlusUnit;
+								cu.ID = getData().classGameStatus.getIDCount();
+								cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
+								getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
+								break;
 							}
 						}
+						if (check == false)
 						{
-							namespace views = std::views;
-							const String str = table[U"data"].get<String>();
-							for (const auto sv : str | views::split(U",@,"_sv))
-							{
-								String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
-								if (re != U"")
-								{
-									sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
-								}
-							}
-						}
-					}
-
-					ClassBattle cb;
-					const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + getData().classGameStatus.nowPowerTag + U".toml" };
-					if (not tomlInfoProcess) // もし読み込みに失敗したら
-					{
-						throw Error{ U"Failed to load `tomlInfoProcess`" };
-					}
-					for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-						String mapUnit = table[targetMap].get<String>();
-						Array<String> arrayMapUnit = mapUnit.split(U',');
-						for (auto& unitYoko : arrayMapUnit)
-						{
-							ClassHorizontalUnit chu;
-							Array<String> unitInfo = unitYoko.split(U'*');
-							auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
-										[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
-							if (it == getData().classGameStatus.arrayClassUnit.end())
-							{
-								continue;
-							}
-							for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
-							{
-								it->ID = getData().classGameStatus.getIDCount();
-								chu.ListClassUnit.push_back(*it);
-							}
-							cb.defUnitGroup.push_back(chu);
-						}
-					}
-
-					cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
-					cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
-					cb.sortieUnitGroup = getData().classGameStatus.arrayPlayerUnit;
-
-					getData().classGameStatus.classBattle = cb;
-
-					changeScene(U"Battle", 0.9s);
-				}
-			}
-			break;
-			default:
-				break;
-			}
-		}
-		for (auto& ttt : htMenuBtnDisplay)
-		{
-			if (ttt.second == true)
-			{
-				rectExecuteBtn = Rect{ 432,516,500,500 };
-			}
-		}
-		//徴兵処理
-		for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
-		{
-			if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
-			{
-				bool check = true;
-				int32 rowCounter = 0;
-				for (auto che : getData().classGameStatus.arrayPlayerUnit)
-				{
-					for (auto che2 : che.ListClassUnit)
-					{
-						if (che2.pressedDetailStrategyMenu == true)
-						{
-							check = false;
-							ClassUnit cu = nowHtRectPlusUnit;
-							cu.ID = getData().classGameStatus.getIDCount();
-							cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
-							getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
 							break;
 						}
+						rowCounter++;
 					}
-					if (check == false)
+					if (check == true)
 					{
-						break;
+						if (nowHtRectPlusUnit.Price > getData().Money)
+						{
+							formBuyDisplayStatus = FormBuyDisplayStatus::Message;
+							Message001 = true;
+							break;
+						}
+
+						getData().Money = getData().Money - nowHtRectPlusUnit.Price;
+
+						ClassHorizontalUnit chu;
+						ClassUnit cu = nowHtRectPlusUnit;
+						cu.ID = getData().classGameStatus.getIDCount();
+						cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
+						chu.ListClassUnit.push_back(cu);
+						getData().classGameStatus.arrayPlayerUnit.push_back(chu);
 					}
-					rowCounter++;
+					else
+					{
+
+					}
 				}
-				if (check == true)
+				else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
 				{
 					ClassHorizontalUnit chu;
 					ClassUnit cu = nowHtRectPlusUnit;
-					cu.ID = getData().classGameStatus.getIDCount();
-					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
+					cu.rectDetailStrategyMenu = Rect{ 0,0,0,0 };
 					chu.ListClassUnit.push_back(cu);
 					getData().classGameStatus.arrayPlayerUnit.push_back(chu);
 				}
-				else
-				{
-
-				}
 			}
-			else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
+			//スクロール上
 			{
-				ClassHorizontalUnit chu;
-				ClassUnit cu = nowHtRectPlusUnit;
-				cu.rectDetailStrategyMenu = Rect{ 0,0,0,0 };
-				chu.ListClassUnit.push_back(cu);
-				getData().classGameStatus.arrayPlayerUnit.push_back(chu);
-			}
-		}
-		//スクロール上
-		{
-			int32 counterUnit = 0;
-			for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
-			{
-				int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
-				for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+				int32 counterUnit = 0;
+				for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
 				{
-					aaa.rectDetailStrategyMenu.y = yyy;
-				}
-				counterUnit++;
-			}
-		}
-		//クリック処理
-		for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
-		{
-			for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
-			{
-				if (aaa.rectDetailStrategyMenu.leftClicked() == true)
-				{
-					for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+					int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
+					for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
 					{
-						for (auto& bbb : nowarrayPlayerUnit.ListClassUnit)
-						{
-							bbb.pressedDetailStrategyMenu = false;
-						}
+						aaa.rectDetailStrategyMenu.y = yyy;
 					}
+					counterUnit++;
+				}
+			}
+			//クリック処理
+			for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+			{
+				for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
+				{
+					if (aaa.rectDetailStrategyMenu.leftClicked() == true)
+					{
+						for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+						{
+							for (auto& bbb : nowarrayPlayerUnit.ListClassUnit)
+							{
+								bbb.pressedDetailStrategyMenu = false;
+							}
+						}
 
-					aaa.pressedDetailStrategyMenu = true;
+						aaa.pressedDetailStrategyMenu = true;
+					}
+				}
+			}
+
+			if (arrayRectMenuBack[1].mouseOver() == true)
+			{
+				vbar001.value().scroll(Mouse::Wheel() * 60);
+			}
+			if (rectExecuteBtn.mouseOver() == true)
+			{
+				vbar002.value().scroll(Mouse::Wheel() * 60);
+			}
+			vbar001.value().update();
+			vbar002.value().update();
+
+		}
+		break;
+		case FormBuyDisplayStatus::Message:
+		{
+			if (Message001)
+			{
+				sceneMessageBoxImpl.set();
+				if (sceneMessageBoxImpl.m_buttonC.mouseOver())
+				{
+					Cursor::RequestStyle(CursorStyle::Hand);
+
+					if (MouseL.down())
+					{
+						Message001 = false;
+						formBuyDisplayStatus = FormBuyDisplayStatus::Normal;
+					}
 				}
 			}
 		}
-
-		if (arrayRectMenuBack[1].mouseOver() == true)
-		{
-			vbar001.value().scroll(Mouse::Wheel() * 60);
+		break;
+		case FormBuyDisplayStatus::Event:
+			break;
+		default:
+			break;
 		}
-		if (rectExecuteBtn.mouseOver() == true)
-		{
-			vbar002.value().scroll(Mouse::Wheel() * 60);
-		}
-		vbar001.value().update();
-		vbar002.value().update();
 	}
 	// 描画関数（オプション）
 	void draw() const override
@@ -2937,6 +3136,7 @@ public:
 				break;
 			case 9:
 				getData().fontBuyMenu(getData().classConfigString.strategyMenu009).draw(ttt.second.stretched(-10));
+				getData().fontBuyMenu(getData().Money).draw(ttt.second.stretched(-10).moveBy(0, ttt.second.h));
 				break;
 			default:
 				break;
@@ -2981,6 +3181,19 @@ public:
 		}
 
 		vbar001.value().draw();
+
+		switch (formBuyDisplayStatus)
+		{
+		case FormBuyDisplayStatus::Normal:
+			break;
+		case FormBuyDisplayStatus::Message:
+			sceneMessageBoxImpl.show(getData().classConfigString.BuyMessage001);
+			break;
+		case FormBuyDisplayStatus::Event:
+			break;
+		default:
+			break;
+		}
 	}
 	void drawFadeIn(double t) const override
 	{
@@ -3005,6 +3218,10 @@ private:
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 	Optional<SasaGUI::ScrollBar> vbar001;
 	Optional<SasaGUI::ScrollBar> vbar002;
+	bool Message001 = false;
+	FormBuyDisplayStatus formBuyDisplayStatus = FormBuyDisplayStatus::Normal;
+	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;
+
 };
 class common001 : public App::Scene
 {
@@ -3110,6 +3327,7 @@ void Main()
 			cp.Image = value[U"Image"].getString();
 			cp.Text = value[U"Text"].getString();
 			cp.Diff = value[U"Diff"].getString();
+			cp.Money = Parse<int32>(value[U"Money"].getString());
 			cp.Wave = Parse<int32>(value[U"Wave"].getString());
 			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
 		}
@@ -3154,6 +3372,7 @@ void Main()
 			cu.Hp = Parse<int32>(value[U"hp"].getString());
 			cu.Attack = Parse<int32>(value[U"attack"].getString());
 			cu.Speed = Parse<double>(value[U"speed"].getString());
+			cu.Price = Parse<int32>(value[U"price"].getString());
 			cu.Move = Parse<int32>(value[U"move"].getString());
 			String sNa = value[U"skill"].getString();
 			if (sNa.contains(',') == true)
@@ -3208,6 +3427,38 @@ void Main()
 
 		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;
 	}
+	// obj.jsonからデータを読み込む
+	{
+		// TOML ファイルからデータを読み込む
+		const JSON objData = JSON::Load(U"001_Warehouse/001_DefaultGame/070_Scenario/Info_Object/obj.json");
+
+		if (not objData) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `obj.json`" };
+		}
+
+		Array<ClassObjectMapTip> arrayClassObj;
+		for (const auto& [key, value] : objData[U"obj"]) {
+			ClassObjectMapTip cu;
+			cu.nameTag = value[U"name"].get<String>();
+			String ty = value[U"type"].get<String>();
+			if (ty == U"wall2")
+			{
+				cu.type = MapTipObjectType::WALL2;
+			}
+			else if (ty == U"gate")
+			{
+				cu.type = MapTipObjectType::GATE;
+			}
+			cu.noWall2 = value[U"no_wall2"].get<int32>();
+			cu.castle = value[U"castle"].get<int32>();
+			cu.castleDefense = value[U"castle_defense"].get<int32>();
+			cu.castleMagdef = value[U"castle_magdef"].get<int32>();
+
+			arrayClassObj.push_back(std::move(cu));
+		}
+		manager.get().get()->classGameStatus.arrayClassObjectMapTip = arrayClassObj;
+	}
 
 	if (System::GetCommandLineArgs().size() == 0)
 	{
@@ -3252,6 +3503,7 @@ void Main()
 				if (aaa.PowerTag == manager.get().get()->NovelPower)
 				{
 					manager.get().get()->selectClassPower = aaa;
+					manager.get().get()->Money = aaa.Money;
 				}
 			}
 

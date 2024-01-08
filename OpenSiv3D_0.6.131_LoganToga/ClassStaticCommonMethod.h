@@ -39,6 +39,7 @@ public:
 				ccs.strategyMenu008 = table[U"strategyMenu008"].get<String>();
 				ccs.strategyMenu009 = table[U"strategyMenu009"].get<String>();
 				ccs.BattleMessage001 = table[U"BattleMessage001"].get<String>();
+				ccs.BuyMessage001 = table[U"BuyMessage001"].get<String>();
 			}
 		}
 
@@ -65,11 +66,33 @@ public:
 					Array splitB = splitA[1].split(U'$');
 					for (String item : splitB)
 					{
-						String re = cm.ele[item];
+						Array splitWi = item.split(U':');
+						String re = cm.ele[splitWi[0]];
 						if (re != U"")
 						{
-							HashTable<String, long> tar;
-							tar.emplace(re, -1);
+							std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
+							if (splitWi.size() == 1)
+							{
+								pp = { -1, BattleWhichIsThePlayer::None };
+							}
+							else
+							{
+								if (splitWi[1] == U"sor")
+								{
+									pp = { -1, BattleWhichIsThePlayer::Sortie };
+								}
+								else if (splitWi[1] == U"def")
+								{
+									pp = { -1, BattleWhichIsThePlayer::Def };
+								}
+								else
+								{
+									pp = { -1, BattleWhichIsThePlayer::None };
+								}
+							}
+
+							HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
+							tar.emplace(re, pp);
 							md.building.push_back(tar);
 						}
 					}
@@ -202,8 +225,8 @@ public:
 			cu.CastleMagdef = found->castleMagdef;
 			cu.Image = found->nameTag;
 			units.push_back(cu);
-
-			gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0][std::get<0>(item)] = id;
+			std::pair<long, BattleWhichIsThePlayer> ppp = { id,BattleWhichIsThePlayer::None };
+			gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0][std::get<0>(item)] = ppp;
 		}
 		horizontalUnit.ListClassUnit = units;
 		gameStatus->classBattle.defUnitGroup.push_back(horizontalUnit);

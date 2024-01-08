@@ -95,6 +95,8 @@ public:
 	int32 rowBuilding = 0;
 	int32 colBuilding = 0;
 	MapTipObjectType mapTipObjectType = MapTipObjectType::None;
+	/// @brief wall2で攻撃側飛び道具がすり抜ける確率
+	int32 NoWall2 = 0;
 	int32 HPCastle = 0;
 	int32 CastleDefense = 0;
 	int32 CastleMagdef = 0;
