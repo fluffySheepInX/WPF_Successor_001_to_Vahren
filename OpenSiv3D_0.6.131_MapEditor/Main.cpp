@@ -1,10 +1,84 @@
 ﻿# include <Siv3D.hpp> // OpenSiv3D v0.6.8
 
+enum class BattleWhichIsThePlayer {
+	Sortie,
+	Def,
+	None
+};
+
 // タイルの一辺の長さ（ピクセル）
 inline constexpr Vec2 TileOffset{ 50, 25 };
 
 // タイルの厚み（ピクセル）
 inline constexpr int32 TileThickness = 15;
+
+// この関数は、Grid<int32> に基づいて Array<Texture> をグループ化します
+HashSet<String> GroupTexturesByGrid(const Grid<int32>& grid, const Array<std::pair<String, Texture>>& textures)
+{
+	HashSet<String> groupedTextures;
+
+	for (size_t i = 0; i < grid.height(); ++i)
+	{
+		for (size_t j = 0; j < grid.width(); j++)
+		{
+			int32 gridValue = grid[i][j];
+			if (gridValue >= 0 && gridValue < textures.size())
+			{
+				groupedTextures.emplace(textures[gridValue].first);
+			}
+		}
+	}
+
+	return groupedTextures;
+}
+
+void WriteTomlFile(const FilePath& path,
+					const Grid<int32> grid,
+					const Grid<int32> gridBui,
+					const Grid<BattleWhichIsThePlayer> gridBuiWhichIsThePlayer,
+					const Optional<Point> sor,
+					const Optional<Point> def,
+					const Optional<Point> neu,
+					const Array<std::pair<String, Texture>> textures,
+					const Array<std::pair<String, Texture>> texturesBui)
+{
+	HashSet<String> group = GroupTexturesByGrid(grid, textures);
+	HashSet<String> groupBui = GroupTexturesByGrid(gridBui, texturesBui);
+
+	// TOML形式の文字列を生成
+	String newLine = U"\r\n";
+	String tomlString = U"";
+	tomlString += U"[[Map]]" + newLine;
+
+	tomlString += U"name = \"Map001\"" + newLine;
+
+	int32 counter = 0;
+	for (auto a : group)
+	{
+		FilePath filePath = a;
+		String fileNameWithExtension = FileSystem::FileName(filePath);
+		String fileName = FileSystem::BaseName(fileNameWithExtension);
+
+		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		counter++;
+	}
+	for (auto a : groupBui)
+	{
+		FilePath filePath = a;
+		String fileNameWithExtension = FileSystem::FileName(filePath);
+		String fileName = FileSystem::BaseName(fileNameWithExtension);
+
+		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		counter++;
+	}
+
+	// ファイルに書き出す
+	TextWriter writer(path);
+	if (writer)
+	{
+		writer.write(tomlString);
+	}
+}
 
 /*
 	インデックスとタイルの配置の関係 (N = 4)
@@ -149,7 +223,7 @@ Optional<Point> ToIndex(const Vec2& pos, const Array<Quad>& columnQuads, const A
 void Main()
 {
 	// ウィンドウをリサイズする
-	Window::Resize(1280, 720);
+	Window::Resize(1920, 1017);
 
 	// 背景を水色にする
 	Scene::SetBackground(ColorF{ 0.8, 0.9, 1.0 });
@@ -158,33 +232,43 @@ void Main()
 	// からファイル一式をダウンロードし、「png」フォルダを App フォルダにコピーしてください。
 
 	// 各タイルのテクスチャ
-	Array<Texture> textures;
-	Array<Texture> texturesBui;
+	Array<std::pair<String, Texture>> textures;
+	Array<std::pair<String, Texture>> texturesBui;
 
-	textures << Texture{};
-	texturesBui << Texture{};
+	//何も無しチップを表現する為
+	textures.push_back({ U"", Texture{} });
+	texturesBui.push_back({ U"", Texture{} });
 
+	// "Tile/" ディレクトリの内容に基づいてtexturesを初期化
 	for (const auto& filePath : FileSystem::DirectoryContents(U"Tile/"))
 	{
-		textures << Texture{ filePath };
+		if (FileSystem::IsFile(filePath)) // ファイルであることを確認
+		{
+			textures.push_back({ filePath, Texture{ filePath } });
+		}
 	}
+	// "Bui/" ディレクトリの内容に基づいてtexturesBuiを初期化
 	for (const auto& filePath : FileSystem::DirectoryContents(U"Bui/"))
 	{
-		texturesBui << Texture{ filePath };
+		if (FileSystem::IsFile(filePath)) // ファイルであることを確認
+		{
+			texturesBui.push_back({ filePath, Texture{ filePath } });
+		}
 	}
 
 	// マップの一辺のタイル数
-	constexpr int32 N = 8;
+	int32 N = 8;
 
 	// 各列の四角形
-	const Array<Quad> columnQuads = MakeColumnQuads(N);
+	Array<Quad> columnQuads = MakeColumnQuads(N);
 
 	// 各行の四角形
-	const Array<Quad> rowQuads = MakeRowQuads(N);
+	Array<Quad> rowQuads = MakeRowQuads(N);
 
 	// タイルの種類
 	Grid<int32> grid(Size{ N, N });
-	Grid<int32> gridBui(Size{ N, N },-1);
+	Grid<int32> gridBui(Size{ N, N }, -1);
+	Grid<BattleWhichIsThePlayer> gridBuiWhichIsThePlayer(N, N, BattleWhichIsThePlayer::None);
 
 	// タイルメニューで選択されているタイルの種類
 	int32 tileTypeSelected = 0;
@@ -194,6 +278,21 @@ void Main()
 
 	// タイルメニューの四角形
 	constexpr RoundRect TileMenuRoundRect = RectF{ 20, 20, (56 * 22), (50 * 4) }.stretched(10).rounded(8);
+
+	const Array<String> options = { U"侵攻", U"防衛", U"中立" };
+	size_t index1 = 0;
+	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::None;
+
+	TextEditState te0;
+	te0.text = U"{}"_fmt(N);
+	TextEditState te1;
+	te1.text = U"";
+	TextEditState te2;
+	te2.text = U"";
+
+	Optional<Point> sor;
+	Optional<Point> def;
+	Optional<Point> neu;
 
 	// マップにグリッドを表示するか
 	bool showGrid = false;
@@ -235,11 +334,11 @@ void Main()
 					// 底辺中央を基準にタイルを描く
 					if (textures.size() < grid[index])
 					{
-						textures[1].draw(Arg::bottomCenter = pos);
+						textures[1].second.draw(Arg::bottomCenter = pos);
 					}
 					else
 					{
-						textures[grid[index]].draw(Arg::bottomCenter = pos);
+						textures[grid[index]].second.draw(Arg::bottomCenter = pos);
 					}
 
 					//建物描写
@@ -249,7 +348,7 @@ void Main()
 					}
 					else
 					{
-						texturesBui[gridBui[index]].draw(Arg::bottomCenter = pos);
+						texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
 					}
 				}
 			}
@@ -274,7 +373,13 @@ void Main()
 						else
 						{
 							gridBui[*index] = tileTypeSelected;
+							gridBuiWhichIsThePlayer[*index] = nowBattleWhichIsThePlayer;
 						}
+					}
+					else if (MouseR.pressed())
+					{
+						te1.text = Format(index.value().x);
+						te2.text = Format(index.value().y);
 					}
 				}
 			}
@@ -357,7 +462,7 @@ void Main()
 						// タイルを表示する
 						if (textures.size() > tileType)
 						{
-							textures[tileType].scaled(0.5).drawAt(rect.center());
+							textures[tileType].second.scaled(0.5).drawAt(rect.center());
 						}
 					}
 					else
@@ -365,7 +470,7 @@ void Main()
 						// タイルを表示する
 						if (texturesBui.size() > tileType)
 						{
-							texturesBui[tileType].scaled(0.5).drawAt(rect.center());
+							texturesBui[tileType].second.scaled(0.5).drawAt(rect.center());
 						}
 					}
 
@@ -386,11 +491,85 @@ void Main()
 		else
 		{
 			SimpleGUI::CheckBox(nowMapTipIsTile, U"Bui mode", Vec2{ 20, 320 }, 160);
+
+			// 選択肢を Array<String> で指定
+			if (SimpleGUI::RadioButtons(index1, options, Vec2{ 180, 320 }))
+			{
+				switch (index1)
+				{
+				case 0:
+					nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
+					break;
+				case 1:
+					nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::Def;
+					break;
+				case 2:
+					nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::None;
+					break;
+				default:
+					break;
+				}
+			}
 		}
 
 		if (SimpleGUI::Button(U"Output data", Vec2{ 20,360 }, 160) == true)
 		{
+			WriteTomlFile(U"Output map.toml", grid, gridBui, gridBuiWhichIsThePlayer, sor, def, neu, textures, texturesBui);
+		}
 
+		SimpleGUI::TextBox(te0, Vec2{ 20, 400 }, 160, 4);
+		if (te0.text != U"")
+		{
+			if (Parse<int32>(te0.text) != N)
+			{
+				N = Parse<int32>(te0.text);
+
+				columnQuads = MakeColumnQuads(N);;
+				rowQuads = MakeRowQuads(N);
+
+				Grid<int32> gridNew(Size{ N, N });
+				Grid<int32> gridBuiNew(Size{ N, N }, -1);
+				Grid<BattleWhichIsThePlayer> gridBuiWhichIsThePlayerNew(N, N, BattleWhichIsThePlayer::None);
+
+				grid = gridNew;
+				gridBui = gridBuiNew;
+				gridBuiWhichIsThePlayer = gridBuiWhichIsThePlayerNew;
+			}
+		}
+
+		if (SimpleGUI::Button(U"塗りつぶし", Vec2{ 20,440 }, 160) == true)
+		{
+			if (nowMapTipIsTile == true)
+			{
+				for (size_t i = 0; i < grid.height(); i++)
+				{
+					for (size_t j = 0; j < grid.width(); j++)
+					{
+						grid[i][j] = tileTypeSelected;
+					}
+				}
+			}
+		}
+
+		SimpleGUI::TextBox(te1, Vec2{ 1920 - 160 - 20, 400 }, 160, 4);
+		SimpleGUI::TextBox(te2, Vec2{ 1920 - 160 - 20, 440 }, 160, 4);
+		if (SimpleGUI::Button(U"現在の座標を出撃位置にする", Vec2{ 1920 - 320 - 20,480 }, 320) == true)
+		{
+			sor = Point();
+			sor.value().x = Parse<int32>(te1.text);
+			sor.value().y = Parse<int32>(te2.text);
+		}
+		if (SimpleGUI::Button(U"現在の座標を防衛位置にする", Vec2{ 1920 - 320 - 20,520 }, 320) == true)
+		{
+			def = Point();
+			def.value().x = Parse<int32>(te1.text);
+			def.value().y = Parse<int32>(te2.text);
+		}
+		if (SimpleGUI::Button(U"現在の座標を中立部隊の位置にする", Vec2{ 1920 - 320 - 20,560 }, 320) == true)
+		{
+			neu = Point();
+			neu.value().x = Parse<int32>(te1.text);
+			neu.value().y = Parse<int32>(te2.text);
 		}
 
 	}
