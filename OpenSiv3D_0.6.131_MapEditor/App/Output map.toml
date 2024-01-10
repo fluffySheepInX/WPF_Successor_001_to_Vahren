@@ -1,7 +1,18 @@
 ﻿[[Map]]
-name = "Map001"
-ele0 = "doro1"
-ele1 = "neu"
-ele2 = "grass1"
-ele3 = "testWall2"
-ele4 = "testWall_buu"
+	name = "Map001"
+	ele0 = "neu"
+	ele1 = "grass1"
+	ele2 = "grass2"
+	ele3 = "doro1"
+	ele4 = "tuti"
+	ele5 = "testWall2"
+	data = """
+ele0**-1**,ele3**-1**,ele3**-1**,ele3*ele5:none*-1**,ele3**-1**,ele3**-1**,ele3**-1*@@**,ele1**-1**,@,
+ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,@,
+ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,@,
+ele3*ele5:none*-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3*ele5:none*-1**,@,
+ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,@,
+ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,@,
+ele3**-1**,ele3**-1*@**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele3**-1**,@,
+ele4**-1**,ele3**-1**,ele3**-1**,ele3*ele5:none*-1**,ele3**-1**,ele3**-1**,ele3**-1**,ele2**-1**,@,
+	"""

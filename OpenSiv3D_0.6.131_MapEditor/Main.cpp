@@ -47,19 +47,22 @@ void WriteTomlFile(const FilePath& path,
 
 	// TOML形式の文字列を生成
 	String newLine = U"\r\n";
+	String tab = U"\t";
 	String tomlString = U"";
 	tomlString += U"[[Map]]" + newLine;
 
-	tomlString += U"name = \"Map001\"" + newLine;
+	tomlString += tab + U"name = \"Map001\"" + newLine;
 
 	int32 counter = 0;
+	HashTable<String, String> ht;
 	for (auto a : group)
 	{
 		FilePath filePath = a;
 		String fileNameWithExtension = FileSystem::FileName(filePath);
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
-		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		ht.emplace(fileName, U"ele{}"_fmt(counter));
 		counter++;
 	}
 	for (auto a : groupBui)
@@ -68,9 +71,101 @@ void WriteTomlFile(const FilePath& path,
 		String fileNameWithExtension = FileSystem::FileName(filePath);
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
-		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		ht.emplace(fileName, U"ele{}"_fmt(counter));
 		counter++;
 	}
+
+	//data
+	tomlString += tab + U"data = \"\"\"" + newLine;
+
+	for (size_t i = 0; i < grid.size().y; i++)
+	{
+		for (size_t j = 0; j < grid.size().x; j++)
+		{
+			String a;
+			{
+				FilePath filePath = textures[grid[j][i]].first;
+				String fileNameWithExtension = FileSystem::FileName(filePath);
+				String fileName = FileSystem::BaseName(fileNameWithExtension);
+				String ele = ht[fileName];
+				if (ele != U"")
+				{
+					a = ele;
+				}
+				else
+				{
+					a = U"eleNone";
+				}
+			}
+			String b;
+			{
+				int32 aaa = gridBui[j][i];
+				if (aaa != -1)
+				{
+					FilePath filePath = texturesBui[gridBui[j][i]].first;
+					String fileNameWithExtension = FileSystem::FileName(filePath);
+					String fileName = FileSystem::BaseName(fileNameWithExtension);
+					String ele = ht[fileName];
+
+					if (ele == U"")
+					{
+						b = U"*";
+					}
+					else
+					{
+						if (gridBuiWhichIsThePlayer[j][i] == BattleWhichIsThePlayer::Sortie)
+						{
+							b = U"*" + ele + U":sor";
+						}
+						else if (gridBuiWhichIsThePlayer[j][i] == BattleWhichIsThePlayer::Def)
+						{
+							b = U"*" + ele + U":def";
+						}
+						else
+						{
+							b = U"*" + ele + U":none";
+						}
+					}
+				}
+				else
+				{
+					b = U"*";
+				}
+			}
+
+
+			String c = U"*-1";
+
+			String d;
+			//出撃と防衛、中立が同じ位置の場合についても後で考慮
+			if (sor.has_value() == true)
+			{
+				Point ppp = { i,j };
+				if (sor.value() == ppp)
+				{
+					d = U"*@@";
+				}
+			}
+			if (def.has_value() == true)
+			{
+				Point ppp = { i,j };
+				if (def.value() == ppp)
+				{
+					d = U"*@";
+				}
+			}
+
+			String e = U"*";
+			String f = U"*";
+
+			tomlString += U"{}{}{}{}{}{},"_fmt(a, b, c, d, e, f);
+
+		}
+		tomlString += U"@," + newLine;
+	}
+
+	tomlString += tab + U"\"\"\"" + newLine;
 
 	// ファイルに書き出す
 	TextWriter writer(path);
@@ -281,7 +376,7 @@ void Main()
 
 	const Array<String> options = { U"侵攻", U"防衛", U"中立" };
 	size_t index1 = 0;
-	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::None;
+	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
 
 	TextEditState te0;
 	te0.text = U"{}"_fmt(N);

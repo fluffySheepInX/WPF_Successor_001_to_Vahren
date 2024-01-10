@@ -63,37 +63,80 @@ public:
 				//build(城壁や矢倉など
 				if (splitA.size() > 1)
 				{
-					Array splitB = splitA[1].split(U'$');
-					for (String item : splitB)
+					if (splitA[1] == U"")
 					{
-						Array splitWi = item.split(U':');
-						String re = cm.ele[splitWi[0]];
-						if (re != U"")
+
+					}
+					else
+					{
+						Array splitB = splitA[1].split(U'$');
+						//1件だけの場合も考慮
+						if (splitB.size() == 1)
 						{
-							std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
-							if (splitWi.size() == 1)
+							Array splitWi = splitB[0].split(U':');
+							String re = cm.ele[splitWi[0]];
+							if (re != U"")
 							{
-								pp = { -1, BattleWhichIsThePlayer::None };
-							}
-							else
-							{
-								if (splitWi[1] == U"sor")
-								{
-									pp = { -1, BattleWhichIsThePlayer::Sortie };
-								}
-								else if (splitWi[1] == U"def")
-								{
-									pp = { -1, BattleWhichIsThePlayer::Def };
-								}
-								else
+								std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
+								if (splitWi.size() == 1)
 								{
 									pp = { -1, BattleWhichIsThePlayer::None };
 								}
-							}
+								else
+								{
+									if (splitWi[1] == U"sor")
+									{
+										pp = { -1, BattleWhichIsThePlayer::Sortie };
+									}
+									else if (splitWi[1] == U"def")
+									{
+										pp = { -1, BattleWhichIsThePlayer::Def };
+									}
+									else
+									{
+										pp = { -1, BattleWhichIsThePlayer::None };
+									}
+								}
 
-							HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
-							tar.emplace(re, pp);
-							md.building.push_back(tar);
+								HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
+								tar.emplace(re, pp);
+								md.building.push_back(tar);
+							}
+						}
+						else
+						{
+							for (String item : splitB)
+							{
+								Array splitWi = item.split(U':');
+								String re = cm.ele[splitWi[0]];
+								if (re != U"")
+								{
+									std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
+									if (splitWi.size() == 1)
+									{
+										pp = { -1, BattleWhichIsThePlayer::None };
+									}
+									else
+									{
+										if (splitWi[1] == U"sor")
+										{
+											pp = { -1, BattleWhichIsThePlayer::Sortie };
+										}
+										else if (splitWi[1] == U"def")
+										{
+											pp = { -1, BattleWhichIsThePlayer::Def };
+										}
+										else
+										{
+											pp = { -1, BattleWhichIsThePlayer::None };
+										}
+									}
+
+									HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
+									tar.emplace(re, pp);
+									md.building.push_back(tar);
+								}
+							}
 						}
 					}
 				}
@@ -121,6 +164,10 @@ public:
 					else if (re == 2)
 					{
 						md.flagBattleMapUnit = FlagBattleMapUnit::Spe;
+					}
+					else if (re == -1)
+					{
+
 					}
 					else
 					{
