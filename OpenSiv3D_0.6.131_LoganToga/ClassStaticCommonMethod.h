@@ -77,30 +77,28 @@ public:
 							String re = cm.ele[splitWi[0]];
 							if (re != U"")
 							{
-								std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
+								std::tuple<String, long, BattleWhichIsThePlayer> pp = { re,-1, BattleWhichIsThePlayer::None };
 								if (splitWi.size() == 1)
 								{
-									pp = { -1, BattleWhichIsThePlayer::None };
+									pp = { re,-1, BattleWhichIsThePlayer::None };
 								}
 								else
 								{
 									if (splitWi[1] == U"sor")
 									{
-										pp = { -1, BattleWhichIsThePlayer::Sortie };
+										pp = { re,-1, BattleWhichIsThePlayer::Sortie };
 									}
 									else if (splitWi[1] == U"def")
 									{
-										pp = { -1, BattleWhichIsThePlayer::Def };
+										pp = { re,-1, BattleWhichIsThePlayer::Def };
 									}
 									else
 									{
-										pp = { -1, BattleWhichIsThePlayer::None };
+										pp = { re,-1, BattleWhichIsThePlayer::None };
 									}
 								}
 
-								HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
-								tar.emplace(re, pp);
-								md.building.push_back(tar);
+								md.building.push_back(pp);
 							}
 						}
 						else
@@ -111,30 +109,28 @@ public:
 								String re = cm.ele[splitWi[0]];
 								if (re != U"")
 								{
-									std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
+									std::tuple<String, long, BattleWhichIsThePlayer> pp = { re,-1, BattleWhichIsThePlayer::None };
 									if (splitWi.size() == 1)
 									{
-										pp = { -1, BattleWhichIsThePlayer::None };
+										pp = { re,-1, BattleWhichIsThePlayer::None };
 									}
 									else
 									{
 										if (splitWi[1] == U"sor")
 										{
-											pp = { -1, BattleWhichIsThePlayer::Sortie };
+											pp = { re,-1, BattleWhichIsThePlayer::Sortie };
 										}
 										else if (splitWi[1] == U"def")
 										{
-											pp = { -1, BattleWhichIsThePlayer::Def };
+											pp = { re,-1, BattleWhichIsThePlayer::Def };
 										}
 										else
 										{
-											pp = { -1, BattleWhichIsThePlayer::None };
+											pp = { re,-1, BattleWhichIsThePlayer::None };
 										}
 									}
 
-									HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
-									tar.emplace(re, pp);
-									md.building.push_back(tar);
+									md.building.push_back(pp);
 								}
 							}
 						}
@@ -242,10 +238,7 @@ public:
 				{
 					for (const auto& building : gameStatus->classBattle.classMapBattle.value().mapData[row][col].building)
 					{
-						for (auto [key, value] : building)
-						{
-							buildings.push_back({ key, row, col });
-						}
+						buildings.push_back({ std::get<0>(building), row, col });
 					}
 				}
 			}
@@ -272,8 +265,8 @@ public:
 			cu.CastleMagdef = found->castleMagdef;
 			cu.Image = found->nameTag;
 			units.push_back(cu);
-			std::pair<long, BattleWhichIsThePlayer> ppp = { id,BattleWhichIsThePlayer::None };
-			gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0][std::get<0>(item)] = ppp;
+			std::get<1>(gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0]) = id;
+			std::get<2>(gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0]) = BattleWhichIsThePlayer::None;
 		}
 		horizontalUnit.ListClassUnit = units;
 		gameStatus->classBattle.defUnitGroup.push_back(horizontalUnit);

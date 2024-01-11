@@ -199,54 +199,48 @@ public:
 					continue;
 				}
 
-				// GATE系の壊せるオブジェクトが存在するかチェック
-				bool con = false;
-				if (listClassHorizontalUnits.begin()->FlagBuilding == true)
-				{
-					for (auto aaa : listClassHorizontalUnits.begin()->ListClassUnit)
-					{
-						if (aaa.rowBuilding == x + i && aaa.colBuilding == y + j)
-						{
-							ClassUnit classUnitBuilding;
-							classUnitBuilding = aaa;
-							classUnitBuilding.IsBuilding = true;
-							classUnitBuilding.IsBuildingEnable = true;
+				//// GATE系の壊せるオブジェクトが存在するかチェック
+				//bool con = false;
+				//if (listClassHorizontalUnits.begin()->FlagBuilding == true)
+				//{
+				//	for (auto aaa : listClassHorizontalUnits.begin()->ListClassUnit)
+				//	{
+				//		for (auto bbb : mapData[x + i][y + j].building)
+				//		{
+				//			if (aaa.ID== std::get<1>(bbb))
+				//			{
+				//				//オブジェクトがあったらコンティニュー
+				//				switch (aaa.mapTipObjectType)
+				//				{
+				//				case MapTipObjectType::WALL2:
+				//					//ここに来ることは無い
+				//					break;
+				//				case MapTipObjectType::GATE:
+				//					if (aaa.HPCastle > 0)
+				//					{
+				//						OpenOne(x + i, y + j, cost, parent, maxN);
+				//					}
+				//					break;
+				//				default:
+				//					break;
+				//				}
+				//			}
+				//			con = true;
 
-							//オブジェクトがあったらコンティニュー
-							switch (classUnitBuilding.mapTipObjectType)
-							{
-							case MapTipObjectType::WALL2:
-								//ここに来ることは無い
-								break;
-							case MapTipObjectType::GATE:
-								if (classUnitBuilding.IsBuildingEnable == false)
-								{
-									OpenOne(x + i, y + j, cost, parent, maxN);
-								}
-								break;
-							default:
-								break;
-							}
-							con = true;
+				//			break;
+				//		}
 
-							break;
-						}
+				//		if (con)
+				//		{
+				//			break;
+				//		}
+				//	}
+				//}
 
-						if (con)
-						{
-							break;
-						}
-					}
-					if (con)
-					{
-						break;
-					}
-				}
-
-				if (con)
-				{
-					continue;
-				}
+				//if (con)
+				//{
+				//	continue;
+				//}
 
 				if (mapData[x + i][y + j].building.size() <= 0)
 				{
@@ -254,25 +248,8 @@ public:
 					continue;
 				}
 
-				// WALL2系の壊せないオブジェクトが存在するかチェック
-				auto ob = std::find_if(arrayClassObjectMapTip.begin(), arrayClassObjectMapTip.end(),
-									   [&](const auto& obj) {
-										   return obj.nameTag == mapData[x + i][y + j].building[0].begin()->first;
-									   });
-				if (ob != arrayClassObjectMapTip.end()) {
-					switch (ob->type) {
-					case MapTipObjectType::WALL2:
-						break;
-					case MapTipObjectType::GATE:
-						OpenOne(x + i, y + j, cost, parent, maxN);
-						break;
-					default:
-						break;
-					}
-				}
-				else {
-					OpenOne(x + i, y + j, cost, parent, maxN);
-				}
+				//現在のマスは建物かつWALL2
+				Array<std::tuple<String, long, BattleWhichIsThePlayer>> ayg = mapData[x + i][y + j].building;
 			}
 		}
 	}
