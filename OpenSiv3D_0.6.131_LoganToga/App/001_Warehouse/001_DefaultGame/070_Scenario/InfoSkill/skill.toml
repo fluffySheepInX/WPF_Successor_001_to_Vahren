@@ -86,7 +86,7 @@
 	str = "attack_dext * 120"
 	
 	#射程距離。
-	range = "550"
+	range = "750"
 
 	#ダメージ減衰距離。省略時は0となり0だと減衰しません。
 	damage_range_adjust = "0"

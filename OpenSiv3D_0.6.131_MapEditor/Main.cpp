@@ -408,6 +408,8 @@ void Main()
 			// 2D カメラによる座標変換を適用する
 			const auto tr = camera.createTransformer();
 
+			Array<std::pair<Vec2, Texture>> buiTex;
+
 			// 上から順にタイルを描く
 			for (int32 i = 0; i < (N * 2 - 1); ++i)
 			{
@@ -424,7 +426,7 @@ void Main()
 					const Point index{ (xi + k), (yi - k) };
 
 					// そのタイルの底辺中央の座標
-					const Vec2 pos = ToTileBottomCenter(index, N);
+					Vec2 pos = ToTileBottomCenter(index, N);
 
 					// 底辺中央を基準にタイルを描く
 					if (textures.size() < grid[index])
@@ -443,9 +445,17 @@ void Main()
 					}
 					else
 					{
-						texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
+						std::pair<Vec2, Texture> hhhh = { pos, texturesBui[gridBui[index]].second };
+						buiTex.push_back(hhhh);
+						//texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
 					}
 				}
+			}
+
+			//建物
+			for (auto aaa: buiTex)
+			{
+				aaa.second.draw(Arg::bottomCenter = aaa.first);
 			}
 
 			// マウスカーソルがタイルメニュー上に無ければ

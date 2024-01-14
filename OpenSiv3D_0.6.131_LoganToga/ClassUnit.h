@@ -263,6 +263,9 @@ public:
 	// FlagMoving
 	bool FlagMoving = false;
 
+	// FlagMoving
+	bool FlagMovingEnd = true;
+
 	// FlagMoveDispose
 	bool FlagMoveDispose = false;
 

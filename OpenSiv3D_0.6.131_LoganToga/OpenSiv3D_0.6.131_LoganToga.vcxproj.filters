@@ -276,6 +276,7 @@
     <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp.txt" />
     <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp2.txt" />
     <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp3.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp4.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">

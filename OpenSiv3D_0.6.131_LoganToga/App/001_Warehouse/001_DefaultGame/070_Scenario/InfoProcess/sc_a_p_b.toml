@@ -1,5 +1,5 @@
 [[Process]]
 	map = "map001.toml,map002.toml,map003.toml"
-	map001.toml = "LineInfantryM14*4,LineInfantryM14*4,LineInfantryM14*4"
+	map001.toml = "LineInfantryM14*1"
 	map002.toml = "LineInfantryM14*5,LineInfantryM14*5,LineInfantryM14*5"
 	map003.toml = "LineInfantryM14*6,LineInfantryM14*6,LineInfantryM14*6"

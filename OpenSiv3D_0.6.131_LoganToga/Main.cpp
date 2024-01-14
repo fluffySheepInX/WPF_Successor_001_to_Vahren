@@ -232,122 +232,157 @@ Optional<ClassAStar*> SearchMinScore(const Array<ClassAStar*>& ls) {
 	return targetClassAStar;
 }
 
-int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target, Array<ClassHorizontalUnit>& enemy, MapCreator mapCreator, Array<Array<MapDetail>> mapData, ClassGameStatus& classGameStatus, Array<Array<Point>>& debugRoot, Array<ClassAStar*>& list)
+int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
+						Array<ClassHorizontalUnit>& enemy,
+						MapCreator mapCreator,
+						Array<Array<MapDetail>> mapData,
+						ClassGameStatus& classGameStatus,
+						Array<Array<Point>>& debugRoot,
+						Array<ClassAStar*>& list)
 {
 	Array<ClassObjectMapTip> arrayClassObjectMapTip = classGameStatus.arrayClassObjectMapTip;
 	Array<ClassObjectMapTip> arrayClassObjectMapTip2;
-	////アスターアルゴリズムで移動経路取得
-	for (auto& aaa : target)
+	while (true)
 	{
-		for (auto& bbb : aaa.ListClassUnit)
+		////アスターアルゴリズムで移動経路取得
+		for (auto& aaa : target)
 		{
-			if (bbb.IsBattleEnable == false)
+			if (aaa.FlagBuilding == true)
 			{
 				continue;
 			}
-
-			Array<Point> listRoot;
-
-			//まず現在のマップチップを取得
-			s3d::Optional<Size> nowIndex = mapCreator.ToIndex(bbb.GetNowPosiCenter(), columnQuads, rowQuads);
-			if (nowIndex.has_value() == false)
+			for (auto& bbb : aaa.ListClassUnit)
 			{
-				continue;
-			}
-
-			//最寄りの敵の座標を取得
-			Vec2 xy1 = bbb.GetNowPosiCenter();
-			xy1.x = xy1.x * xy1.x;
-			xy1.y = xy1.y * xy1.y;
-			double disA = xy1.x + xy1.y;
-			HashTable<double, ClassUnit> dicDis;
-			for (auto& ccc : enemy)
-			{
-				for (auto& ddd : ccc.ListClassUnit)
+				if (bbb.IsBuilding == true && bbb.mapTipObjectType == MapTipObjectType::WALL2)
 				{
-					Vec2 xy2 = ddd.GetNowPosiCenter();
-					xy2.x = xy2.x * xy2.x;
-					xy2.y = xy2.y * xy2.y;
-					double disB = xy2.x + xy2.y;
-					dicDis.emplace(disA - disB, ddd);
+					continue;
 				}
-			}
-
-			auto minElement = dicDis.begin();
-			for (auto it = dicDis.begin(); it != dicDis.end(); ++it) {
-				if (it->first < minElement->first) {
-					minElement = it;
-				}
-			}
-
-			//最寄りの敵のマップチップを取得
-			s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(minElement->second.GetNowPosiCenter(), columnQuads, rowQuads);
-			if (nowIndexEnemy.has_value() == false)
-			{
-				continue;
-			}
-
-			//Array<Array<ClassAStar>> MapO;
-			//for (size_t i = 0; i < mapData.size(); ++i) {
-			//	MapO.emplace_back(); // 新しい行を追加
-
-			//	for (size_t j = 0; j < mapData[i].size(); ++j) {
-			//		MapO.back().emplace_back(i, j); // 新しい ClassAStar を追加
-			//	}
-			//}
-
-			//debugMap.emplace_back();
-			//debugMap.back().emplace_back(nowIndex.value().x, nowIndex.value().y);
-			//debugMap.back().emplace_back(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
-
-			////現在地を開く
-			ClassAStarManager classAStarManager(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
-			Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr, mapCreator.N);
-			MicrosecClock mc;
-			////移動経路取得
-			while (true)
-			{
-				if (startAstar.has_value() == false)
+				if (bbb.IsBattleEnable == false)
 				{
-					listRoot.clear();
-					break;
+					continue;
 				}
-
-				Print << U"AAAAAAAAAAAAAAAAA:" + Format(mc.us());
-				classAStarManager.OpenAround(startAstar.value(),
-												mapData,
-												target,
-												arrayClassObjectMapTip2,
-												mapCreator.N
-				);
-				Print << U"BBBBBBBBBBBBBBBB:" + Format(mc.us());
-				list = classAStarManager.GetListClassAStar();
-				startAstar.value()->SetAStarStatus(AStarStatus::Closed);
-
-				classAStarManager.RemoveClassAStar(startAstar.value());
-
-				if (classAStarManager.GetListClassAStar().size() != 0)
+				if (bbb.FlagMoving == true)
 				{
-					startAstar = SearchMinScore(classAStarManager.GetListClassAStar());
+					continue;
 				}
+				if (bbb.FlagMovingEnd == false)
+				{
+					continue;
+				}
+				Array<Point> listRoot;
 
-				if (startAstar.has_value() == false)
+				//まず現在のマップチップを取得
+				s3d::Optional<Size> nowIndex = mapCreator.ToIndex(bbb.GetNowPosiCenter(), columnQuads, rowQuads);
+				if (nowIndex.has_value() == false)
 				{
 					continue;
 				}
 
-				if (startAstar.value()->GetRow() == classAStarManager.GetEndX() && startAstar.value()->GetCol() == classAStarManager.GetEndY())
+				//最寄りの敵の座標を取得
+				Vec2 xy1 = bbb.GetNowPosiCenter();
+				xy1.x = xy1.x * xy1.x;
+				xy1.y = xy1.y * xy1.y;
+				double disA = xy1.x + xy1.y;
+				HashTable<double, ClassUnit> dicDis;
+				try
 				{
-					startAstar.value()->GetRoot(listRoot);
-					listRoot.reverse();
-					break;
+					for (auto& ccc : enemy)
+					{
+						for (auto& ddd : ccc.ListClassUnit)
+						{
+							if (ddd.IsBattleEnable == false)
+							{
+								continue;
+							}
+							Vec2 xy2 = ddd.GetNowPosiCenter();
+							xy2.x = xy2.x * xy2.x;
+							xy2.y = xy2.y * xy2.y;
+							double disB = xy2.x + xy2.y;
+							dicDis.emplace(disA - disB, ddd);
+						}
+					}
 				}
-			}
+				catch (const std::exception&)
+				{
+					throw;
+				}
 
-			if (listRoot.size() != 0)
-			{
-				classGameStatus.aiRoot[bbb.ID] = listRoot;
-				debugRoot.push_back(listRoot);
+				if (dicDis.size() == 0)
+				{
+					continue;
+				}
+
+				auto minElement = dicDis.begin();
+				for (auto it = dicDis.begin(); it != dicDis.end(); ++it) {
+					if (it->first < minElement->first) {
+						minElement = it;
+					}
+				}
+
+				//最寄りの敵のマップチップを取得
+				s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(minElement->second.GetNowPosiCenter(), columnQuads, rowQuads);
+				if (nowIndexEnemy.has_value() == false)
+				{
+					continue;
+				}
+
+				////現在地を開く
+				ClassAStarManager classAStarManager(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
+				Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr, mapCreator.N);
+				MicrosecClock mc;
+				////移動経路取得
+				while (true)
+				{
+					try
+					{
+						if (startAstar.has_value() == false)
+						{
+							listRoot.clear();
+							break;
+						}
+
+						Print << U"AAAAAAAAAAAAAAAAA:" + Format(mc.us());
+						classAStarManager.OpenAround(startAstar.value(),
+														mapData,
+														enemy,
+														target,
+														arrayClassObjectMapTip2,
+														mapCreator.N
+						);
+						Print << U"BBBBBBBBBBBBBBBB:" + Format(mc.us());
+						startAstar.value()->SetAStarStatus(AStarStatus::Closed);
+
+						classAStarManager.RemoveClassAStar(startAstar.value());
+
+						if (classAStarManager.GetListClassAStar().size() != 0)
+						{
+							startAstar = SearchMinScore(classAStarManager.GetListClassAStar());
+						}
+
+						if (startAstar.has_value() == false)
+						{
+							continue;
+						}
+
+						//敵まで到達したか
+						if (startAstar.value()->GetRow() == classAStarManager.GetEndX() && startAstar.value()->GetCol() == classAStarManager.GetEndY())
+						{
+							startAstar.value()->GetRoot(listRoot);
+							listRoot.reverse();
+							break;
+						}
+					}
+					catch (const std::exception&)
+					{
+						throw;
+					}
+				}
+
+				if (listRoot.size() != 0)
+				{
+					classGameStatus.aiRoot[bbb.ID] = listRoot;
+					debugRoot.push_back(listRoot);
+				}
 			}
 		}
 	}
@@ -1035,6 +1070,7 @@ public:
 		}
 
 		//ユニットの初期位置設定
+		bool ran = false;
 		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 		{
 			if (!item.FlagBuilding &&
@@ -1044,7 +1080,14 @@ public:
 				{
 					Point pt = Point(counterXSor, counterYSor);
 					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
-					itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
+					if (ran == true)
+					{
+						itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
+					}
+					else
+					{
+						itemUnit.nowPosiLeft = Vec2(reV.x, reV.y - itemUnit.TakasaUnit - 15);
+					}
 				}
 			}
 		}
@@ -1057,7 +1100,14 @@ public:
 				{
 					Point pt = Point(counterXDef, counterYDef);
 					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
-					itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
+					if (ran == true)
+					{
+						itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
+					}
+					else
+					{
+						itemUnit.nowPosiLeft = Vec2(reV.x, reV.y - itemUnit.TakasaUnit - 15);
+					}
 				}
 			}
 		}
@@ -1092,13 +1142,13 @@ public:
 			}
 		}
 
-		//task = Async(BattleMoveAStar,
-		//				std::ref(getData().classGameStatus.classBattle.defUnitGroup),
-		//				std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-		//				std::ref(mapCreator),
-		//				std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-		//				std::ref(getData().classGameStatus),
-		//				std::ref(debugRoot), std::ref(debugAstar));
+		task = Async(BattleMoveAStar,
+						std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+						std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+						std::ref(mapCreator),
+						std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+						std::ref(getData().classGameStatus),
+						std::ref(debugRoot), std::ref(debugAstar));
 
 	}
 	// 更新関数（オプション）
@@ -1385,12 +1435,30 @@ public:
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
+					if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
+					{
+						continue;
+					}
 					if (itemUnit.IsBattleEnable == false)
 					{
 						continue;
 					}
 					if (itemUnit.FlagMoving == true)
 					{
+						itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
+
+						Circle c = { itemUnit.nowPosiLeft ,1 };
+						Circle cc = { itemUnit.orderPosiLeft ,1 };
+
+						if (c.intersects(cc))
+						{
+							itemUnit.FlagMoving = false;
+						}
+						//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
+						//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
+						//{
+						//	itemUnit.FlagMoving = false;
+						//}
 						continue;
 					}
 					//auto rootPo = getData().classGameStatus.aiRoot;
@@ -1402,9 +1470,26 @@ public:
 					{
 						continue;
 					}
-					auto iufbri = getData().classGameStatus.aiRoot[itemUnit.ID].begin();
+					if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
+					{
+						itemUnit.FlagMovingEnd = true;
+						itemUnit.FlagMoving = false;
+						continue;
+					}
+
 					// タイルのインデックス
-					const Point index{ (iufbri->x),(iufbri->y) };
+					Point index;
+					try
+					{
+						getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
+						auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
+						index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
+					}
+					catch (const std::exception&)
+					{
+						throw;
+						continue;
+					}
 					//Print << index;
 					//Print << getData().classGameStatus.aiRoot[itemUnit.ID];
 
@@ -1415,12 +1500,20 @@ public:
 					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
 					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
 					const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-					const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+					const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
 
 					itemUnit.orderPosiLeft = pos;
 					Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
-					itemUnit.vecMove = hhh.normalized();
+					if (hhh.x == 0 && hhh.y == 0)
+					{
+						itemUnit.vecMove = { 0,0 };
+					}
+					else
+					{
+						itemUnit.vecMove = hhh.normalized();
+					}
 					itemUnit.FlagMoving = true;
+					itemUnit.FlagMovingEnd = false;
 				}
 			}
 
@@ -1428,6 +1521,10 @@ public:
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
+					if (itemUnit.IsBattleEnable == false)
+					{
+						continue;
+					}
 					if (itemUnit.FlagMoving == false)
 					{
 						continue;
@@ -1441,10 +1538,14 @@ public:
 					}
 				}
 			}
-			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			for (auto& item : getData().classGameStatus.classBattle.neutralUnitGroup)
 			{
 				for (auto& itemUnit : item.ListClassUnit)
 				{
+					if (itemUnit.IsBattleEnable == false)
+					{
+						continue;
+					}
 					if (itemUnit.FlagMoving == false)
 					{
 						continue;
@@ -1766,6 +1867,8 @@ public:
 		bui.append(getData().classGameStatus.classBattle.defUnitGroup[0].ListClassUnit);
 		bui.append(getData().classGameStatus.classBattle.neutralUnitGroup[0].ListClassUnit);
 
+		Array<std::pair<Vec2, String>> buiTex;
+
 		//// マップを描く | Draw the map
 		// 上から順にタイルを描く
 		for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
@@ -1789,7 +1892,7 @@ public:
 				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
 				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
 				const double posY = (i * mapCreator.TileOffset.y);
-				const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+				Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
 				// 底辺中央を基準にタイルを描く
 				String tip = getData().classGameStatus.classBattle.classMapBattle.value().mapData[index.x][index.y].tip;
@@ -1804,7 +1907,8 @@ public:
 
 					if (abc.rowBuilding == (xi + k) && abc.colBuilding == (yi - k))
 					{
-						TextureAsset(abc.Image + U".png").draw(Arg::bottomCenter = pos);
+						std::pair<Vec2, String> hhhh = { pos, abc.Image + U".png" };
+						buiTex.push_back(hhhh);
 					}
 				}
 			}
@@ -1914,6 +2018,12 @@ public:
 					}
 				}
 			}
+		}
+
+		//bui
+		for (auto aaa : buiTex)
+		{
+			TextureAsset(aaa.second).draw(Arg::bottomCenter = aaa.first);
 		}
 
 		//範囲指定もしくは移動先矢印
@@ -2944,6 +3054,7 @@ public:
 											ClassUnit unitBui;
 											unitBui.IsBuilding = true;
 											unitBui.ID = getData().classGameStatus.getIDCount();
+											std::get<1>(bui) = unitBui.ID;
 											unitBui.mapTipObjectType = mapTip.type;
 											unitBui.NoWall2 = mapTip.noWall2;
 											unitBui.HPCastle = mapTip.castle;

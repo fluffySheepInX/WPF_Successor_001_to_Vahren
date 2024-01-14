@@ -26,7 +26,7 @@
     },
     {
       "name": "testWall",
-      "type": "gate",
+      "type": "wall2",
       "no_wall2": 80,
       "castle": 100,
       "castle_defense": 100,
@@ -42,7 +42,7 @@
     },
     {
       "name": "testWall_buu",
-      "type": "gate",
+      "type": "wall2",
       "no_wall2": 80,
       "castle": 100,
       "castle_defense": 100,
@@ -50,7 +50,7 @@
     },
     {
       "name": "testWall_bu",
-      "type": "gate",
+      "type": "wall2",
       "no_wall2": 80,
       "castle": 100,
       "castle_defense": 100,
