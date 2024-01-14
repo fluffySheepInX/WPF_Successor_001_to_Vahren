@@ -245,6 +245,10 @@ public:
 					}
 				}
 
+				//// GATE系の壊せるオブジェクトが存在するかチェック
+				//
+				//味方の壊せる・敵の壊せるオブジェクトは通行可能とする？
+				//
 				{
 					bool con = false;
 					if (arrayObjMy.begin()->FlagBuilding == true)

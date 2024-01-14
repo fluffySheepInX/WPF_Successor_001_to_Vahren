@@ -238,21 +238,36 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 						Array<Array<MapDetail>> mapData,
 						ClassGameStatus& classGameStatus,
 						Array<Array<Point>>& debugRoot,
-						Array<ClassAStar*>& list)
+						Array<ClassAStar*>& list,
+						const std::atomic<bool>& abort)
 {
 	Array<ClassObjectMapTip> arrayClassObjectMapTip = classGameStatus.arrayClassObjectMapTip;
 	Array<ClassObjectMapTip> arrayClassObjectMapTip2;
 	while (true)
 	{
+		if (abort == true)
+		{
+			break;
+		}
 		////アスターアルゴリズムで移動経路取得
 		for (auto& aaa : target)
 		{
+			if (abort == true)
+			{
+				break;
+			}
+
 			if (aaa.FlagBuilding == true)
 			{
 				continue;
 			}
 			for (auto& bbb : aaa.ListClassUnit)
 			{
+				if (abort == true)
+				{
+					break;
+				}
+
 				if (bbb.IsBuilding == true && bbb.mapTipObjectType == MapTipObjectType::WALL2)
 				{
 					continue;
@@ -290,6 +305,10 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 					{
 						for (auto& ddd : ccc.ListClassUnit)
 						{
+							if (ddd.IsBuilding == true && ddd.mapTipObjectType == MapTipObjectType::WALL2)
+							{
+								continue;
+							}
 							if (ddd.IsBattleEnable == false)
 							{
 								continue;
@@ -335,6 +354,11 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 				{
 					try
 					{
+						if (abort == true)
+						{
+							break;
+						}
+
 						if (startAstar.has_value() == false)
 						{
 							listRoot.clear();
@@ -1148,8 +1172,13 @@ public:
 						std::ref(mapCreator),
 						std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
 						std::ref(getData().classGameStatus),
-						std::ref(debugRoot), std::ref(debugAstar));
+						std::ref(debugRoot), std::ref(debugAstar),
+						std::ref(abort));
 
+	}
+	~Battle()
+	{
+		abort = true;
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -2124,6 +2153,7 @@ public:
 private:
 	Array<ClassAStar*> debugAstar;
 	AsyncTask<int32> task;
+	std::atomic<bool> abort{ false };
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
 	Point cursPos = Cursor::Pos();
