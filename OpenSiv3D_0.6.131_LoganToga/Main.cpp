@@ -3001,7 +3001,7 @@ public:
 				}
 			}
 		}
-			break;
+		break;
 		case SelectCharStatus::Event:
 			break;
 		default:
@@ -3085,13 +3085,14 @@ public:
 		rectText = { 50,Scene::Size().y - 325,Scene::Size().x - 100,300 };
 		rectHelp = { 70,Scene::Size().y - 325 - 70,400,70 };
 		rectFace = { Scene::Size().x - 100 - 206 - 50,Scene::Size().y - 325 + 50,206,206 };
+		rectSkip = { Scene::Size().x - 400 - 50,Scene::Size().y - 325 - 70,400,70 };
 		stopwatch = Stopwatch{ StartImmediately::Yes };
 	}
 	// 更新関数（オプション）
 	void update() override
 	{
 		length = stopwatch.sF() / 0.05;
-		if (csv[nowRow][0].substr(0, 3) == U"end")
+		if (csv[nowRow][0].substr(0, 3) == U"end" || rectSkip.leftClicked() == true)
 		{
 			if (getData().Wave >= getData().selectClassPower.Wave)
 			{
@@ -3108,7 +3109,7 @@ public:
 			nowRow++;
 		}
 
-		if (MouseL.down() == true)
+		if (MouseL.down() == true && rectText.mouseOver() == true)
 		{
 			stopwatch.restart();
 			length = 0;
@@ -3128,6 +3129,8 @@ public:
 		}
 
 		getData().slice9.draw(rectText);
+		getData().slice9.draw(rectSkip);
+		getData().fontNovelHelp(getData().classConfigString.StorySkip).draw(rectSkip.stretched(-10), ColorF{ 0.85 });
 
 		if (csv[nowRow][3] != U"-1")
 		{
@@ -3167,11 +3170,12 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
-	Rect rectText;
-	Rect rectFace;
-	Rect rectHelp;
-	int32 nowRow;
-	int32 length;
+	Rect rectText = {};
+	Rect rectFace = {};
+	Rect rectHelp = {};
+	Rect rectSkip = {};
+	int32 nowRow = 0;
+	int32 length = 0;
 	CSV csv;
 	Stopwatch stopwatch;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
@@ -3853,7 +3857,36 @@ void Main()
 			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
 		}
 	}
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/070_Scenario/InfoCard/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		const JSON jsonPower = JSON::Load(filePath);
+		if (not jsonPower) // もし読み込みに失敗したら
+		{
+			continue;
+		}
 
+		for (const auto& [key, value] : jsonPower[U"Card"])
+		{
+			ClassCard cc;
+			cc.nameTag = value[U"name_tag"].getString();
+			cc.sortKey = Parse<int32>(value[U"sortkey"].getString());
+			cc.func = value[U"func"].getString();
+			const Array<String> strArray = value[U"icon"].getString().split(U',');
+			for (auto& s : strArray)
+			{
+				cc.icon.push_back(s.replaced(U" ", U"").replaced(U"\t", U""));
+			}
+			cc.name = value[U"name"].getString();
+			cc.help = value[U"help"].getString();
+			cc.attackMyUnit = Parse<int32>(value[U"attackMyUnit"].getString());
+			cc.defMyUnit = Parse<int32>(value[U"defMyUnit"].getString());
+			cc.moveMyUnit = Parse<int32>(value[U"moveMyUnit"].getString());
+			cc.costMyUnit = Parse<int32>(value[U"costMyUnit"].getString());
+			cc.hpMyUnit = Parse<int32>(value[U"hpMyUnit"].getString());
+			manager.get().get()->classGameStatus.arrayClassCard.push_back(std::move(cc));
+		}
+	}
 	// config.tomlからデータを読み込む
 	{
 		const TOMLReader tomlConfig{ U"001_Warehouse/001_DefaultGame/config.toml" };

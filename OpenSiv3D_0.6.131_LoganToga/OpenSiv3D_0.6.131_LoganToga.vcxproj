@@ -174,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoCard\card.json" />
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll" />
     <None Include="App\engine\font\fontawesome\fontawesome-brands.otf.zstdcmp" />
     <None Include="App\engine\font\fontawesome\fontawesome-solid.otf.zstdcmp" />
@@ -319,6 +320,7 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassCard.h" />
     <ClInclude Include="ClassAStar.h" />
     <ClInclude Include="ClassBattle.h" />
     <ClInclude Include="ClassConfigString.h" />

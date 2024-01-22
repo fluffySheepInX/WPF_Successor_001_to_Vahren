@@ -22,4 +22,5 @@ public:
 	String BattleMessage001;
 	String BuyMessage001;
 	String SelectCharMessage001;
+	String StorySkip;
 };

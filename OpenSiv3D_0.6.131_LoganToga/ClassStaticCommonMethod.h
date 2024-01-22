@@ -41,6 +41,7 @@ public:
 				ccs.BattleMessage001 = table[U"BattleMessage001"].get<String>();
 				ccs.BuyMessage001 = table[U"BuyMessage001"].get<String>();
 				ccs.SelectCharMessage001 = table[U"SelectCharMessage001"].get<String>();
+				ccs.StorySkip = table[U"StorySkip"].get<String>();
 			}
 		}
 
