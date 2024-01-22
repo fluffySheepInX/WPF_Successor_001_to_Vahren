@@ -21,4 +21,5 @@ public:
 	String strategyMenu009;
 	String BattleMessage001;
 	String BuyMessage001;
+	String SelectCharMessage001;
 };

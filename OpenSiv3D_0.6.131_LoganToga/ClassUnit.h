@@ -282,6 +282,7 @@ public:
 	}
 	// OrderPosiLeft
 	Vec2 orderPosiLeft;
+	Vec2 orderPosiLeftLast;
 
 	// OrderPosiCenter
 	Vec2 GetOrderPosiCenter()

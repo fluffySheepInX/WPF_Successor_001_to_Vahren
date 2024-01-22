@@ -445,7 +445,7 @@ void Main()
 					}
 					else
 					{
-						std::pair<Vec2, Texture> hhhh = { pos, texturesBui[gridBui[index]].second };
+						std::pair<Vec2, Texture> hhhh = { pos.movedBy(0,-15), texturesBui[gridBui[index]].second};
 						buiTex.push_back(hhhh);
 						//texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
 					}

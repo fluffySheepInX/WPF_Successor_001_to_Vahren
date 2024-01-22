@@ -79,6 +79,14 @@ enum class BattleStatus
 	,
 	Event
 };
+enum class SelectCharStatus
+{
+	SelectChar
+	,
+	Message
+	,
+	Event
+};
 enum class FormBuyDisplayStatus
 {
 	Normal

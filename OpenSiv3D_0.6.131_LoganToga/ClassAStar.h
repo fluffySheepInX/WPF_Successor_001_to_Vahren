@@ -184,7 +184,7 @@ public:
 		return getClassAStar;
 	}
 
-	void OpenAround(ClassAStar* parent, Array<Array<MapDetail>>& mapData, Array<ClassHorizontalUnit>& arrayObjEnemy, Array<ClassHorizontalUnit>& arrayObjMy, Array<ClassObjectMapTip>& arrayClassObjectMapTip, int32 maxN)
+	void OpenAround(ClassAStar* parent, Array<Array<MapDetail>>& mapData, Array<ClassHorizontalUnit>& arrayObjEnemy, Array<ClassHorizontalUnit>& arrayObjMy, int32 maxN)
 	{
 		int32 x = parent->GetRow();
 		int32 y = parent->GetCol();
