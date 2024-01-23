@@ -1879,8 +1879,9 @@ public:
 						}
 
 						//衝突したらunitのHPを減らし、消滅
-						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,30 };
+						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,(loop_Battle_player_skills.classSkill.w + loop_Battle_player_skills.classSkill.h) / 2 };
 
+						bool bombCheck = false;
 						for (auto& itemTargetHo : getData().classGameStatus.classBattle.defUnitGroup)
 						{
 							for (auto& itemTarget : itemTargetHo.ListClassUnit)
@@ -1889,11 +1890,18 @@ public:
 								{
 									continue;
 								}
-
-								Point pt = Point(itemTarget.rowBuilding, itemTarget.colBuilding);
-								Vec2 vv = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
-								vv = { vv.x,vv.y - (25 + 15) };
-								Circle cTar = Circle{ vv,30 };
+								Vec2 vv;
+								if (itemTarget.IsBuilding == true)
+								{
+									Point pt = Point(itemTarget.rowBuilding, itemTarget.colBuilding);
+									vv = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
+									vv = { vv.x,vv.y - (25 + 15) };
+								}
+								else
+								{
+									vv = itemTarget.GetNowPosiCenter();
+								}
+								Circle cTar = Circle{ vv,1 };
 								if (c.intersects(cTar) == true)
 								{
 									loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
@@ -1909,7 +1917,19 @@ public:
 
 									//消滅
 									arrayNo.push_back(target.No);
+
+									//一体だけ当たったらそこで終了
+									if (loop_Battle_player_skills.classSkill.SkillBomb == SkillBomb::off)
+									{
+										bombCheck == true;
+										break;
+									}
 								}
+							}
+							//一体だけ当たったらそこで終了
+							if (bombCheck == true)
+							{
+								break;
 							}
 						}
 					}
@@ -1956,7 +1976,7 @@ public:
 						}
 
 						//衝突したらunitのHPを減らし、消滅
-						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,30 };
+						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,15 };
 
 						for (auto& itemTargetHo : getData().classGameStatus.classBattle.sortieUnitGroup)
 						{
@@ -1966,11 +1986,18 @@ public:
 								{
 									continue;
 								}
-
-								Point pt = Point(itemTarget.rowBuilding, itemTarget.colBuilding);
-								Vec2 vv = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
-								vv = { vv.x,vv.y - (25 + 15) };
-								Circle cTar = Circle{ vv,30 };
+								Vec2 vv;
+								if (itemTarget.IsBuilding == true)
+								{
+									Point pt = Point(itemTarget.rowBuilding, itemTarget.colBuilding);
+									vv = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
+									vv = { vv.x,vv.y - (25 + 15) };
+								}
+								else
+								{
+									vv = itemTarget.GetNowPosiCenter();
+								}
+								Circle cTar = Circle{ vv,15 };
 								if (c.intersects(cTar) == true)
 								{
 									loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
@@ -2106,7 +2133,7 @@ public:
 				getData().NovelNumber = getData().NovelNumber + 1;
 				getData().Wave = getData().Wave + 1;
 
-				changeScene(U"Novel", 0.9s);
+				changeScene(U"Card", 0.9s);
 			}
 		}
 		break;
@@ -3052,7 +3079,9 @@ public:
 	}
 private:
 	int32 basePointY = 50;
+	/// @brief classConfigString.selectChara1の枠　など
 	Array<Rect> arrayRectSystem;
+	/// @brief mouseOver時のテキストエリア　など
 	Array<RectF> arrayRectFSystem;
 	bool Message001 = false;
 	SelectCharStatus selectCharStatus = SelectCharStatus::SelectChar;
@@ -3748,6 +3777,106 @@ private:
 	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;
 
 };
+class Card : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	Card(const InitData& init)
+		: IScene{ init }
+	{
+		// カードの確率分布
+		{
+			Array<int> probabilities;
+			for (size_t i = 0; i < getData().classGameStatus.arrayClassCard.size(); i++)
+			{
+				probabilities.push_back(1);
+			}
+			distributionCard = DiscreteDistribution(probabilities.begin(), probabilities.end());
+		}
+
+		String sc = getData().classConfigString.selectChara1;
+		RectF re1 = getData().fontSelectChar1(sc).region();
+		re1.x = Scene::Center().x - (re1.w / 2);
+		re1.y = basePointY;
+		arrayRectFSystem.push_back(re1);
+		RectF re2 = { 0,0,1600,300 };
+		re2.x = Scene::Center().x - (800);
+		re2.y = (re1.h + basePointY + 20) + 550 + 20;
+		arrayRectFSystem.push_back(re2);
+
+		int32 arraySize = 3;
+		int32 xxx = 0;
+		xxx = ((arraySize * 206) / 2);
+		int32 counter = 0;
+		for (size_t i = 0; i < 3; i++)
+		{
+			ClassCard cc = DiscreteSample(getData().classGameStatus.arrayClassCard, distributionCard);
+			RectF rrr = {};
+			rrr = { (Scene::Center().x - xxx) + counter * 206,re1.h + basePointY + 20,206,550 };
+			cc.rectF = rrr;
+
+			arrayCard.push_back(cc);
+			counter++;
+		}
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+		for (auto& ccc : arrayCard)
+		{
+			if (ccc.rectF.leftClicked() == false)
+			{
+				continue;
+			}
+
+
+
+			changeScene(U"Novel", 0.9s);
+		}
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+		getData().slice9.draw(arrayRectFSystem[0].asRect());
+		getData().fontNovelHelp(getData().classConfigString.selectCard).draw(arrayRectFSystem[0].stretched(-10), ColorF{ 0.85 });
+		getData().slice9.draw(arrayRectFSystem[1].asRect());
+
+		for (auto& ttt : arrayCard)
+		{
+			if (ttt.rectF.mouseOver() == true)
+			{
+				getData().fontSelectChar2(ttt.help).draw(arrayRectFSystem[1].stretched(-10), ColorF{ 0.85 });
+			}
+
+			for (size_t i = 0; i < ttt.icon.size(); i++)
+			{
+				ttt.rectF(TextureAsset(ttt.icon[i])).draw();
+			}
+		}
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	int32 basePointY = 50;
+	Array<RectF> arrayRectFSystem;
+	Array<ClassCard> arrayCard;
+	DiscreteDistribution distributionCard;
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+
 class common001 : public App::Scene
 {
 public:
@@ -3817,8 +3946,14 @@ void Main()
 	manager.add<SelectChar>(U"SelectChar");
 	manager.add<Novel>(U"Novel");
 	manager.add<Buy>(U"Buy");
+	manager.add<Card>(U"Card");
 
 	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/010_FaceImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(U"001_Warehouse/001_DefaultGame/006_CardImage/"))
 	{
 		String filename = FileSystem::FileName(filePath);
 		TextureAsset::Register(filename, filePath);
@@ -3877,6 +4012,7 @@ void Main()
 			{
 				cc.icon.push_back(s.replaced(U" ", U"").replaced(U"\t", U""));
 			}
+			cc.icon.reverse();
 			cc.name = value[U"name"].getString();
 			cc.help = value[U"help"].getString();
 			cc.attackMyUnit = Parse<int32>(value[U"attackMyUnit"].getString());
@@ -3951,6 +4087,70 @@ void Main()
 		Array<ClassSkill> arrayClassSkill;
 		for (const auto& [key, value] : skillData[U"Skill"]) {
 			ClassSkill cu;
+			{
+				if (value[U"func"].get<String>() == U"missile")
+				{
+					cu.SkillType = SkillType::missile;
+				}
+			}
+			{
+				if (value[U"MoveType"].get<String>() == U"throw")
+				{
+					cu.MoveType = MoveType::thr;
+				}
+			}
+			{
+				if (value[U"Easing"].get<String>() == U"easeOutExpo")
+				{
+					cu.Easing = SkillEasing::easeOutExpo;
+				}
+			}
+			if (value.hasElement(U"EasingRatio") == true)
+			{
+				cu.EasingRatio = Parse<int32>(value[U"EasingRatio"].get<String>());
+			}
+			if (value.hasElement(U"slow_per") == true)
+			{
+				cu.slowPer = Parse<int32>(value[U"slow_per"].get<String>());
+			}
+			else
+			{
+				cu.slowPer = none;
+			}
+			if (value.hasElement(U"slow_time") == true)
+			{
+				cu.slowTime = Parse<int32>(value[U"slow_time"].get<String>());
+			}
+			else
+			{
+				cu.slowTime = none;
+			}
+			if (value.hasElement(U"center") == true)
+			{
+				if (value[U"center"].get<String>() == U"on")
+				{
+					cu.SkillCenter = SkillCenter::on;
+				}
+				else if (value[U"center"].get<String>() == U"off")
+				{
+					cu.SkillCenter = SkillCenter::off;
+				}
+				else if (value[U"center"].get<String>() == U"end")
+				{
+					cu.SkillCenter = SkillCenter::end;
+				}
+			}
+			if (value.hasElement(U"bom") == true)
+			{
+				if (value[U"bom"].get<String>() == U"on")
+				{
+					cu.SkillBomb = SkillBomb::on;
+				}
+				else if (value[U"bom"].get<String>() == U"off")
+				{
+					cu.SkillBomb = SkillBomb::off;
+				}
+			}
 			cu.nameTag = value[U"name_tag"].get<String>();
 			cu.name = value[U"name"].get<String>();
 			cu.range = Parse<int32>(value[U"range"].get<String>());
@@ -4030,36 +4230,36 @@ void Main()
 		//manager.init(U"Novel");
 
 		{
-			//manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
-			//const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
+			manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+			const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
 
-			//if (not tomlInfoProcess) // もし読み込みに失敗したら
-			//{
-			//	throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
-			//}
+			if (not tomlInfoProcess) // もし読み込みに失敗したら
+			{
+				throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+			}
 
-			//for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-			//	String map = table[U"map"].get<String>();
-			//	manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
-			//	for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
-			//	{
-			//		String ene = table[map].get<String>();
-			//		manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
-			//	}
-			//}
-			//manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
-			//manager.get().get()->NovelPower = U"sc_a_p_b";
-			//manager.get().get()->NovelNumber = 0;
-			//manager.init(U"Buy");
+			for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+				String map = table[U"map"].get<String>();
+				manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+				for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
+				{
+					String ene = table[map].get<String>();
+					manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+				}
+			}
+			manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
+			manager.get().get()->NovelPower = U"sc_a_p_b";
+			manager.get().get()->NovelNumber = 0;
+			manager.init(U"Buy");
 
-			//for (auto& aaa : manager.get().get()->classGameStatus.arrayClassPower)
-			//{
-			//	if (aaa.PowerTag == manager.get().get()->NovelPower)
-			//	{
-			//		manager.get().get()->selectClassPower = aaa;
-			//		manager.get().get()->Money = aaa.Money;
-			//	}
-			//}
+			for (auto& aaa : manager.get().get()->classGameStatus.arrayClassPower)
+			{
+				if (aaa.PowerTag == manager.get().get()->NovelPower)
+				{
+					manager.get().get()->selectClassPower = aaa;
+					manager.get().get()->Money = aaa.Money;
+				}
+			}
 
 		}
 

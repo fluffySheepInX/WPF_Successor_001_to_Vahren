@@ -5,6 +5,7 @@
 	selectScenario = "scenario"
 	selectScenario2 = "other"
 	selectChara1 = "Please select a character to play"
+	selectCard = "Please select a card"
 	DoYouWantToQuitTheGame = "Do you want to quit the game"
 	strategyMenu000 = "Plus unit."
 	strategyMenu001 = "Training."

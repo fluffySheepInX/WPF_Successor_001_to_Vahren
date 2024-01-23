@@ -17,6 +17,7 @@ public:
 
 	float radian;
 	float degree;
+	Optional<RectF> rectF;
 };
 
 class ClassExecuteSkills

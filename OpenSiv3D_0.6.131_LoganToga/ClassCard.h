@@ -14,4 +14,6 @@ public:
 	int32 moveMyUnit;
 	int32 costMyUnit;
 	int32 hpMyUnit;
+
+	RectF rectF;
 };

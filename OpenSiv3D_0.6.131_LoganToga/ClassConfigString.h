@@ -8,6 +8,7 @@ public:
 	String selectScenario;
 	String selectScenario2;
 	String selectChara1;
+	String selectCard;
 	String DoYouWantToQuitTheGame;
 	String strategyMenu000;
 	String strategyMenu001;
