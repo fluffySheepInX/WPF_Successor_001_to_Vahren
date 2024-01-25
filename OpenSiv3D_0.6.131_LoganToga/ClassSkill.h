@@ -13,6 +13,7 @@ public:
 	std::pair<s3d::String, int32> fkey;
 	int32 sortKey = 0;
 	SkillType SkillType = SkillType::sword;
+
 	/// <summary>
 	///		movetype = line、speed≠0	直進タイプ	敵に向かって直進します
 	///		movetype = line、speed = 0	静止タイプ	静止したまま
@@ -23,8 +24,8 @@ public:
 	///		movetype = circle	回転タイプ	術者を中心に回転します
 	///		movetype = swing	振り回しタイプ	術者を中心に旋回します（剣を振る等）
 	/// </summary>
-	///
 	MoveType MoveType = MoveType::line;
+
 	Optional<SkillEasing> Easing = none;
 	int32 EasingRatio = 0;
 	double mp = 0.0;
@@ -34,29 +35,38 @@ public:
 	Optional<int32> slowTime = 1;
 	SkillCenter SkillCenter = SkillCenter::on;
 	SkillBomb SkillBomb = SkillBomb::on;
+	SkillD360 SkillD360 = SkillD360::off;
 	s3d::Array<s3d::String> sound;
 	s3d::String direct;
 	int32 w = 0;
 	int32 h = 0;
 	int32 a = 0;
+
+	/// <summary>
+	///	arc		放物線を高くする。負の値にすると低くなる
+	///	throw	省略時は50。50にすると標的への直線距離の50% が高さ半径になる
+	///	drop	落下タイプでは落下開始点の高さ。上昇タイプでは上昇する高さ
+	///	circle	一周する毎に伸びる半径ﾄﾞｯﾄ数。400だと一周する度に4ﾄﾞｯﾄ半径が伸びる
+	/// </summary>
+	int32 height = 0;
+	double radius = 0;
 	s3d::String forceFire;
 	s3d::String attr;
 	std::pair<s3d::String, int32> str;
 	int32 range = 0;
 	int32 damageRangeAdjust = 0;
 	int32 rangeMin = 0;
-	int32 speed = 0;
+	double speed = 0;
 	std::pair<s3d::String, int32> gunDelay;
 	s3d::String pairNext;
 	s3d::String next;
 	int32 randomSpace = 0;
 	s3d::Array<s3d::String> offset;
 	s3d::Array<int32> ray;
-	s3d::String forceRay;
 	int32 rush = -1;
 	int32 rushInterval = -1;
 	int32 rushRandomDegree = -1;
-
+	SkillForceRay SkillForceRay = SkillForceRay::off;
 	float radian = 0;
 	float degree = 0;
 };

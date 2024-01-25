@@ -58,6 +58,14 @@ enum class SkillBomb
 {
 	on, off
 };
+enum class SkillD360
+{
+	on, off
+};
+enum class SkillForceRay
+{
+	on, off
+};
 
 /// <summary>
 /// 部隊チップの種別

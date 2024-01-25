@@ -63,7 +63,11 @@ struct Fade4 : public IFade
 		}
 	}
 };
-
+template <class T>
+struct TexturedCollider
+{
+	T Collider;
+};
 namespace s3dx
 {
 	class SceneMessageBoxImpl
@@ -210,6 +214,7 @@ auto randomFade()
 MapCreator mapCreator;
 Array<Quad> columnQuads;
 Array<Quad> rowQuads;
+
 Optional<ClassAStar*> SearchMinScore(const Array<ClassAStar*>& ls) {
 	int minScore = std::numeric_limits<int>::max();
 	int minCost = std::numeric_limits<int>::max();
@@ -1854,6 +1859,7 @@ public:
 			SkillProcess(getData().classGameStatus.classBattle.defUnitGroup, getData().classGameStatus.classBattle.sortieUnitGroup, m_Battle_enemy_skills);
 
 			//skill実行処理
+			const double time = Scene::Time();
 			{
 				Array<ClassExecuteSkills> deleteCES;
 				for (ClassExecuteSkills& loop_Battle_player_skills : m_Battle_player_skills)
@@ -1874,12 +1880,84 @@ public:
 						}
 						else
 						{
-							target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100))),
-														(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100))));
+							//イージングによって速度を変更させる
+							if (loop_Battle_player_skills.classSkill.Easing.has_value() == true)
+							{
+								// 移動の割合 0.0～1.0
+								const double t = Min(target.stopwatch.sF(), 1.0);
+								switch (loop_Battle_player_skills.classSkill.Easing.value())
+								{
+								case SkillEasing::easeOutExpo:
+								{
+									const double ea = EaseOutExpo(t);
+									target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100) * (ea * loop_Battle_player_skills.classSkill.EasingRatio))),
+																(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100) * (ea * loop_Battle_player_skills.classSkill.EasingRatio))));
+								}
+								break;
+								default:
+									break;
+								}
+							}
+							else
+							{
+								switch (loop_Battle_player_skills.classSkill.MoveType)
+								{
+								case MoveType::line:
+								{
+									if (loop_Battle_player_skills.classSkill.SkillCenter == SkillCenter::end)
+									{
+										Vec2 offPos = { -1,-1 };
+										for (size_t i = 0; i < getData().classGameStatus.classBattle.sortieUnitGroup.size(); i++)
+										{
+											for (size_t j = 0; j < getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit.size(); j++)
+											{
+												if (loop_Battle_player_skills.UnitID == getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit[j].ID)
+												{
+													offPos = getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit[j].GetNowPosiCenter();
+												}
+											}
+										}
+										target.NowPosition = offPos;
+									}
+									else
+									{
+										target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100))),
+																	(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100))));
+									}
+								}
+								break;
+								case MoveType::circle:
+								{
+									Vec2 offPos = { -1,-1 };
+									for (size_t i = 0; i < getData().classGameStatus.classBattle.sortieUnitGroup.size(); i++)
+									{
+										for (size_t j = 0; j < getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit.size(); j++)
+										{
+											if (loop_Battle_player_skills.UnitID == getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit[j].ID)
+											{
+												offPos = getData().classGameStatus.classBattle.sortieUnitGroup[i].ListClassUnit[j].GetNowPosiCenter();
+											}
+										}
+									}
+
+									const double theta = (target.RushNo * 60_deg + time * (loop_Battle_player_skills.classSkill.speed * Math::Pi / 180.0));
+									const Vec2 pos = OffsetCircular{ offPos, loop_Battle_player_skills.classSkill.radius, theta };
+
+									target.NowPosition = pos;
+								}
+								break;
+								default:
+									target.NowPosition = Vec2((target.NowPosition.x + (target.MoveVec.x * (loop_Battle_player_skills.classSkill.speed / 100))),
+																(target.NowPosition.y + (target.MoveVec.y * (loop_Battle_player_skills.classSkill.speed / 100))));
+									break;
+								}
+							}
 						}
 
 						//衝突したらunitのHPを減らし、消滅
-						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,(loop_Battle_player_skills.classSkill.w + loop_Battle_player_skills.classSkill.h) / 2 };
+						RectF rrr = { Arg::bottomCenter(target.NowPosition),(double)loop_Battle_player_skills.classSkill.w,(double)loop_Battle_player_skills.classSkill.h };
+						TexturedCollider tc1 = { rrr };
+						TexturedCollider tc2 = { Circle{ target.NowPosition.x,target.NowPosition.y,loop_Battle_player_skills.classSkill.w / 2 } };
 
 						bool bombCheck = false;
 						for (auto& itemTargetHo : getData().classGameStatus.classBattle.defUnitGroup)
@@ -1902,27 +1980,54 @@ public:
 									vv = itemTarget.GetNowPosiCenter();
 								}
 								Circle cTar = Circle{ vv,1 };
-								if (c.intersects(cTar) == true)
+								if (loop_Battle_player_skills.classSkill.SkillCenter == SkillCenter::end)
 								{
-									loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
-
-									if (itemTarget.IsBuilding == true)
+									if (tc1.Collider.rotatedAt(tc1.Collider.bottomCenter(), target.radian + Math::ToRadians(90)).intersects(cTar) == true)
 									{
-										itemTarget.HPCastle = itemTarget.HPCastle - (10000);
+										loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
+
+										if (itemTarget.IsBuilding == true)
+										{
+											itemTarget.HPCastle = itemTarget.HPCastle - (10000);
+										}
+										else
+										{
+											itemTarget.Hp = itemTarget.Hp - (10000);
+										}
+
+										//消滅
+										arrayNo.push_back(target.No);
+										//一体だけ当たったらそこで終了
+										if (loop_Battle_player_skills.classSkill.SkillBomb == SkillBomb::off)
+										{
+											bombCheck == true;
+											break;
+										}
 									}
-									else
+								}
+								else
+								{
+									if (tc2.Collider.intersects(cTar) == true)
 									{
-										itemTarget.Hp = itemTarget.Hp - (10000);
-									}
+										loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
 
-									//消滅
-									arrayNo.push_back(target.No);
+										if (itemTarget.IsBuilding == true)
+										{
+											itemTarget.HPCastle = itemTarget.HPCastle - (10000);
+										}
+										else
+										{
+											itemTarget.Hp = itemTarget.Hp - (10000);
+										}
 
-									//一体だけ当たったらそこで終了
-									if (loop_Battle_player_skills.classSkill.SkillBomb == SkillBomb::off)
-									{
-										bombCheck == true;
-										break;
+										//消滅
+										arrayNo.push_back(target.No);
+										//一体だけ当たったらそこで終了
+										if (loop_Battle_player_skills.classSkill.SkillBomb == SkillBomb::off)
+										{
+											bombCheck == true;
+											break;
+										}
 									}
 								}
 							}
@@ -1976,7 +2081,7 @@ public:
 						}
 
 						//衝突したらunitのHPを減らし、消滅
-						Circle c = Circle{ target.NowPosition.x,target.NowPosition.y,15 };
+						TexturedCollider tc1{ Circle{ target.NowPosition.x,target.NowPosition.y,15 } };
 
 						for (auto& itemTargetHo : getData().classGameStatus.classBattle.sortieUnitGroup)
 						{
@@ -1998,7 +2103,7 @@ public:
 									vv = itemTarget.GetNowPosiCenter();
 								}
 								Circle cTar = Circle{ vv,15 };
-								if (c.intersects(cTar) == true)
+								if (tc1.Collider.intersects(cTar) == true)
 								{
 									loop_Battle_player_skills.classUnit->FlagMovingSkill = false;
 
@@ -2379,19 +2484,47 @@ public:
 				if (skill.classSkill.image == U"")
 				{
 					Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
+					continue;
 				}
-				else
+
+				if (skill.classSkill.SkillForceRay == SkillForceRay::on)
 				{
-					if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
+					Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
+				}
+
+				if (skill.classSkill.SkillD360 == SkillD360::on)
+				{
+					if (skill.classSkill.SkillCenter == SkillCenter::end)
 					{
-						TextureAsset(skill.classSkill.image + U"N.png").rotated(acb.radian + Math::ToRadians(90)).draw(acb.NowPosition.x, acb.NowPosition.y);
+						const Texture texture = TextureAsset(skill.classSkill.image + U".png");
+						texture
+							.resized(skill.classSkill.w, skill.classSkill.h)
+							.rotatedAt(texture.resized(skill.classSkill.w, skill.classSkill.h).region().bottomCenter(), acb.radian + Math::ToRadians(90))
+							.drawAt(acb.NowPosition);
 					}
 					else
 					{
-						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
-						TextureAsset(skill.classSkill.image + U"NW.png").rotated(acb.radian + Math::ToRadians(135)).draw(acb.NowPosition.x - (TextureAsset(skill.classSkill.image + U"NW.png").size().x / 2), acb.NowPosition.y - (TextureAsset(skill.classSkill.image + U"NW.png").size().y / 2));
+						TextureAsset(skill.classSkill.image + U".png")
+							.resized(skill.classSkill.w, skill.classSkill.h)
+							.rotated(acb.lifeTime * 10)
+							.drawAt(acb.NowPosition);
 					}
+					continue;
 				}
+
+				if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
+				{
+					TextureAsset(skill.classSkill.image + U"N.png")
+						.resized(skill.classSkill.w, skill.classSkill.h)
+						.rotated(acb.radian + Math::ToRadians(90))
+						.drawAt(acb.NowPosition);
+					continue;
+				}
+
+				TextureAsset(skill.classSkill.image + U"NW.png")
+					.resized(skill.classSkill.w, skill.classSkill.h)
+					.rotated(acb.radian + Math::ToRadians(135))
+					.drawAt(acb.NowPosition);
 			}
 		}
 		for (auto& skill : m_Battle_enemy_skills)
@@ -2411,7 +2544,16 @@ public:
 					else
 					{
 						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
-						TextureAsset(skill.classSkill.image + U"NW.png").rotated(acb.radian + Math::ToRadians(135)).draw(acb.NowPosition.x - (TextureAsset(skill.classSkill.image + U"NW.png").size().x / 2), acb.NowPosition.y - (TextureAsset(skill.classSkill.image + U"NW.png").size().y / 2));
+						if (skill.classSkill.SkillD360 == SkillD360::on)
+						{
+							TextureAsset(skill.classSkill.image + U".png")
+								.rotated(acb.lifeTime * 10)
+								.draw(acb.NowPosition.x - (TextureAsset(skill.classSkill.image + U"NW.png").size().x / 2), acb.NowPosition.y - (TextureAsset(skill.classSkill.image + U"NW.png").size().y / 2));
+						}
+						else
+						{
+							TextureAsset(skill.classSkill.image + U"NW.png").rotated(acb.radian + Math::ToRadians(135)).draw(acb.NowPosition.x - (TextureAsset(skill.classSkill.image + U"NW.png").size().x / 2), acb.NowPosition.y - (TextureAsset(skill.classSkill.image + U"NW.png").size().y / 2));
+						}
 					}
 				}
 			}
@@ -2533,6 +2675,7 @@ private:
 
 							ClassExecuteSkills ces;
 							ces.No = getData().classGameStatus.getDeleteCESIDCount();
+							ces.UnitID = itemUnit.ID;
 							ces.classSkill = itemSkill;
 							ces.classUnit = &itemUnit;
 
@@ -2540,10 +2683,18 @@ private:
 							{
 								ClassBullets cbItemUnit;
 								cbItemUnit.No = singleAttackNumber;
+								cbItemUnit.RushNo = iii;
 								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
 								cbItemUnit.StartPosition = itemUnit.GetNowPosiCenter();
 								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
-								cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+								if (itemSkill.speed == 0)
+								{
+									cbItemUnit.duration = 2.5;
+								}
+								else
+								{
+									cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+								}
 								cbItemUnit.lifeTime = 0;
 
 								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
@@ -4098,11 +4249,18 @@ void Main()
 				{
 					cu.MoveType = MoveType::thr;
 				}
+				if (value[U"MoveType"].get<String>() == U"circle")
+				{
+					cu.MoveType = MoveType::circle;
+				}
 			}
 			{
-				if (value[U"Easing"].get<String>() == U"easeOutExpo")
+				if (value.hasElement(U"Easing") == true)
 				{
-					cu.Easing = SkillEasing::easeOutExpo;
+					if (value[U"Easing"].get<String>() == U"easeOutExpo")
+					{
+						cu.Easing = SkillEasing::easeOutExpo;
+					}
 				}
 			}
 			if (value.hasElement(U"EasingRatio") == true)
@@ -4151,14 +4309,49 @@ void Main()
 					cu.SkillBomb = SkillBomb::off;
 				}
 			}
+			if (value.hasElement(U"height") == true)
+			{
+				cu.height = Parse<int32>(value[U"height"].get<String>());
+			}
+			if (value.hasElement(U"radius") == true)
+			{
+				cu.radius = Parse<double>(value[U"radius"].get<String>());
+			}
+			if (value.hasElement(U"rush") == true)
+			{
+				cu.rush = Parse<int32>(value[U"rush"].get<String>());
+			}
+			cu.image = value[U"image"].get<String>();
+			if (value.hasElement(U"d360") == true)
+			{
+				if (value[U"d360"].get<String>() == U"on")
+				{
+					cu.SkillD360 = SkillD360::on;
+					TextureAsset::Register(cu.image + U".png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U".png");
+				}
+			}
+			else
+			{
+				TextureAsset::Register(cu.image + U"NW.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
+				TextureAsset::Register(cu.image + U"N.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"N.png");
+			}
+			if (value.hasElement(U"force_ray") == true)
+			{
+				if (value[U"force_ray"].get<String>() == U"on")
+				{
+					cu.SkillForceRay = SkillForceRay::on;
+				}
+				else
+				{
+					cu.SkillForceRay = SkillForceRay::off;
+				}
+			}
 			cu.nameTag = value[U"name_tag"].get<String>();
 			cu.name = value[U"name"].get<String>();
 			cu.range = Parse<int32>(value[U"range"].get<String>());
 			cu.w = Parse<int32>(value[U"w"].get<String>());
-			cu.speed = Parse<int32>(value[U"speed"].get<String>());
-			cu.image = value[U"image"].get<String>();
-			TextureAsset::Register(cu.image + U"NW.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
-			TextureAsset::Register(cu.image + U"N.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"N.png");
+			cu.h = Parse<int32>(value[U"h"].get<String>());
+			cu.speed = Parse<double>(value[U"speed"].get<String>());
 
 			arrayClassSkill.push_back(std::move(cu));
 		}
