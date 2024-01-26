@@ -4761,36 +4761,36 @@ void Main()
 		//manager.init(U"Novel");
 
 		{
-			manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
-			const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
+			//manager.get().get()->classConfigString = ClassStaticCommonMethod::GetClassConfigString(U"en");
+			//const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/sc_a_p_b.toml" };
 
-			if (not tomlInfoProcess) // もし読み込みに失敗したら
-			{
-				throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
-			}
+			//if (not tomlInfoProcess) // もし読み込みに失敗したら
+			//{
+			//	throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+			//}
 
-			for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-				String map = table[U"map"].get<String>();
-				manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
-				for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
-				{
-					String ene = table[map].get<String>();
-					manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
-				}
-			}
-			manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
-			manager.get().get()->NovelPower = U"sc_a_p_b";
-			manager.get().get()->NovelNumber = 0;
-			manager.init(U"Buy");
+			//for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+			//	String map = table[U"map"].get<String>();
+			//	manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+			//	for (auto& map : manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaMap)
+			//	{
+			//		String ene = table[map].get<String>();
+			//		manager.get().get()->classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+			//	}
+			//}
+			//manager.get().get()->classGameStatus.nowPowerTag = U"sc_a_p_b";
+			//manager.get().get()->NovelPower = U"sc_a_p_b";
+			//manager.get().get()->NovelNumber = 0;
+			//manager.init(U"Buy");
 
-			for (auto& aaa : manager.get().get()->classGameStatus.arrayClassPower)
-			{
-				if (aaa.PowerTag == manager.get().get()->NovelPower)
-				{
-					manager.get().get()->selectClassPower = aaa;
-					manager.get().get()->Money = aaa.Money;
-				}
-			}
+			//for (auto& aaa : manager.get().get()->classGameStatus.arrayClassPower)
+			//{
+			//	if (aaa.PowerTag == manager.get().get()->NovelPower)
+			//	{
+			//		manager.get().get()->selectClassPower = aaa;
+			//		manager.get().get()->Money = aaa.Money;
+			//	}
+			//}
 
 		}
 
