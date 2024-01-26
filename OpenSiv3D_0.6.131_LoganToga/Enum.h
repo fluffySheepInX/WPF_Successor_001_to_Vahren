@@ -66,6 +66,10 @@ enum class SkillForceRay
 {
 	on, off
 };
+enum class SkillStrKind
+{
+	none, attack, magic, attack_magic, attack_dext, magic_dext, fix
+};
 
 /// <summary>
 /// 部隊チップの種別

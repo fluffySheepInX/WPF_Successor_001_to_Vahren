@@ -52,7 +52,8 @@ public:
 	double radius = 0;
 	s3d::String forceFire;
 	s3d::String attr;
-	std::pair<s3d::String, int32> str;
+	int32 str;
+	SkillStrKind SkillStrKind = SkillStrKind::none;
 	int32 range = 0;
 	int32 damageRangeAdjust = 0;
 	int32 rangeMin = 0;

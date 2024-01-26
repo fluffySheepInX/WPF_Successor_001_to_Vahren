@@ -19,6 +19,7 @@ public:
 
 	float radian;
 	float degree;
+	float initDegree;
 	///// @brief 累積時間
 	//double AccumulationTime = 0;
 	Optional<RectF> rectF;
