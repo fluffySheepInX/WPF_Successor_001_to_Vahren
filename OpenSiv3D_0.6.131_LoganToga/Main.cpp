@@ -1320,10 +1320,6 @@ public:
 		{
 		case BattleStatus::Battle:
 		{
-			if (SimpleGUI::Button(U"Call", Vec2{ 600, 20 }, unspecified, (not task.isValid())))
-			{
-			}
-
 			//カメラ移動
 			if (MouseL.pressed() == true)
 			{
@@ -1709,19 +1705,29 @@ public:
 					{
 						itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
 
-						Circle c = { itemUnit.nowPosiLeft ,1 };
-						Circle cc = { itemUnit.orderPosiLeft ,1 };
-
-						if (c.intersects(cc))
+						double current_distanceX = itemUnit.orderPosiLeft.x - itemUnit.nowPosiLeft.x;
+						double current_distanceY = itemUnit.orderPosiLeft.y - itemUnit.nowPosiLeft.y;
+						double next_distanceX = current_distanceX - (itemUnit.vecMove.x * (itemUnit.Speed / 100));
+						double next_distanceY = current_distanceY - (itemUnit.vecMove.y * (itemUnit.Speed / 100));
+						if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
 						{
 							itemUnit.FlagMoving = false;
 						}
+						continue;
+
+						//Circle c = { itemUnit.nowPosiLeft ,1 };
+						//Circle cc = { itemUnit.orderPosiLeft ,1 };
+
+						//if (c.intersects(cc))
+						//{
+						//	itemUnit.FlagMoving = false;
+						//}
 						//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
 						//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
 						//{
 						//	itemUnit.FlagMoving = false;
 						//}
-						continue;
+						//continue;
 					}
 					if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
 					{
