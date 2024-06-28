@@ -47,10 +47,11 @@ void WriteTomlFile(const FilePath& path,
 
 	// TOML形式の文字列を生成
 	String newLine = U"\r\n";
+	String tab = U"\r\t";
 	String tomlString = U"";
 	tomlString += U"[[Map]]" + newLine;
 
-	tomlString += U"name = \"Map001\"" + newLine;
+	tomlString += tab + U"name = \"Map001\"" + newLine;
 
 	int32 counter = 0;
 	for (auto a : group)
@@ -59,7 +60,7 @@ void WriteTomlFile(const FilePath& path,
 		String fileNameWithExtension = FileSystem::FileName(filePath);
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
-		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
 		counter++;
 	}
 	for (auto a : groupBui)
@@ -68,9 +69,17 @@ void WriteTomlFile(const FilePath& path,
 		String fileNameWithExtension = FileSystem::FileName(filePath);
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
-		tomlString += U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
 		counter++;
 	}
+
+	//data
+	tomlString += tab + U"data = \"\"\"" + newLine;
+
+
+
+
+	tomlString += tab + U"\"\"\"" + newLine;
 
 	// ファイルに書き出す
 	TextWriter writer(path);
