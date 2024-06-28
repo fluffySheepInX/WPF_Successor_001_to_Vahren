@@ -27,6 +27,7 @@ public:
 				ccs.selectScenario = table[U"selectScenario"].get<String>();
 				ccs.selectScenario2 = table[U"selectScenario2"].get<String>();
 				ccs.selectChara1 = table[U"selectChara1"].get<String>();
+				ccs.selectCard = table[U"selectCard"].get<String>();
 				ccs.DoYouWantToQuitTheGame = table[U"DoYouWantToQuitTheGame"].get<String>();
 				ccs.strategyMenu000 = table[U"strategyMenu000"].get<String>();
 				ccs.strategyMenu001 = table[U"strategyMenu001"].get<String>();
@@ -40,6 +41,8 @@ public:
 				ccs.strategyMenu009 = table[U"strategyMenu009"].get<String>();
 				ccs.BattleMessage001 = table[U"BattleMessage001"].get<String>();
 				ccs.BuyMessage001 = table[U"BuyMessage001"].get<String>();
+				ccs.SelectCharMessage001 = table[U"SelectCharMessage001"].get<String>();
+				ccs.StorySkip = table[U"StorySkip"].get<String>();
 			}
 		}
 
@@ -63,37 +66,76 @@ public:
 				//build(城壁や矢倉など
 				if (splitA.size() > 1)
 				{
-					Array splitB = splitA[1].split(U'$');
-					for (String item : splitB)
+					if (splitA[1] == U"")
 					{
-						Array splitWi = item.split(U':');
-						String re = cm.ele[splitWi[0]];
-						if (re != U"")
+
+					}
+					else
+					{
+						Array splitB = splitA[1].split(U'$');
+						//1件だけの場合も考慮
+						if (splitB.size() == 1)
 						{
-							std::pair<long, BattleWhichIsThePlayer> pp = { -1, BattleWhichIsThePlayer::None };
-							if (splitWi.size() == 1)
+							Array splitWi = splitB[0].split(U':');
+							String re = cm.ele[splitWi[0]];
+							if (re != U"")
 							{
-								pp = { -1, BattleWhichIsThePlayer::None };
-							}
-							else
-							{
-								if (splitWi[1] == U"sor")
+								std::tuple<String, long, BattleWhichIsThePlayer> pp = { re,-1, BattleWhichIsThePlayer::None };
+								if (splitWi.size() == 1)
 								{
-									pp = { -1, BattleWhichIsThePlayer::Sortie };
-								}
-								else if (splitWi[1] == U"def")
-								{
-									pp = { -1, BattleWhichIsThePlayer::Def };
+									pp = { re,-1, BattleWhichIsThePlayer::None };
 								}
 								else
 								{
-									pp = { -1, BattleWhichIsThePlayer::None };
+									if (splitWi[1] == U"sor")
+									{
+										pp = { re,-1, BattleWhichIsThePlayer::Sortie };
+									}
+									else if (splitWi[1] == U"def")
+									{
+										pp = { re,-1, BattleWhichIsThePlayer::Def };
+									}
+									else
+									{
+										pp = { re,-1, BattleWhichIsThePlayer::None };
+									}
+								}
+
+								md.building.push_back(pp);
+							}
+						}
+						else
+						{
+							for (String item : splitB)
+							{
+								Array splitWi = item.split(U':');
+								String re = cm.ele[splitWi[0]];
+								if (re != U"")
+								{
+									std::tuple<String, long, BattleWhichIsThePlayer> pp = { re,-1, BattleWhichIsThePlayer::None };
+									if (splitWi.size() == 1)
+									{
+										pp = { re,-1, BattleWhichIsThePlayer::None };
+									}
+									else
+									{
+										if (splitWi[1] == U"sor")
+										{
+											pp = { re,-1, BattleWhichIsThePlayer::Sortie };
+										}
+										else if (splitWi[1] == U"def")
+										{
+											pp = { re,-1, BattleWhichIsThePlayer::Def };
+										}
+										else
+										{
+											pp = { re,-1, BattleWhichIsThePlayer::None };
+										}
+									}
+
+									md.building.push_back(pp);
 								}
 							}
-
-							HashTable<String, std::pair<long, BattleWhichIsThePlayer>> tar;
-							tar.emplace(re, pp);
-							md.building.push_back(tar);
 						}
 					}
 				}
@@ -121,6 +163,10 @@ public:
 					else if (re == 2)
 					{
 						md.flagBattleMapUnit = FlagBattleMapUnit::Spe;
+					}
+					else if (re == -1)
+					{
+
 					}
 					else
 					{
@@ -195,10 +241,7 @@ public:
 				{
 					for (const auto& building : gameStatus->classBattle.classMapBattle.value().mapData[row][col].building)
 					{
-						for (auto [key, value] : building)
-						{
-							buildings.push_back({ key, row, col });
-						}
+						buildings.push_back({ std::get<0>(building), row, col });
 					}
 				}
 			}
@@ -225,8 +268,8 @@ public:
 			cu.CastleMagdef = found->castleMagdef;
 			cu.Image = found->nameTag;
 			units.push_back(cu);
-			std::pair<long, BattleWhichIsThePlayer> ppp = { id,BattleWhichIsThePlayer::None };
-			gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0][std::get<0>(item)] = ppp;
+			std::get<1>(gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0]) = id;
+			std::get<2>(gameStatus->classBattle.classMapBattle.value().mapData[std::get<1>(item)][std::get<2>(item)].building[0]) = BattleWhichIsThePlayer::None;
 		}
 		horizontalUnit.ListClassUnit = units;
 		gameStatus->classBattle.defUnitGroup.push_back(horizontalUnit);

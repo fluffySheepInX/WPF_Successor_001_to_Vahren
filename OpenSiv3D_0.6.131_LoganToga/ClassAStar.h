@@ -152,7 +152,7 @@ public:
 		});
 	}
 
-	Optional<ClassAStar*> OpenOne(int x, int y, int cost, ClassAStar* parent, int32 maxN) {
+	Optional<ClassAStar*> OpenOne(int x, int y, int cost, ClassAStar* parent, int32 maxN, AStarStatus status = AStarStatus::Open) {
 		if (x < 0 || y < 0)
 		{
 			return none;
@@ -170,7 +170,7 @@ public:
 			return none;
 		}
 
-		getClassAStar->SetAStarStatus(AStarStatus::Open);
+		getClassAStar->SetAStarStatus(status);
 		getClassAStar->SetCost(cost);
 
 		if (parent == nullptr) {
@@ -184,7 +184,7 @@ public:
 		return getClassAStar;
 	}
 
-	void OpenAround(ClassAStar* parent, Array<Array<MapDetail>>& mapData, Array<ClassHorizontalUnit>& listClassHorizontalUnits, Array<ClassObjectMapTip>& arrayClassObjectMapTip, int32 maxN)
+	void OpenAround(ClassAStar* parent, Array<Array<MapDetail>>& mapData, Array<ClassHorizontalUnit>& arrayObjEnemy, Array<ClassHorizontalUnit>& arrayObjMy, int32 maxN)
 	{
 		int32 x = parent->GetRow();
 		int32 y = parent->GetCol();
@@ -199,80 +199,99 @@ public:
 					continue;
 				}
 
-				// GATE系の壊せるオブジェクトが存在するかチェック
-				bool con = false;
-				if (listClassHorizontalUnits.begin()->FlagBuilding == true)
+				//// GATE系の壊せるオブジェクトが存在するかチェック
+				//
+				//味方の壊せる・敵の壊せるオブジェクトは通行可能とする？
+				//
 				{
-					for (auto aaa : listClassHorizontalUnits.begin()->ListClassUnit)
+					bool con = false;
+					if (arrayObjEnemy.begin()->FlagBuilding == true)
 					{
-						if (aaa.rowBuilding == x + i && aaa.colBuilding == y + j)
+						for (const auto& bbb : mapData[x + i][y + j].building)
 						{
-							ClassUnit classUnitBuilding;
-							classUnitBuilding = aaa;
-							classUnitBuilding.IsBuilding = true;
-							classUnitBuilding.IsBuildingEnable = true;
-
-							//オブジェクトがあったらコンティニュー
-							switch (classUnitBuilding.mapTipObjectType)
+							for (const auto& aaa : arrayObjEnemy.begin()->ListClassUnit)
 							{
-							case MapTipObjectType::WALL2:
-								//ここに来ることは無い
-								break;
-							case MapTipObjectType::GATE:
-								if (classUnitBuilding.IsBuildingEnable == false)
+								if (aaa.ID == std::get<1>(bbb))
 								{
-									OpenOne(x + i, y + j, cost, parent, maxN);
+									//オブジェクトがあったらコンティニュー
+									switch (aaa.mapTipObjectType)
+									{
+									case MapTipObjectType::WALL2:
+										break;
+									case MapTipObjectType::GATE:
+										OpenOne(x + i, y + j, cost, parent, maxN);
+										break;
+									default:
+										break;
+									}
+
+									con = true;
+
+									break;
+
 								}
-								break;
-							default:
+							}
+
+							if (con == true)
+							{
 								break;
 							}
-							con = true;
-
-							break;
-						}
-
-						if (con)
-						{
-							break;
 						}
 					}
-					if (con)
+
+					if (con == true)
 					{
-						break;
+						continue;
 					}
 				}
 
-				if (con)
+				//// GATE系の壊せるオブジェクトが存在するかチェック
+				//
+				//味方の壊せる・敵の壊せるオブジェクトは通行可能とする？
+				//
 				{
-					continue;
-				}
+					bool con = false;
+					if (arrayObjMy.begin()->FlagBuilding == true)
+					{
+						for (const auto& bbb : mapData[x + i][y + j].building)
+						{
+							for (const auto& aaa : arrayObjMy.begin()->ListClassUnit)
+							{
+								if (aaa.ID == std::get<1>(bbb))
+								{
+									//オブジェクトがあったらコンティニュー
+									switch (aaa.mapTipObjectType)
+									{
+									case MapTipObjectType::WALL2:
+										break;
+									case MapTipObjectType::GATE:
+										OpenOne(x + i, y + j, cost, parent, maxN);
+										break;
+									default:
+										break;
+									}
 
-				if (mapData[x + i][y + j].building.size() <= 0)
-				{
-					OpenOne(x + i, y + j, cost, parent, maxN);
-					continue;
-				}
+									con = true;
 
-				// WALL2系の壊せないオブジェクトが存在するかチェック
-				auto ob = std::find_if(arrayClassObjectMapTip.begin(), arrayClassObjectMapTip.end(),
-									   [&](const auto& obj) {
-										   return obj.nameTag == mapData[x + i][y + j].building[0].begin()->first;
-									   });
-				if (ob != arrayClassObjectMapTip.end()) {
-					switch (ob->type) {
-					case MapTipObjectType::WALL2:
-						break;
-					case MapTipObjectType::GATE:
-						OpenOne(x + i, y + j, cost, parent, maxN);
-						break;
-					default:
-						break;
+									break;
+
+								}
+							}
+
+							if (con == true)
+							{
+								break;
+							}
+						}
+					}
+
+					if (con == true)
+					{
+						continue;
 					}
 				}
-				else {
-					OpenOne(x + i, y + j, cost, parent, maxN);
-				}
+
+				OpenOne(x + i, y + j, cost, parent, maxN);
 			}
 		}
 	}

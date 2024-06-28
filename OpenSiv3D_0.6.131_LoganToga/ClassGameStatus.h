@@ -5,6 +5,7 @@
 # include "ClassPower.h" 
 # include "ClassBattle.h" 
 # include "ClassObjectMapTip.h" 
+# include "ClassCard.h" 
 
 class ClassGameStatus
 {
@@ -35,6 +36,7 @@ public:
 	Array<ClassUnit> arrayClassUnit;
 	Array<ClassHorizontalUnit> arrayPlayerUnit;
 	Array<ClassSkill> arrayClassSkill;
+	Array<ClassCard> arrayClassCard;
 	bool IsBattleMove = false;
 	int32 DistanceBetweenUnit = 0;
 	int32 DistanceBetweenUnitTate = 0;

@@ -8,6 +8,7 @@ public:
 	String selectScenario;
 	String selectScenario2;
 	String selectChara1;
+	String selectCard;
 	String DoYouWantToQuitTheGame;
 	String strategyMenu000;
 	String strategyMenu001;
@@ -21,4 +22,6 @@ public:
 	String strategyMenu009;
 	String BattleMessage001;
 	String BuyMessage001;
+	String SelectCharMessage001;
+	String StorySkip;
 };

@@ -263,6 +263,9 @@ public:
 	// FlagMoving
 	bool FlagMoving = false;
 
+	// FlagMoving
+	bool FlagMovingEnd = true;
+
 	// FlagMoveDispose
 	bool FlagMoveDispose = false;
 
@@ -279,6 +282,7 @@ public:
 	}
 	// OrderPosiLeft
 	Vec2 orderPosiLeft;
+	Vec2 orderPosiLeftLast;
 
 	// OrderPosiCenter
 	Vec2 GetOrderPosiCenter()

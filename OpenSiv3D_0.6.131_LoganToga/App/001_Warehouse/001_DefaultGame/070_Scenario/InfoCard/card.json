@@ -1,0 +1,69 @@
+{
+  "Card": [
+    {
+      "name_tag": "a",
+      "sortkey": "1",
+      "func": "a",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun010.png",
+      "name": "【蛮勇の羊たちlv1】",
+      "help": "自軍兵士の物理攻撃力+50",
+      "attackMyUnit": "50",
+      "defMyUnit": "0",
+      "moveMyUnit": "0",
+      "costMyUnit": "0",
+      "hpMyUnit": "0"
+    },
+    {
+      "name_tag": "b",
+      "sortkey": "2",
+      "func": "a",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun011.png",
+      "name": "【蝙蝠と夜lv1】",
+      "help": "自軍兵士の移動速度+50",
+      "attackMyUnit": "0",
+      "defMyUnit": "0",
+      "moveMyUnit": "50",
+      "costMyUnit": "0",
+      "hpMyUnit": "0"
+    },
+    {
+      "name_tag": "c",
+      "sortkey": "3",
+      "func": "a",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun012.png",
+      "name": "【防壁の再計算lv1】",
+      "help": "自軍兵士の物理防御力+50",
+      "attackMyUnit": "0",
+      "defMyUnit": "50",
+      "moveMyUnit": "0",
+      "costMyUnit": "0",
+      "hpMyUnit": "0"
+    },
+    {
+      "name_tag": "d",
+      "sortkey": "4",
+      "func": "a",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun013.png",
+      "name": "【医療体制の見直しlv1】",
+      "help": "自軍兵士の体力+1000",
+      "attackMyUnit": "0",
+      "defMyUnit": "0",
+      "moveMyUnit": "0",
+      "costMyUnit": "0",
+      "hpMyUnit": "1000"
+    },
+    {
+      "name_tag": "e",
+      "sortkey": "5",
+      "func": "a",
+      "icon": "f_attack.png, _num5.png, _num1.png, we_gun014.png",
+      "name": "【糧食製造への投資lv1】",
+      "help": "自軍兵士のコスト+40,自軍兵士の体力+250,自軍兵士の物理防御力+15,自軍兵士の物理攻撃力+15",
+      "attackMyUnit": "15",
+      "defMyUnit": "15",
+      "moveMyUnit": "0",
+      "costMyUnit": "40",
+      "hpMyUnit": "250"
+    }
+  ]
+}

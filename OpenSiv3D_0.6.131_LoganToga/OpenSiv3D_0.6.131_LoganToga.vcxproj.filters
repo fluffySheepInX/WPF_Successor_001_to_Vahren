@@ -273,6 +273,10 @@
     <Text Include="App\example\LICENSE.txt">
       <Filter>Resource Files\example</Filter>
     </Text>
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp2.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp3.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp4.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll">
@@ -732,9 +736,7 @@
     <None Include="App\engine\font\min\siv3d-min.woff">
       <Filter>Resource Files\engine\font\min</Filter>
     </None>
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+5.csv" />
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+6.csv" />
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+7.csv" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoCard\card.json" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -840,6 +842,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SasaGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

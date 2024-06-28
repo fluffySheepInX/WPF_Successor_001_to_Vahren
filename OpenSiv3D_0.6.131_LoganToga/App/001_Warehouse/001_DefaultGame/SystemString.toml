@@ -5,6 +5,7 @@
 	selectScenario = "scenario"
 	selectScenario2 = "other"
 	selectChara1 = "Please select a character to play"
+	selectCard = "Please select a card"
 	DoYouWantToQuitTheGame = "Do you want to quit the game"
 	strategyMenu000 = "Plus unit."
 	strategyMenu001 = "Training."
@@ -18,3 +19,5 @@
 	strategyMenu009 = "Battle."
 	BattleMessage001 = "Shall we dance?"
 	BuyMessage001 = "You have no money......"
+	SelectCharMessage001 = "This character is currently unavailable for selection"
+	StorySkip = "Story Skip"

@@ -47,13 +47,14 @@ void WriteTomlFile(const FilePath& path,
 
 	// TOML形式の文字列を生成
 	String newLine = U"\r\n";
-	String tab = U"\r\t";
+	String tab = U"\t";
 	String tomlString = U"";
 	tomlString += U"[[Map]]" + newLine;
 
 	tomlString += tab + U"name = \"Map001\"" + newLine;
 
 	int32 counter = 0;
+	HashTable<String, String> ht;
 	for (auto a : group)
 	{
 		FilePath filePath = a;
@@ -61,6 +62,7 @@ void WriteTomlFile(const FilePath& path,
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
 		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		ht.emplace(fileName, U"ele{}"_fmt(counter));
 		counter++;
 	}
 	for (auto a : groupBui)
@@ -70,14 +72,98 @@ void WriteTomlFile(const FilePath& path,
 		String fileName = FileSystem::BaseName(fileNameWithExtension);
 
 		tomlString += tab + U"ele{} = \"{}\""_fmt(counter, fileName) + newLine;
+		ht.emplace(fileName, U"ele{}"_fmt(counter));
 		counter++;
 	}
 
 	//data
 	tomlString += tab + U"data = \"\"\"" + newLine;
 
+	for (size_t i = 0; i < grid.size().y; i++)
+	{
+		for (size_t j = 0; j < grid.size().x; j++)
+		{
+			String a;
+			{
+				FilePath filePath = textures[grid[j][i]].first;
+				String fileNameWithExtension = FileSystem::FileName(filePath);
+				String fileName = FileSystem::BaseName(fileNameWithExtension);
+				String ele = ht[fileName];
+				if (ele != U"")
+				{
+					a = ele;
+				}
+				else
+				{
+					a = U"eleNone";
+				}
+			}
+			String b;
+			{
+				int32 aaa = gridBui[j][i];
+				if (aaa != -1)
+				{
+					FilePath filePath = texturesBui[gridBui[j][i]].first;
+					String fileNameWithExtension = FileSystem::FileName(filePath);
+					String fileName = FileSystem::BaseName(fileNameWithExtension);
+					String ele = ht[fileName];
+
+					if (ele == U"")
+					{
+						b = U"*";
+					}
+					else
+					{
+						if (gridBuiWhichIsThePlayer[j][i] == BattleWhichIsThePlayer::Sortie)
+						{
+							b = U"*" + ele + U":sor";
+						}
+						else if (gridBuiWhichIsThePlayer[j][i] == BattleWhichIsThePlayer::Def)
+						{
+							b = U"*" + ele + U":def";
+						}
+						else
+						{
+							b = U"*" + ele + U":none";
+						}
+					}
+				}
+				else
+				{
+					b = U"*";
+				}
+			}
 
 
+			String c = U"*-1";
+
+			String d;
+			//出撃と防衛、中立が同じ位置の場合についても後で考慮
+			if (sor.has_value() == true)
+			{
+				Point ppp = { i,j };
+				if (sor.value() == ppp)
+				{
+					d = U"*@@";
+				}
+			}
+			if (def.has_value() == true)
+			{
+				Point ppp = { i,j };
+				if (def.value() == ppp)
+				{
+					d = U"*@";
+				}
+			}
+
+			String e = U"*";
+			String f = U"*";
+
+			tomlString += U"{}{}{}{}{}{},"_fmt(a, b, c, d, e, f);
+
+		}
+		tomlString += U"@," + newLine;
+	}
 
 	tomlString += tab + U"\"\"\"" + newLine;
 
@@ -290,7 +376,7 @@ void Main()
 
 	const Array<String> options = { U"侵攻", U"防衛", U"中立" };
 	size_t index1 = 0;
-	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::None;
+	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
 
 	TextEditState te0;
 	te0.text = U"{}"_fmt(N);
@@ -322,6 +408,8 @@ void Main()
 			// 2D カメラによる座標変換を適用する
 			const auto tr = camera.createTransformer();
 
+			Array<std::pair<Vec2, Texture>> buiTex;
+
 			// 上から順にタイルを描く
 			for (int32 i = 0; i < (N * 2 - 1); ++i)
 			{
@@ -338,7 +426,7 @@ void Main()
 					const Point index{ (xi + k), (yi - k) };
 
 					// そのタイルの底辺中央の座標
-					const Vec2 pos = ToTileBottomCenter(index, N);
+					Vec2 pos = ToTileBottomCenter(index, N);
 
 					// 底辺中央を基準にタイルを描く
 					if (textures.size() < grid[index])
@@ -357,9 +445,17 @@ void Main()
 					}
 					else
 					{
-						texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
+						std::pair<Vec2, Texture> hhhh = { pos.movedBy(0,-15), texturesBui[gridBui[index]].second};
+						buiTex.push_back(hhhh);
+						//texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
 					}
 				}
+			}
+
+			//建物
+			for (auto aaa: buiTex)
+			{
+				aaa.second.draw(Arg::bottomCenter = aaa.first);
 			}
 
 			// マウスカーソルがタイルメニュー上に無ければ

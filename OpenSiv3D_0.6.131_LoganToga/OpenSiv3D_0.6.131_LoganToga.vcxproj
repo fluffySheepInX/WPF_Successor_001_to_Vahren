@@ -151,6 +151,10 @@
     <ResourceCompile Include="App\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp2.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp3.txt" />
+    <Text Include="App\001_Warehouse\001_DefaultGame\016_BattleMap\temp4.txt" />
     <Text Include="App\dll\soundtouch\COPYING.TXT" />
     <Text Include="App\engine\font\fontawesome\LICENSE.txt" />
     <Text Include="App\engine\soundfont\GMGSx.sf2.txt" />
@@ -170,9 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+5.csv" />
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+6.csv" />
-    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoStory\sc_a_p_b+7.csv" />
+    <None Include="App\001_Warehouse\001_DefaultGame\070_Scenario\InfoCard\card.json" />
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll" />
     <None Include="App\engine\font\fontawesome\fontawesome-brands.otf.zstdcmp" />
     <None Include="App\engine\font\fontawesome\fontawesome-solid.otf.zstdcmp" />
@@ -318,6 +320,7 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassCard.h" />
     <ClInclude Include="ClassAStar.h" />
     <ClInclude Include="ClassBattle.h" />
     <ClInclude Include="ClassConfigString.h" />

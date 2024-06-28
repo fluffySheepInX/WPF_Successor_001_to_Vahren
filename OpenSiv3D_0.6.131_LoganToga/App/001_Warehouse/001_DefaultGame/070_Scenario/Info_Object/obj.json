@@ -26,7 +26,15 @@
     },
     {
       "name": "testWall",
-      "type": "gate",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall2",
+      "type": "wall2",
       "no_wall2": 80,
       "castle": 100,
       "castle_defense": 100,
@@ -35,6 +43,14 @@
     {
       "name": "testWall_buu",
       "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall_bu",
+      "type": "wall2",
       "no_wall2": 80,
       "castle": 100,
       "castle_defense": 100,
