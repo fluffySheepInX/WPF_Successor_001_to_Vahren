@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenSiv3D_0.6.131_LoganToga
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenSiv3D_0.6.131_MapEditor", "OpenSiv3D_0.6.131_MapEditor\OpenSiv3D_0.6.131_MapEditor.vcxproj", "{0639492C-F45A-407F-8F7B-968546C1505E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenSiv3D_0.6.141_LoganToga", "OpenSiv3D_0.6.141_LoganToga\OpenSiv3D_0.6.141_LoganToga.vcxproj", "{03F3D4B2-B247-4610-95A6-A973ED5B1B40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,14 @@ Global
 		{0639492C-F45A-407F-8F7B-968546C1505E}.Release|Any CPU.Build.0 = Release|x64
 		{0639492C-F45A-407F-8F7B-968546C1505E}.Release|x64.ActiveCfg = Release|x64
 		{0639492C-F45A-407F-8F7B-968546C1505E}.Release|x64.Build.0 = Release|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Debug|Any CPU.Build.0 = Debug|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Debug|x64.ActiveCfg = Debug|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Debug|x64.Build.0 = Debug|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Release|Any CPU.ActiveCfg = Release|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Release|Any CPU.Build.0 = Release|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Release|x64.ActiveCfg = Release|x64
+		{03F3D4B2-B247-4610-95A6-A973ED5B1B40}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
