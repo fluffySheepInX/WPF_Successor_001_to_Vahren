@@ -1,9 +1,11 @@
 ﻿# include <Siv3D.hpp> // Siv3D v0.6.14
+# include "000_SystemString.h"
 # include "001_GLOBAL.h"
 # include "005_GameUIToolkit.h"
 # include "100_StructEffect.h"
 # include "101_StructHomography.h"
 # include "102_StructGameData.h"
+# include "150_enumClassLanguageSteamFullSuport.h"
 # include "200_ClassGaussianClass.h"
 # include "201_ClassPauseWindow.h"
 
@@ -113,11 +115,162 @@ void WriteIni(INI ini)
 	}
 }
 
+class ClassSelectLang {
+public:
+	String lang = U"";
+	RectF btnRectF = RectF{};
+	bool isDisplayBtnRectF = true;
+	int32 SortKey = 0;
+};
 
 std::unique_ptr<GaussianClass> m_gaussianClass;
 PauseWindow m_pauseWindow = PauseWindow();
+LanguageSteamFullSuport language;
+SystemString systemString;
 
 // タイトルシーン
+/// @brief 言語選択シーン
+class SelectLang : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	SelectLang(const InitData& init)
+		: IScene{ init }
+	{
+		int32 counterAll = 0;
+		int32 counter = -1;
+		int32 counterCol = 0;
+		for (auto ttt : LANDIS)
+		{
+			ClassSelectLang csl;
+			csl.SortKey = counterAll;
+			csl.isDisplayBtnRectF = true;
+			csl.lang = ttt.second;
+			RectF rectText = getData().fontNormal(ttt.second).region();
+			if (counterCol % 3 == 0)
+			{
+				counterCol = 0;
+				counter++;
+			}
+			else
+			{
+			}
+
+			csl.btnRectF = RectF{ 100 / 2,(300) + (counterAll * (rectText.h + 20)) ,Scene::Size().x - 100,rectText.h + 20 };
+
+			acsl.push_back(csl);
+			counterCol++;
+			counterAll++;
+		}
+
+		vbar001.emplace(SasaGUI::Orientation::Vertical);
+
+		//仮置き
+		language = LanguageSteamFullSuport::English;
+	}
+
+	// 更新関数（オプション）
+	void update() override
+	{
+		for (auto& ttt : acsl)
+		{
+			if (ttt.btnRectF.leftClicked())
+			{
+				AudioAsset(U"click").play();
+
+				LangFunc(ttt.lang);
+				TextureSet();
+
+				Optional<INI> ini{ std::in_place, U"/data.ini" };
+				INI ini2 = INI(U"data.ini");
+				WriteIni(ini2);
+				INI ini3 = INI(U"data.ini");
+				ini.emplace(ini3);
+
+				bool temp = Parse<bool>(ini.value()[U"data.winSizeCheck"]);
+				if (temp)
+				{
+					int32 tempWinSize = Parse<int32>(ini.value()[U"data.winSizeCheck"]);
+					Size BaseSceneSize;
+					if (tempWinSize == 1600)
+					{
+						BaseSceneSize = { WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
+						SetWindSize(BaseSceneSize.x, BaseSceneSize.y);
+					}
+					else
+					{
+						BaseSceneSize = { WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001 };
+						SetWindSize(BaseSceneSize.x, BaseSceneSize.y);
+					}
+
+					// シーンの拡大倍率を計算する
+					SCALE = CalculateScale(BaseSceneSize, Scene::Size());
+					OFFSET = CalculateOffset(BaseSceneSize, Scene::Size());
+
+					changeScene(U"TitleScene");
+				}
+				else
+				{
+					changeScene(U"WinSizeScene");
+				}
+
+			}
+		}
+	}
+
+	void LangFunc(String lang)
+	{
+		const JSON jsonLang = JSON::Load(PathLang + U"/SystemString.json");
+
+		if (not jsonLang)throw Error{ U"Failed to load `SystemString.json`" };
+
+		for (const auto& [key, value] : jsonLang[U"lang"]) {
+
+			if (
+				lang == U"日本語" && (value[U"lang"].getString() == U"Japan")
+				)
+			{
+				SystemString lang;
+				lang.TopMenuTitle = value[U"TopMenuTitle"].getString();
+				lang.AppTitle = value[U"AppTitle"].getString();
+				systemString = lang;
+			}
+		}
+	}
+
+	void TextureSet()
+	{
+	}
+
+	// 描画関数（オプション） 
+	void draw() const override
+	{
+		for (auto& ttt : acsl)
+		{
+			getData().slice9.draw(ttt.btnRectF.asRect());
+			getData().fontMini(ttt.lang).draw(Arg::center = ttt.btnRectF.stretched(-5).center());
+		}
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	Optional<SasaGUI::ScrollBar> vbar001;
+	Array<ClassSelectLang> acsl;
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
 class TitleScene : public App::Scene {
 public:
 	TitleScene(const InitData& init) : IScene(init) {
@@ -160,24 +313,42 @@ private:
 class WinSizeScene : public App::Scene {
 public:
 	WinSizeScene(const InitData& init) : IScene(init) {
+		Size tempSize = { 600,300 };
+		Window::Resize(tempSize);
+
+		// シーンの拡大倍率を計算する
+		const Size BaseSceneSize{ WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
+		SCALE = CalculateScale(BaseSceneSize, tempSize);
+		OFFSET = CalculateOffset(BaseSceneSize, tempSize);
+
 		INI aa = INI(U"data.ini");
 		WriteIni(aa);
 		ini.emplace(aa);  // .emplace() で再代入
+
+		m_gaussianClass->SetSize(Scene::Size());
 	}
 	void update() override {
 		if (m_000Button.leftClicked() || m_001Button.leftClicked()) {
 			changeScene(U"TitleScene");
 
+			Size ss;
 			if (m_000Button.leftClicked())
 			{
 				ini->write(U"data", U"winSize", 1600);
+				ss = { WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
 			}
 			else
 			{
 				ini->write(U"data", U"winSize", 1200);
+				ss = { WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001 };
 			}
 			ini->write(U"data", U"winSizeCheck", checked0);
 			ini->save(U"data.ini");
+
+			// シーンの拡大倍率を計算する
+			const Size BaseSceneSize{ WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
+			SCALE = CalculateScale(BaseSceneSize, ss);
+			OFFSET = CalculateOffset(BaseSceneSize, ss);
 		}
 		SimpleGUI::CheckBox(checked0, U"もう表示しない", m_001Button.movedBy(0, 60).pos);
 	}
@@ -198,7 +369,6 @@ private:
 	bool checked0 = false;
 };
 
-
 void Main()
 {
 	// ウィンドウの枠を非表示にする
@@ -213,40 +383,17 @@ void Main()
 	App manager;
 	manager.add<TitleScene>(U"TitleScene");
 	manager.add<WinSizeScene>(U"WinSizeScene");
+	manager.add<SelectLang>(U"SelectLang");
+	manager.init(U"SelectLang");
+
+	Size tempSize = { INIT_WINDOW_SIZE_WIDTH,INIT_WINDOW_SIZE_HEIGHT };
+	Window::Resize(tempSize);
 
 	// 関数を格納するArrayを定義する
 	Array<std::function<void()>> functions;
 	functions.push_back(DrawUnder000);
 	functions.push_back(DrawUnder001);
 	m_gaussianClass = std::make_unique<GaussianClass>(Scene::Size(), functions);
-
-	Optional<INI> ini{ std::in_place, U"/data.ini" };
-	INI ini2 = INI(U"data.ini");
-	WriteIni(ini2);
-	INI ini3 = INI(U"data.ini");
-	ini.emplace(ini3);
-
-	Size tempSize = { 400,400 };
-	Window::Resize(tempSize);
-
-	bool temp = Parse<bool>(ini.value()[U"data.winSizeCheck"]);
-	if (temp)
-	{
-		int32 tempWinSize = Parse<int32>(ini.value()[U"data.winSizeCheck"]);
-		if (tempWinSize == 1600)
-		{
-			SetWindSize(WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000);
-		}
-		else
-		{
-			SetWindSize(WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001);
-		}
-		manager.init(U"TitleScene");
-	}
-	else
-	{
-		manager.init(U"WinSizeScene");
-	}
 
 	Optional<std::pair<Point, Point>> dragStart;
 	EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ Scene::Size().x - 10, Scene::Size().y - 10 }).asPolygon();
@@ -262,6 +409,9 @@ void Main()
 		}
 
 		m_gaussianClass->Show();
+
+		//タイトル表示
+		manager.get().get()->fontLine(systemString.AppTitle).draw(5, Scene::Size().y - 30, Palette::Black);
 
 		if (not manager.update())
 		{

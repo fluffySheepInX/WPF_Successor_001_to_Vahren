@@ -8,8 +8,8 @@ struct Fade4 : public IFade
 {
 	Array<int> rectPos;
 	const int size = 50;
-	const int w = Scene::Width() / size;
-	const int h = Scene::Height() / size;
+	int w = Scene::Width() / size;
+	int h = Scene::Height() / size;
 
 	Fade4()
 	{
@@ -17,6 +17,14 @@ struct Fade4 : public IFade
 		Shuffle(rectPos);
 	}
 
+	void setW(int32 www)
+	{
+		w = www / size;
+	}
+	void setH(int32 hhh)
+	{
+		w = hhh / size;
+	}
 	void fade(double t) override
 	{
 		for (auto [index, pos] : Indexed(rectPos))

@@ -765,6 +765,7 @@
     <None Include="App\engine\shader\glsl\quad_warp.frag">
       <Filter>Resource Files\engine\shader\glsl</Filter>
     </None>
+    <None Include="App\000_Warehouse\000_DefaultGame\SystemString.json" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -831,6 +832,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="201_ClassPauseWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="150_enumClassLanguageSteamFullSuport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
