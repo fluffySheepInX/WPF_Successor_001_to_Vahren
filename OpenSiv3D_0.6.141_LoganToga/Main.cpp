@@ -168,7 +168,10 @@ public:
 		//仮置き
 		language = LanguageSteamFullSuport::English;
 	}
-
+	~SelectLang()
+	{
+		System::Update();
+	}
 	// 更新関数（オプション）
 	void update() override
 	{
@@ -277,19 +280,28 @@ public:
 		INI ini = INI(U"data.ini");
 		WriteIni(ini);
 		int32 tempWinSize = Parse<int32>(ini[U"data.winSize"]);
+		Size ss;
 		if (tempWinSize == 1600)
 		{
+			ss = { WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
 			SetWindSize(WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000);
 		}
 		else
 		{
+			ss = { WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001 };
 			SetWindSize(WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001);
 		}
 
 		EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ Scene::Size().x - 10, Scene::Size().y - 10 }).asPolygon();
 		EXITBTNRECT = Rect{ Arg::center(EXITBTNPOLYGON.centroid().asPoint()),20,20 };
 
+		// シーンの拡大倍率を計算する
+		const Size BaseSceneSize{ WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
+		SCALE = CalculateScale(BaseSceneSize, ss);
+		OFFSET = CalculateOffset(BaseSceneSize, ss);
 		m_gaussianClass->SetSize(Scene::Size());
+
+		System::Update();
 	}
 	void update() override {
 		if (m_startButton.leftClicked()) {
@@ -298,7 +310,6 @@ public:
 	}
 
 	void draw() const override {
-		getData().fontNormal(SYSTEMSTRING.TopMenuTitle).draw(12, 10, Palette::White);
 		m_startButton.draw(Palette::Skyblue).drawFrame(2, Palette::Black);
 		m_DiscoButton.draw(Palette::Skyblue).drawFrame(2, Palette::Black);
 
@@ -326,29 +337,23 @@ public:
 		ini.emplace(aa);  // .emplace() で再代入
 
 		m_gaussianClass->SetSize(Scene::Size());
+
+		System::Update();
 	}
 	void update() override {
 		if (m_000Button.leftClicked() || m_001Button.leftClicked()) {
-			changeScene(U"TitleScene");
-
-			Size ss;
 			if (m_000Button.leftClicked())
 			{
 				ini->write(U"data", U"winSize", 1600);
-				ss = { WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
 			}
 			else
 			{
 				ini->write(U"data", U"winSize", 1200);
-				ss = { WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001 };
 			}
 			ini->write(U"data", U"winSizeCheck", checked0);
 			ini->save(U"data.ini");
 
-			// シーンの拡大倍率を計算する
-			const Size BaseSceneSize{ WINDOWSIZEWIDTH000, WINDOWSIZEHEIGHT000 };
-			SCALE = CalculateScale(BaseSceneSize, ss);
-			OFFSET = CalculateOffset(BaseSceneSize, ss);
+			changeScene(U"TitleScene");
 		}
 		SimpleGUI::CheckBox(checked0, U"もう表示しない", m_001Button.movedBy(0, 60).pos);
 	}
@@ -380,14 +385,14 @@ void Main()
 	// 背景の色を設定する | Set the background color
 	Scene::SetBackground(ColorF(U"#0F040D"));
 
+	Size tempSize = { INIT_WINDOW_SIZE_WIDTH,INIT_WINDOW_SIZE_HEIGHT };
+	Window::Resize(tempSize);
+
 	App manager;
 	manager.add<TitleScene>(U"TitleScene");
 	manager.add<WinSizeScene>(U"WinSizeScene");
 	manager.add<SelectLang>(U"SelectLang");
 	manager.init(U"SelectLang");
-
-	Size tempSize = { INIT_WINDOW_SIZE_WIDTH,INIT_WINDOW_SIZE_HEIGHT };
-	Window::Resize(tempSize);
 
 	// 関数を格納するArrayを定義する
 	Array<std::function<void()>> functions;
@@ -408,15 +413,15 @@ void Main()
 			return;
 		}
 
-		m_gaussianClass->Show();
-
-		//タイトル表示
-		manager.get().get()->fontLine(systemString.AppTitle).draw(5, Scene::Size().y - 30, Palette::Black);
-
 		if (not manager.update())
 		{
 			break;
 		}
+
+		m_gaussianClass->Show();
+
+		//タイトル表示
+		manager.get().get()->fontLine(systemString.AppTitle).draw(5, Scene::Size().y - 30, Palette::Black);
 
 		if (EXITBTNRECT.leftClicked() == true)
 		{
