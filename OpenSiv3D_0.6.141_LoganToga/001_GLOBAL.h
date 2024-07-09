@@ -17,6 +17,7 @@ const int32 WINDOWSIZEWIDTH001 = 1200;
 const int32 WINDOWSIZEHEIGHT001 = 600;
 const String STRINGSLICE9000 = (PATHBASE + PATH_DEFAULT_GAME + U"/000_SystemImage" + U"/wnd0.png");
 const String STRINGSLICE9001 = (PATHBASE + PATH_DEFAULT_GAME + U"/000_SystemImage" + U"/wnd1.png");
+const String STRINGSLICE9002 = (PATHBASE + PATH_DEFAULT_GAME + U"/000_SystemImage" + U"/wnd2.png");
 const String FONTJA = (PathFont + U"/x12y12pxMaruMinya.ttf");
 
 SystemString SYSTEMSTRING;

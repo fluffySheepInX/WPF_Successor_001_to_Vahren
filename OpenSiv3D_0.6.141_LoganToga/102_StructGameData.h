@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿# include "205_ClassScenario.h" 
+
+#pragma once
 struct GameData {
 	/// @brief 日本語
 	const Font fontNormal = Font{ FontMethod::MSDF,50, FONTJA };
@@ -16,4 +18,11 @@ struct GameData {
 	.cornerSize = 8,
 	.backgroundRepeat = false
 } };
+	const GameUIToolkit::Slice9 slice9Cy{ STRINGSLICE9002, GameUIToolkit::Slice9::Style{
+.backgroundRect = Rect{ 0, 0, 256, 128 },
+	.frameRect = Rect{ 256, 0, 256, 128 },
+	.cornerSize = 32,
+	.backgroundRepeat = true
+} };
+	ClassScenario selectClassScenario;
 };

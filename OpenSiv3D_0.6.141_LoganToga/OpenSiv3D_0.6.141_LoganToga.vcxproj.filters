@@ -766,6 +766,8 @@
       <Filter>Resource Files\engine\shader\glsl</Filter>
     </None>
     <None Include="App\000_Warehouse\000_DefaultGame\SystemString.json" />
+    <None Include="App\000_Warehouse\000_DefaultGame\Config.toml" />
+    <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoScenario\AnyNameWillDo.json" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -835,6 +837,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="150_enumClassLanguageSteamFullSuport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="205_ClassScenario.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="210_ClassStaticCommonMethod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

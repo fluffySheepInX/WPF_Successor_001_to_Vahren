@@ -170,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoScenario\AnyNameWillDo.json" />
+    <None Include="App\000_Warehouse\000_DefaultGame\Config.toml" />
     <None Include="App\000_Warehouse\000_DefaultGame\SystemString.json" />
     <None Include="App\dll\soundtouch\SoundTouch_x64.dll" />
     <None Include="App\engine\font\fontawesome\fontawesome-brands.otf.zstdcmp" />
@@ -335,6 +337,8 @@
     <ClInclude Include="150_enumClassLanguageSteamFullSuport.h" />
     <ClInclude Include="200_ClassGaussianClass.h" />
     <ClInclude Include="201_ClassPauseWindow.h" />
+    <ClInclude Include="205_ClassScenario.h" />
+    <ClInclude Include="210_ClassStaticCommonMethod.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

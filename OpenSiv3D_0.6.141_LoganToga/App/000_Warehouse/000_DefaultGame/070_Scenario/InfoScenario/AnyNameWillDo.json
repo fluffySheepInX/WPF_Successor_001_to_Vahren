@@ -1,0 +1,29 @@
+{
+  "Scenario": [
+    {
+      "ButtonType": "Scenario",
+      "ScenarioName": "憂鬱なる提督達より愛をこめて",
+      "Sortkey": "-9",
+      "HelpString": "前哨戦",
+      "power": "sc_a_p_a,sc_a_p_b,sc_a_p_c",
+      "SelectCharaFrameImageLeft": "waku001.png",
+      "SelectCharaFrameImageRight": "waku002.png",
+      "Text": "館エレイル帝国の尖兵であった$東アイディオール株式会社は$先代社長の無茶な拡大志向によって$システムに異変をきたしていた。$$崩壊を悟った現社長は本国からの責任追及を避ける為に$息のかかった提督達を保護し、後ろ盾のない人間を新たな提督に任命、$極東・極北へ進軍を命じた。$$もし進軍が成功すればそれで良し。$失敗したら、その責任に先代社長の負の遺産をオマケでなすりつけ、帝国へ引き渡すのである。$$……という全容に私は気付いているのだが、$いやほんとどうしたらいいんだ誰か助けてくれ。$　　　　　──新たな提督、アーベル・イリイホーン."
+    },
+    {
+      "ButtonType": "Mail",
+      "ScenarioName": "作者にメールを送る",
+      "Sortkey": "1",
+      "Text": "Gmailがすぐ送信出来る状態で開きます！",
+      "Mail": "fluffysheepinx@gmail.com"
+    },
+    {
+      "ButtonType": "Internet",
+      "ScenarioName": "作者のホームページへ行く",
+      "Sortkey": "2",
+      "Text": "押すと飛びます！",
+      "Internet": "http://lockedroom.uvs.jp/"
+    }
+
+  ]
+}
