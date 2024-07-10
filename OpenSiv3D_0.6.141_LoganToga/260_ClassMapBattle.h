@@ -1,6 +1,6 @@
 ﻿#pragma once
 # include "156_EnumBattleWhichIsThePlayer.h" 
-# include "157_FlagBattleMapUnit.h" 
+# include "157_EnumFlagBattleMapUnit.h" 
 
 class MapDetail
 {

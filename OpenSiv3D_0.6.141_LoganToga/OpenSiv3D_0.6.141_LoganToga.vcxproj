@@ -341,7 +341,8 @@
     <ClInclude Include="154_EnumGender.h" />
     <ClInclude Include="155_EnumSkill.h" />
     <ClInclude Include="156_EnumBattleWhichIsThePlayer.h" />
-    <ClInclude Include="157_FlagBattleMapUnit.h" />
+    <ClInclude Include="157_EnumFlagBattleMapUnit.h" />
+    <ClInclude Include="158_EnumFormBuyDisplayStatus.h" />
     <ClInclude Include="200_ClassGaussianClass.h" />
     <ClInclude Include="201_ClassPauseWindow.h" />
     <ClInclude Include="205_ClassScenario.h" />
