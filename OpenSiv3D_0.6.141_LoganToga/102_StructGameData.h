@@ -1,4 +1,6 @@
 ﻿# include "205_ClassScenario.h" 
+# include "215_ClassPower.h" 
+# include "220_ClassGameStatus.h" 
 
 #pragma once
 struct GameData {
@@ -24,5 +26,11 @@ struct GameData {
 	.cornerSize = 32,
 	.backgroundRepeat = true
 } };
+	ClassGameStatus classGameStatus;
 	ClassScenario selectClassScenario;
+	ClassPower selectClassPower;
+	String NovelPower = U"";
+	int32 NovelNumber = 0;
+	int32 Money = 0;
+	int32 Wave = 0;
 };

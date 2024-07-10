@@ -334,11 +334,29 @@
     <ClInclude Include="100_StructEffect.h" />
     <ClInclude Include="101_StructHomography.h" />
     <ClInclude Include="102_StructGameData.h" />
-    <ClInclude Include="150_enumClassLanguageSteamFullSuport.h" />
+    <ClInclude Include="150_EnumClassLanguageSteamFullSuport.h" />
+    <ClInclude Include="151_EnumSelectCharStatus.h" />
+    <ClInclude Include="152_EnumBattleFormation.h" />
+    <ClInclude Include="153_EnumMapTipObjectType.h" />
+    <ClInclude Include="154_EnumGender.h" />
+    <ClInclude Include="155_EnumSkill.h" />
+    <ClInclude Include="156_EnumBattleWhichIsThePlayer.h" />
+    <ClInclude Include="157_FlagBattleMapUnit.h" />
     <ClInclude Include="200_ClassGaussianClass.h" />
     <ClInclude Include="201_ClassPauseWindow.h" />
     <ClInclude Include="205_ClassScenario.h" />
     <ClInclude Include="210_ClassStaticCommonMethod.h" />
+    <ClInclude Include="215_ClassPower.h" />
+    <ClInclude Include="220_ClassGameStatus.h" />
+    <ClInclude Include="225_ClassCard.h" />
+    <ClInclude Include="230_ClassUnit.h" />
+    <ClInclude Include="235_ClassMap.h" />
+    <ClInclude Include="240_ClassSkill.h" />
+    <ClInclude Include="245_ClassObjectMapTip.h" />
+    <ClInclude Include="250_ClassTestBattle.h" />
+    <ClInclude Include="255_ClassBattle.h" />
+    <ClInclude Include="260_ClassMapBattle.h" />
+    <ClInclude Include="265_ClassHorizontalUnit.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

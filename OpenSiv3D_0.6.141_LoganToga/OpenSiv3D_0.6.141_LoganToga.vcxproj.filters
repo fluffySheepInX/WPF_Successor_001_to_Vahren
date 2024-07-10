@@ -836,13 +836,67 @@
     <ClInclude Include="201_ClassPauseWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="150_enumClassLanguageSteamFullSuport.h">
+    <ClInclude Include="150_EnumClassLanguageSteamFullSuport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="205_ClassScenario.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="210_ClassStaticCommonMethod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="151_EnumSelectCharStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="215_ClassPower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="220_ClassGameStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="225_ClassCard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="235_ClassMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="230_ClassUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="152_EnumBattleFormation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="153_EnumMapTipObjectType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="154_EnumGender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="240_ClassSkill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="155_EnumSkill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="245_ClassObjectMapTip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="250_ClassTestBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="156_EnumBattleWhichIsThePlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="255_ClassBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="260_ClassMapBattle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="157_FlagBattleMapUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="265_ClassHorizontalUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

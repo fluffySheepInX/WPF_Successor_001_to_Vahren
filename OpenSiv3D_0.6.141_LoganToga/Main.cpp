@@ -5,7 +5,8 @@
 # include "100_StructEffect.h"
 # include "101_StructHomography.h"
 # include "102_StructGameData.h"
-# include "150_enumClassLanguageSteamFullSuport.h"
+# include "150_EnumClassLanguageSteamFullSuport.h"
+# include "151_EnumSelectCharStatus.h"
 # include "200_ClassGaussianClass.h"
 # include "201_ClassPauseWindow.h"
 # include "205_ClassScenario.h" 
@@ -218,6 +219,27 @@ public:
 				SystemString ss;
 				ss.TopMenuTitle = value[U"TopMenuTitle"].getString();
 				ss.AppTitle = value[U"AppTitle"].getString();
+				ss.configSave = value[U"configSave"].get<String>();
+				ss.configLoad = value[U"configLoad"].get<String>();
+				ss.selectScenario = value[U"selectScenario"].get<String>();
+				ss.selectScenario2 = value[U"selectScenario2"].get<String>();
+				ss.selectChara1 = value[U"selectChara1"].get<String>();
+				ss.selectCard = value[U"selectCard"].get<String>();
+				ss.DoYouWantToQuitTheGame = value[U"DoYouWantToQuitTheGame"].get<String>();
+				ss.strategyMenu000 = value[U"strategyMenu000"].get<String>();
+				ss.strategyMenu001 = value[U"strategyMenu001"].get<String>();
+				ss.strategyMenu002 = value[U"strategyMenu002"].get<String>();
+				ss.strategyMenu003 = value[U"strategyMenu003"].get<String>();
+				ss.strategyMenu004 = value[U"strategyMenu004"].get<String>();
+				ss.strategyMenu005 = value[U"strategyMenu005"].get<String>();
+				ss.strategyMenu006 = value[U"strategyMenu006"].get<String>();
+				ss.strategyMenu007 = value[U"strategyMenu007"].get<String>();
+				ss.strategyMenu008 = value[U"strategyMenu008"].get<String>();
+				ss.strategyMenu009 = value[U"strategyMenu009"].get<String>();
+				ss.BattleMessage001 = value[U"BattleMessage001"].get<String>();
+				ss.BuyMessage001 = value[U"BuyMessage001"].get<String>();
+				ss.SelectCharMessage001 = value[U"SelectCharMessage001"].get<String>();
+				ss.StorySkip = value[U"StorySkip"].get<String>();
 				systemString = ss;
 			}
 		}
@@ -699,7 +721,227 @@ private:
 	int32 scenario_with_longest_name_w = 0;
 	int32 scenario_with_longest_name_h = 0;
 };
+class SelectChar : public App::Scene
+{
+public:
+	// コンストラクタ（必ず実装）
+	SelectChar(const InitData& init)
+		: IScene{ init }
+	{
+		for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/030_SelectCharaImage/"))
+		{
+			String filename = FileSystem::FileName(filePath);
+			TextureAsset::Register(filename, filePath);
+		}
 
+		String sc = systemString.selectChara1;
+		RectF re1 = getData().fontNormal(sc).region();
+		re1.x = WINDOWSIZEWIDTH000 / 2 - (re1.w / 2);
+		re1.y = basePointY;
+		arrayRectFSystem.push_back(re1);
+		Rect re2 = { 0,0,WINDOWSIZEWIDTH000,256 };
+		re2.x = WINDOWSIZEWIDTH000 / 2 - (800);
+		re2.y = (re1.h + basePointY + 20) + 450 + 20;
+		arrayRectSystem.push_back(re2);
+
+		int32 arrayPowerSize = getData().selectClassScenario.ArrayPower.size();
+		int32 xxx = 0;
+		xxx = ((arrayPowerSize * 169) / 2);
+		int32 counter = 0;
+		for (auto ttt : getData().selectClassScenario.ArrayPower)
+		{
+			for (auto&& e : getData().classGameStatus.arrayClassPower | std::views::filter([&](auto&& e) { return e.PowerTag == ttt; }))
+			{
+				RectF rrr = {};
+				rrr = { (WINDOWSIZEWIDTH000 / 2 - xxx) + counter * 169,re1.h + basePointY + 20,169,450 };
+				e.RectF = rrr;
+			}
+			counter++;
+		}
+
+		//Scene::SetBackground(Color{ 126,87,194,255 });
+	}
+	// 更新関数（オプション）
+	void update() override
+	{
+		switch (selectCharStatus)
+		{
+		case SelectCharStatus::SelectChar:
+		{
+			for (const auto ttt : getData().classGameStatus.arrayClassPower)
+			{
+				if (ttt.RectF.leftClicked() == true)
+				{
+					// TOML ファイルからデータを読み込む
+					const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + ttt.PowerTag + U".toml" };
+
+					if (not tomlInfoProcess) // もし読み込みに失敗したら
+					{
+						//throw Error{ U"Failed to load `tomlInfoProcess.toml`" };
+						selectCharStatus = SelectCharStatus::Message;
+						Message001 = true;
+						break;
+					}
+
+					for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+						String map = table[U"map"].get<String>();
+						getData().classGameStatus.arrayInfoProcessSelectCharaMap = map.split(U',');
+						for (auto& map : getData().classGameStatus.arrayInfoProcessSelectCharaMap)
+						{
+							String ene = table[map].get<String>();
+							getData().classGameStatus.arrayInfoProcessSelectCharaEnemyUnit = ene.split(U',');
+						}
+					}
+					getData().classGameStatus.nowPowerTag = ttt.PowerTag;
+					getData().NovelPower = ttt.PowerTag;
+					getData().NovelNumber = 0;
+
+					for (auto& aaa : getData().classGameStatus.arrayClassPower)
+					{
+						if (aaa.PowerTag == ttt.PowerTag)
+						{
+							getData().selectClassPower = aaa;
+							getData().Money = aaa.Money;
+						}
+					}
+
+					changeScene(U"Novel", 0.9s);
+				}
+			}
+		}
+		break;
+		case SelectCharStatus::Message:
+		{
+			if (Message001)
+			{
+				sceneMessageBoxImpl.set();
+				if (sceneMessageBoxImpl.m_buttonC.mouseOver())
+				{
+					Cursor::RequestStyle(CursorStyle::Hand);
+
+					if (MouseL.down())
+					{
+						Message001 = false;
+						selectCharStatus = SelectCharStatus::SelectChar;
+					}
+				}
+			}
+		}
+		break;
+		case SelectCharStatus::Event:
+			break;
+		default:
+			break;
+		}
+	}
+	// 描画関数（オプション）
+	void draw() const override
+	{
+		TextureAsset(getData().selectClassScenario.SelectCharaFrameImageLeft).draw();
+		TextureAsset(getData().selectClassScenario.SelectCharaFrameImageRight)
+			.draw(Scene::Size().x - TextureAsset(getData().selectClassScenario.SelectCharaFrameImageRight).width(), 0);
+
+		arrayRectFSystem[0].draw();
+		getData().fontMini(systemString.selectChara1).draw(arrayRectFSystem[0], ColorF{ 0.25 });
+		arrayRectFSystem[0].drawFrame(3, 0, Palette::Orange);
+
+		getData().slice9.draw(arrayRectSystem[0]);
+
+		for (const auto ttt : getData().classGameStatus.arrayClassPower)
+		{
+			ttt.RectF(TextureAsset(ttt.Image).resized(169, 450)).draw();
+			if (ttt.RectF.mouseOver() == true)
+			{
+				getData().fontLine(ttt.Text).draw(arrayRectSystem[0].stretched(-10), ColorF{ 0.85 });
+			}
+		}
+
+		switch (selectCharStatus)
+		{
+		case SelectCharStatus::SelectChar:
+			break;
+		case SelectCharStatus::Message:
+			sceneMessageBoxImpl.show(systemString.SelectCharMessage001);
+			break;
+		case SelectCharStatus::Event:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void drawFadeIn(double t) const override
+	{
+		draw();
+
+		m_fadeInFunction->fade(1 - t);
+	}
+	void drawFadeOut(double t) const override
+	{
+		draw();
+
+		m_fadeOutFunction->fade(t);
+	}
+private:
+	int32 basePointY = 50;
+	/// @brief classConfigString.selectChara1の枠　など
+	Array<Rect> arrayRectSystem;
+	/// @brief mouseOver時のテキストエリア　など
+	Array<RectF> arrayRectFSystem;
+	bool Message001 = false;
+	SelectCharStatus selectCharStatus = SelectCharStatus::SelectChar;
+	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;
+	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
+	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
+};
+
+void Init(App& manager)
+{
+	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/010_FaceImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/006_CardImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/005_BackgroundImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/040_ChipImage/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		TextureAsset::Register(filename, filePath);
+	}
+	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoPower/"))
+	{
+		String filename = FileSystem::FileName(filePath);
+		const JSON jsonPower = JSON::Load(filePath);
+		if (not jsonPower) // もし読み込みに失敗したら
+		{
+			continue;
+		}
+
+		for (const auto& [key, value] : jsonPower[U"Power"])
+		{
+			ClassPower cp;
+			cp.PowerTag = value[U"PowerTag"].getString();
+			cp.PowerName = value[U"PowerName"].getString();
+			cp.HelpString = value[U"Help"].getString();
+			cp.SortKey = Parse<int32>(value[U"SortKey"].getString());
+			cp.Image = value[U"Image"].getString();
+			cp.Text = value[U"Text"].getString();
+			cp.Diff = value[U"Diff"].getString();
+			cp.Money = Parse<int32>(value[U"Money"].getString());
+			cp.Wave = Parse<int32>(value[U"Wave"].getString());
+			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
+		}
+	}
+}
 
 void Main()
 {
@@ -720,6 +962,7 @@ void Main()
 	manager.add<WinSizeScene>(U"WinSizeScene");
 	manager.add<SelectLang>(U"SelectLang");
 	manager.add<ScenarioMenu>(U"ScenarioMenu");
+	manager.add<SelectChar>(U"SelectChar");
 	manager.init(U"SelectLang");
 
 	// 関数を格納するArrayを定義する
@@ -727,6 +970,8 @@ void Main()
 	functions.push_back(DrawUnder000);
 	functions.push_back(DrawUnder001);
 	m_gaussianClass = std::make_unique<GaussianClass>(Scene::Size(), functions);
+
+	Init(manager);
 
 	Optional<std::pair<Point, Point>> dragStart;
 	EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ Scene::Size().x - 10, Scene::Size().y - 10 }).asPolygon();

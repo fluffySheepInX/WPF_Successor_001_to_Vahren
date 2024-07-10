@@ -3,36 +3,27 @@ class SystemString {
 public:
 	String AppTitle;
 	String TopMenuTitle;
+	String lang;
+	String configSave;
+	String configLoad;
+	String selectScenario;
+	String selectScenario2;
+	String selectChara1;
+	String selectCard;
+	String DoYouWantToQuitTheGame;
+	String strategyMenu000;
+	String strategyMenu001;
+	String strategyMenu002;
+	String strategyMenu003;
+	String strategyMenu004;
+	String strategyMenu005;
+	String strategyMenu006;
+	String strategyMenu007;
+	String strategyMenu008;
+	String strategyMenu009;
+	String BattleMessage001;
+	String BuyMessage001;
+	String SelectCharMessage001;
+	String StorySkip;
 
-	String GoScene000;
-	String GoScene001;
-	String GoScene002;
-
-	String Talk000Scene000;
-	String Talk001Scene000;
-	String Talk002Scene000;
-
-	String Talk000Scene001;
-	String Talk001Scene001;
-	String Talk002Scene001;
-	String AutoScene000;
-	String DasuScene000;
-	String SotoScene000;
-	String NakaScene000;
-
-	String Talk000Scene002;
-	String Talk001Scene002;
-	String Talk002Scene002;
-
-	String Talk000Return000Scene000;
-	String Talk001Return000Scene000;
-	String Talk002Return000Scene000;
-
-	String Talk000Return000Scene001;
-	String Talk001Return000Scene001;
-	String Talk002Return000Scene001;
-
-	String Talk000Return000Scene002;
-	String Talk001Return000Scene002;
-	String Talk002Return000Scene002;
 };
