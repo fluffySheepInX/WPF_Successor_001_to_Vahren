@@ -315,6 +315,16 @@ Optional<Point> ToIndex(const Vec2& pos, const Array<Quad>& columnQuads, const A
 	return Point{ x, y };
 }
 
+class Unit
+{
+public:
+	String houkou = U"";
+	String ID = U"";
+	int32 x = 0;
+	int32 y = 0;
+	String BattleWhichIsThePlayer;
+};
+
 void Main()
 {
 	// ウィンドウをリサイズする
@@ -323,12 +333,16 @@ void Main()
 	// 背景を水色にする
 	Scene::SetBackground(ColorF{ 0.8, 0.9, 1.0 });
 
+	const Font font{ 25 };
+
 	// https://kenney.nl/assets/isometric-roads
 	// からファイル一式をダウンロードし、「png」フォルダを App フォルダにコピーしてください。
 
 	// 各タイルのテクスチャ
 	Array<std::pair<String, Texture>> textures;
 	Array<std::pair<String, Texture>> texturesBui;
+
+	Array<Unit> arrayEnemy;
 
 	//何も無しチップを表現する為
 	textures.push_back({ U"", Texture{} });
@@ -369,13 +383,17 @@ void Main()
 	int32 tileTypeSelected = 0;
 
 	// マップ表示用の 2D カメラ
-	Camera2D camera{ Vec2{ 0, 0 }, 1.0 };
+	Camera2D camera{ Vec2{ 0, 0 }, 1.0 ,CameraControl::Mouse };
 
 	// タイルメニューの四角形
 	constexpr RoundRect TileMenuRoundRect = RectF{ 20, 20, (56 * 22), (50 * 4) }.stretched(10).rounded(8);
 
 	const Array<String> options = { U"侵攻", U"防衛", U"中立" };
+	const Array<String> optionsUnit = { U"仲間", U"敵", U"中立" };
+	const Array<String> optionsHoukou = { U"北", U"北東", U"東", U"東南", U"南", U"西南", U"西", U"北西" };
 	size_t index1 = 0;
+	size_t indexUnit = 0;
+	size_t indexHoukou = 0;
 	BattleWhichIsThePlayer nowBattleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
 
 	TextEditState te0;
@@ -385,16 +403,30 @@ void Main()
 	TextEditState te2;
 	te2.text = U"";
 
+	TextEditState teUnit;
+	teUnit.text = U"";
+
 	Optional<Point> sor;
+	TextEditState teSor1;
+	TextEditState teSor2;
 	Optional<Point> def;
+	TextEditState teDef1;
+	TextEditState teDef2;
 	Optional<Point> neu;
+	TextEditState teNeu1;
+	TextEditState teNeu2;
 
 	// マップにグリッドを表示するか
 	bool showGrid = false;
 
 	bool showIndex = false;
+	bool showUnit = false;
+
+	bool showGridBuiWhichIsThePlayer = false;
 
 	bool nowMapTipIsTile = true;
+
+	bool setEnemy = false;
 
 	while (System::Update())
 	{
@@ -445,7 +477,7 @@ void Main()
 					}
 					else
 					{
-						std::pair<Vec2, Texture> hhhh = { pos.movedBy(0,-15), texturesBui[gridBui[index]].second};
+						std::pair<Vec2, Texture> hhhh = { pos.movedBy(0,-15), texturesBui[gridBui[index]].second };
 						buiTex.push_back(hhhh);
 						//texturesBui[gridBui[index]].second.draw(Arg::bottomCenter = pos);
 					}
@@ -453,7 +485,7 @@ void Main()
 			}
 
 			//建物
-			for (auto aaa: buiTex)
+			for (auto aaa : buiTex)
 			{
 				aaa.second.draw(Arg::bottomCenter = aaa.first);
 			}
@@ -518,6 +550,47 @@ void Main()
 
 						PutText(U"{}"_fmt(index), pos.movedBy(0, -TileOffset.y - 3));
 					}
+				}
+			}
+
+			if (showGridBuiWhichIsThePlayer)
+			{
+				for (auto y : step(gridBuiWhichIsThePlayer.height()))
+				{
+					for (auto x : step(gridBuiWhichIsThePlayer.width()))
+					{
+						const Point index{ x, y };
+						const Vec2 pos = ToTileBottomCenter(index, N).movedBy(0, -TileThickness);
+						switch (gridBuiWhichIsThePlayer[index])
+						{
+						case BattleWhichIsThePlayer::Sortie:
+							if (index1 == 0)
+								PutText(U"攻", pos.movedBy(0, -TileOffset.y + 3));
+							break;
+						case BattleWhichIsThePlayer::Def:
+							if (index1 == 1)
+								PutText(U"守", pos.movedBy(0, -TileOffset.y + 3));
+							break;
+						case BattleWhichIsThePlayer::None:
+							if (index1 == 2)
+								PutText(U"中", pos.movedBy(0, -TileOffset.y + 3));
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+
+			if (showUnit)
+			{
+				for (auto& i : arrayEnemy)
+				{
+					const Point index{ i.x, i.y };
+					const Vec2 pos = ToTileBottomCenter(index, N).movedBy(0, -TileThickness);
+					PutText(i.ID, pos.movedBy(0, -TileOffset.y + 6));
+					PutText(i.BattleWhichIsThePlayer, pos.movedBy(20, -TileOffset.y -6));
+					PutText(i.houkou, pos.movedBy(-20, -TileOffset.y - 6));
 				}
 			}
 		}
@@ -656,26 +729,128 @@ void Main()
 			}
 		}
 
-		SimpleGUI::TextBox(te1, Vec2{ 1920 - 160 - 20, 400 }, 160, 4);
-		SimpleGUI::TextBox(te2, Vec2{ 1920 - 160 - 20, 440 }, 160, 4);
-		if (SimpleGUI::Button(U"現在の座標を出撃位置にする", Vec2{ 1920 - 320 - 20,480 }, 320) == true)
-		{
-			sor = Point();
-			sor.value().x = Parse<int32>(te1.text);
-			sor.value().y = Parse<int32>(te2.text);
-		}
-		if (SimpleGUI::Button(U"現在の座標を防衛位置にする", Vec2{ 1920 - 320 - 20,520 }, 320) == true)
-		{
-			def = Point();
-			def.value().x = Parse<int32>(te1.text);
-			def.value().y = Parse<int32>(te2.text);
-		}
-		if (SimpleGUI::Button(U"現在の座標を中立部隊の位置にする", Vec2{ 1920 - 320 - 20,560 }, 320) == true)
-		{
-			neu = Point();
-			neu.value().x = Parse<int32>(te1.text);
-			neu.value().y = Parse<int32>(te2.text);
-		}
+		// マップ上の建築物の陣営を表示するかのチェックボックス
+		SimpleGUI::CheckBox(showGridBuiWhichIsThePlayer, U"Show GBP", Vec2{ 20, 480 }, 160);
+		//ユニット設定モード
+		SimpleGUI::CheckBox(setEnemy, U"set Unit", Vec2{ 20, 520 }, 160);
+		//設定したユニットを表示する
+		SimpleGUI::CheckBox(showUnit, U"show Unit", Vec2{ 20, 560 }, 160);
 
+		if (setEnemy)
+		{
+			if (SimpleGUI::Button(U"確定", Vec2{ 1920 - 120 - 20, 400 }, 120))
+			{
+				Unit unit;
+				switch (indexHoukou)
+				{
+				case 0:
+					unit.houkou = U"北";
+					break;
+				case 1:
+					unit.houkou = U"北東";
+					break;
+				case 2:
+					unit.houkou = U"東";
+					break;
+				case 3:
+					unit.houkou = U"東南";
+					break;
+				case 4:
+					unit.houkou = U"南";
+					break;
+				case 5:
+					unit.houkou = U"西南";
+					break;
+				case 6:
+					unit.houkou = U"西";
+					break;
+				case 7:
+					unit.houkou = U"北西";
+					break;
+				default:
+					break;
+				}
+				switch (indexUnit)
+				{
+				case 0:
+					unit.BattleWhichIsThePlayer = U"仲間";
+					break;
+				case 1:
+					unit.BattleWhichIsThePlayer = U"敵";
+					break;
+				case 2:
+					unit.BattleWhichIsThePlayer = U"中立";
+					break;
+				default:
+					break;
+				}
+				unit.ID = teUnit.text;
+				unit.x = Parse<int32>(te1.text);
+				unit.y = Parse<int32>(te2.text);
+				arrayEnemy.push_back(unit);
+			}
+			SimpleGUI::RadioButtons(indexUnit, optionsUnit, Vec2{ 1920 - 200 - 50, 400 });
+			SimpleGUI::RadioButtons(indexHoukou, optionsHoukou, Vec2{ 1920 - 200 - 50, 520 });
+
+			font(U"x").draw(1920 - 120 - 20, 440, Palette::Black);
+			//現在のx座標
+			SimpleGUI::TextBox(te1, Vec2{ 1920 - 120 - 20, 480 }, 120, 4);
+
+			font(U"y").draw(1920 - 120 - 20, 520, Palette::Black);
+			//現在のy座標
+			SimpleGUI::TextBox(te2, Vec2{ 1920 - 120 - 20, 560 }, 120, 4);
+
+			font(U"ID").draw(1920 - 120 - 20, 600, Palette::Black);
+			//ID
+			SimpleGUI::TextBox(teUnit, Vec2{ 1920 - 120 - 20, 660 }, 120, 4);
+
+		}
+		else
+		{
+			font(U"現在の座標").draw(1920 - 160 - 20 - 160, 400, Palette::Black);
+			//現在のx座標
+			SimpleGUI::TextBox(te1, Vec2{ 1920 - 120 - 20, 400 }, 120, 4);
+			//現在のy座標
+			SimpleGUI::TextBox(te2, Vec2{ 1920 - 120 - 20, 440 }, 120, 4);
+			if (SimpleGUI::Button(U"現在の座標を出撃位置にする", Vec2{ 1920 - 320 - 20,480 }, 320) == true)
+			{
+				sor = Point();
+				sor.value().x = Parse<int32>(te1.text);
+				sor.value().y = Parse<int32>(te2.text);
+				teSor1.text = te1.text;
+				teSor2.text = te2.text;
+			}
+			font(U"出撃の座標").draw(1920 - 160 - 20 - 160, 520, Palette::Black);
+			//出撃x座標
+			SimpleGUI::TextBox(teSor1, Vec2{ 1920 - 120 - 20, 520 }, 120, 4);
+			//出撃y座標
+			SimpleGUI::TextBox(teSor2, Vec2{ 1920 - 120 - 20, 560 }, 120, 4);
+			if (SimpleGUI::Button(U"現在の座標を防衛位置にする", Vec2{ 1920 - 320 - 20,600 }, 320) == true)
+			{
+				def = Point();
+				def.value().x = Parse<int32>(te1.text);
+				def.value().y = Parse<int32>(te2.text);
+				teDef1.text = te1.text;
+				teDef2.text = te2.text;
+			}
+			font(U"防衛の座標").draw(1920 - 160 - 20 - 160, 640, Palette::Black);
+			//防衛x座標
+			SimpleGUI::TextBox(teDef1, Vec2{ 1920 - 120 - 20, 640 }, 120, 4);
+			//防衛y座標
+			SimpleGUI::TextBox(teDef2, Vec2{ 1920 - 120 - 20, 680 }, 120, 4);
+			if (SimpleGUI::Button(U"現在の座標を中立部隊の位置にする", Vec2{ 1920 - 320 - 20,720 }, 320) == true)
+			{
+				neu = Point();
+				neu.value().x = Parse<int32>(te1.text);
+				neu.value().y = Parse<int32>(te2.text);
+				teNeu1.text = te1.text;
+				teNeu2.text = te2.text;
+			}
+			font(U"中立部隊の座標").draw(1920 - 160 - 20 - 160, 760, Palette::Black);
+			//中立部隊x座標
+			SimpleGUI::TextBox(teNeu1, Vec2{ 1920 - 120 - 20, 760 }, 120, 4);
+			//中立部隊y座標
+			SimpleGUI::TextBox(teNeu2, Vec2{ 1920 - 120 - 20, 800 }, 120, 4);
+		}
 	}
 }

@@ -1114,6 +1114,7 @@ public:
 				{
 					if (std::get<1>(ttt).leftClicked() == true)
 					{
+						//バトル前準備
 						processBeforeBattle();
 						changeScene(U"Battle", 0.9s);
 					}
