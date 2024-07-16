@@ -6,6 +6,7 @@
 # include "255_ClassBattle.h" 
 # include "245_ClassObjectMapTip.h" 
 # include "225_ClassCard.h" 
+#include <bitset>
 
 class ClassGameStatus
 {
@@ -44,16 +45,8 @@ public:
 	Array<String> arrayInfoProcessSelectCharaMap;
 	Array<String> arrayInfoProcessSelectCharaEnemyUnit;
 
-	bool strategyMenu000 = true;
-	bool strategyMenu001 = true;
-	bool strategyMenu002 = true;
-	bool strategyMenu003 = true;
-	bool strategyMenu004 = true;
-	bool strategyMenu005 = true;
-	bool strategyMenu006 = true;
-	bool strategyMenu007 = true;
-	bool strategyMenu008 = true;
-	bool strategyMenu009 = true;
+	inline static constexpr uint8 NumMenus = 10;
+	std::bitset<NumMenus> strategyMenus = std::bitset<NumMenus>("1111111111");;
 private:
 	long iDCount = 0;
 	long battleIDCount = 0;

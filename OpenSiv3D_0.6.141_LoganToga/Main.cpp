@@ -172,6 +172,10 @@ public:
 
 		//仮置き
 		language = LanguageSteamFullSuport::English;
+
+
+		EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ INIT_WINDOW_SIZE_WIDTH - 10, INIT_WINDOW_SIZE_HEIGHT - 10 }).asPolygon();
+		EXITBTNRECT = Rect{ Arg::center(EXITBTNPOLYGON.centroid().asPoint()),20,20 };
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -300,6 +304,9 @@ public:
 		SCALE = CalculateScale(BaseSceneSize, tempSize);
 		OFFSET = CalculateOffset(BaseSceneSize, tempSize);
 
+		EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ tempSize.x - 10, tempSize.y - 10 }).asPolygon();
+		EXITBTNRECT = Rect{ Arg::center(EXITBTNPOLYGON.centroid().asPoint()),20,20 };
+
 		INI aa = INI(U"data.ini");
 		WriteIni(aa);
 		ini.emplace(aa);  // .emplace() で再代入
@@ -359,7 +366,7 @@ public:
 			SetWindSize(WINDOWSIZEWIDTH001, WINDOWSIZEHEIGHT001);
 		}
 
-		EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ WINDOWSIZEWIDTH000 / 2 - 10, Scene::Size().y - 10 }).asPolygon();
+		EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ WINDOWSIZEWIDTH000 - 10, Scene::Size().y - 10 }).asPolygon();
 		EXITBTNRECT = Rect{ Arg::center(EXITBTNPOLYGON.centroid().asPoint()),20,20 };
 
 		// シーンの拡大倍率を計算する
@@ -1050,58 +1057,10 @@ public:
 		//arrayRectMenuBack.push_back(Rect{ 432,516,500,500 });
 
 		//メニューボタン
-		{
-			int32 counter = 0;
-			if (getData().classGameStatus.strategyMenu000 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
+		for (auto index : Range(0, getData().classGameStatus.NumMenus - 1)) {
+			if (getData().classGameStatus.strategyMenus[index]) {
+				htMenuBtn.push_back(std::make_tuple(index, Rect{ 32,32 + (index * 64),300,64 }));
 			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu001 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu002 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu003 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu004 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu005 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu006 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu007 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu008 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
-			if (getData().classGameStatus.strategyMenu009 == true)
-			{
-				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
-			}
-			counter++;
 		}
 
 		//初期化
@@ -1857,8 +1816,6 @@ void Main()
 	Init(manager);
 
 	Optional<std::pair<Point, Point>> dragStart;
-	EXITBTNPOLYGON = Shape2D::Cross(10, 5, Vec2{ WINDOWSIZEWIDTH000 / 2 - 10, Scene::Size().y - 10 }).asPolygon();
-	EXITBTNRECT = Rect{ Arg::center(EXITBTNPOLYGON.centroid().asPoint()),20,20 };
 
 	while (System::Update())
 	{
