@@ -227,16 +227,26 @@ public:
 				ss.selectChara1 = value[U"selectChara1"].get<String>();
 				ss.selectCard = value[U"selectCard"].get<String>();
 				ss.DoYouWantToQuitTheGame = value[U"DoYouWantToQuitTheGame"].get<String>();
-				ss.strategyMenu000 = value[U"strategyMenu000"].get<String>();
-				ss.strategyMenu001 = value[U"strategyMenu001"].get<String>();
-				ss.strategyMenu002 = value[U"strategyMenu002"].get<String>();
-				ss.strategyMenu003 = value[U"strategyMenu003"].get<String>();
-				ss.strategyMenu004 = value[U"strategyMenu004"].get<String>();
-				ss.strategyMenu005 = value[U"strategyMenu005"].get<String>();
-				ss.strategyMenu006 = value[U"strategyMenu006"].get<String>();
-				ss.strategyMenu007 = value[U"strategyMenu007"].get<String>();
-				ss.strategyMenu008 = value[U"strategyMenu008"].get<String>();
-				ss.strategyMenu009 = value[U"strategyMenu009"].get<String>();
+				ss.strategyMenu.push_back(value[U"strategyMenu000"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu001"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu002"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu003"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu004"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu005"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu006"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu007"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu008"].get<String>());
+				ss.strategyMenu.push_back(value[U"strategyMenu009"].get<String>());
+				//ss.strategyMenu000 = value[U"strategyMenu000"].get<String>();
+				//ss.strategyMenu001 = value[U"strategyMenu001"].get<String>();
+				//ss.strategyMenu002 = value[U"strategyMenu002"].get<String>();
+				//ss.strategyMenu003 = value[U"strategyMenu003"].get<String>();
+				//ss.strategyMenu004 = value[U"strategyMenu004"].get<String>();
+				//ss.strategyMenu005 = value[U"strategyMenu005"].get<String>();
+				//ss.strategyMenu006 = value[U"strategyMenu006"].get<String>();
+				//ss.strategyMenu007 = value[U"strategyMenu007"].get<String>();
+				//ss.strategyMenu008 = value[U"strategyMenu008"].get<String>();
+				//ss.strategyMenu009 = value[U"strategyMenu009"].get<String>();
 				ss.BattleMessage001 = value[U"BattleMessage001"].get<String>();
 				ss.BuyMessage001 = value[U"BuyMessage001"].get<String>();
 				ss.SelectCharMessage001 = value[U"SelectCharMessage001"].get<String>();
@@ -1044,84 +1054,83 @@ public:
 			int32 counter = 0;
 			if (getData().classGameStatus.strategyMenu000 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu001 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu002 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu003 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu004 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu005 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu006 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu007 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu008 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 			if (getData().classGameStatus.strategyMenu009 == true)
 			{
-				htMenuBtn.emplace(counter, Rect{ 32,32 + (counter * 64),300,64 });
+				htMenuBtn.push_back(std::make_tuple(counter, Rect{ 32,32 + (counter * 64),300,64 }));
 			}
 			counter++;
 		}
 
 		//初期化
-		for (auto ttt : htMenuBtnDisplay)
 		{
-			ttt.second = false;
-		}
-		{
+			for (auto ttt : htMenuBtnDisplay)
+				ttt.second = false;
+
 			int32 counter = 0;
 			for (auto& ttt : getData().classGameStatus.arrayClassUnit)
 			{
 				ttt.rectExecuteBtnStrategyMenu = Rect{ 448,548 + (counter * 64),300,64 };
 				counter++;
 			}
-		}
-		vbar001.emplace(SasaGUI::Orientation::Vertical);;
-		vbar002.emplace(SasaGUI::Orientation::Vertical);;
-		vbar001.value().updateLayout({
-			(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)(16),
-			SasaGUI::ScrollBar::Thickness,
-			(int32)500
-		});
-		vbar002.value().updateLayout({
-			(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)516,
-			SasaGUI::ScrollBar::Thickness,
-			(int32)500
-		});
-		vbar001.value().updateConstraints(0.0, 2000.0, Scene::Height());
-		vbar002.value().updateConstraints(0.0, 2000.0, Scene::Height());
 
+			vbar001.emplace(SasaGUI::Orientation::Vertical);;
+			vbar002.emplace(SasaGUI::Orientation::Vertical);;
+			vbar001.value().updateLayout({
+				(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)(16),
+				SasaGUI::ScrollBar::Thickness,
+				(int32)500
+			});
+			vbar002.value().updateLayout({
+				(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)516,
+				SasaGUI::ScrollBar::Thickness,
+				(int32)500
+			});
+			vbar001.value().updateConstraints(0.0, 2000.0, Scene::Height());
+			vbar002.value().updateConstraints(0.0, 2000.0, Scene::Height());
+		}
 	}
 	// 更新関数（オプション）
 	void update() override
@@ -1134,160 +1143,19 @@ public:
 		{
 			for (auto& ttt : htMenuBtn)
 			{
-				if (ttt.second.mouseOver())
+				if (std::get<1>(ttt).mouseOver())
 				{
-					htMenuBtnDisplay[0] = false;
-					htMenuBtnDisplay[1] = false;
-					htMenuBtnDisplay[2] = false;
-					htMenuBtnDisplay[3] = false;
-					htMenuBtnDisplay[4] = false;
-					htMenuBtnDisplay[5] = false;
-					htMenuBtnDisplay[6] = false;
-					htMenuBtnDisplay[7] = false;
-					htMenuBtnDisplay[8] = false;
-					htMenuBtnDisplay[9] = false;
-					htMenuBtnDisplay[ttt.first] = true;
+					for (auto&& [i, re] : htMenuBtnDisplay)
+						htMenuBtnDisplay[i] = false;
+					htMenuBtnDisplay[std::get<0>(ttt)] = true;
 				}
-				switch (ttt.first)
+				switch (std::get<0>(ttt))
 				{
 				case 9:
 				{
-					if (ttt.second.leftClicked() == true)
+					if (std::get<1>(ttt).leftClicked() == true)
 					{
-						String targetMap = getData().classGameStatus.arrayInfoProcessSelectCharaMap[getData().Wave];
-
-						const TOMLReader tomlMap{ U"001_Warehouse/001_DefaultGame/016_BattleMap/" + targetMap };
-						if (not tomlMap) // もし読み込みに失敗したら
-						{
-							throw Error{ U"Failed to load `tomlMap`" };
-						}
-
-						ClassMap sM;
-						for (const auto& table : tomlMap[U"Map"].tableArrayView()) {
-							const String name = table[U"name"].get<String>();
-
-							{
-								int32 counter = 0;
-								while (true)
-								{
-									String aaa = U"ele{}"_fmt(counter);
-									const String ele = table[aaa].get<String>();
-									sM.ele.emplace(aaa, ele);
-									counter++;
-									if (ele == U"")
-									{
-										break;
-									}
-								}
-							}
-							{
-								namespace views = std::views;
-								const String str = table[U"data"].get<String>();
-								for (const auto sv : str | views::split(U",@,"_sv))
-								{
-									String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
-									if (re != U"")
-									{
-										sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
-									}
-								}
-							}
-						}
-
-						ClassBattle cb;
-						const TOMLReader tomlInfoProcess{ U"001_Warehouse/001_DefaultGame/070_Scenario/InfoProcess/" + getData().classGameStatus.nowPowerTag + U".toml" };
-						if (not tomlInfoProcess) // もし読み込みに失敗したら
-						{
-							throw Error{ U"Failed to load `tomlInfoProcess`" };
-						}
-
-						//建物関係
-						cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
-						ClassHorizontalUnit chuSor;
-						ClassHorizontalUnit chuDef;
-						ClassHorizontalUnit chuNa;
-						chuSor.FlagBuilding = true;
-						chuDef.FlagBuilding = true;
-						chuNa.FlagBuilding = true;
-						for (size_t indexRow = 0; indexRow < cb.classMapBattle.value().mapData.size(); ++indexRow)
-						{
-							for (size_t indexCol = 0; indexCol < cb.classMapBattle.value().mapData[indexRow].size(); ++indexCol)
-							{
-								for (auto& bui : cb.classMapBattle.value().mapData[indexRow][indexCol].building)
-								{
-									String key = std::get<0>(bui);
-									BattleWhichIsThePlayer bw = std::get<2>(bui);
-
-									// arrayClassObjectMapTip から適切な ClassObjectMapTip オブジェクトを見つける
-									for (const auto& mapTip : getData().classGameStatus.arrayClassObjectMapTip)
-									{
-										if (mapTip.nameTag == key)
-										{
-											// ClassUnit の設定を行う
-											ClassUnit unitBui;
-											unitBui.IsBuilding = true;
-											unitBui.ID = getData().classGameStatus.getIDCount();
-											std::get<1>(bui) = unitBui.ID;
-											unitBui.mapTipObjectType = mapTip.type;
-											unitBui.NoWall2 = mapTip.noWall2;
-											unitBui.HPCastle = mapTip.castle;
-											unitBui.CastleDefense = mapTip.castleDefense;
-											unitBui.CastleMagdef = mapTip.castleMagdef;
-											unitBui.Image = mapTip.nameTag;
-											unitBui.rowBuilding = indexRow;
-											unitBui.colBuilding = indexCol;
-
-											if (bw == BattleWhichIsThePlayer::Sortie)
-											{
-												chuSor.ListClassUnit.push_back(unitBui);
-											}
-											else if (bw == BattleWhichIsThePlayer::Def)
-											{
-												chuDef.ListClassUnit.push_back(unitBui);
-											}
-											else
-											{
-												chuNa.ListClassUnit.push_back(unitBui);
-											}
-											break; // 適切なオブジェクトが見つかったのでループを抜ける
-										}
-									}
-								}
-							}
-						}
-						cb.sortieUnitGroup.push_back(chuSor);
-						cb.defUnitGroup.push_back(chuDef);
-						cb.neutralUnitGroup.push_back(chuNa);
-
-						for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-							String mapUnit = table[targetMap].get<String>();
-							Array<String> arrayMapUnit = mapUnit.split(U',');
-							for (auto& unitYoko : arrayMapUnit)
-							{
-								ClassHorizontalUnit chu;
-								Array<String> unitInfo = unitYoko.split(U'*');
-								auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
-											[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
-								if (it == getData().classGameStatus.arrayClassUnit.end())
-								{
-									continue;
-								}
-								for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
-								{
-									it->ID = getData().classGameStatus.getIDCount();
-									chu.ListClassUnit.push_back(*it);
-								}
-								cb.defUnitGroup.push_back(chu);
-							}
-						}
-
-						cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
-						//C++11以降では、std::move を使ってコピーを避け、効率的に要素を追加することもできます。
-						//これは特に大きな Array オブジェクトを扱う場合に有用です
-						cb.sortieUnitGroup.append(std::move(getData().classGameStatus.arrayPlayerUnit));
-
-						getData().classGameStatus.classBattle = cb;
-
+						processBeforeBattle();
 						changeScene(U"Battle", 0.9s);
 					}
 				}
@@ -1296,125 +1164,22 @@ public:
 					break;
 				}
 			}
-			for (auto& ttt : htMenuBtnDisplay)
+
+			//trueなら表示
+			if (std::any_of(htMenuBtnDisplay.begin(), htMenuBtnDisplay.end(),
+				[](const auto& ttt) { return ttt.second; }))
 			{
-				if (ttt.second == true)
-				{
-					rectExecuteBtn = Rect{ 432,516,500,500 };
-				}
+				rectExecuteBtn = Rect{ 432, 516, 500, 500 };
 			}
+
 			//徴兵処理
-			for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
-			{
-				if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
-				{
-					bool check = true;
-					int32 rowCounter = 0;
-					for (auto che : getData().classGameStatus.arrayPlayerUnit)
-					{
-						for (auto che2 : che.ListClassUnit)
-						{
-							if (che2.pressedDetailStrategyMenu == true)
-							{
-								check = false;
-								if (nowHtRectPlusUnit.Price > getData().Money)
-								{
-									formBuyDisplayStatus = FormBuyDisplayStatus::Message;
-									Message001 = true;
-									break;
-								}
-
-								getData().Money = getData().Money - nowHtRectPlusUnit.Price;
-
-								ClassUnit cu = nowHtRectPlusUnit;
-								cu.ID = getData().classGameStatus.getIDCount();
-								cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
-								getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
-								break;
-							}
-						}
-						if (check == false)
-						{
-							break;
-						}
-						rowCounter++;
-					}
-					if (check == true)
-					{
-						if (nowHtRectPlusUnit.Price > getData().Money)
-						{
-							formBuyDisplayStatus = FormBuyDisplayStatus::Message;
-							Message001 = true;
-							break;
-						}
-
-						getData().Money = getData().Money - nowHtRectPlusUnit.Price;
-
-						ClassHorizontalUnit chu;
-						ClassUnit cu = nowHtRectPlusUnit;
-						cu.ID = getData().classGameStatus.getIDCount();
-						cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
-						chu.ListClassUnit.push_back(cu);
-						getData().classGameStatus.arrayPlayerUnit.push_back(chu);
-					}
-					else
-					{
-
-					}
-				}
-				else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
-				{
-					ClassHorizontalUnit chu;
-					ClassUnit cu = nowHtRectPlusUnit;
-					cu.rectDetailStrategyMenu = Rect{ 0,0,0,0 };
-					chu.ListClassUnit.push_back(cu);
-					getData().classGameStatus.arrayPlayerUnit.push_back(chu);
-				}
-			}
-			//スクロール上
-			{
-				int32 counterUnit = 0;
-				for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
-				{
-					int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
-					for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
-					{
-						aaa.rectDetailStrategyMenu.y = yyy;
-					}
-					counterUnit++;
-				}
-			}
-			//クリック処理
-			for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
-			{
-				for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
-				{
-					if (aaa.rectDetailStrategyMenu.leftClicked() == true)
-					{
-						for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
-						{
-							for (auto& bbb : nowarrayPlayerUnit.ListClassUnit)
-							{
-								bbb.pressedDetailStrategyMenu = false;
-							}
-						}
-
-						aaa.pressedDetailStrategyMenu = true;
-					}
-				}
-			}
-
-			if (arrayRectMenuBack[1].mouseOver() == true)
-			{
-				vbar001.value().scroll(Mouse::Wheel() * 60);
-			}
-			if (rectExecuteBtn.mouseOver() == true)
-			{
-				vbar002.value().scroll(Mouse::Wheel() * 60);
-			}
-			vbar001.value().update();
-			vbar002.value().update();
-
+			conscriptionUnit();
+			//ユニット表示エリアでスクロールした時、位置を調整する
+			fixDisplayUnit();
+			//ユニットをクリック時に、その他のユニットの対象フラグを初期化する
+			resetFlagsUnit();
+			//スクロールバー関係
+			processBar();
 		}
 		break;
 		case FormBuyDisplayStatus::Message:
@@ -1471,45 +1236,11 @@ public:
 				}
 			}
 		}
-		for (auto& ttt : htMenuBtn)
+
+		for (auto&& [i, ttt] : Indexed(htMenuBtn))
 		{
-			getData().slice9.draw(ttt.second);
-			switch (ttt.first)
-			{
-			case 0:
-				getData().fontLine(systemString.strategyMenu000).draw(ttt.second.stretched(-10));
-				break;
-			case 1:
-				getData().fontLine(systemString.strategyMenu001).draw(ttt.second.stretched(-10));
-				break;
-			case 2:
-				getData().fontLine(systemString.strategyMenu002).draw(ttt.second.stretched(-10));
-				break;
-			case 3:
-				getData().fontLine(systemString.strategyMenu003).draw(ttt.second.stretched(-10));
-				break;
-			case 4:
-				getData().fontLine(systemString.strategyMenu004).draw(ttt.second.stretched(-10));
-				break;
-			case 5:
-				getData().fontLine(systemString.strategyMenu005).draw(ttt.second.stretched(-10));
-				break;
-			case 6:
-				getData().fontLine(systemString.strategyMenu006).draw(ttt.second.stretched(-10));
-				break;
-			case 7:
-				getData().fontLine(systemString.strategyMenu007).draw(ttt.second.stretched(-10));
-				break;
-			case 8:
-				getData().fontLine(systemString.strategyMenu008).draw(ttt.second.stretched(-10));
-				break;
-			case 9:
-				getData().fontLine(systemString.strategyMenu009).draw(ttt.second.stretched(-10));
-				getData().fontLine(getData().Money).draw(ttt.second.stretched(-10).moveBy(0, ttt.second.h));
-				break;
-			default:
-				break;
-			}
+			getData().slice9.draw(std::get<1>(ttt));
+			getData().fontLine(systemString.strategyMenu[i]).draw(std::get<1>(ttt).stretched(-10));
 		}
 		for (auto& ttt : htMenuBtnDisplay)
 		{
@@ -1577,11 +1308,263 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	/// @brief ユニットをクリック時に、その他のユニットの対象フラグを初期化する
+	void resetFlagsUnit()
+	{
+		for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+		{
+			for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
+			{
+				if (aaa.rectDetailStrategyMenu.leftClicked() == true)
+				{
+					for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+					{
+						for (auto& bbb : nowarrayPlayerUnit.ListClassUnit)
+						{
+							bbb.pressedDetailStrategyMenu = false;
+						}
+					}
+
+					aaa.pressedDetailStrategyMenu = true;
+					break;
+				}
+			}
+		}
+	}
+	/// @brief スクロールバー関係
+	void processBar()
+	{
+		if (arrayRectMenuBack[1].mouseOver() == true)
+			vbar001.value().scroll(Mouse::Wheel() * 60);
+		if (rectExecuteBtn.mouseOver() == true)
+			vbar002.value().scroll(Mouse::Wheel() * 60);
+		vbar001.value().update();
+		vbar002.value().update();
+	}
+	/// @brief ユニット表示エリアでスクロールした時、位置を調整する
+	void fixDisplayUnit()
+	{
+		int32 counterUnit = 0;
+		for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+		{
+			int32 yyy = 16 + 16 + (counterUnit * 32) - vbar001.value().value();
+			for (auto& aaa : nowarrayPlayerUnit.ListClassUnit)
+			{
+				aaa.rectDetailStrategyMenu.y = yyy;
+			}
+			counterUnit++;
+		}
+	}
+	/// @brief 徴兵処理
+	void conscriptionUnit()
+	{
+		for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
+		{
+			if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.leftClicked() == true)
+			{
+				bool check = true;
+				int32 rowCounter = 0;
+				for (auto che : getData().classGameStatus.arrayPlayerUnit)
+				{
+					for (auto che2 : che.ListClassUnit)
+					{
+						if (che2.pressedDetailStrategyMenu == true)
+						{
+							check = false;
+							if (nowHtRectPlusUnit.Price > getData().Money)
+							{
+								formBuyDisplayStatus = FormBuyDisplayStatus::Message;
+								Message001 = true;
+								break;
+							}
+
+							getData().Money = getData().Money - nowHtRectPlusUnit.Price;
+
+							ClassUnit cu = nowHtRectPlusUnit;
+							cu.ID = getData().classGameStatus.getIDCount();
+							cu.rectDetailStrategyMenu = Rect{ 432 + 16 + (getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.size() * 32),16 + 16 + (rowCounter * 32),32,32 };
+							getData().classGameStatus.arrayPlayerUnit[rowCounter].ListClassUnit.push_back(cu);
+							break;
+						}
+					}
+					if (check == false)
+					{
+						break;
+					}
+					rowCounter++;
+				}
+				if (check == true)
+				{
+					if (nowHtRectPlusUnit.Price > getData().Money)
+					{
+						formBuyDisplayStatus = FormBuyDisplayStatus::Message;
+						Message001 = true;
+						break;
+					}
+
+					getData().Money = getData().Money - nowHtRectPlusUnit.Price;
+
+					ClassHorizontalUnit chu;
+					ClassUnit cu = nowHtRectPlusUnit;
+					cu.ID = getData().classGameStatus.getIDCount();
+					cu.rectDetailStrategyMenu = Rect{ 432 + 16,16 + 16 + (getData().classGameStatus.arrayPlayerUnit.size() * 32),32,32 };
+					chu.ListClassUnit.push_back(cu);
+					getData().classGameStatus.arrayPlayerUnit.push_back(chu);
+				}
+				else
+				{
+
+				}
+			}
+			else if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.rightClicked() == true)
+			{
+				ClassHorizontalUnit chu;
+				ClassUnit cu = nowHtRectPlusUnit;
+				cu.rectDetailStrategyMenu = Rect{ 0,0,0,0 };
+				chu.ListClassUnit.push_back(cu);
+				getData().classGameStatus.arrayPlayerUnit.push_back(chu);
+			}
+		}
+	}
+	/// @brief バトル前準備
+	void processBeforeBattle()
+	{
+		String targetMap = getData().classGameStatus.arrayInfoProcessSelectCharaMap[getData().Wave];
+
+		const TOMLReader tomlMap{ PATHBASE + PATH_DEFAULT_GAME + U"/016_BattleMap/" + targetMap };
+		if (not tomlMap) // もし読み込みに失敗したら
+			throw Error{ U"Failed to load `tomlMap`" };
+
+		ClassMap sM;
+		for (const auto& table : tomlMap[U"Map"].tableArrayView()) {
+			const String name = table[U"name"].get<String>();
+
+			{
+				int32 counter = 0;
+				while (true)
+				{
+					String aaa = U"ele{}"_fmt(counter);
+					const String ele = table[aaa].get<String>();
+					sM.ele.emplace(aaa, ele);
+					counter++;
+					if (ele == U"")
+					{
+						break;
+					}
+				}
+			}
+			{
+				namespace views = std::views;
+				const String str = table[U"data"].get<String>();
+				for (const auto sv : str | views::split(U",@,"_sv))
+				{
+					String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
+					if (re != U"")
+					{
+						sM.data.push_back(ClassStaticCommonMethod::ReplaceNewLine(re));
+					}
+				}
+			}
+		}
+
+		ClassBattle cb;
+		const TOMLReader tomlInfoProcess{ PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoProcess/" + getData().classGameStatus.nowPowerTag + U".toml" };
+		if (not tomlInfoProcess) // もし読み込みに失敗したら
+			throw Error{ U"Failed to load `tomlInfoProcess`" };
+
+		//建物関係
+		cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
+		ClassHorizontalUnit chuSor;
+		ClassHorizontalUnit chuDef;
+		ClassHorizontalUnit chuNa;
+		chuSor.FlagBuilding = true;
+		chuDef.FlagBuilding = true;
+		chuNa.FlagBuilding = true;
+		for (size_t indexRow = 0; indexRow < cb.classMapBattle.value().mapData.size(); ++indexRow)
+		{
+			for (size_t indexCol = 0; indexCol < cb.classMapBattle.value().mapData[indexRow].size(); ++indexCol)
+			{
+				for (auto& bui : cb.classMapBattle.value().mapData[indexRow][indexCol].building)
+				{
+					String key = std::get<0>(bui);
+					BattleWhichIsThePlayer bw = std::get<2>(bui);
+
+					// arrayClassObjectMapTip から適切な ClassObjectMapTip オブジェクトを見つける
+					for (const auto& mapTip : getData().classGameStatus.arrayClassObjectMapTip)
+					{
+						if (mapTip.nameTag == key)
+						{
+							// ClassUnit の設定を行う
+							ClassUnit unitBui;
+							unitBui.IsBuilding = true;
+							unitBui.ID = getData().classGameStatus.getIDCount();
+							std::get<1>(bui) = unitBui.ID;
+							unitBui.mapTipObjectType = mapTip.type;
+							unitBui.NoWall2 = mapTip.noWall2;
+							unitBui.HPCastle = mapTip.castle;
+							unitBui.CastleDefense = mapTip.castleDefense;
+							unitBui.CastleMagdef = mapTip.castleMagdef;
+							unitBui.Image = mapTip.nameTag;
+							unitBui.rowBuilding = indexRow;
+							unitBui.colBuilding = indexCol;
+
+							if (bw == BattleWhichIsThePlayer::Sortie)
+							{
+								chuSor.ListClassUnit.push_back(unitBui);
+							}
+							else if (bw == BattleWhichIsThePlayer::Def)
+							{
+								chuDef.ListClassUnit.push_back(unitBui);
+							}
+							else
+							{
+								chuNa.ListClassUnit.push_back(unitBui);
+							}
+							break; // 適切なオブジェクトが見つかったのでループを抜ける
+						}
+					}
+				}
+			}
+		}
+		cb.sortieUnitGroup.push_back(chuSor);
+		cb.defUnitGroup.push_back(chuDef);
+		cb.neutralUnitGroup.push_back(chuNa);
+
+		for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
+			String mapUnit = table[targetMap].get<String>();
+			Array<String> arrayMapUnit = mapUnit.split(U',');
+			for (auto& unitYoko : arrayMapUnit)
+			{
+				ClassHorizontalUnit chu;
+				Array<String> unitInfo = unitYoko.split(U'*');
+				auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
+							[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
+				if (it == getData().classGameStatus.arrayClassUnit.end())
+				{
+					continue;
+				}
+				for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
+				{
+					it->ID = getData().classGameStatus.getIDCount();
+					chu.ListClassUnit.push_back(*it);
+				}
+				cb.defUnitGroup.push_back(chu);
+			}
+		}
+
+		cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
+		//C++11以降では、std::move を使ってコピーを避け、効率的に要素を追加することもできます。
+		//これは特に大きな Array オブジェクトを扱う場合に有用です
+		cb.sortieUnitGroup.append(std::move(getData().classGameStatus.arrayPlayerUnit));
+
+		getData().classGameStatus.classBattle = cb;
+
+	}
 	/// @brief 左上メニュー、画面上部ユニット群の強制表示枠
 	Array <Rect> arrayRectMenuBack;
 	/// @brief 画面下部の詳細実行枠
 	Rect rectExecuteBtn{ 0,0,0,0 };
-	HashTable<int32, Rect> htMenuBtn;
+	Array<std::tuple<int32, Rect>> htMenuBtn;
 	HashTable<int32, bool> htMenuBtnDisplay;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
@@ -1640,6 +1623,205 @@ void Init(App& manager)
 			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
 		}
 	}
+	// Unit.jsonからデータを読み込む
+	{
+		const JSON jsonUnit = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoUnit/Unit.json");
+
+		if (not jsonUnit) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `Unit.json`" };
+		}
+
+		Array<ClassUnit> arrayClassUnit;
+		for (const auto& [key, value] : jsonUnit[U"Unit"]) {
+			ClassUnit cu;
+			cu.NameTag = value[U"name_tag"].getString();
+			cu.Name = value[U"name"].getString();
+			cu.Image = value[U"image"].getString();
+			cu.Hp = Parse<int32>(value[U"hp"].getString());
+			cu.Attack = Parse<int32>(value[U"attack"].getString());
+			cu.Defense = Parse<int32>(value[U"defense"].getString());
+			cu.Speed = Parse<double>(value[U"speed"].getString());
+			cu.Price = Parse<int32>(value[U"price"].getString());
+			cu.Move = Parse<int32>(value[U"move"].getString());
+			String sNa = value[U"skill"].getString();
+			if (sNa.contains(',') == true)
+			{
+				cu.SkillName = sNa.split(',');
+			}
+			else
+			{
+				cu.SkillName.push_back(sNa);
+			}
+			arrayClassUnit.push_back(std::move(cu));
+		}
+
+		// unitのスキルを読み込み
+		const JSON skillData = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + +U"/070_Scenario/InfoSkill/skill.json");
+
+		if (not skillData) // もし読み込みに失敗したら
+		{
+			throw Error{ U"Failed to load `skill.json`" };
+		}
+
+		Array<ClassSkill> arrayClassSkill;
+		for (const auto& [key, value] : skillData[U"Skill"]) {
+			ClassSkill cu;
+			{
+				if (value[U"func"].get<String>() == U"missile")
+				{
+					cu.SkillType = SkillType::missile;
+				}
+			}
+			{
+				if (value[U"MoveType"].get<String>() == U"throw")
+				{
+					cu.MoveType = MoveType::thr;
+				}
+				if (value[U"MoveType"].get<String>() == U"circle")
+				{
+					cu.MoveType = MoveType::circle;
+				}
+				if (value[U"MoveType"].get<String>() == U"swing")
+				{
+					cu.MoveType = MoveType::swing;
+				}
+			}
+			{
+				if (value.hasElement(U"Easing") == true)
+				{
+					if (value[U"Easing"].get<String>() == U"easeOutExpo")
+					{
+						cu.Easing = SkillEasing::easeOutExpo;
+					}
+				}
+			}
+			if (value.hasElement(U"EasingRatio") == true)
+			{
+				cu.EasingRatio = Parse<int32>(value[U"EasingRatio"].get<String>());
+			}
+			if (value.hasElement(U"slow_per") == true)
+			{
+				cu.slowPer = Parse<int32>(value[U"slow_per"].get<String>());
+			}
+			else
+			{
+				cu.slowPer = none;
+			}
+			if (value.hasElement(U"slow_time") == true)
+			{
+				cu.slowTime = Parse<int32>(value[U"slow_time"].get<String>());
+			}
+			else
+			{
+				cu.slowTime = none;
+			}
+			if (value.hasElement(U"center") == true)
+			{
+				if (value[U"center"].get<String>() == U"on")
+				{
+					cu.SkillCenter = SkillCenter::on;
+				}
+				else if (value[U"center"].get<String>() == U"off")
+				{
+					cu.SkillCenter = SkillCenter::off;
+				}
+				else if (value[U"center"].get<String>() == U"end")
+				{
+					cu.SkillCenter = SkillCenter::end;
+				}
+			}
+			if (value.hasElement(U"bom") == true)
+			{
+				if (value[U"bom"].get<String>() == U"on")
+				{
+					cu.SkillBomb = SkillBomb::on;
+				}
+				else if (value[U"bom"].get<String>() == U"off")
+				{
+					cu.SkillBomb = SkillBomb::off;
+				}
+			}
+			if (value.hasElement(U"height") == true)
+			{
+				cu.height = Parse<int32>(value[U"height"].get<String>());
+			}
+			if (value.hasElement(U"radius") == true)
+			{
+				cu.radius = Parse<double>(value[U"radius"].get<String>());
+			}
+			if (value.hasElement(U"rush") == true)
+			{
+				cu.rush = Parse<int32>(value[U"rush"].get<String>());
+			}
+			cu.image = value[U"image"].get<String>();
+			if (value.hasElement(U"d360") == true)
+			{
+				if (value[U"d360"].get<String>() == U"on")
+				{
+					cu.SkillD360 = SkillD360::on;
+					TextureAsset::Register(cu.image + U".png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U".png");
+				}
+			}
+			else
+			{
+				TextureAsset::Register(cu.image + U"NW.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
+				TextureAsset::Register(cu.image + U"N.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"N.png");
+			}
+			if (value.hasElement(U"force_ray") == true)
+			{
+				if (value[U"force_ray"].get<String>() == U"on")
+				{
+					cu.SkillForceRay = SkillForceRay::on;
+				}
+				else
+				{
+					cu.SkillForceRay = SkillForceRay::off;
+				}
+			}
+			cu.nameTag = value[U"name_tag"].get<String>();
+			cu.name = value[U"name"].get<String>();
+			cu.range = Parse<int32>(value[U"range"].get<String>());
+			cu.w = Parse<int32>(value[U"w"].get<String>());
+			cu.h = Parse<int32>(value[U"h"].get<String>());
+			cu.str = Parse<int32>(value[U"str"].get<String>());
+			if (value[U"str_kind"].get<String>() == U"attack")
+			{
+				cu.SkillStrKind = SkillStrKind::attack;
+			}
+			else if (value[U"str_kind"].get<String>() == U"off")
+			{
+				cu.SkillStrKind = SkillStrKind::attack;
+			}
+			else if (value[U"str_kind"].get<String>() == U"end")
+			{
+				cu.SkillStrKind = SkillStrKind::attack;
+			}
+
+			cu.speed = Parse<double>(value[U"speed"].get<String>());
+
+			arrayClassSkill.push_back(std::move(cu));
+		}
+
+		//unitのスキル名からスキルクラスを探し、unitに格納
+		for (auto& itemUnit : arrayClassUnit)
+		{
+			for (const auto& itemSkillName : itemUnit.SkillName)
+			{
+				for (const auto& skill : arrayClassSkill)
+				{
+					if (skill.nameTag == itemSkillName)
+					{
+						itemUnit.Skill.emplace_back(skill);
+						break;
+					}
+				}
+			}
+		}
+
+		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;
+	}
+
 }
 
 void Main()
