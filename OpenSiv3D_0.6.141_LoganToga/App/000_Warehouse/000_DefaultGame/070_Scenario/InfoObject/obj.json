@@ -1,0 +1,68 @@
+{
+  "obj": [
+    {
+      "name": "fwall1",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "fwall2",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "ucwall",
+      "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall2",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall_buu",
+      "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "testWall_bu",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "fgate1",
+      "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    }
+  ]
+}

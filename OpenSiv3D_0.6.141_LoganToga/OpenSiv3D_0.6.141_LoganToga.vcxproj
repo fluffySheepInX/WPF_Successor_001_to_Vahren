@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoEnemy\enemy.json" />
     <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoScenario\AnyNameWillDo.json" />
     <None Include="App\000_Warehouse\000_DefaultGame\Config.toml" />
     <None Include="App\000_Warehouse\000_DefaultGame\SystemString.json" />
@@ -358,6 +359,7 @@
     <ClInclude Include="255_ClassBattle.h" />
     <ClInclude Include="260_ClassMapBattle.h" />
     <ClInclude Include="265_ClassHorizontalUnit.h" />
+    <ClInclude Include="231_ClassEnemy.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

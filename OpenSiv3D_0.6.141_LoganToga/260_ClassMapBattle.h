@@ -12,8 +12,9 @@ public:
 	String unit;
 	String houkou;
 	String zinkei;
-	bool kougekiButaiNoIti;
-	bool boueiButaiNoIti;
+	String posSpecial;
+	bool kougekiButaiNoIti = false;
+	bool boueiButaiNoIti = false;
 	//s3d::Optional<s3d::Path> mapPath;
 };
 

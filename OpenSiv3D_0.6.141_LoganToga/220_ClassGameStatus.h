@@ -5,7 +5,8 @@
 # include "215_ClassPower.h" 
 # include "255_ClassBattle.h" 
 # include "245_ClassObjectMapTip.h" 
-# include "225_ClassCard.h" 
+# include "225_ClassCard.h"
+# include "231_ClassEnemy.h" 
 #include <bitset>
 
 class ClassGameStatus
@@ -35,6 +36,7 @@ public:
 	ClassTestBattle classTestBattle;
 	ClassBattle classBattle;
 	Array<ClassUnit> arrayClassUnit;
+	Array<ClassEnemy> arrayClassEnemy;
 	Array<ClassHorizontalUnit> arrayPlayerUnit;
 	Array<ClassSkill> arrayClassSkill;
 	Array<ClassCard> arrayClassCard;

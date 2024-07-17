@@ -180,6 +180,7 @@ void WriteTomlFile(const FilePath& path,
 			}
 
 			String e = U"*";
+			//陣形
 			String f = U"*";
 
 			tomlString += U"{}{}{}{}{}{},"_fmt(a, b, c, d, e, f);
@@ -188,6 +189,7 @@ void WriteTomlFile(const FilePath& path,
 		if (tomlString.ends_with(U","_sv))
 		{
 			tomlString.pop_back();
+			tomlString += U"$";
 		}
 		tomlString += newLine;
 	}
@@ -819,7 +821,7 @@ void Main()
 
 			font(U"ID").draw(1920 - 120 - 20, 600, Palette::Black);
 			//ID
-			SimpleGUI::TextBox(teUnit, Vec2{ 1920 - 120 - 20, 660 }, 120, 4);
+			SimpleGUI::TextBox(teUnit, Vec2{ 1920 - 120 - 20, 660 }, 120, 64);
 
 		}
 		else

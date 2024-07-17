@@ -110,57 +110,37 @@ public:
 						}
 					}
 				}
-				//flag(部隊チップの種別
+				//ユニットの情報
 				if (splitA.size() > 2)
 				{
-					int32 re = -1;
-					try
-					{
-						re = Parse<int32>(splitA[2]);
-					}
-					catch (const std::exception&)
-					{
-						throw;
-					}
-
-					if (re == 0)
-					{
-						md.flagBattleMapUnit = FlagBattleMapUnit::Unit;
-					}
-					else if (re == 1)
-					{
-						md.flagBattleMapUnit = FlagBattleMapUnit::Var;
-					}
-					else if (re == 2)
-					{
-						md.flagBattleMapUnit = FlagBattleMapUnit::Spe;
-					}
-					else if (re == -1)
+					Array re = splitA[2].split(U':');
+					if (re.size() == 0 || re[0] == U"-1")
 					{
 
 					}
 					else
 					{
-						throw;
+						md.unit = re[0];
+						md.houkou = re[1];
+						//
+						//md.BattleWhichIsThePlayer = re[2];
 					}
 				}
-				//部隊
+				//【出撃、防衛、中立の位置】もしくは【退却位置】
 				if (splitA.size() > 3)
 				{
-					md.unit = splitA[3];
-					if (md.unit == U"@@")
+					md.posSpecial = splitA[3];
+					if (md.posSpecial == U"@@")
 					{
 						md.kougekiButaiNoIti = true;
-					}
-					if (md.unit == U"@")
+					}else if (md.posSpecial == U"@")
 					{
 						md.boueiButaiNoIti = true;
 					}
-				}
-				//方向
-				if (splitA.size() > 4)
-				{
-					md.houkou = splitA[4];
+					else
+					{
+
+					}
 				}
 				//陣形
 				if (splitA.size() > 5)

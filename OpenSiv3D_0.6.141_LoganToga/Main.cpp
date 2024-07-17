@@ -1416,7 +1416,7 @@ private:
 			{
 				namespace views = std::views;
 				const String str = table[U"data"].get<String>();
-				for (const auto sv : str | views::split(U",@,"_sv))
+				for (const auto sv : str | views::split(U"$"_sv))
 				{
 					String re = ClassStaticCommonMethod::ReplaceNewLine(String(sv.begin(), sv.end()));
 					if (re != U"")
@@ -1433,6 +1433,7 @@ private:
 			throw Error{ U"Failed to load `tomlInfoProcess`" };
 
 		//建物関係
+		//現在バグ有り
 		cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
 		ClassHorizontalUnit chuSor;
 		ClassHorizontalUnit chuDef;
@@ -1490,27 +1491,45 @@ private:
 		cb.defUnitGroup.push_back(chuDef);
 		cb.neutralUnitGroup.push_back(chuNa);
 
-		for (const auto& table : tomlInfoProcess[U"Process"].tableArrayView()) {
-			String mapUnit = table[targetMap].get<String>();
-			Array<String> arrayMapUnit = mapUnit.split(U',');
+		//敵兵
+		for (auto& ttt : sM.data)
+		{
+			ClassHorizontalUnit chu;
+			Array<String> arrayMapUnit = ttt.split(U',');
 			for (auto& unitYoko : arrayMapUnit)
 			{
-				ClassHorizontalUnit chu;
-				Array<String> unitInfo = unitYoko.split(U'*');
-				auto it = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
-							[&](const ClassUnit& unit) { return unit.NameTag == unitInfo[0]; });
-				if (it == getData().classGameStatus.arrayClassUnit.end())
+				Array<String> cellInfo = unitYoko.split(U'*');
+				if (cellInfo[2] == U"" || cellInfo[2] == U"-1")
 				{
 					continue;
 				}
-				for (size_t i = 0; i < Parse<int32>(unitInfo[1]); i++)
+				Array<String> unitInfo = cellInfo[2].split(U':');
+
+				//部隊編成を取得
+				auto it = std::find_if(getData().classGameStatus.arrayClassEnemy.begin(), getData().classGameStatus.arrayClassEnemy.end(),
+							[&](const ClassEnemy& unit) { return unit.name == unitInfo[0]; });
+				if (it == getData().classGameStatus.arrayClassEnemy.end())
 				{
-					it->ID = getData().classGameStatus.getIDCount();
-					chu.ListClassUnit.push_back(*it);
+					continue;
 				}
-				cb.defUnitGroup.push_back(chu);
+				for (auto& ce : it->type)
+				{
+					//ユニットの情報を取得
+					auto it2 = std::find_if(getData().classGameStatus.arrayClassUnit.begin(), getData().classGameStatus.arrayClassUnit.end(),
+								[&](const ClassUnit& unit) { return unit.NameTag == ce; });
+					if (it2 == getData().classGameStatus.arrayClassUnit.end())
+					{
+						continue;
+					}
+					it2->ID = getData().classGameStatus.getIDCount();
+					chu.ListClassUnit.push_back(*it2);
+				}
 			}
+
+			cb.defUnitGroup.push_back(chu);
 		}
+		//敵兵位置移動
+
 
 		cb.battleWhichIsThePlayer = BattleWhichIsThePlayer::Sortie;
 		//C++11以降では、std::move を使ってコピーを避け、効率的に要素を追加することもできます。
@@ -1588,9 +1607,7 @@ void Init(App& manager)
 		const JSON jsonUnit = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoUnit/Unit.json");
 
 		if (not jsonUnit) // もし読み込みに失敗したら
-		{
 			throw Error{ U"Failed to load `Unit.json`" };
-		}
 
 		Array<ClassUnit> arrayClassUnit;
 		for (const auto& [key, value] : jsonUnit[U"Unit"]) {
@@ -1780,6 +1797,52 @@ void Init(App& manager)
 		}
 
 		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;
+	}
+	// obj.jsonからデータを読み込む
+	{
+		// TOML ファイルからデータを読み込む
+		const JSON objData = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoObject/obj.json");
+
+		if (not objData) // もし読み込みに失敗したら
+			throw Error{ U"Failed to load `obj.json`" };
+
+		Array<ClassObjectMapTip> arrayClassObj;
+		for (const auto& [key, value] : objData[U"obj"]) {
+			ClassObjectMapTip cu;
+			cu.nameTag = value[U"name"].get<String>();
+			String ty = value[U"type"].get<String>();
+			if (ty == U"wall2")
+			{
+				cu.type = MapTipObjectType::WALL2;
+			}
+			else if (ty == U"gate")
+			{
+				cu.type = MapTipObjectType::GATE;
+			}
+			cu.noWall2 = value[U"no_wall2"].get<int32>();
+			cu.castle = value[U"castle"].get<int32>();
+			cu.castleDefense = value[U"castle_defense"].get<int32>();
+			cu.castleMagdef = value[U"castle_magdef"].get<int32>();
+
+			arrayClassObj.push_back(std::move(cu));
+		}
+		manager.get().get()->classGameStatus.arrayClassObjectMapTip = arrayClassObj;
+	}
+	//enemy
+	{
+		const JSON jsonUnit = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoEnemy/enemy.json");
+
+		if (not jsonUnit) // もし読み込みに失敗したら
+			throw Error{ U"Failed to load `Unit.json`" };
+
+		Array<ClassEnemy> arrayClassUnit;
+		for (const auto& [key, value] : jsonUnit[U"enemy"]) {
+			ClassEnemy ce;
+			ce.name = value[U"name"].getString();
+			ce.type = value[U"value"].getString().split(',');
+			arrayClassUnit.push_back(std::move(ce));
+		}
+		manager.get().get()->classGameStatus.arrayClassEnemy = arrayClassUnit;
 	}
 
 }

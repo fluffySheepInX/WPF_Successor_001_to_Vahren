@@ -768,6 +768,7 @@
     <None Include="App\000_Warehouse\000_DefaultGame\SystemString.json" />
     <None Include="App\000_Warehouse\000_DefaultGame\Config.toml" />
     <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoScenario\AnyNameWillDo.json" />
+    <None Include="App\000_Warehouse\000_DefaultGame\070_Scenario\InfoEnemy\enemy.json" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="App\example\test.mp3">
@@ -900,6 +901,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="158_EnumFormBuyDisplayStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="231_ClassEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
