@@ -1433,7 +1433,6 @@ private:
 			throw Error{ U"Failed to load `tomlInfoProcess`" };
 
 		//建物関係
-		//現在バグ有り
 		cb.classMapBattle = ClassStaticCommonMethod::GetClassMapBattle(sM);
 		ClassHorizontalUnit chuSor;
 		ClassHorizontalUnit chuDef;
@@ -1494,7 +1493,6 @@ private:
 		//敵兵
 		for (auto& ttt : sM.data)
 		{
-			ClassHorizontalUnit chu;
 			Array<String> arrayMapUnit = ttt.split(U',');
 			for (auto& unitYoko : arrayMapUnit)
 			{
@@ -1503,6 +1501,7 @@ private:
 				{
 					continue;
 				}
+				ClassHorizontalUnit chu;
 				Array<String> unitInfo = cellInfo[2].split(U':');
 
 				//部隊編成を取得
@@ -1524,9 +1523,8 @@ private:
 					it2->ID = getData().classGameStatus.getIDCount();
 					chu.ListClassUnit.push_back(*it2);
 				}
+				cb.defUnitGroup.push_back(chu);
 			}
-
-			cb.defUnitGroup.push_back(chu);
 		}
 		//敵兵位置移動
 
