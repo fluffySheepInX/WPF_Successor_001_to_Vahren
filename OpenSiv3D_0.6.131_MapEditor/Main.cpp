@@ -12,6 +12,16 @@ inline constexpr Vec2 TileOffset{ 50, 25 };
 // タイルの厚み（ピクセル）
 inline constexpr int32 TileThickness = 15;
 
+class Unit
+{
+public:
+	String houkou = U"";
+	String ID = U"";
+	int32 x = 0;
+	int32 y = 0;
+	String BattleWhichIsThePlayer;
+};
+
 // この関数は、Grid<int32> に基づいて Array<Texture> をグループ化します
 HashSet<String> GroupTexturesByGrid(const Grid<int32>& grid, const Array<std::pair<String, Texture>>& textures)
 {
@@ -33,14 +43,15 @@ HashSet<String> GroupTexturesByGrid(const Grid<int32>& grid, const Array<std::pa
 }
 
 void WriteTomlFile(const FilePath& path,
-					const Grid<int32> grid,
-					const Grid<int32> gridBui,
-					const Grid<BattleWhichIsThePlayer> gridBuiWhichIsThePlayer,
-					const Optional<Point> sor,
-					const Optional<Point> def,
-					const Optional<Point> neu,
-					const Array<std::pair<String, Texture>> textures,
-					const Array<std::pair<String, Texture>> texturesBui)
+					const Grid<int32>& grid,
+					const Grid<int32>& gridBui,
+					const Grid<BattleWhichIsThePlayer>& gridBuiWhichIsThePlayer,
+					const Optional<Point>& sor,
+					const Optional<Point>& def,
+					const Optional<Point>& neu,
+					const Array<std::pair<String, Texture>>& textures,
+					const Array<std::pair<String, Texture>>& texturesBui,
+					const Array<Unit>& arrayEnemy)
 {
 	HashSet<String> group = GroupTexturesByGrid(grid, textures);
 	HashSet<String> groupBui = GroupTexturesByGrid(gridBui, texturesBui);
@@ -79,11 +90,12 @@ void WriteTomlFile(const FilePath& path,
 	//data
 	tomlString += tab + U"data = \"\"\"" + newLine;
 
-	for (size_t i = 0; i < grid.size().y; i++)
+	for (size_t i = 0; i < grid.height(); i++)
 	{
-		for (size_t j = 0; j < grid.size().x; j++)
+		for (size_t j = 0; j < grid.width(); j++)
 		{
-			String a;
+			//マップチップ
+			String a = U"*";
 			{
 				FilePath filePath = textures[grid[j][i]].first;
 				String fileNameWithExtension = FileSystem::FileName(filePath);
@@ -98,7 +110,8 @@ void WriteTomlFile(const FilePath& path,
 					a = U"eleNone";
 				}
 			}
-			String b;
+			//建物マップチップ
+			String b = U"*";
 			{
 				int32 aaa = gridBui[j][i];
 				if (aaa != -1)
@@ -134,25 +147,35 @@ void WriteTomlFile(const FilePath& path,
 				}
 			}
 
-
+			//ユニットの情報
+			//*unitName,houkou,BattleWhichIsThePlayer
 			String c = U"*-1";
-
-			String d;
-			//出撃と防衛、中立が同じ位置の場合についても後で考慮
-			if (sor.has_value() == true)
 			{
-				Point ppp = { i,j };
-				if (sor.value() == ppp)
+				if (Array<Unit> a = arrayEnemy.filter([i, j](const Unit& u) { return (u.x == j && u.y == i); }); a.size() == 1)
 				{
-					d = U"*@@";
+					c = U"*" + a[0].ID + U":" + a[0].houkou + U":" + a[0].BattleWhichIsThePlayer;
 				}
 			}
-			if (def.has_value() == true)
+
+			//【出撃、防衛、中立の位置】もしくは【退却位置】
+			String d = U"*";
 			{
-				Point ppp = { i,j };
-				if (def.value() == ppp)
+				//出撃と防衛、中立が同じ位置の場合についても後で考慮
+				if (sor.has_value() == true)
 				{
-					d = U"*@";
+					Point ppp = { i,j };
+					if (sor.value() == ppp)
+					{
+						d = U"*@@";
+					}
+				}
+				if (def.has_value() == true)
+				{
+					Point ppp = { i,j };
+					if (def.value() == ppp)
+					{
+						d = U"*@";
+					}
 				}
 			}
 
@@ -162,7 +185,11 @@ void WriteTomlFile(const FilePath& path,
 			tomlString += U"{}{}{}{}{}{},"_fmt(a, b, c, d, e, f);
 
 		}
-		tomlString += U"@," + newLine;
+		if (tomlString.ends_with(U","_sv))
+		{
+			tomlString.pop_back();
+		}
+		tomlString += newLine;
 	}
 
 	tomlString += tab + U"\"\"\"" + newLine;
@@ -314,16 +341,6 @@ Optional<Point> ToIndex(const Vec2& pos, const Array<Quad>& columnQuads, const A
 
 	return Point{ x, y };
 }
-
-class Unit
-{
-public:
-	String houkou = U"";
-	String ID = U"";
-	int32 x = 0;
-	int32 y = 0;
-	String BattleWhichIsThePlayer;
-};
 
 void Main()
 {
@@ -589,7 +606,7 @@ void Main()
 					const Point index{ i.x, i.y };
 					const Vec2 pos = ToTileBottomCenter(index, N).movedBy(0, -TileThickness);
 					PutText(i.ID, pos.movedBy(0, -TileOffset.y + 6));
-					PutText(i.BattleWhichIsThePlayer, pos.movedBy(20, -TileOffset.y -6));
+					PutText(i.BattleWhichIsThePlayer, pos.movedBy(20, -TileOffset.y - 6));
 					PutText(i.houkou, pos.movedBy(-20, -TileOffset.y - 6));
 				}
 			}
@@ -692,7 +709,7 @@ void Main()
 
 		if (SimpleGUI::Button(U"Output data", Vec2{ 20,360 }, 160) == true)
 		{
-			WriteTomlFile(U"Output map.toml", grid, gridBui, gridBuiWhichIsThePlayer, sor, def, neu, textures, texturesBui);
+			WriteTomlFile(U"Output map.toml", grid, gridBui, gridBuiWhichIsThePlayer, sor, def, neu, textures, texturesBui, arrayEnemy);
 		}
 
 		SimpleGUI::TextBox(te0, Vec2{ 20, 400 }, 160, 4);
