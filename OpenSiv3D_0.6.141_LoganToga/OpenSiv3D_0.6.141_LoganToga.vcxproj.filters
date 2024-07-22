@@ -906,5 +906,17 @@
     <ClInclude Include="231_ClassEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="270_ClassMapCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="275_ClassAStar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="159_EnumBattleStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="280_ClassExecuteSkills.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

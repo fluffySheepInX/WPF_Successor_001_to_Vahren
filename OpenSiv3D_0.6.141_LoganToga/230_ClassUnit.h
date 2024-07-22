@@ -12,6 +12,8 @@ public:
 		if (this != &other) {
 			Formation = other.Formation; // 前提：ClassFormationが適切なコピーコンストラクタを持つ
 			ID = other.ID;
+			houkou = other.houkou;
+			initXY = other.initXY;
 			IsLeader = other.IsLeader;
 			IsSelect = other.IsSelect;
 			IsDone = other.IsDone;
@@ -102,6 +104,9 @@ public:
 	int32 HPCastle = 0;
 	int32 CastleDefense = 0;
 	int32 CastleMagdef = 0;
+
+	String houkou = U"";
+	Point initXY = Point();
 
 	// IsLeader
 	bool IsLeader = false;

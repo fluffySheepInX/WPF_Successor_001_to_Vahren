@@ -360,6 +360,10 @@
     <ClInclude Include="260_ClassMapBattle.h" />
     <ClInclude Include="265_ClassHorizontalUnit.h" />
     <ClInclude Include="231_ClassEnemy.h" />
+    <ClInclude Include="270_ClassMapCreator.h" />
+    <ClInclude Include="275_ClassAStar.h" />
+    <ClInclude Include="159_EnumBattleStatus.h" />
+    <ClInclude Include="280_ClassExecuteSkills.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
