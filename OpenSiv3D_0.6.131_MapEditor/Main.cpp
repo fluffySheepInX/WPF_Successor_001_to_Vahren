@@ -385,7 +385,7 @@ void Main()
 	}
 
 	// マップの一辺のタイル数
-	int32 N = 8;
+	int32 N = 16;
 
 	// 各列の四角形
 	Array<Quad> columnQuads = MakeColumnQuads(N);
@@ -732,6 +732,8 @@ void Main()
 				gridBui = gridBuiNew;
 				gridBuiWhichIsThePlayer = gridBuiWhichIsThePlayerNew;
 			}
+
+
 		}
 
 		if (SimpleGUI::Button(U"塗りつぶし", Vec2{ 20,440 }, 160) == true)
@@ -754,6 +756,124 @@ void Main()
 		SimpleGUI::CheckBox(setEnemy, U"set Unit", Vec2{ 20, 520 }, 160);
 		//設定したユニットを表示する
 		SimpleGUI::CheckBox(showUnit, U"show Unit", Vec2{ 20, 560 }, 160);
+		//マップを読み込む
+		if (SimpleGUI::Button(U"Read data", Vec2{ 20,600 }, 160) == true)
+		{
+			Optional<FilePath> path = Dialog::OpenFile({ FileFilter::AllFiles() });
+
+			const TOMLReader tomlConfig{ path.value() };
+			if (not tomlConfig) // もし読み込みに失敗したら
+				throw Error{ U"Failed to load `config.toml`" };
+
+			int32 counterToml = 0;
+			Array<String> arrayEle;
+			String mapData = U"";
+			for (const auto& table : tomlConfig[U"Map"].tableArrayView()) {
+				while (true)
+				{
+					String aaaaaaaa = U"ele" + Format(counterToml);
+					String ele = table[aaaaaaaa].get<String>();
+					if (ele == U"")
+					{
+						break;
+					}
+					arrayEle.push_back(ele);
+					counterToml++;
+				}
+
+				//この時点でarrayEleに値格納完了
+
+				mapData = table[U"data"].get<String>();
+			}
+
+			//データからマップへ変換
+
+			Array splitMap = mapData.split('$');
+			splitMap.remove_if([](const String tar) {return tar.contains(U"	"); });
+			for (const auto&& [i, ss] : Indexed(splitMap))
+			{
+				Array splitMapRow = ss.split(',');
+				if (i == 0)
+				{
+					N = splitMapRow.size();
+					te0.text = Format(N);
+					columnQuads = MakeColumnQuads(N);
+					rowQuads = MakeRowQuads(N);
+					Grid<int32> gridAAA(Size{ N, N });
+					grid = gridAAA;
+					Grid<int32> gridBBB(Size{ N, N }, -1);
+					gridBui = gridBBB;
+					Grid<BattleWhichIsThePlayer> gridBuiWhichIsThePlayerAAA(N, N, BattleWhichIsThePlayer::None);
+					gridBuiWhichIsThePlayer = gridBuiWhichIsThePlayerAAA;
+
+				}
+
+				for (const auto&& [i2, rr] : Indexed(splitMapRow))
+				{
+					Array splitMapTip = rr.split('*');
+					//maptip
+					{
+						//ele名を数字に変換
+						char lastChar = splitMapTip[0].back();
+						int32 tempLastChar = lastChar - '0';
+						//eleをファイル名に変換
+						String targetEle = arrayEle[tempLastChar];
+						int32 targetNum = -1;
+						for (const auto&& [i3, abc] : Indexed(textures))
+						{
+							if (abc.first.contains(targetEle))
+							{
+								targetNum = i3;
+								break;
+							}
+						}
+						if (targetNum != -1)
+						{
+							grid[i2][i] = targetNum;
+						}
+					}
+					//bui
+					{
+						//ele名を数字に変換
+						if (splitMapTip[1].contains(U":") == false)
+						{
+							continue;
+						}
+						Array splitMapTipBui = splitMapTip[1].split(':');
+						char lastChar = splitMapTipBui[0].back();
+						int32 tempLastChar = lastChar - '0';
+						//eleをファイル名に変換
+						String targetEle = arrayEle[tempLastChar];
+
+						int32 targetNumBui = -1;
+						for (const auto&& [i4, abc] : Indexed(texturesBui))
+						{
+							if (abc.first.contains(targetEle))
+							{
+								targetNumBui = i4;
+								break;
+							}
+						}
+						if (targetNumBui != -1)
+						{
+							gridBui[i2][i] = targetNumBui;
+							if (splitMapTipBui[1] == U"def")
+							{
+								gridBuiWhichIsThePlayer[i2][i] = BattleWhichIsThePlayer::Def;
+							}
+							else if (splitMapTipBui[1] == U"sor")
+							{
+								gridBuiWhichIsThePlayer[i2][i] = BattleWhichIsThePlayer::Sortie;
+							}
+							else
+							{
+								gridBuiWhichIsThePlayer[i2][i] = BattleWhichIsThePlayer::None;
+							}
+						}
+					}
+				}
+			}
+		}
 
 		if (setEnemy)
 		{

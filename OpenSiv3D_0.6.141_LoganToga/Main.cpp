@@ -4171,7 +4171,6 @@ void Init(App& manager)
 	}
 	// obj.jsonからデータを読み込む
 	{
-		// TOML ファイルからデータを読み込む
 		const JSON objData = JSON::Load(PATHBASE + PATH_DEFAULT_GAME + U"/070_Scenario/InfoObject/obj.json");
 
 		if (not objData) // もし読み込みに失敗したら
