@@ -157,13 +157,19 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 						ClassGameStatus& classGameStatus,
 						Array<Array<Point>>& debugRoot,
 						Array<ClassAStar*>& list,
-						const std::atomic<bool>& abort)
+						const std::atomic<bool>& abort,
+						const std::atomic<bool>& pause
+)
 {
 	while (true)
 	{
 		if (abort == true)
 		{
 			break;
+		}
+		if (pause == true)
+		{
+			continue;
 		}
 		////アスターアルゴリズムで移動経路取得
 		for (auto& aaa : target)
@@ -335,14 +341,14 @@ int32 BattleMoveAStarMyUnits(Array<ClassHorizontalUnit>& target,
 						ClassGameStatus& classGameStatus,
 						Array<Array<Point>>& debugRoot,
 						Array<ClassAStar*>& list,
-						const std::atomic<bool>& abort)
+						const std::atomic<bool>& abort,
+						const std::atomic<bool>& pause
+)
 {
 	for (auto& aaa : target)
 	{
 		if (abort == true)
-		{
 			break;
-		}
 
 		if (aaa.FlagBuilding == true)
 		{
@@ -450,7 +456,6 @@ int32 BattleMoveAStarMyUnits(Array<ClassHorizontalUnit>& target,
 			}
 		}
 	}
-
 	return -1;
 }
 
@@ -2164,7 +2169,7 @@ public:
 				std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
 				std::ref(getData().classGameStatus),
 				std::ref(debugRoot), std::ref(debugAstar),
-				std::ref(abort));
+				std::ref(abort), std::ref(pauseTask));
 	}
 	~Battle()
 	{
@@ -2188,7 +2193,6 @@ public:
 				viewPos.moveBy(-Cursor::Delta());
 				camera.jumpTo(viewPos, 1.0);
 			}
-
 			if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
 			{
 				if (MouseR.up() == false)
@@ -2377,18 +2381,26 @@ public:
 					}
 					getData().classGameStatus.IsBattleMove = false;
 
-					abortMyUnits = false;
-					if (taskMyUnits.isReady() || taskMyUnits.isValid() == false)
+					if (PauseFlag == true)
 					{
-						taskMyUnits = Async(BattleMoveAStarMyUnits,
-										std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-										std::ref(getData().classGameStatus.classBattle.defUnitGroup),
-										std::ref(mapCreator),
-										std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-										std::ref(getData().classGameStatus),
-										std::ref(debugRoot), std::ref(debugAstar),
-										std::ref(abortMyUnits));
+						abortMyUnits = true;
+						taskMyUnits.wait();
 					}
+					else
+					{
+
+					}
+
+					abortMyUnits = false;
+
+					taskMyUnits = Async(BattleMoveAStarMyUnits,
+									std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+									std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+									std::ref(mapCreator),
+									std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+									std::ref(getData().classGameStatus),
+									std::ref(debugRoot), std::ref(debugAstar),
+									std::ref(abortMyUnits), std::ref(pauseTaskMyUnits));
 				}
 				else
 				{
@@ -2466,6 +2478,25 @@ public:
 					}
 				}
 			}
+
+			//pause処理
+			if (KeySpace.down())
+			{
+				PauseFlag = !PauseFlag;
+				if (PauseFlag == false)
+				{
+					pauseTask = false;
+					pauseTaskMyUnits = false;
+				}
+				else
+				{
+					pauseTask = true;
+					pauseTaskMyUnits = true;
+					return;
+				}
+			}
+			if (PauseFlag == true)
+				return;
 
 			//移動処理
 			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
@@ -3778,12 +3809,17 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	bool PauseFlag = false;
 	RenderTexture rtMap;
 	Array<ClassAStar*> debugAstar;
 	AsyncTask<int32> task;
 	AsyncTask<int32> taskMyUnits;
+
 	std::atomic<bool> abort{ false };
 	std::atomic<bool> abortMyUnits{ false };
+	std::atomic<bool> pauseTask{ false };
+	std::atomic<bool> pauseTaskMyUnits{ false };
+
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
 	Point cursPos = Cursor::Pos();
