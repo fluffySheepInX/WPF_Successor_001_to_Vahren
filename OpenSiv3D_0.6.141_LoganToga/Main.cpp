@@ -2013,6 +2013,8 @@ public:
 			TextureAsset::Register(FileSystem::FileName(filePath), filePath);
 		for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/040_ChipImage/"))
 			TextureAsset::Register(FileSystem::FileName(filePath), filePath);
+		for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/041_ChipImageSkill/"))
+			TextureAsset::Register(FileSystem::FileName(filePath), filePath);
 
 		mapCreator.N = getData().classGameStatus.classBattle.classMapBattle.value().mapData.size();
 		columnQuads = mapCreator.MakeColumnQuads(mapCreator.N);
@@ -2164,6 +2166,52 @@ public:
 			//	}
 			//}
 
+		}
+
+
+		const Texture emoji{ U"🔥"_emoji };
+		renderTextureSkill.clear(ColorF{ 0.5, 0.0 });
+		renderTextureSkill = RenderTexture{ 320,320 };
+		{
+			const ScopedRenderTarget2D target{ renderTextureSkill.clear(Palette::Red) };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			//skill抽出
+			Array<ClassSkill> table;
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (item.ListClassUnit.empty())
+					continue;
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					for (auto& ski : itemUnit.Skill)
+						table.push_back(ski);
+				}
+			}
+
+			// ソート
+			table.sort_by([](const ClassSkill& a, const ClassSkill& b)
+			{
+				return a.sortKey < b.sortKey;
+			});
+			table.erase(std::unique(table.begin(), table.end()), table.end());
+
+			for (const auto&& [i, key] : Indexed(table))
+			{
+				Rect rectSkill;
+				rectSkill.x = (i % 10) * 32;
+				rectSkill.y = (i / 10) * 32;
+				rectSkill.w = 32;
+				rectSkill.h = 32;
+				htSkill.emplace(key.nameTag, rectSkill);
+
+				for (auto& icons : key.icon.reversed())
+				{
+					TextureAsset(icons.trimmed()).resized(32).draw(rectSkill.x, rectSkill.y);
+				}
+			}
 		}
 
 		task = Async(BattleMoveAStar,
@@ -3465,331 +3513,338 @@ public:
 	// 描画関数（オプション）
 	void draw() const override
 	{
-		const auto t = camera.createTransformer();
-
-		//rtMap.drawAt(camera.getCenter());
-
-		for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
 		{
-			// x の開始インデックス
-			const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+			const auto t = camera.createTransformer();
 
-			// y の開始インデックス
-			const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+			//rtMap.drawAt(camera.getCenter());
 
-			// 左から順にタイルを描く
-			for (int32 k = 0; k < (mapCreator.N - Abs(mapCreator.N - i - 1)); ++k)
+			for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
 			{
-				// タイルのインデックス
-				const Point index{ (xi + k), (yi - k) };
-
-				// そのタイルの底辺中央の座標
-				const int32 i = index.manhattanLength();
+				// x の開始インデックス
 				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+
+				// y の開始インデックス
 				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-				const double posY = (i * mapCreator.TileOffset.y);
-				Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
 
-				// 底辺中央を基準にタイルを描く
-				String tip = getData().classGameStatus.classBattle.classMapBattle.value().mapData[index.x][index.y].tip;
-				TextureAsset(tip + U".png").draw(Arg::bottomCenter = pos);
-
-			}
-		}
-
-		if (debugMap.size() != 0)
-		{
-			//// タイルのインデックス
-			//const Point index{ (debugMap.back().begin()->GetRow()),(debugMap.back().begin()->GetCol()) };
-
-			//// そのタイルの底辺中央の座標
-			//const int32 i = index.manhattanLength();
-			//const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-			//const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-			//const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-			//const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-			//const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-			//const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
-
-			//Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
-			//ccccc.draw();
-		}
-		if (debugRoot.size() != 0)
-		{
-			//for (auto abcd : debugRoot.back())
-			//{
-			//	// タイルのインデックス
-			//	const Point index{ abcd.x,abcd.y };
-
-			//	// そのタイルの底辺中央の座標
-			//	const int32 i = index.manhattanLength();
-			//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-			//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-			//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-			//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-			//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-			//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
-
-			//	Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
-			//	ccccc.draw(Palette::Red);
-			//}
-		}
-		if (debugAstar.size() != 0)
-		{
-			//for (auto hfdfsjf : debugAstar)
-			//{
-			//	// タイルのインデックス
-			//	const Point index{ hfdfsjf->GetRow(),hfdfsjf->GetCol()};
-
-			//	// そのタイルの底辺中央の座標
-			//	const int32 i = index.manhattanLength();
-			//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-			//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-			//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-			//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-			//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-			//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
-
-			//	Circle ccccc = Circle{ Arg::bottomCenter = pos,15 };
-			//	ccccc.draw(Palette::Yellow);
-			//}
-		}
-
-		//unit
-		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
-		{
-			if (!item.FlagBuilding &&
-				!item.ListClassUnit.empty() &&
-				item.ListClassUnit[0].Formation == BattleFormation::F)
-			{
-				for (auto& itemUnit : item.ListClassUnit)
+				// 左から順にタイルを描く
+				for (int32 k = 0; k < (mapCreator.N - Abs(mapCreator.N - i - 1)); ++k)
 				{
-					if (itemUnit.IsBattleEnable == false)
+					// タイルのインデックス
+					const Point index{ (xi + k), (yi - k) };
+
+					// そのタイルの底辺中央の座標
+					const int32 i = index.manhattanLength();
+					const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+					const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+					const double posY = (i * mapCreator.TileOffset.y);
+					Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+					// 底辺中央を基準にタイルを描く
+					String tip = getData().classGameStatus.classBattle.classMapBattle.value().mapData[index.x][index.y].tip;
+					TextureAsset(tip + U".png").draw(Arg::bottomCenter = pos);
+
+				}
+			}
+
+			if (debugMap.size() != 0)
+			{
+				//// タイルのインデックス
+				//const Point index{ (debugMap.back().begin()->GetRow()),(debugMap.back().begin()->GetCol()) };
+
+				//// そのタイルの底辺中央の座標
+				//const int32 i = index.manhattanLength();
+				//const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				//const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				//const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				//const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				//const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				//const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				//Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+				//ccccc.draw();
+			}
+			if (debugRoot.size() != 0)
+			{
+				//for (auto abcd : debugRoot.back())
+				//{
+				//	// タイルのインデックス
+				//	const Point index{ abcd.x,abcd.y };
+
+				//	// そのタイルの底辺中央の座標
+				//	const int32 i = index.manhattanLength();
+				//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				//	Circle ccccc = Circle{ Arg::bottomCenter = pos,30 };
+				//	ccccc.draw(Palette::Red);
+				//}
+			}
+			if (debugAstar.size() != 0)
+			{
+				//for (auto hfdfsjf : debugAstar)
+				//{
+				//	// タイルのインデックス
+				//	const Point index{ hfdfsjf->GetRow(),hfdfsjf->GetCol()};
+
+				//	// そのタイルの底辺中央の座標
+				//	const int32 i = index.manhattanLength();
+				//	const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+				//	const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+				//	const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+				//	const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+				//	const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+				//	const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+
+				//	Circle ccccc = Circle{ Arg::bottomCenter = pos,15 };
+				//	ccccc.draw(Palette::Yellow);
+				//}
+			}
+
+			//unit
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty() &&
+					item.ListClassUnit[0].Formation == BattleFormation::F)
+				{
+					for (auto& itemUnit : item.ListClassUnit)
 					{
-						continue;
-					}
-					if (itemUnit.FlagMove == true)
-					{
-						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
-					}
-					else
-					{
-						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+						if (itemUnit.IsBattleEnable == false)
+						{
+							continue;
+						}
+						if (itemUnit.FlagMove == true)
+						{
+							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
+						}
+						else
+						{
+							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+						}
 					}
 				}
 			}
-		}
-		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
-		{
-			if (!item.FlagBuilding &&
-				!item.ListClassUnit.empty() &&
-				item.ListClassUnit[0].Formation == BattleFormation::F)
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 			{
-				for (auto& itemUnit : item.ListClassUnit)
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty() &&
+					item.ListClassUnit[0].Formation == BattleFormation::F)
 				{
-					if (itemUnit.IsBattleEnable == false)
+					for (auto& itemUnit : item.ListClassUnit)
 					{
-						continue;
-					}
-					if (itemUnit.FlagMove == true)
-					{
-						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
-					}
-					else
-					{
-						TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+						if (itemUnit.IsBattleEnable == false)
+						{
+							continue;
+						}
+						if (itemUnit.FlagMove == true)
+						{
+							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
+						}
+						else
+						{
+							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
+						}
 					}
 				}
 			}
-		}
 
-		Array<ClassUnit> bui;
-		bui.append(getData().classGameStatus.classBattle.sortieUnitGroup[0].ListClassUnit);
-		bui.append(getData().classGameStatus.classBattle.defUnitGroup[0].ListClassUnit);
-		bui.append(getData().classGameStatus.classBattle.neutralUnitGroup[0].ListClassUnit);
-		Array<std::pair<Vec2, String>> buiTex;
+			Array<ClassUnit> bui;
+			bui.append(getData().classGameStatus.classBattle.sortieUnitGroup[0].ListClassUnit);
+			bui.append(getData().classGameStatus.classBattle.defUnitGroup[0].ListClassUnit);
+			bui.append(getData().classGameStatus.classBattle.neutralUnitGroup[0].ListClassUnit);
+			Array<std::pair<Vec2, String>> buiTex;
 
-		for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
-		{
-			// x の開始インデックス
-			const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-
-			// y の開始インデックス
-			const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-
-			// 左から順にタイルを描く
-			for (int32 k = 0; k < (mapCreator.N - Abs(mapCreator.N - i - 1)); ++k)
+			for (int32 i = 0; i < (mapCreator.N * 2 - 1); ++i)
 			{
-				// タイルのインデックス
-				const Point index{ (xi + k), (yi - k) };
-
-				// そのタイルの底辺中央の座標
-				const int32 i = index.manhattanLength();
+				// x の開始インデックス
 				const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-				const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-				const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-				const double posY = (i * mapCreator.TileOffset.y);
 
-				Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
-				for (auto& abc : bui)
+				// y の開始インデックス
+				const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+
+				// 左から順にタイルを描く
+				for (int32 k = 0; k < (mapCreator.N - Abs(mapCreator.N - i - 1)); ++k)
 				{
-					if (abc.IsBattleEnable == false)
+					// タイルのインデックス
+					const Point index{ (xi + k), (yi - k) };
+
+					// そのタイルの底辺中央の座標
+					const int32 i = index.manhattanLength();
+					const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+					const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+					const double posY = (i * mapCreator.TileOffset.y);
+
+					Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2), posY };
+					for (auto& abc : bui)
 					{
+						if (abc.IsBattleEnable == false)
+						{
+							continue;
+						}
+
+						if (abc.rowBuilding == (xi + k) && abc.colBuilding == (yi - k))
+						{
+							std::pair<Vec2, String> hhhh = { pos.movedBy(0,-15), abc.Image + U".png" };
+							buiTex.push_back(hhhh);
+						}
+					}
+				}
+			}
+
+			//bui
+			for (auto aaa : buiTex)
+			{
+				TextureAsset(aaa.second).draw(Arg::bottomCenter = aaa.first);
+			}
+
+			//触れたらもう一度unitをdrawする。2重に描写することで、目的を達する
+
+
+			//範囲指定もしくは移動先矢印
+			if (MouseR.pressed())
+			{
+				if (getData().classGameStatus.IsBattleMove == false)
+				{
+					const double thickness = 3.0;
+					double offset = 0.0;
+
+					offset += (Scene::DeltaTime() * 10);
+
+					const Rect rect{ cursPos, Cursor::Pos() - cursPos };
+					rect.top().draw(LineStyle::SquareDot(offset), thickness);
+					rect.right().draw(LineStyle::SquareDot(offset), thickness);
+					rect.bottom().draw(LineStyle::SquareDot(offset), thickness);
+					rect.left().draw(LineStyle::SquareDot(offset), thickness);
+				}
+				else
+				{
+					Line{ cursPos, Cursor::Pos() }
+					.drawArrow(10, Vec2{ 40, 80 }, Palette::Orange);
+				}
+			}
+
+			for (auto& skill : m_Battle_player_skills)
+			{
+				for (auto& acb : skill.ArrayClassBullet)
+				{
+					if (skill.classSkill.image == U"")
+					{
+						Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
 						continue;
 					}
 
-					if (abc.rowBuilding == (xi + k) && abc.colBuilding == (yi - k))
+					if (skill.classSkill.SkillForceRay == SkillForceRay::on)
 					{
-						std::pair<Vec2, String> hhhh = { pos.movedBy(0,-15), abc.Image + U".png" };
-						buiTex.push_back(hhhh);
+						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
 					}
-				}
-			}
-		}
 
-		//bui
-		for (auto aaa : buiTex)
-		{
-			TextureAsset(aaa.second).draw(Arg::bottomCenter = aaa.first);
-		}
-
-		//触れたらもう一度unitをdrawする。2重に描写することで、目的を達する
-
-
-		//範囲指定もしくは移動先矢印
-		if (MouseR.pressed())
-		{
-			if (getData().classGameStatus.IsBattleMove == false)
-			{
-				const double thickness = 3.0;
-				double offset = 0.0;
-
-				offset += (Scene::DeltaTime() * 10);
-
-				const Rect rect{ cursPos, Cursor::Pos() - cursPos };
-				rect.top().draw(LineStyle::SquareDot(offset), thickness);
-				rect.right().draw(LineStyle::SquareDot(offset), thickness);
-				rect.bottom().draw(LineStyle::SquareDot(offset), thickness);
-				rect.left().draw(LineStyle::SquareDot(offset), thickness);
-			}
-			else
-			{
-				Line{ cursPos, Cursor::Pos() }
-				.drawArrow(10, Vec2{ 40, 80 }, Palette::Orange);
-			}
-		}
-
-		for (auto& skill : m_Battle_player_skills)
-		{
-			for (auto& acb : skill.ArrayClassBullet)
-			{
-				if (skill.classSkill.image == U"")
-				{
-					Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
-					continue;
-				}
-
-				if (skill.classSkill.SkillForceRay == SkillForceRay::on)
-				{
-					Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
-				}
-
-				if (skill.classSkill.SkillD360 == SkillD360::on)
-				{
-					if (skill.classSkill.SkillCenter == SkillCenter::end)
+					if (skill.classSkill.SkillD360 == SkillD360::on)
 					{
-						const Texture texture = TextureAsset(skill.classSkill.image + U".png");
-						texture
+						if (skill.classSkill.SkillCenter == SkillCenter::end)
+						{
+							const Texture texture = TextureAsset(skill.classSkill.image + U".png");
+							texture
+								.resized(skill.classSkill.w, skill.classSkill.h)
+								.rotatedAt(texture.resized(skill.classSkill.w, skill.classSkill.h).region().bottomCenter(), acb.radian + Math::ToRadians(90))
+								.drawAt(acb.NowPosition);
+						}
+						else
+						{
+							TextureAsset(skill.classSkill.image + U".png")
+								.resized(skill.classSkill.w, skill.classSkill.h)
+								.rotated(acb.lifeTime * 10)
+								.drawAt(acb.NowPosition);
+						}
+						continue;
+					}
+
+					if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
+					{
+						TextureAsset(skill.classSkill.image + U"N.png")
 							.resized(skill.classSkill.w, skill.classSkill.h)
-							.rotatedAt(texture.resized(skill.classSkill.w, skill.classSkill.h).region().bottomCenter(), acb.radian + Math::ToRadians(90))
+							.rotated(acb.radian + Math::ToRadians(90))
 							.drawAt(acb.NowPosition);
+						continue;
 					}
-					else
-					{
-						TextureAsset(skill.classSkill.image + U".png")
-							.resized(skill.classSkill.w, skill.classSkill.h)
-							.rotated(acb.lifeTime * 10)
-							.drawAt(acb.NowPosition);
-					}
-					continue;
-				}
 
-				if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
-				{
-					TextureAsset(skill.classSkill.image + U"N.png")
+					TextureAsset(skill.classSkill.image + U"NW.png")
 						.resized(skill.classSkill.w, skill.classSkill.h)
-						.rotated(acb.radian + Math::ToRadians(90))
+						.rotated(acb.radian + Math::ToRadians(135))
 						.drawAt(acb.NowPosition);
-					continue;
 				}
-
-				TextureAsset(skill.classSkill.image + U"NW.png")
-					.resized(skill.classSkill.w, skill.classSkill.h)
-					.rotated(acb.radian + Math::ToRadians(135))
-					.drawAt(acb.NowPosition);
 			}
-		}
-		for (auto& skill : m_Battle_enemy_skills)
-		{
-			for (auto& acb : skill.ArrayClassBullet)
+			for (auto& skill : m_Battle_enemy_skills)
 			{
-				if (skill.classSkill.image == U"")
+				for (auto& acb : skill.ArrayClassBullet)
 				{
-					Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
-					continue;
-				}
-
-				if (skill.classSkill.SkillForceRay == SkillForceRay::on)
-				{
-					Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
-				}
-
-				if (skill.classSkill.SkillD360 == SkillD360::on)
-				{
-					if (skill.classSkill.SkillCenter == SkillCenter::end)
+					if (skill.classSkill.image == U"")
 					{
-						const Texture texture = TextureAsset(skill.classSkill.image + U".png");
-						texture
-							.resized(skill.classSkill.w, skill.classSkill.h)
-							.rotatedAt(texture.resized(skill.classSkill.w, skill.classSkill.h).region().bottomCenter(), acb.radian + Math::ToRadians(90))
-							.drawAt(acb.NowPosition);
+						Circle{ acb.NowPosition.x,acb.NowPosition.y,30 }.draw();
+						continue;
 					}
-					else
-					{
-						TextureAsset(skill.classSkill.image + U".png")
-							.resized(skill.classSkill.w, skill.classSkill.h)
-							.rotated(acb.lifeTime * 10)
-							.drawAt(acb.NowPosition);
-					}
-					continue;
-				}
 
-				if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
-				{
-					TextureAsset(skill.classSkill.image + U"N.png")
+					if (skill.classSkill.SkillForceRay == SkillForceRay::on)
+					{
+						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
+					}
+
+					if (skill.classSkill.SkillD360 == SkillD360::on)
+					{
+						if (skill.classSkill.SkillCenter == SkillCenter::end)
+						{
+							const Texture texture = TextureAsset(skill.classSkill.image + U".png");
+							texture
+								.resized(skill.classSkill.w, skill.classSkill.h)
+								.rotatedAt(texture.resized(skill.classSkill.w, skill.classSkill.h).region().bottomCenter(), acb.radian + Math::ToRadians(90))
+								.drawAt(acb.NowPosition);
+						}
+						else
+						{
+							TextureAsset(skill.classSkill.image + U".png")
+								.resized(skill.classSkill.w, skill.classSkill.h)
+								.rotated(acb.lifeTime * 10)
+								.drawAt(acb.NowPosition);
+						}
+						continue;
+					}
+
+					if (acb.degree == 0 || acb.degree == 90 || acb.degree == 180 || acb.degree == 270)
+					{
+						TextureAsset(skill.classSkill.image + U"N.png")
+							.resized(skill.classSkill.w, skill.classSkill.h)
+							.rotated(acb.radian + Math::ToRadians(90))
+							.drawAt(acb.NowPosition);
+						continue;
+					}
+
+					TextureAsset(skill.classSkill.image + U"NW.png")
 						.resized(skill.classSkill.w, skill.classSkill.h)
-						.rotated(acb.radian + Math::ToRadians(90))
+						.rotated(acb.radian + Math::ToRadians(135))
 						.drawAt(acb.NowPosition);
-					continue;
 				}
-
-				TextureAsset(skill.classSkill.image + U"NW.png")
-					.resized(skill.classSkill.w, skill.classSkill.h)
-					.rotated(acb.radian + Math::ToRadians(135))
-					.drawAt(acb.NowPosition);
 			}
 		}
+
+		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
 
 		switch (battleStatus)
 		{
 		case BattleStatus::Battle:
 			break;
 		case BattleStatus::Message:
+		{
+			const auto t = camera.createTransformer();
 			sceneMessageBoxImpl.show(systemString.BattleMessage001);
-			break;
+		}
+		break;
 		case BattleStatus::Event:
 			break;
 		default:
@@ -3821,6 +3876,10 @@ private:
 	std::atomic<bool> abortMyUnits{ false };
 	std::atomic<bool> pauseTask{ false };
 	std::atomic<bool> pauseTaskMyUnits{ false };
+
+	RenderTexture renderTextureSkill;
+	HashTable<String, Rect> htSkill;
+
 
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
@@ -3974,7 +4033,7 @@ void Init(App& manager)
 	}
 	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/006_CardImage/"))
 	{
-		String filename = FileSystem::FileName(filePath);
+		String filename = U"/006_CardImage/" + FileSystem::FileName(filePath);
 		TextureAsset::Register(filename, filePath);
 	}
 	for (const auto& filePath : FileSystem::DirectoryContents(PATHBASE + PATH_DEFAULT_GAME + U"/005_BackgroundImage/"))
@@ -4086,6 +4145,10 @@ void Init(App& manager)
 			{
 				cu.EasingRatio = Parse<int32>(value[U"EasingRatio"].get<String>());
 			}
+			if (value.hasElement(U"icon") == true)
+			{
+				cu.icon = (value[U"icon"].get<String>().split(','));
+			}
 			if (value.hasElement(U"slow_per") == true)
 			{
 				cu.slowPer = Parse<int32>(value[U"slow_per"].get<String>());
@@ -4146,13 +4209,13 @@ void Init(App& manager)
 				if (value[U"d360"].get<String>() == U"on")
 				{
 					cu.SkillD360 = SkillD360::on;
-					TextureAsset::Register(cu.image + U".png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U".png");
+					TextureAsset::Register(cu.image + U".png", PATHBASE + PATH_DEFAULT_GAME + U"/042_ChipImageSkillEffect/" + cu.image + U".png");
 				}
 			}
 			else
 			{
-				TextureAsset::Register(cu.image + U"NW.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
-				TextureAsset::Register(cu.image + U"N.png", U"001_Warehouse/001_DefaultGame/042_ChipImageSkillEffect/" + cu.image + U"N.png");
+				TextureAsset::Register(cu.image + U"NW.png", PATHBASE + PATH_DEFAULT_GAME + U"/042_ChipImageSkillEffect/" + cu.image + U"NW.png");
+				TextureAsset::Register(cu.image + U"N.png", PATHBASE + PATH_DEFAULT_GAME + U"/042_ChipImageSkillEffect/" + cu.image + U"N.png");
 			}
 			if (value.hasElement(U"force_ray") == true)
 			{
