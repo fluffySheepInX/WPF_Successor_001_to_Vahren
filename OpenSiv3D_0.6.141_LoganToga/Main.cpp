@@ -1900,6 +1900,10 @@ private:
 					start = mapCreator.ToTileBottomCenter(item.ListClassUnit[0].initXY.movedBy(0, 1), mapCreator.N).asPoint();
 					end = mapCreator.ToTileBottomCenter(item.ListClassUnit[0].initXY, mapCreator.N).asPoint();
 				}
+				else {
+					start = mapCreator.ToTileBottomCenter(item.ListClassUnit[0].initXY.movedBy(-1, 0), mapCreator.N).asPoint();
+					end = mapCreator.ToTileBottomCenter(item.ListClassUnit[0].initXY, mapCreator.N).asPoint();
+				}
 
 				//その部隊の人数を取得
 				int32 unitCount = item.ListClassUnit.size();
@@ -2181,6 +2185,9 @@ public:
 	{
 		Cursor::RequestStyle(U"MyCursor");
 
+		// 2D カメラを更新する
+		camera.update();
+
 		const auto t = camera.createTransformer();
 
 		switch (battleStatus)
@@ -2190,8 +2197,8 @@ public:
 			//カメラ移動
 			if (MouseL.pressed() == true)
 			{
-				viewPos.moveBy(-Cursor::Delta());
-				camera.jumpTo(viewPos, 1.0);
+				const auto viewPos = (camera.getTargetCenter() - Cursor::Delta());
+				camera.jumpTo(viewPos, camera.getTargetScale());
 			}
 			if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
 			{
@@ -2237,11 +2244,6 @@ public:
 
 				if (getData().classGameStatus.IsBattleMove == true)
 				{
-					if (taskMyUnits.isValid() == true)
-					{
-						abortMyUnits = true;
-					}
-
 					Array<ClassUnit*> lisUnit;
 					for (auto& target : *lisClassHorizontalUnit)
 					{
@@ -2381,14 +2383,14 @@ public:
 					}
 					getData().classGameStatus.IsBattleMove = false;
 
-					if (PauseFlag == true)
+					// 実行途中のタスクがあれば完了まで待つ。
+					if (taskMyUnits.isValid())
 					{
+						// 中断指示を出す
 						abortMyUnits = true;
-						taskMyUnits.wait();
-					}
-					else
-					{
 
+						// 完全に処理が完了する前に制御を返してくれる
+						taskMyUnits.wait();
 					}
 
 					abortMyUnits = false;
@@ -3825,7 +3827,7 @@ private:
 	Point cursPos = Cursor::Pos();
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
-	Camera2D camera;
+	Camera2D camera{ Vec2{ 0, 0 },1.0,CameraControl::Wheel };
 	bool BattleMessage001 = true;
 	BattleStatus battleStatus = BattleStatus::Message;
 	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;

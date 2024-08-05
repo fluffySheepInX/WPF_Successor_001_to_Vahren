@@ -63,6 +63,22 @@
       "castle": 100,
       "castle_defense": 100,
       "castle_magdef": 100
+    },
+    {
+      "name": "gate_brick_left2",
+      "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
+      "name": "gate_brick_right1",
+      "type": "gate",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
     }
   ]
 }
