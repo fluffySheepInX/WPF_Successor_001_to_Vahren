@@ -2169,11 +2169,10 @@ public:
 		}
 
 
-		const Texture emoji{ U"🔥"_emoji };
-		renderTextureSkill.clear(ColorF{ 0.5, 0.0 });
 		renderTextureSkill = RenderTexture{ 320,320 };
+		renderTextureSkill.clear(ColorF{ 0.5, 0.0 });
 		{
-			const ScopedRenderTarget2D target{ renderTextureSkill.clear(Palette::Red) };
+			const ScopedRenderTarget2D target{ renderTextureSkill.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
 
 			// 描画された最大のアルファ成分を保持するブレンドステート
 			const ScopedRenderStates2D blend{ MakeBlendState() };
@@ -2201,8 +2200,8 @@ public:
 			for (const auto&& [i, key] : Indexed(table))
 			{
 				Rect rectSkill;
-				rectSkill.x = (i % 10) * 32;
-				rectSkill.y = (i / 10) * 32;
+				rectSkill.x = ((i % 10) * 32) + 4;
+				rectSkill.y = ((i / 10) * 32) + 4;
 				rectSkill.w = 32;
 				rectSkill.h = 32;
 				htSkill.emplace(key.nameTag, rectSkill);
@@ -2212,7 +2211,13 @@ public:
 					TextureAsset(icons.trimmed()).resized(32).draw(rectSkill.x, rectSkill.y);
 				}
 			}
+
+			Rect df = Rect(320, 320);
+			df.drawFrame(4, 0, ColorF{ 0.5 });
 		}
+
+		renderTextureSkillUP = RenderTexture{ 320,320 };
+		renderTextureSkillUP.clear(ColorF{ 0.5, 0.0, 0.0, 0.0 });
 
 		task = Async(BattleMoveAStar,
 				std::ref(getData().classGameStatus.classBattle.defUnitGroup),
@@ -2236,291 +2241,295 @@ public:
 		// 2D カメラを更新する
 		camera.update();
 
-		const auto t = camera.createTransformer();
-
 		switch (battleStatus)
 		{
 		case BattleStatus::Battle:
 		{
 			//カメラ移動
-			if (MouseL.pressed() == true)
-			{
-				const auto viewPos = (camera.getTargetCenter() - Cursor::Delta());
-				camera.jumpTo(viewPos, camera.getTargetScale());
-			}
-			if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
-			{
-				if (MouseR.up() == false)
-				{
-					cursPos = Cursor::Pos();
-				}
-			}
-			else if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == true)
-			{
-				if (MouseR.up() == false)
-				{
-					cursPos = Cursor::Pos();
-				}
-			}
-			else if (MouseR.down() == true && getData().classGameStatus.IsBattleMove == true)
-			{
-				cursPos = Cursor::Pos();
-			}
-
 			//部隊を選択状態にする。もしくは既に選択状態なら移動させる
-			if (MouseR.up() == true)
 			{
-				Point start = cursPos;
-				Point end = Cursor::Pos();
+				const auto t = camera.createTransformer();
 
-				//ターゲットを抽出
-				Array<ClassHorizontalUnit>* lisClassHorizontalUnit;
-				switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
+				//カメラ移動
+				if (MouseL.pressed() == true)
 				{
-				case BattleWhichIsThePlayer::Sortie:
-					lisClassHorizontalUnit = &getData().classGameStatus.classBattle.sortieUnitGroup;
-					break;
-				case BattleWhichIsThePlayer::Def:
-					lisClassHorizontalUnit = &getData().classGameStatus.classBattle.defUnitGroup;
-					break;
-				case BattleWhichIsThePlayer::None:
-					//AI同士の戦いにフラグは立てない
-					return;
-				default:
-					return;
+					const auto viewPos = (camera.getTargetCenter() - Cursor::Delta());
+					camera.jumpTo(viewPos, camera.getTargetScale());
+				}
+				if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == false)
+				{
+					if (MouseR.up() == false)
+					{
+						cursPos = Cursor::Pos();
+					}
+				}
+				else if (MouseR.pressed() == false && getData().classGameStatus.IsBattleMove == true)
+				{
+					if (MouseR.up() == false)
+					{
+						cursPos = Cursor::Pos();
+					}
+				}
+				else if (MouseR.down() == true && getData().classGameStatus.IsBattleMove == true)
+				{
+					cursPos = Cursor::Pos();
 				}
 
-				if (getData().classGameStatus.IsBattleMove == true)
+				//部隊を選択状態にする。もしくは既に選択状態なら移動させる
+				if (MouseR.up() == true)
 				{
-					Array<ClassUnit*> lisUnit;
-					for (auto& target : *lisClassHorizontalUnit)
+					Point start = cursPos;
+					Point end = Cursor::Pos();
+
+					//ターゲットを抽出
+					Array<ClassHorizontalUnit>* lisClassHorizontalUnit;
+					switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
 					{
-						for (auto& unit : target.ListClassUnit)
-						{
-							if (unit.FlagMove == true)
-							{
-								lisUnit.push_back(&unit);
-							}
-						}
+					case BattleWhichIsThePlayer::Sortie:
+						lisClassHorizontalUnit = &getData().classGameStatus.classBattle.sortieUnitGroup;
+						break;
+					case BattleWhichIsThePlayer::Def:
+						lisClassHorizontalUnit = &getData().classGameStatus.classBattle.defUnitGroup;
+						break;
+					case BattleWhichIsThePlayer::None:
+						//AI同士の戦いにフラグは立てない
+						return;
+					default:
+						return;
 					}
 
-					if (lisUnit.size() == 1)
+					if (getData().classGameStatus.IsBattleMove == true)
 					{
-						ClassUnit* cu = lisUnit[0];
-						// 移動先の座標算出
-						cu->orderPosiLeft = end;
-						Vec2 nor = Vec2(end - start).normalized();
-						Vec2 moved = cu->nowPosiLeft + Vec2(nor.x * cu->Speed, nor.y * cu->Speed);
-						//マップチップ座標に変換している
-						auto index = mapCreator.ToIndex(moved, columnQuads, rowQuads);
-						if (not index.has_value())
+						Array<ClassUnit*> lisUnit;
+						for (auto& target : *lisClassHorizontalUnit)
 						{
-							cu->FlagMove = false;
-							return;
-						}
-
-						//移動
-						cu->vecMove = Vec2(cu->orderPosiLeft - cu->nowPosiLeft).normalized();
-						cu->orderPosiLeft = end;
-						cu->FlagMove = false;
-						cu->FlagMoving = true;
-					}
-
-					int32 counterLisClassHorizontalUnit = 0;
-					for (auto& target : *lisClassHorizontalUnit)
-					{
-						Array<ClassUnit*> re;
-						for (auto& unit : target.ListClassUnit)
-						{
-							if (unit.FlagMove == true)
+							for (auto& unit : target.ListClassUnit)
 							{
-								re.push_back(&unit);
-							}
-						}
-						if (re.size() == 0)
-						{
-							counterLisClassHorizontalUnit++;
-							continue;
-						}
-
-						//その部隊の人数を取得
-						int32 unitCount = re.size();
-
-						//商の数
-						int32 result = unitCount / 2;
-
-						//角度
-						// X軸との角度を計算
-						//θ'=直線とx軸のなす角度
-						double angle2 = Math::Atan2(end.y - start.y,
-											   end.x - start.x);
-						//θ
-						double angle = Math::Pi / 2 - angle2;
-
-						//移動フラグが立っているユニットだけ、繰り返す
-						//偶奇判定
-						if (unitCount % 2 == 1)
-						{
-							////奇数の場合
-							int32 counter = 0;
-							for (auto& unit : re)
-							{
-								//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
-								double xPos = end.x
-									+ (
-										(counter - (result))
-										* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
-										)
-									-
-									(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
-								//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
-								double yPos = end.y
-									- (
-									(counter - (result))
-									* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
-
-									)
-									-
-									(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
-
-								//移動
-								unit->orderPosiLeft = Vec2(xPos, yPos);
-								unit->orderPosiLeftLast = Vec2(xPos, yPos);
-								//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
-								unit->FlagMove = false;
-								//unit->FlagMoving = true;
-
-								counter++;
-							}
-						}
-						else
-						{
-							int32 counter = 0;
-							for (auto& unit : re)
-							{
-								//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
-								double xPos = end.x
-									+ (
-										(counter - (result))
-										* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
-										)
-									-
-									(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
-								//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
-								double yPos = end.y
-									- (
-									(counter - (result))
-									* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
-
-									)
-									-
-									(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
-
-								//移動
-								unit->orderPosiLeft = Vec2(xPos, yPos);
-								unit->orderPosiLeftLast = Vec2(xPos, yPos);
-								//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
-								unit->FlagMove = false;
-								//unit->FlagMoving = true;
-
-								counter++;
-							}
-						}
-
-						counterLisClassHorizontalUnit++;
-					}
-					getData().classGameStatus.IsBattleMove = false;
-
-					// 実行途中のタスクがあれば完了まで待つ。
-					if (taskMyUnits.isValid())
-					{
-						// 中断指示を出す
-						abortMyUnits = true;
-
-						// 完全に処理が完了する前に制御を返してくれる
-						taskMyUnits.wait();
-					}
-
-					abortMyUnits = false;
-
-					taskMyUnits = Async(BattleMoveAStarMyUnits,
-									std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
-									std::ref(getData().classGameStatus.classBattle.defUnitGroup),
-									std::ref(mapCreator),
-									std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
-									std::ref(getData().classGameStatus),
-									std::ref(debugRoot), std::ref(debugAstar),
-									std::ref(abortMyUnits), std::ref(pauseTaskMyUnits));
-				}
-				else
-				{
-					//範囲選択
-					for (auto& target : *lisClassHorizontalUnit)
-					{
-						for (auto& unit : target.ListClassUnit)
-						{
-							Vec2 gnpc = unit.GetNowPosiCenter();
-							if (start.x > end.x)
-							{
-								//左
-								if (start.y > end.y)
+								if (unit.FlagMove == true)
 								{
-									//上
-									if (gnpc.x >= end.x && gnpc.x <= start.x
-										&& gnpc.y >= end.y && gnpc.y <= start.y)
-									{
-										unit.FlagMove = true;
-										getData().classGameStatus.IsBattleMove = true;
-									}
-									else
-									{
-										unit.FlagMove = false;
-									}
+									lisUnit.push_back(&unit);
 								}
-								else
+							}
+						}
+
+						if (lisUnit.size() == 1)
+						{
+							ClassUnit* cu = lisUnit[0];
+							// 移動先の座標算出
+							cu->orderPosiLeft = end;
+							Vec2 nor = Vec2(end - start).normalized();
+							Vec2 moved = cu->nowPosiLeft + Vec2(nor.x * cu->Speed, nor.y * cu->Speed);
+							//マップチップ座標に変換している
+							auto index = mapCreator.ToIndex(moved, columnQuads, rowQuads);
+							if (not index.has_value())
+							{
+								cu->FlagMove = false;
+								return;
+							}
+
+							//移動
+							cu->vecMove = Vec2(cu->orderPosiLeft - cu->nowPosiLeft).normalized();
+							cu->orderPosiLeft = end;
+							cu->FlagMove = false;
+							cu->FlagMoving = true;
+						}
+
+						int32 counterLisClassHorizontalUnit = 0;
+						for (auto& target : *lisClassHorizontalUnit)
+						{
+							Array<ClassUnit*> re;
+							for (auto& unit : target.ListClassUnit)
+							{
+								if (unit.FlagMove == true)
 								{
-									//下
-									if (gnpc.x >= end.x && gnpc.x <= start.x
-										&& gnpc.y >= start.y && gnpc.y <= end.y)
-									{
-										unit.FlagMove = true;
-										getData().classGameStatus.IsBattleMove = true;
-									}
-									else
-									{
-										unit.FlagMove = false;
-									}
+									re.push_back(&unit);
+								}
+							}
+							if (re.size() == 0)
+							{
+								counterLisClassHorizontalUnit++;
+								continue;
+							}
+
+							//その部隊の人数を取得
+							int32 unitCount = re.size();
+
+							//商の数
+							int32 result = unitCount / 2;
+
+							//角度
+							// X軸との角度を計算
+							//θ'=直線とx軸のなす角度
+							double angle2 = Math::Atan2(end.y - start.y,
+												   end.x - start.x);
+							//θ
+							double angle = Math::Pi / 2 - angle2;
+
+							//移動フラグが立っているユニットだけ、繰り返す
+							//偶奇判定
+							if (unitCount % 2 == 1)
+							{
+								////奇数の場合
+								int32 counter = 0;
+								for (auto& unit : re)
+								{
+									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+									double xPos = end.x
+										+ (
+											(counter - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+											)
+										-
+										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+									double yPos = end.y
+										- (
+										(counter - (result))
+										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+										)
+										-
+										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+									//移動
+									unit->orderPosiLeft = Vec2(xPos, yPos);
+									unit->orderPosiLeftLast = Vec2(xPos, yPos);
+									//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
+									unit->FlagMove = false;
+									//unit->FlagMoving = true;
+
+									counter++;
 								}
 							}
 							else
 							{
-								//右
-								if (start.y > end.y)
+								int32 counter = 0;
+								for (auto& unit : re)
 								{
-									//上
-									if (gnpc.x >= start.x && gnpc.x <= end.x
-										&& gnpc.y >= end.y && gnpc.y <= start.y)
+									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+									double xPos = end.x
+										+ (
+											(counter - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+											)
+										-
+										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+									double yPos = end.y
+										- (
+										(counter - (result))
+										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+										)
+										-
+										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+									//移動
+									unit->orderPosiLeft = Vec2(xPos, yPos);
+									unit->orderPosiLeftLast = Vec2(xPos, yPos);
+									//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
+									unit->FlagMove = false;
+									//unit->FlagMoving = true;
+
+									counter++;
+								}
+							}
+
+							counterLisClassHorizontalUnit++;
+						}
+						getData().classGameStatus.IsBattleMove = false;
+
+						// 実行途中のタスクがあれば完了まで待つ。
+						if (taskMyUnits.isValid())
+						{
+							// 中断指示を出す
+							abortMyUnits = true;
+
+							// 完全に処理が完了する前に制御を返してくれる
+							taskMyUnits.wait();
+						}
+
+						abortMyUnits = false;
+
+						taskMyUnits = Async(BattleMoveAStarMyUnits,
+										std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
+										std::ref(getData().classGameStatus.classBattle.defUnitGroup),
+										std::ref(mapCreator),
+										std::ref(getData().classGameStatus.classBattle.classMapBattle.value().mapData),
+										std::ref(getData().classGameStatus),
+										std::ref(debugRoot), std::ref(debugAstar),
+										std::ref(abortMyUnits), std::ref(pauseTaskMyUnits));
+					}
+					else
+					{
+						//範囲選択
+						for (auto& target : *lisClassHorizontalUnit)
+						{
+							for (auto& unit : target.ListClassUnit)
+							{
+								Vec2 gnpc = unit.GetNowPosiCenter();
+								if (start.x > end.x)
+								{
+									//左
+									if (start.y > end.y)
 									{
-										unit.FlagMove = true;
-										getData().classGameStatus.IsBattleMove = true;
+										//上
+										if (gnpc.x >= end.x && gnpc.x <= start.x
+											&& gnpc.y >= end.y && gnpc.y <= start.y)
+										{
+											unit.FlagMove = true;
+											getData().classGameStatus.IsBattleMove = true;
+										}
+										else
+										{
+											unit.FlagMove = false;
+										}
 									}
 									else
 									{
-										unit.FlagMove = false;
+										//下
+										if (gnpc.x >= end.x && gnpc.x <= start.x
+											&& gnpc.y >= start.y && gnpc.y <= end.y)
+										{
+											unit.FlagMove = true;
+											getData().classGameStatus.IsBattleMove = true;
+										}
+										else
+										{
+											unit.FlagMove = false;
+										}
 									}
 								}
 								else
 								{
-									//下
-									if (gnpc.x >= start.x && gnpc.x <= end.x
-										&& gnpc.y >= start.y && gnpc.y <= end.y)
+									//右
+									if (start.y > end.y)
 									{
-										unit.FlagMove = true;
-										getData().classGameStatus.IsBattleMove = true;
+										//上
+										if (gnpc.x >= start.x && gnpc.x <= end.x
+											&& gnpc.y >= end.y && gnpc.y <= start.y)
+										{
+											unit.FlagMove = true;
+											getData().classGameStatus.IsBattleMove = true;
+										}
+										else
+										{
+											unit.FlagMove = false;
+										}
 									}
 									else
 									{
-										unit.FlagMove = false;
+										//下
+										if (gnpc.x >= start.x && gnpc.x <= end.x
+											&& gnpc.y >= start.y && gnpc.y <= end.y)
+										{
+											unit.FlagMove = true;
+											getData().classGameStatus.IsBattleMove = true;
+										}
+										else
+										{
+											unit.FlagMove = false;
+										}
 									}
 								}
 							}
@@ -2530,180 +2539,88 @@ public:
 			}
 
 			//pause処理
-			if (KeySpace.down())
 			{
-				PauseFlag = !PauseFlag;
-				if (PauseFlag == false)
+				if (KeySpace.down())
 				{
-					pauseTask = false;
-					pauseTaskMyUnits = false;
+					PauseFlag = !PauseFlag;
+					if (PauseFlag == false)
+					{
+						pauseTask = false;
+						pauseTaskMyUnits = false;
+					}
+					else
+					{
+						pauseTask = true;
+						pauseTaskMyUnits = true;
+						return;
+					}
 				}
-				else
-				{
-					pauseTask = true;
-					pauseTaskMyUnits = true;
+				if (PauseFlag == true)
 					return;
-				}
 			}
-			if (PauseFlag == true)
-				return;
 
 			//移動処理
-			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 			{
-				for (auto& itemUnit : item.ListClassUnit)
+				for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 				{
-					if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
+					for (auto& itemUnit : item.ListClassUnit)
 					{
-						continue;
-					}
-					if (itemUnit.IsBattleEnable == false)
-					{
-						continue;
-					}
-					if (itemUnit.FlagMoving == true)
-					{
-						itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
-
-						Circle c = { itemUnit.nowPosiLeft ,1 };
-						Circle cc = { itemUnit.orderPosiLeft ,1 };
-
-						if (c.intersects(cc))
+						if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
 						{
-							itemUnit.FlagMoving = false;
+							continue;
 						}
-						//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
-						//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
-						//{
-						//	itemUnit.FlagMoving = false;
-						//}
-						continue;
-					}
-					//auto rootPo = getData().classGameStatus.aiRoot;
-					//for (auto [key, value] : rootPo)
-					//{
-					//	Print << key << U": " << value;
-					//}
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
-					{
-						continue;
-					}
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
-					{
-						itemUnit.FlagMovingEnd = true;
-						itemUnit.FlagMoving = false;
-						continue;
-					}
-
-					// タイルのインデックス
-					Point index;
-					try
-					{
-						getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
-						auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
-						index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
-					}
-					catch (const std::exception&)
-					{
-						throw;
-						continue;
-					}
-
-					// そのタイルの底辺中央の座標
-					const int32 i = index.manhattanLength();
-					const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-					const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-					const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-					const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
-
-					itemUnit.orderPosiLeft = pos;
-					Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
-					if (hhh.x == 0 && hhh.y == 0)
-					{
-						itemUnit.vecMove = { 0,0 };
-					}
-					else
-					{
-						itemUnit.vecMove = hhh.normalized();
-					}
-					itemUnit.FlagMoving = true;
-					itemUnit.FlagMovingEnd = false;
-				}
-			}
-			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
-			{
-				for (auto& itemUnit : item.ListClassUnit)
-				{
-					if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
-					{
-						continue;
-					}
-					if (itemUnit.IsBattleEnable == false)
-					{
-						continue;
-					}
-					if (itemUnit.FlagMoving == true)
-					{
-						itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
-
-						double current_distanceX = itemUnit.orderPosiLeft.x - itemUnit.nowPosiLeft.x;
-						double current_distanceY = itemUnit.orderPosiLeft.y - itemUnit.nowPosiLeft.y;
-						double next_distanceX = current_distanceX - (itemUnit.vecMove.x * (itemUnit.Speed / 100));
-						double next_distanceY = current_distanceY - (itemUnit.vecMove.y * (itemUnit.Speed / 100));
-						if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
+						if (itemUnit.IsBattleEnable == false)
 						{
-							itemUnit.FlagMoving = false;
+							continue;
 						}
-						continue;
+						if (itemUnit.FlagMoving == true)
+						{
+							itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
 
-						//Circle c = { itemUnit.nowPosiLeft ,1 };
-						//Circle cc = { itemUnit.orderPosiLeft ,1 };
+							Circle c = { itemUnit.nowPosiLeft ,1 };
+							Circle cc = { itemUnit.orderPosiLeft ,1 };
 
-						//if (c.intersects(cc))
+							if (c.intersects(cc))
+							{
+								itemUnit.FlagMoving = false;
+							}
+							//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
+							//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
+							//{
+							//	itemUnit.FlagMoving = false;
+							//}
+							continue;
+						}
+						//auto rootPo = getData().classGameStatus.aiRoot;
+						//for (auto [key, value] : rootPo)
 						//{
-						//	itemUnit.FlagMoving = false;
+						//	Print << key << U": " << value;
 						//}
-						//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
-						//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
-						//{
-						//	itemUnit.FlagMoving = false;
-						//}
-						//continue;
-					}
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
-					{
-						continue;
-					}
-					//潜在的バグ有り
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
-					{
-						itemUnit.FlagMovingEnd = true;
-						itemUnit.FlagMoving = false;
-						continue;
-					}
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
+						{
+							continue;
+						}
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
+						{
+							itemUnit.FlagMovingEnd = true;
+							itemUnit.FlagMoving = false;
+							continue;
+						}
 
-					// タイルのインデックス
-					Point index;
-					try
-					{
-						getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
-						auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
-						index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
-					}
-					catch (const std::exception&)
-					{
-						throw;
-						continue;
-					}
+						// タイルのインデックス
+						Point index;
+						try
+						{
+							getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
+							auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
+							index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
+						}
+						catch (const std::exception&)
+						{
+							throw;
+							continue;
+						}
 
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
-					{
-						itemUnit.orderPosiLeft = itemUnit.orderPosiLeftLast;
-					}
-					else
-					{
 						// そのタイルの底辺中央の座標
 						const int32 i = index.manhattanLength();
 						const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
@@ -2714,92 +2631,188 @@ public:
 						const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
 
 						itemUnit.orderPosiLeft = pos;
-					}
-
-					Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
-					if (hhh.x == 0 && hhh.y == 0)
-					{
-						itemUnit.vecMove = { 0,0 };
-					}
-					else
-					{
-						itemUnit.vecMove = hhh.normalized();
-					}
-					itemUnit.FlagMoving = true;
-					itemUnit.FlagMovingEnd = false;
-				}
-			}
-			for (auto& item : getData().classGameStatus.classBattle.neutralUnitGroup)
-			{
-				for (auto& itemUnit : item.ListClassUnit)
-				{
-					if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
-					{
-						continue;
-					}
-					if (itemUnit.IsBattleEnable == false)
-					{
-						continue;
-					}
-					if (itemUnit.FlagMoving == true)
-					{
-						itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
-
-						Circle c = { itemUnit.nowPosiLeft ,1 };
-						Circle cc = { itemUnit.orderPosiLeft ,1 };
-
-						if (c.intersects(cc))
+						Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
+						if (hhh.x == 0 && hhh.y == 0)
 						{
-							itemUnit.FlagMoving = false;
+							itemUnit.vecMove = { 0,0 };
 						}
-						continue;
+						else
+						{
+							itemUnit.vecMove = hhh.normalized();
+						}
+						itemUnit.FlagMoving = true;
+						itemUnit.FlagMovingEnd = false;
 					}
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
+				}
+				for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+				{
+					for (auto& itemUnit : item.ListClassUnit)
 					{
-						continue;
-					}
-					if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
-					{
-						itemUnit.FlagMovingEnd = true;
-						itemUnit.FlagMoving = false;
-						continue;
-					}
+						if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
+						{
+							continue;
+						}
+						if (itemUnit.IsBattleEnable == false)
+						{
+							continue;
+						}
+						if (itemUnit.FlagMoving == true)
+						{
+							itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
 
-					// タイルのインデックス
-					Point index;
-					try
-					{
-						getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
-						auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
-						index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
-					}
-					catch (const std::exception&)
-					{
-						throw;
-						continue;
-					}
+							double current_distanceX = itemUnit.orderPosiLeft.x - itemUnit.nowPosiLeft.x;
+							double current_distanceY = itemUnit.orderPosiLeft.y - itemUnit.nowPosiLeft.y;
+							double next_distanceX = current_distanceX - (itemUnit.vecMove.x * (itemUnit.Speed / 100));
+							double next_distanceY = current_distanceY - (itemUnit.vecMove.y * (itemUnit.Speed / 100));
+							if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
+							{
+								itemUnit.FlagMoving = false;
+							}
+							continue;
 
-					// そのタイルの底辺中央の座標
-					const int32 i = index.manhattanLength();
-					const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
-					const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
-					const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
-					const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
-					const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
-					const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
+							//Circle c = { itemUnit.nowPosiLeft ,1 };
+							//Circle cc = { itemUnit.orderPosiLeft ,1 };
 
-					itemUnit.orderPosiLeft = pos;
-					Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
-					if (hhh.x == 0 && hhh.y == 0)
-					{
-						itemUnit.vecMove = { 0,0 };
+							//if (c.intersects(cc))
+							//{
+							//	itemUnit.FlagMoving = false;
+							//}
+							//if (itemUnit.nowPosiLeft.x <= itemUnit.orderPosiLeft.x + 10 && itemUnit.nowPosiLeft.x >= itemUnit.orderPosiLeft.x - 10
+							//	&& itemUnit.nowPosiLeft.y <= itemUnit.orderPosiLeft.y + 10 && itemUnit.nowPosiLeft.y >= itemUnit.orderPosiLeft.y - 10)
+							//{
+							//	itemUnit.FlagMoving = false;
+							//}
+							//continue;
+						}
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
+						{
+							continue;
+						}
+						//潜在的バグ有り
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
+						{
+							itemUnit.FlagMovingEnd = true;
+							itemUnit.FlagMoving = false;
+							continue;
+						}
+
+						// タイルのインデックス
+						Point index;
+						try
+						{
+							getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
+							auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
+							index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
+						}
+						catch (const std::exception&)
+						{
+							throw;
+							continue;
+						}
+
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
+						{
+							itemUnit.orderPosiLeft = itemUnit.orderPosiLeftLast;
+						}
+						else
+						{
+							// そのタイルの底辺中央の座標
+							const int32 i = index.manhattanLength();
+							const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+							const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+							const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+							const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+							const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+							const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
+
+							itemUnit.orderPosiLeft = pos;
+						}
+
+						Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
+						if (hhh.x == 0 && hhh.y == 0)
+						{
+							itemUnit.vecMove = { 0,0 };
+						}
+						else
+						{
+							itemUnit.vecMove = hhh.normalized();
+						}
+						itemUnit.FlagMoving = true;
+						itemUnit.FlagMovingEnd = false;
 					}
-					else
+				}
+				for (auto& item : getData().classGameStatus.classBattle.neutralUnitGroup)
+				{
+					for (auto& itemUnit : item.ListClassUnit)
 					{
-						itemUnit.vecMove = hhh.normalized();
+						if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
+						{
+							continue;
+						}
+						if (itemUnit.IsBattleEnable == false)
+						{
+							continue;
+						}
+						if (itemUnit.FlagMoving == true)
+						{
+							itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
+
+							Circle c = { itemUnit.nowPosiLeft ,1 };
+							Circle cc = { itemUnit.orderPosiLeft ,1 };
+
+							if (c.intersects(cc))
+							{
+								itemUnit.FlagMoving = false;
+							}
+							continue;
+						}
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
+						{
+							continue;
+						}
+						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
+						{
+							itemUnit.FlagMovingEnd = true;
+							itemUnit.FlagMoving = false;
+							continue;
+						}
+
+						// タイルのインデックス
+						Point index;
+						try
+						{
+							getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
+							auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
+							index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
+						}
+						catch (const std::exception&)
+						{
+							throw;
+							continue;
+						}
+
+						// そのタイルの底辺中央の座標
+						const int32 i = index.manhattanLength();
+						const int32 xi = (i < (mapCreator.N - 1)) ? 0 : (i - (mapCreator.N - 1));
+						const int32 yi = (i < (mapCreator.N - 1)) ? i : (mapCreator.N - 1);
+						const int32 k2 = (index.manhattanDistanceFrom(Point{ xi, yi }) / 2);
+						const double posX = ((i < (mapCreator.N - 1)) ? (i * -mapCreator.TileOffset.x) : ((i - 2 * mapCreator.N + 2) * mapCreator.TileOffset.x));
+						const double posY = (i * mapCreator.TileOffset.y) - mapCreator.TileThickness;
+						const Vec2 pos = { (posX + mapCreator.TileOffset.x * 2 * k2) - (itemUnit.yokoUnit / 2), posY - itemUnit.TakasaUnit - 15 };
+
+						itemUnit.orderPosiLeft = pos;
+						Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
+						if (hhh.x == 0 && hhh.y == 0)
+						{
+							itemUnit.vecMove = { 0,0 };
+						}
+						else
+						{
+							itemUnit.vecMove = hhh.normalized();
+						}
+						itemUnit.FlagMoving = true;
+						itemUnit.FlagMovingEnd = false;
 					}
-					itemUnit.FlagMoving = true;
-					itemUnit.FlagMovingEnd = false;
 				}
 			}
 
@@ -3369,6 +3382,39 @@ public:
 				m_Battle_enemy_skills.remove_if([&](const ClassExecuteSkills& a) { return a.ArrayClassBullet.size() == 0; });
 			}
 
+			//skill選択処理
+			{
+				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(0, Scene::Size().y - 320 - 30) };
+				for (auto&& [i, re] : Indexed(htSkill))
+				{
+					if (re.second.leftClicked())
+					{
+						bool flgEr = false;
+						for (auto it = nowSelectSkill.begin(); it != nowSelectSkill.end(); ++it)
+						{
+							if (it->contains(re.first))
+							{
+								nowSelectSkill.erase(it);
+								flgEr = true;
+								break;
+							}
+						}
+						nowSelectSkill.push_back(re.first);
+						{
+							const ScopedRenderTarget2D target{ renderTextureSkillUP.clear(ColorF{ 0.5, 0.0, 0.0, 0.0 }) };
+
+							// 描画された最大のアルファ成分を保持するブレンドステート
+							const ScopedRenderStates2D blend{ MakeBlendState() };
+
+							re.second.drawFrame(2, 0, Palette::Red);
+						}
+						//if (flgEr == false)
+						//{
+						//}
+					}
+				}
+			}
+
 			//体力が無くなったunit削除処理
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
@@ -3472,6 +3518,8 @@ public:
 		break;
 		case BattleStatus::Message:
 		{
+			const auto t = camera.createTransformer();
+
 			if (BattleMessage001)
 			{
 				sceneMessageBoxImpl.set(camera);
@@ -3743,7 +3791,7 @@ public:
 
 					if (skill.classSkill.SkillForceRay == SkillForceRay::on)
 					{
-						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
+						Line{ acb.StartPosition, acb.NowPosition }.draw(skill.classSkill.rayStrokeThickness, ColorF{ skill.classSkill.ray[1], skill.classSkill.ray[2], skill.classSkill.ray[3], skill.classSkill.ray[0] });
 					}
 
 					if (skill.classSkill.SkillD360 == SkillD360::on)
@@ -3793,7 +3841,7 @@ public:
 
 					if (skill.classSkill.SkillForceRay == SkillForceRay::on)
 					{
-						Line{ acb.StartPosition, acb.NowPosition }.draw(4, Palette::White);
+						Line{ acb.StartPosition, acb.NowPosition }.draw(skill.classSkill.rayStrokeThickness, ColorF{ skill.classSkill.ray[1], skill.classSkill.ray[2], skill.classSkill.ray[3], skill.classSkill.ray[0] });
 					}
 
 					if (skill.classSkill.SkillD360 == SkillD360::on)
@@ -3834,6 +3882,7 @@ public:
 		}
 
 		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
+		renderTextureSkillUP.draw(0, Scene::Size().y - 320 - 30);
 
 		switch (battleStatus)
 		{
@@ -3878,8 +3927,9 @@ private:
 	std::atomic<bool> pauseTaskMyUnits{ false };
 
 	RenderTexture renderTextureSkill;
+	RenderTexture renderTextureSkillUP;
 	HashTable<String, Rect> htSkill;
-
+	Array<String> nowSelectSkill;
 
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
@@ -4112,6 +4162,11 @@ void Init(App& manager)
 		Array<ClassSkill> arrayClassSkill;
 		for (const auto& [key, value] : skillData[U"Skill"]) {
 			ClassSkill cu;
+			if (value.hasElement(U"sortkey") == true)
+			{
+				cu.sortKey = Parse<int32>(value[U"sortkey"].get<String>());
+			}
+
 			{
 				if (value[U"func"].get<String>() == U"missile")
 				{
@@ -4227,6 +4282,17 @@ void Init(App& manager)
 				{
 					cu.SkillForceRay = SkillForceRay::off;
 				}
+			}
+			if (value.hasElement(U"ray") == true)
+			{
+				for (auto& temp : value[U"ray"].get<String>().split(','))
+				{
+					cu.ray.push_back(Parse<double>(temp.trimmed()) / 255);
+				}
+			}
+			if (value.hasElement(U"ray_strokeThickness") == true)
+			{
+				cu.rayStrokeThickness = Parse<int32>(value[U"ray_strokeThickness"].get<String>());
 			}
 			cu.nameTag = value[U"name_tag"].get<String>();
 			cu.name = value[U"name"].get<String>();

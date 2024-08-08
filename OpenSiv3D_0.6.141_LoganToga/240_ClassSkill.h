@@ -117,7 +117,8 @@ public:
 	s3d::String next;
 	int32 randomSpace = 0;
 	s3d::Array<s3d::String> offset;
-	s3d::Array<int32> ray;
+	Array<double> ray;
+	int32 rayStrokeThickness;
 	int32 rush = -1;
 	int32 rushInterval = -1;
 	int32 rushRandomDegree = -1;
