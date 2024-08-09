@@ -1389,17 +1389,31 @@ public:
 	Buy(const InitData& init)
 		: IScene{ init }
 	{
-		//左上
-		arrayRectMenuBack.push_back(Rect{ 16,16,400,800 });
 		//中央上
 		arrayRectMenuBack.push_back(Rect{ 432,16,500,500 });
-		////中央下
-		//arrayRectMenuBack.push_back(Rect{ 432,516,500,500 });
 
 		//メニューボタン
 		for (auto index : Range(0, getData().classGameStatus.NumMenus - 1)) {
 			if (getData().classGameStatus.strategyMenus[index]) {
-				htMenuBtn.push_back(std::make_tuple(index, Rect{ 32,32 + (index * 64),300,64 }));
+				htMenuBtn.push_back(std::make_tuple(index, Rect{ 16,16 + (index * 64),300,64 }));
+			}
+		}
+
+		renderTextureMenuBtn = RenderTexture{ 400,800, ColorF{0.5, 0.0} };
+		renderTextureMenuBtn.clear(ColorF{ 0.5, 0.0 });
+		{
+			// レンダーターゲットを renderTextureDetail に変更する
+			const ScopedRenderTarget2D target{ renderTextureMenuBtn };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			getData().slice9.draw(Rect{ 0,0,400,800 });
+
+			for (auto&& [i, ttt] : Indexed(htMenuBtn))
+			{
+				getData().slice9.draw(std::get<1>(ttt));
+				getData().fontLine(systemString.strategyMenu[i]).draw(std::get<1>(ttt).stretched(-10));
 			}
 		}
 
@@ -1476,6 +1490,8 @@ public:
 			conscriptionUnit();
 			//ユニット表示エリアでスクロールした時、位置を調整する
 			fixDisplayUnit();
+			//徴兵可能ユニット表示エリアでスクロールした時、位置を調整する
+			fixDisplayUnitConscriptionUnit();
 			//ユニットをクリック時に、その他のユニットの対象フラグを初期化する
 			resetFlagsUnit();
 			//スクロールバー関係
@@ -1512,9 +1528,7 @@ public:
 		getData().slice9.draw(rectExecuteBtn);
 
 		for (auto& ttt : arrayRectMenuBack)
-		{
 			getData().slice9.draw(ttt);
-		}
 		for (auto& ttt : getData().classGameStatus.arrayPlayerUnit)
 		{
 			for (auto& aaa : ttt.ListClassUnit)
@@ -1537,11 +1551,9 @@ public:
 			}
 		}
 
-		for (auto&& [i, ttt] : Indexed(htMenuBtn))
-		{
-			getData().slice9.draw(std::get<1>(ttt));
-			getData().fontLine(systemString.strategyMenu[i]).draw(std::get<1>(ttt).stretched(-10));
-		}
+		//強制表示メニュー
+		renderTextureMenuBtn.draw(16, 16);
+
 		for (auto& ttt : htMenuBtnDisplay)
 		{
 			switch (ttt.first)
@@ -1549,12 +1561,20 @@ public:
 			case 0:
 				if (ttt.second == true)
 				{
+					//徴兵出来るユニット表示
 					for (auto nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
 					{
-						getData().slice9.draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu);
-						getData().fontLine(nowHtRectPlusUnit.Name).draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.stretched(-10));
-						vbar002.value().draw();
+						if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.y > Scene::Size().y - 12 || nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.y < 548 - 12)
+						{
+
+						}
+						else
+						{
+							getData().slice9.draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu);
+							getData().fontLine(nowHtRectPlusUnit.Name).draw(nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.stretched(-10));
+						}
 					}
+					vbar002.value().draw();
 				}
 				break;
 			case 1:
@@ -1634,7 +1654,7 @@ private:
 	/// @brief スクロールバー関係
 	void processBar()
 	{
-		if (arrayRectMenuBack[1].mouseOver() == true)
+		if (arrayRectMenuBack[0].mouseOver() == true)
 			vbar001.value().scroll(Mouse::Wheel() * 60);
 		if (rectExecuteBtn.mouseOver() == true)
 			vbar002.value().scroll(Mouse::Wheel() * 60);
@@ -1652,6 +1672,18 @@ private:
 			{
 				aaa.rectDetailStrategyMenu.y = yyy;
 			}
+			counterUnit++;
+		}
+	}
+	/// @brief 徴兵可能ユニット表示エリアでスクロールした時、位置を調整する
+	void fixDisplayUnitConscriptionUnit()
+	{
+		int32 counterUnit = 0;
+		for (auto& nowarrayPlayerUnit : getData().classGameStatus.arrayClassUnit)
+		{
+			int32 yyy = 548 + (counterUnit * 64) - vbar002.value().value();
+
+			nowarrayPlayerUnit.rectExecuteBtnStrategyMenu.y = yyy;
 			counterUnit++;
 		}
 	}
@@ -1989,7 +2021,10 @@ private:
 	Array <Rect> arrayRectMenuBack;
 	/// @brief 画面下部の詳細実行枠
 	Rect rectExecuteBtn{ 0,0,0,0 };
+
 	Array<std::tuple<int32, Rect>> htMenuBtn;
+	RenderTexture renderTextureMenuBtn;
+
 	HashTable<int32, bool> htMenuBtnDisplay;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
@@ -3704,6 +3739,34 @@ public:
 				//}
 			}
 
+			//体力ゲージ
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
+					}
+				}
+			}
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
+					}
+				}
+			}
+
 			//unit
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
@@ -3722,7 +3785,6 @@ public:
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
 						}
-						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
 					}
 				}
 			}
@@ -3743,7 +3805,6 @@ public:
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
 						}
-						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
 					}
 				}
 			}
