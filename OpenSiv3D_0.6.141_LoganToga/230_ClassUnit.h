@@ -3,6 +3,7 @@
 # include "153_EnumMapTipObjectType.h" 
 # include "154_EnumGender.h" 
 # include "240_ClassSkill.h" 
+# include "005_GameUIToolkit.h" 
 
 class ClassUnit
 {
@@ -108,6 +109,8 @@ public:
 	String houkou = U"";
 	Point initXY = Point();
 
+	GameUIToolkit::LiquidBarBattle bLiquidBarBattle;
+
 	// IsLeader
 	bool IsLeader = false;
 
@@ -197,6 +200,8 @@ public:
 
 	// Hp
 	int32 Hp = 0;
+	// HpMAX
+	int32 HpMAX = 0;
 
 	// Mp
 	int32 Mp = 0;

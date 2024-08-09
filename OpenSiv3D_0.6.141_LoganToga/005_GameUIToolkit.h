@@ -227,6 +227,128 @@ namespace GameUIToolkit {
 		double m_liquidHPVelocity = 0.0;
 		double m_solidHPVelocity = 0.0;
 	};
+	class LiquidBarBattle
+	{
+	public:
+
+		LiquidBarBattle() = default;
+
+		explicit LiquidBarBattle(const Rect& rect)
+			: m_rect{ rect } {}
+
+		void update(double targetHP)
+		{
+			m_targetHP = targetHP;
+			m_liquidHP = Math::SmoothDamp(m_liquidHP, targetHP, m_liquidHPVelocity, LiquidSmoothTime);
+
+			if (m_solidHP < targetHP)
+			{
+				m_solidHP = targetHP;
+			}
+			else
+			{
+				m_solidHP = Math::SmoothDamp(m_solidHP, targetHP, m_solidHPVelocity, SolidSmoothTime, MaxSolidBarSpeed);
+			}
+		}
+
+		void ChangePoint(const Vec2 v)
+		{
+			m_rect.x = v.x;
+			m_rect.y = v.y;
+		}
+
+		const LiquidBarBattle& draw(const ColorF& liquidColorFront, const ColorF& liquidColorBack, const ColorF& solidColor) const
+		{
+			// バーの背景を描く
+			m_rect.draw(ColorF{ 0.2, 0.15, 0.25 });
+
+			// バーの枠を描く
+			m_rect.drawFrame(2, 0);
+
+			const Point basePos = m_rect.pos.movedBy(FrameThickness, FrameThickness);
+			const int32 height = (m_rect.h - (FrameThickness * 2));
+			const double width = (m_rect.w - (FrameThickness * 2));
+
+			const double solidWidth = Min(Max((width * m_solidHP) + (height * 0.5 * 0.3), 0.0), width);
+			const double liquidWidth = (width * m_liquidHP);
+
+			// 固体バーを描く
+			{
+				const RectF solidBar{ basePos, solidWidth, height };
+				const double alpha = ((0.005 < AbsDiff(m_targetHP, m_solidHP)) ? 1.0 : (AbsDiff(m_targetHP, m_solidHP) / 0.005));
+				solidBar.draw(ColorF{ solidColor, alpha });
+			}
+
+			// 液体バーを描く
+			{
+				const double t = Scene::Time();
+				const double offsetScale = ((m_liquidHP < 0.05) ? (m_liquidHP / 0.05) : (0.98 < m_liquidHP) ? 0.0 : 1.0);
+
+				// 背景の液体バーを描く
+				for (int32 i = 0; i < height; ++i)
+				{
+					const Vec2 pos = basePos.movedBy(0, i);
+					const double waveOffset = (i * 0.3)
+						+ (Math::Sin(i * 17_deg + t * 800_deg) * 0.8)
+						+ (Math::Sin(i * 11_deg + t * 700_deg) * 1.2)
+						+ (Math::Sin(i * 7_deg + t * 550_deg) * 1.6);
+					const RectF rect{ pos, Clamp((liquidWidth + waveOffset * offsetScale), 0.0, width), 1 };
+
+					const double distance = Clamp(1.0 - i / (height - 1.0) + 0.7, 0.0, 1.0);
+					HSV hsv{ liquidColorBack };
+					hsv.v *= Math::Pow(distance, 2.0);
+					rect.draw(hsv);
+				}
+
+				// 前景の液体バーを描く
+				for (int32 i = 0; i < height; ++i)
+				{
+					const Vec2 pos = basePos.movedBy(0, i);
+					const double waveOffset = (i * 0.3)
+						+ (Math::Sin(i * 17_deg - t * 800_deg) * 0.8)
+						+ (Math::Sin(i * 11_deg - t * 700_deg) * 1.2)
+						+ (Math::Sin(i * 7_deg - t * 550_deg) * 1.6);
+					const RectF rect{ pos, Clamp((liquidWidth + waveOffset * offsetScale), 0.0, width), 1 };
+
+					const double distance = Clamp(1.0 - i / (height - 1.0) + 0.7, 0.0, 1.0);
+					HSV hsv{ liquidColorFront };
+					hsv.v *= Math::Pow(distance, 2.0);
+					rect.draw(hsv);
+				}
+			}
+			return *this;
+		}
+		// 左揃えでテキストを描く
+		const LiquidBarBattle& withLabel(const DrawableText drawableText, double fontSize, const ColorF& textColor, double offsetX, const Vec2& textPosOffset = Vec2(0, 0)) const
+		{
+			const RectF textSize = drawableText.region();
+			const Point textPos = (Vec2(m_rect.x + offsetX, m_rect.y + (m_rect.h - textSize.y) / 2) + textPosOffset).asPoint();
+			drawableText.draw(fontSize, textPos, ColorF(0.1));
+			drawableText.draw(fontSize, textPos, textColor);
+			return *this;
+		}
+
+	private:
+
+		// 液体バーが減少するときの平滑化時間（小さいと早く目標に到達）
+		static constexpr double LiquidSmoothTime = 0.03;
+
+		// 固体バーが減少するときの平滑化時間（小さいと早く目標に到達）
+		static constexpr double SolidSmoothTime = 0.5;
+
+		// 固体バーが減少するときの最大の速さ
+		static constexpr double MaxSolidBarSpeed = 0.25;
+
+		static constexpr int32 FrameThickness = 2;
+
+		Rect m_rect = Rect::Empty();
+
+		double m_targetHP = 1.0;
+		double m_liquidHP = 1.0;
+		double m_solidHP = 1.0;
+		double m_liquidHPVelocity = 0.0;
+		double m_solidHPVelocity = 0.0;
+	};
 
 	class HPBar
 	{

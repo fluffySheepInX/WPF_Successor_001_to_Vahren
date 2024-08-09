@@ -2099,6 +2099,32 @@ public:
 			}
 		}
 
+		//ユニット体力バーの設定
+		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty())
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					Vec2 temp = itemUnit.GetNowPosiCenter().movedBy(-64 / 2, (32 / 2) + 6);
+					itemUnit.bLiquidBarBattle = GameUIToolkit::LiquidBarBattle(Rect(temp.x, temp.y, 64, 16));
+				}
+			}
+		}
+		for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+		{
+			if (!item.FlagBuilding &&
+				!item.ListClassUnit.empty())
+			{
+				for (auto& itemUnit : item.ListClassUnit)
+				{
+					Vec2 temp = itemUnit.GetNowPosiCenter().movedBy(-64 / 2, (32 / 2) + 6);
+					itemUnit.bLiquidBarBattle = GameUIToolkit::LiquidBarBattle(Rect(temp.x, temp.y, 64, 16));
+				}
+			}
+		}
+
 		// buiの初期位置
 		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 		{
@@ -2814,6 +2840,30 @@ public:
 						itemUnit.FlagMovingEnd = false;
 					}
 				}
+			}
+
+			//ユニット体力バーの設定
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						double hpp = (static_cast<double>(itemUnit.Hp) / itemUnit.HpMAX);
+						itemUnit.bLiquidBarBattle.update(hpp);
+						itemUnit.bLiquidBarBattle.ChangePoint(itemUnit.GetNowPosiCenter().movedBy(-64 / 2, (32 / 2) + 6));
+					}
+			}
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						double hpp = (static_cast<double>(itemUnit.Hp) / itemUnit.HpMAX);
+						itemUnit.bLiquidBarBattle.update(hpp);
+						itemUnit.bLiquidBarBattle.ChangePoint(itemUnit.GetNowPosiCenter().movedBy(-64 / 2, (32 / 2) + 6));
+					}
 			}
 
 			//skill処理
@@ -3658,15 +3708,12 @@ public:
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
 				if (!item.FlagBuilding &&
-					!item.ListClassUnit.empty() &&
-					item.ListClassUnit[0].Formation == BattleFormation::F)
+					!item.ListClassUnit.empty())
 				{
 					for (auto& itemUnit : item.ListClassUnit)
 					{
 						if (itemUnit.IsBattleEnable == false)
-						{
 							continue;
-						}
 						if (itemUnit.FlagMove == true)
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
@@ -3675,21 +3722,19 @@ public:
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
 						}
+						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
 					}
 				}
 			}
 			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 			{
 				if (!item.FlagBuilding &&
-					!item.ListClassUnit.empty() &&
-					item.ListClassUnit[0].Formation == BattleFormation::F)
+					!item.ListClassUnit.empty())
 				{
 					for (auto& itemUnit : item.ListClassUnit)
 					{
 						if (itemUnit.IsBattleEnable == false)
-						{
 							continue;
-						}
 						if (itemUnit.FlagMove == true)
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter()).drawFrame(3, 3, Palette::Orange);
@@ -3698,6 +3743,7 @@ public:
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
 						}
+						itemUnit.bLiquidBarBattle.draw(ColorF{ 0.9, 0.1, 0.1 }, ColorF{ 0.7, 0.05, 0.05 }, ColorF{ 0.9, 0.5, 0.1 });
 					}
 				}
 			}
@@ -4134,6 +4180,7 @@ void Init(App& manager)
 			cu.Name = value[U"name"].getString();
 			cu.Image = value[U"image"].getString();
 			cu.Hp = Parse<int32>(value[U"hp"].getString());
+			cu.HpMAX = cu.Hp;
 			cu.Attack = Parse<int32>(value[U"attack"].getString());
 			cu.Defense = Parse<int32>(value[U"defense"].getString());
 			cu.Speed = Parse<double>(value[U"speed"].getString());
