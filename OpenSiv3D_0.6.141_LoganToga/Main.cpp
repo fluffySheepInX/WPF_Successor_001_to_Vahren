@@ -4000,117 +4000,232 @@ private:
 			{
 				//発動中もしくは死亡ユニットはスキップ
 				if (itemUnit.FlagMovingSkill == true || itemUnit.IsBattleEnable == false)
-				{
 					continue;
-				}
 
-				//昇順（小さい値から大きい値へ）
-				for (const ClassSkill& itemSkill : itemUnit.Skill.sort_by([](const auto& item1, const auto& item2) { return  item1.sortKey < item2.sortKey; }))
+				auto temp = itemUnit.Skill.filter([&](const ClassSkill& itemSkill) {return nowSelectSkill.contains(itemSkill.nameTag); });
+
+				if (temp.size() > 0)
 				{
-					//ターゲットとなるユニットを抽出し、
-					//スキル射程範囲を確認
-					const auto xA = itemUnit.GetNowPosiCenter();
-
-					for (auto& itemTargetHo : achTarget)
+					for (auto& itemSkill : temp)
 					{
-						for (auto& itemTarget : itemTargetHo.ListClassUnit)
+						//ターゲットとなるユニットを抽出し、
+						//スキル射程範囲を確認
+						const auto xA = itemUnit.GetNowPosiCenter();
+
+						for (auto& itemTargetHo : achTarget)
 						{
-							//スキル発動条件確認
-							if (itemTarget.IsBattleEnable == false)
+							for (auto& itemTarget : itemTargetHo.ListClassUnit)
 							{
-								continue;
-							}
-							if (itemTarget.IsBuilding == true)
-							{
-								switch (itemTarget.mapTipObjectType)
-								{
-								case MapTipObjectType::WALL2:
+								//スキル発動条件確認
+								if (itemTarget.IsBattleEnable == false)
 								{
 									continue;
 								}
-								break;
-								case MapTipObjectType::GATE:
+								if (itemTarget.IsBuilding == true)
 								{
-									if (itemTarget.HPCastle <= 0)
+									switch (itemTarget.mapTipObjectType)
+									{
+									case MapTipObjectType::WALL2:
 									{
 										continue;
 									}
-								}
-								break;
-								default:
 									break;
+									case MapTipObjectType::GATE:
+									{
+										if (itemTarget.HPCastle <= 0)
+										{
+											continue;
+										}
+									}
+									break;
+									default:
+										break;
+									}
 								}
-							}
 
-							//三平方の定理から射程内か確認
-							const Vec2 xB = itemTarget.GetNowPosiCenter();
-							const double teihen = xA.x - xB.x;
-							const double takasa = xA.y - xB.y;
-							const double syahen = (teihen * teihen) + (takasa * takasa);
-							const double kyori = std::sqrt(syahen);
+								//三平方の定理から射程内か確認
+								const Vec2 xB = itemTarget.GetNowPosiCenter();
+								const double teihen = xA.x - xB.x;
+								const double takasa = xA.y - xB.y;
+								const double syahen = (teihen * teihen) + (takasa * takasa);
+								const double kyori = std::sqrt(syahen);
 
-							const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
-							const double xBHankei = itemTarget.yokoUnit / 2.0;
+								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
+								const double xBHankei = itemTarget.yokoUnit / 2.0;
 
-							bool check = true;
-							if (kyori > (xAHankei + xBHankei))
-							{
-								check = false;
-							}
-							// チェック
-							if (check == false)
-							{
-								continue;
-							}
-
-							int32 random = getData().classGameStatus.getBattleIDCount();
-							int singleAttackNumber = random;
-
-							itemUnit.FlagMovingSkill = true;
-
-							//rush数だけ実行する
-							int32 rushBase = 1;
-							if (itemSkill.rush > 1) rushBase = itemSkill.rush;
-
-							ClassExecuteSkills ces;
-							ces.No = getData().classGameStatus.getDeleteCESIDCount();
-							ces.UnitID = itemUnit.ID;
-							ces.classSkill = itemSkill;
-							ces.classUnit = &itemUnit;
-
-							for (int iii = 0; iii < rushBase; iii++)
-							{
-								ClassBullets cbItemUnit;
-								cbItemUnit.No = singleAttackNumber;
-								cbItemUnit.RushNo = iii;
-								cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
-								cbItemUnit.StartPosition = itemUnit.GetNowPosiCenter();
-								cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
-								if (itemSkill.speed == 0)
+								bool check = true;
+								if (kyori > (xAHankei + xBHankei))
 								{
-									cbItemUnit.duration = 2.5;
+									check = false;
 								}
-								else
+								// チェック
+								if (check == false)
 								{
-									cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+									continue;
 								}
-								cbItemUnit.lifeTime = 0;
 
-								Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
-								cbItemUnit.MoveVec = ve.normalized();
+								int32 random = getData().classGameStatus.getBattleIDCount();
+								int singleAttackNumber = random;
 
-								//二点間の角度を求める
-								cbItemUnit.radian = Math::Atan2((float)(cbItemUnit.OrderPosition.y - cbItemUnit.NowPosition.y),
-													(float)(cbItemUnit.OrderPosition.x - cbItemUnit.NowPosition.x));
-								cbItemUnit.degree = cbItemUnit.radian * (180 / Math::Pi);
-								cbItemUnit.initDegree = cbItemUnit.degree;
+								itemUnit.FlagMovingSkill = true;
 
-								ces.ArrayClassBullet.push_back(cbItemUnit);
+								//rush数だけ実行する
+								int32 rushBase = 1;
+								if (itemSkill.rush > 1) rushBase = itemSkill.rush;
+
+								ClassExecuteSkills ces;
+								ces.No = getData().classGameStatus.getDeleteCESIDCount();
+								ces.UnitID = itemUnit.ID;
+								ces.classSkill = itemSkill;
+								ces.classUnit = &itemUnit;
+
+								for (int iii = 0; iii < rushBase; iii++)
+								{
+									ClassBullets cbItemUnit;
+									cbItemUnit.No = singleAttackNumber;
+									cbItemUnit.RushNo = iii;
+									cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+									cbItemUnit.StartPosition = itemUnit.GetNowPosiCenter();
+									cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
+									if (itemSkill.speed == 0)
+									{
+										cbItemUnit.duration = 2.5;
+									}
+									else
+									{
+										cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+									}
+									cbItemUnit.lifeTime = 0;
+
+									Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
+									cbItemUnit.MoveVec = ve.normalized();
+
+									//二点間の角度を求める
+									cbItemUnit.radian = Math::Atan2((float)(cbItemUnit.OrderPosition.y - cbItemUnit.NowPosition.y),
+														(float)(cbItemUnit.OrderPosition.x - cbItemUnit.NowPosition.x));
+									cbItemUnit.degree = cbItemUnit.radian * (180 / Math::Pi);
+									cbItemUnit.initDegree = cbItemUnit.degree;
+
+									ces.ArrayClassBullet.push_back(cbItemUnit);
+								}
+
+								aces.push_back(ces);
+
+								return;
 							}
+						}
+					}
+				}
+				else
+				{
+					//昇順（小さい値から大きい値へ）
+					for (const ClassSkill& itemSkill : itemUnit.Skill.sort_by([](const auto& item1, const auto& item2) { return  item1.sortKey < item2.sortKey; }))
+					{
+						//ターゲットとなるユニットを抽出し、
+						//スキル射程範囲を確認
+						const auto xA = itemUnit.GetNowPosiCenter();
 
-							aces.push_back(ces);
+						for (auto& itemTargetHo : achTarget)
+						{
+							for (auto& itemTarget : itemTargetHo.ListClassUnit)
+							{
+								//スキル発動条件確認
+								if (itemTarget.IsBattleEnable == false)
+								{
+									continue;
+								}
+								if (itemTarget.IsBuilding == true)
+								{
+									switch (itemTarget.mapTipObjectType)
+									{
+									case MapTipObjectType::WALL2:
+									{
+										continue;
+									}
+									break;
+									case MapTipObjectType::GATE:
+									{
+										if (itemTarget.HPCastle <= 0)
+										{
+											continue;
+										}
+									}
+									break;
+									default:
+										break;
+									}
+								}
 
-							return;
+								//三平方の定理から射程内か確認
+								const Vec2 xB = itemTarget.GetNowPosiCenter();
+								const double teihen = xA.x - xB.x;
+								const double takasa = xA.y - xB.y;
+								const double syahen = (teihen * teihen) + (takasa * takasa);
+								const double kyori = std::sqrt(syahen);
+
+								const double xAHankei = (itemUnit.yokoUnit / 2.0) + itemSkill.range;
+								const double xBHankei = itemTarget.yokoUnit / 2.0;
+
+								bool check = true;
+								if (kyori > (xAHankei + xBHankei))
+								{
+									check = false;
+								}
+								// チェック
+								if (check == false)
+								{
+									continue;
+								}
+
+								int32 random = getData().classGameStatus.getBattleIDCount();
+								int singleAttackNumber = random;
+
+								itemUnit.FlagMovingSkill = true;
+
+								//rush数だけ実行する
+								int32 rushBase = 1;
+								if (itemSkill.rush > 1) rushBase = itemSkill.rush;
+
+								ClassExecuteSkills ces;
+								ces.No = getData().classGameStatus.getDeleteCESIDCount();
+								ces.UnitID = itemUnit.ID;
+								ces.classSkill = itemSkill;
+								ces.classUnit = &itemUnit;
+
+								for (int iii = 0; iii < rushBase; iii++)
+								{
+									ClassBullets cbItemUnit;
+									cbItemUnit.No = singleAttackNumber;
+									cbItemUnit.RushNo = iii;
+									cbItemUnit.NowPosition = itemUnit.GetNowPosiCenter();
+									cbItemUnit.StartPosition = itemUnit.GetNowPosiCenter();
+									cbItemUnit.OrderPosition = itemTarget.GetNowPosiCenter();
+									if (itemSkill.speed == 0)
+									{
+										cbItemUnit.duration = 2.5;
+									}
+									else
+									{
+										cbItemUnit.duration = (itemSkill.range + itemSkill.speed - 1) / itemSkill.speed;
+									}
+									cbItemUnit.lifeTime = 0;
+
+									Vec2 ve = cbItemUnit.OrderPosition - cbItemUnit.NowPosition;
+									cbItemUnit.MoveVec = ve.normalized();
+
+									//二点間の角度を求める
+									cbItemUnit.radian = Math::Atan2((float)(cbItemUnit.OrderPosition.y - cbItemUnit.NowPosition.y),
+														(float)(cbItemUnit.OrderPosition.x - cbItemUnit.NowPosition.x));
+									cbItemUnit.degree = cbItemUnit.radian * (180 / Math::Pi);
+									cbItemUnit.initDegree = cbItemUnit.degree;
+
+									ces.ArrayClassBullet.push_back(cbItemUnit);
+								}
+
+								aces.push_back(ces);
+
+								return;
+							}
 						}
 					}
 				}
