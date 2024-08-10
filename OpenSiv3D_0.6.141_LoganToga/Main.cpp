@@ -25,7 +25,6 @@ SystemString systemString;
 MapCreator mapCreator;
 Array<Quad> columnQuads;
 Array<Quad> rowQuads;
-
 auto randomFade()
 {
 	Array<std::function<std::unique_ptr<IFade>()>> makeFadeFuncs = {
@@ -1399,7 +1398,10 @@ public:
 			}
 		}
 
-		renderTextureMenuBtn = RenderTexture{ 400,800, ColorF{0.5, 0.0} };
+		renderTextureRight = MSRenderTexture{ 400,800, ColorF{0.5, 0.0} };
+		renderTextureRight.clear(ColorF{ 0.5, 0.0 });
+
+		renderTextureMenuBtn = MSRenderTexture{ 400,800, ColorF{0.5, 0.0} };
 		renderTextureMenuBtn.clear(ColorF{ 0.5, 0.0 });
 		{
 			// レンダーターゲットを renderTextureDetail に変更する
@@ -1408,13 +1410,18 @@ public:
 			// 描画された最大のアルファ成分を保持するブレンドステート
 			const ScopedRenderStates2D blend{ MakeBlendState() };
 
-			getData().slice9.draw(Rect{ 0,0,400,800 });
-
-			for (auto&& [i, ttt] : Indexed(htMenuBtn))
 			{
-				getData().slice9.draw(std::get<1>(ttt));
-				getData().fontLine(systemString.strategyMenu[i]).draw(std::get<1>(ttt).stretched(-10));
+				getData().slice9.draw(Rect{ 0,0,400,800 });
+
+				for (auto&& [i, ttt] : Indexed(htMenuBtn))
+				{
+					getData().slice9.draw(std::get<1>(ttt));
+					getData().fontLine(systemString.strategyMenu[i]).draw(std::get<1>(ttt).stretched(-10));
+				}
 			}
+
+			Graphics2D::Flush();
+			renderTextureMenuBtn.resolve();
 		}
 
 		//初期化
@@ -1431,6 +1438,7 @@ public:
 
 			vbar001.emplace(SasaGUI::Orientation::Vertical);;
 			vbar002.emplace(SasaGUI::Orientation::Vertical);;
+			vbarRight.emplace(SasaGUI::Orientation::Vertical);;
 			vbar001.value().updateLayout({
 				(int32)(432 + 500 + SasaGUI::ScrollBar::Thickness), (int32)(16),
 				SasaGUI::ScrollBar::Thickness,
@@ -1441,8 +1449,14 @@ public:
 				SasaGUI::ScrollBar::Thickness,
 				(int32)500
 			});
+			vbarRight.value().updateLayout({
+				(int32)(1396 + SasaGUI::ScrollBar::Thickness), (int32)16,
+				SasaGUI::ScrollBar::Thickness,
+				(int32)800
+			});
 			vbar001.value().updateConstraints(0.0, 2000.0, Scene::Height());
 			vbar002.value().updateConstraints(0.0, 2000.0, Scene::Height());
+			vbarRight.value().updateConstraints(0.0, 2000.0, Scene::Height());
 		}
 	}
 	// 更新関数（オプション）
@@ -1456,17 +1470,19 @@ public:
 		{
 			for (auto& ttt : htMenuBtn)
 			{
-				if (std::get<1>(ttt).mouseOver())
+				const Quad Button1Quad = projection.transformRect(std::get<1>(ttt));
+				if (Button1Quad.mouseOver())
 				{
 					for (auto&& [i, re] : htMenuBtnDisplay)
 						htMenuBtnDisplay[i] = false;
 					htMenuBtnDisplay[std::get<0>(ttt)] = true;
 				}
+
 				switch (std::get<0>(ttt))
 				{
 				case 9:
 				{
-					if (std::get<1>(ttt).leftClicked() == true)
+					if (Button1Quad.leftClicked() == true)
 					{
 						//バトル前準備
 						processBeforeBattle();
@@ -1486,6 +1502,7 @@ public:
 				rectExecuteBtn = Rect{ 432, 516, 500, 500 };
 			}
 
+			displayConscriptionUnitInfo();
 			//徴兵処理
 			conscriptionUnit();
 			//ユニット表示エリアでスクロールした時、位置を調整する
@@ -1494,6 +1511,8 @@ public:
 			fixDisplayUnitConscriptionUnit();
 			//ユニットをクリック時に、その他のユニットの対象フラグを初期化する
 			resetFlagsUnit();
+
+			displayUnitInfo();
 			//スクロールバー関係
 			processBar();
 		}
@@ -1552,7 +1571,18 @@ public:
 		}
 
 		//強制表示メニュー
-		renderTextureMenuBtn.draw(16, 16);
+		{
+			const ScopedRenderStates2D sampler{ SamplerState::ClampAniso };
+			Shader::QuadWarp(TargetQuad, renderTextureMenuBtn);
+		}
+
+		//右詳細
+		{
+			const ScopedRenderStates2D sampler{ SamplerState::ClampAniso };
+			Shader::QuadWarp(TargetQuadRight, renderTextureRight);
+		}
+		if (flagVbarRight)
+			vbarRight.value().draw();
 
 		for (auto& ttt : htMenuBtnDisplay)
 		{
@@ -1651,15 +1681,97 @@ private:
 			}
 		}
 	}
+	/// @brief ユニットをマウスオーバー時に、そのユニットの情報を表示する
+	void displayUnitInfo()
+	{
+		for (auto& nowArrayPlayerUnit : getData().classGameStatus.arrayPlayerUnit)
+		{
+			for (auto& aaa : nowArrayPlayerUnit.ListClassUnit)
+			{
+				if (aaa.rectDetailStrategyMenu.mouseOver() == true)
+				{
+					writeRenderRight(aaa);
+					flagVbarRight = true;
+				}
+			}
+		}
+	}
+	void displayConscriptionUnitInfo()
+	{
+		for (auto& nowHtRectPlusUnit : getData().classGameStatus.arrayClassUnit)
+		{
+			if (nowHtRectPlusUnit.rectExecuteBtnStrategyMenu.mouseOver() == true)
+			{
+				writeRenderRight(nowHtRectPlusUnit);
+				flagVbarRight = true;
+			}
+		}
+	}
+	void writeRenderRight(ClassUnit& nowHtRectPlusUnit)
+	{
+		{
+			// レンダーターゲットを tempRight に変更する
+			const ScopedRenderTarget2D target{ tempRight.clear(ColorF{0.5, 0.0}) };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			String temp = nowHtRectPlusUnit.Name + U"\r\n" + Format(nowHtRectPlusUnit.Attack);
+
+			getData().fontLine(temp).draw(12, 12);
+
+			Graphics2D::Flush();
+			tempRight.resolve();
+		}
+
+		{
+			// レンダーターゲットを renderTextureRight に変更する
+			const ScopedRenderTarget2D target{ renderTextureRight.clear(ColorF{0.5, 0.0})};
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			getData().slice9.draw(Rect{ 0,0,400,800 });
+
+			tempRight.draw();
+
+			Graphics2D::Flush();
+			renderTextureRight.resolve();
+		}
+	}
 	/// @brief スクロールバー関係
 	void processBar()
 	{
+		double mw = Mouse::Wheel();
+
 		if (arrayRectMenuBack[0].mouseOver() == true)
 			vbar001.value().scroll(Mouse::Wheel() * 60);
 		if (rectExecuteBtn.mouseOver() == true)
 			vbar002.value().scroll(Mouse::Wheel() * 60);
+
+		if (flagVbarRight && TargetQuadRight.mouseOver() == true)
+		{
+			vbarRight.value().scroll(Mouse::Wheel() * 60);
+
+			{
+				// レンダーターゲットを renderTextureDetail に変更する
+				const ScopedRenderTarget2D target{ renderTextureRight.clear(ColorF{0.5, 0.0}) };
+
+				// 描画された最大のアルファ成分を保持するブレンドステート
+				const ScopedRenderStates2D blend{ MakeBlendState() };
+
+				getData().slice9.draw(Rect{ 0,0,400,800 });
+
+				tempRight(0, vbarRight.value().value(), 400, 800).draw();
+
+				Graphics2D::Flush();
+				renderTextureRight.resolve();
+			}
+		}
+
 		vbar001.value().update();
 		vbar002.value().update();
+		vbarRight.value().update();
 	}
 	/// @brief ユニット表示エリアでスクロールした時、位置を調整する
 	void fixDisplayUnit()
@@ -2022,14 +2134,27 @@ private:
 	/// @brief 画面下部の詳細実行枠
 	Rect rectExecuteBtn{ 0,0,0,0 };
 
+	VertexShader vs;
+	PixelShader ps;
+	const Rect BaseRect{ 0,0, 400, 800 };
+	const Quad TargetQuad{ Vec2{ 0, 0 },Vec2{ 400, 64 },Vec2{ 400, 800 },Vec2{ 0, 900 } };
+	const Mat3x3 projection = Mat3x3::Homography(BaseRect.asQuad(), TargetQuad);
+	const Rect BaseRectRight{ 932,0, 400, 800 };
+	const Quad TargetQuadRight{ Vec2{ 996, 64 },Vec2{ 1396, 0 },Vec2{ 1396, 900 },Vec2{ 996, 800 } };
+	const Mat3x3 projectionRight = Mat3x3::Homography(BaseRectRight.asQuad(), TargetQuadRight);
+
 	Array<std::tuple<int32, Rect>> htMenuBtn;
-	RenderTexture renderTextureMenuBtn;
+	MSRenderTexture renderTextureMenuBtn;
+	MSRenderTexture renderTextureRight;
+	MSRenderTexture tempRight = MSRenderTexture{ 400,1600, ColorF{0.5, 0.0} };
 
 	HashTable<int32, bool> htMenuBtnDisplay;
 	std::unique_ptr<IFade> m_fadeInFunction = randomFade();
 	std::unique_ptr<IFade> m_fadeOutFunction = randomFade();
 	Optional<SasaGUI::ScrollBar> vbar001;
 	Optional<SasaGUI::ScrollBar> vbar002;
+	Optional<SasaGUI::ScrollBar> vbarRight;
+	bool flagVbarRight = false;
 	bool Message001 = false;
 	FormBuyDisplayStatus formBuyDisplayStatus = FormBuyDisplayStatus::Normal;
 	s3dx::SceneMessageBoxImpl sceneMessageBoxImpl;
