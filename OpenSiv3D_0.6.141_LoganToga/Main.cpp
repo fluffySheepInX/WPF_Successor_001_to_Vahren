@@ -350,50 +350,43 @@ int32 BattleMoveAStarMyUnits(Array<ClassHorizontalUnit>& target,
 			break;
 
 		if (aaa.FlagBuilding == true)
-		{
 			continue;
-		}
+
 		for (auto& listClassUnit : aaa.ListClassUnit)
 		{
 			if (abort == true)
-			{
 				break;
-			}
-
 			if (listClassUnit.IsBuilding == true && listClassUnit.mapTipObjectType == MapTipObjectType::WALL2)
-			{
 				continue;
-			}
+			if (listClassUnit.IsBuilding == true && listClassUnit.mapTipObjectType == MapTipObjectType::GATE)
+				continue;
 			if (listClassUnit.IsBattleEnable == false)
-			{
 				continue;
-			}
 			if (listClassUnit.FlagMoving == true)
-			{
 				continue;
-			}
 			if (listClassUnit.FlagMovingEnd == false)
-			{
 				continue;
-			}
-			Array<Point> listRoot;
+			//これをすると動かなくなる
+			//if (listClassUnit.FlagMove == false)
+			//	continue;
+			if (listClassUnit.FlagMoveAI == false)
+				continue;
 
-			//まず現在のマップチップを取得
-			s3d::Optional<Size> nowIndex = mapCreator.ToIndex(listClassUnit.GetNowPosiCenter(), columnQuads, rowQuads);
-			if (nowIndex.has_value() == false)
-			{
-				continue;
-			}
+			Array<Point> listRoot;
 
 			//指定のマップチップを取得
 			s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(listClassUnit.orderPosiLeft, columnQuads, rowQuads);
 			if (nowIndexEnemy.has_value() == false)
-			{
 				continue;
-			}
 
 			////現在地を開く
 			ClassAStarManager classAStarManager(nowIndexEnemy.value().x, nowIndexEnemy.value().y);
+
+			//現在のマップチップを取得
+			s3d::Optional<Size> nowIndex = mapCreator.ToIndex(listClassUnit.GetNowPosiCenter(), columnQuads, rowQuads);
+			if (nowIndex.has_value() == false)
+				continue;
+
 			Optional<ClassAStar*> startAstar = classAStarManager.OpenOne(nowIndex.value().x, nowIndex.value().y, 0, nullptr, mapCreator.N);
 			MicrosecClock mc;
 			////移動経路取得
@@ -452,6 +445,7 @@ int32 BattleMoveAStarMyUnits(Array<ClassHorizontalUnit>& target,
 			{
 				classGameStatus.aiRoot[listClassUnit.ID] = listRoot;
 				debugRoot.push_back(listRoot);
+				listClassUnit.FlagMoveAI = false;
 			}
 		}
 	}
@@ -1726,7 +1720,7 @@ private:
 
 		{
 			// レンダーターゲットを renderTextureRight に変更する
-			const ScopedRenderTarget2D target{ renderTextureRight.clear(ColorF{0.5, 0.0})};
+			const ScopedRenderTarget2D target{ renderTextureRight.clear(ColorF{0.5, 0.0}) };
 
 			// 描画された最大のアルファ成分を保持するブレンドステート
 			const ScopedRenderStates2D blend{ MakeBlendState() };
@@ -2182,9 +2176,6 @@ public:
 		Grid<int32> gridWork(Size{ mapCreator.N, mapCreator.N });
 		mapCreator.grid = gridWork;
 
-		//始点設定
-		viewPos = { 0,0 };
-
 		int32 counterXSor = 0;
 		int32 counterYSor = 0;
 		bool flagSor = false;
@@ -2236,6 +2227,10 @@ public:
 			counterXDef++;
 		}
 
+		//始点設定
+		viewPos = mapCreator.ToIndex(Point(counterXSor, counterYSor), columnQuads, rowQuads).value();
+		camera.setCenter(viewPos);
+
 		//ユニットの初期位置設定
 		bool ran = true;
 		for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
@@ -2249,7 +2244,7 @@ public:
 					Vec2 reV = mapCreator.ToTileBottomCenter(pt, mapCreator.N);
 					if (ran == true)
 					{
-						itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(-50, 50));
+						itemUnit.nowPosiLeft = Vec2(reV.x + Random(-50, 50), reV.y + Random(0, 50));
 					}
 					else
 					{
@@ -2461,7 +2456,7 @@ public:
 					cursPos = Cursor::Pos();
 				}
 
-				//部隊を選択状態にする。もしくは既に選択状態なら移動させる
+				//部隊を選択状態にする。もしくは既に選択状態なら経路を算出する
 				if (MouseR.up() == true)
 				{
 					Point start = cursPos;
@@ -2488,24 +2483,17 @@ public:
 					{
 						Array<ClassUnit*> lisUnit;
 						for (auto& target : *lisClassHorizontalUnit)
-						{
 							for (auto& unit : target.ListClassUnit)
-							{
 								if (unit.FlagMove == true)
-								{
 									lisUnit.push_back(&unit);
-								}
-							}
-						}
 
 						if (lisUnit.size() == 1)
 						{
 							ClassUnit* cu = lisUnit[0];
 							// 移動先の座標算出
-							cu->orderPosiLeft = end;
 							Vec2 nor = Vec2(end - start).normalized();
 							Vec2 moved = cu->nowPosiLeft + Vec2(nor.x * cu->Speed, nor.y * cu->Speed);
-							//マップチップ座標に変換している
+							// 移動先が有効かどうかチェック || 本来は経路探索で移動可能かどうか調べるべき
 							auto index = mapCreator.ToIndex(moved, columnQuads, rowQuads);
 							if (not index.has_value())
 							{
@@ -2520,108 +2508,89 @@ public:
 							cu->FlagMoving = true;
 						}
 
-						int32 counterLisClassHorizontalUnit = 0;
-						for (auto& target : *lisClassHorizontalUnit)
+						for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(*lisClassHorizontalUnit))
 						{
-							Array<ClassUnit*> re;
-							for (auto& unit : target.ListClassUnit)
-							{
+							Array<ClassUnit*> target;
+							for (auto& unit : loopLisClassHorizontalUnit.ListClassUnit)
 								if (unit.FlagMove == true)
-								{
-									re.push_back(&unit);
-								}
-							}
-							if (re.size() == 0)
-							{
-								counterLisClassHorizontalUnit++;
+									target.push_back(&unit);
+
+							if (target.size() == 0)
 								continue;
-							}
 
 							//その部隊の人数を取得
-							int32 unitCount = re.size();
+							int32 unitCount = target.size();
 
 							//商の数
-							int32 result = unitCount / 2;
+							int32 result = (unitCount - 1) / 2;
 
-							//角度
-							// X軸との角度を計算
-							//θ'=直線とx軸のなす角度
+							// 角度_X軸との角度を計算_θ'=直線とx軸のなす角度
 							double angle2 = Math::Atan2(end.y - start.y,
 												   end.x - start.x);
 							//θ
 							double angle = Math::Pi / 2 - angle2;
 
 							//移動フラグが立っているユニットだけ、繰り返す
-							//偶奇判定
-							if (unitCount % 2 == 1)
+							if (unitCount % 2 == 1)//偶奇判定
 							{
-								////奇数の場合
-								int32 counter = 0;
-								for (auto& unit : re)
+								for (auto&& [ii, unit] : Indexed(target))
 								{
 									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
 									double xPos = end.x
 										+ (
-											(counter - (result))
+											(ii - (result))
 											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
 											)
 										-
-										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
 									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
 									double yPos = end.y
 										- (
-										(counter - (result))
+										(ii - (result))
 										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
 
 										)
 										-
-										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
 
-									//移動
 									unit->orderPosiLeft = Vec2(xPos, yPos);
 									unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
 									unit->FlagMove = false;
-									//unit->FlagMoving = true;
+									unit->FlagMoveAI = true;
 
-									counter++;
+									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
 								}
 							}
 							else
 							{
-								int32 counter = 0;
-								for (auto& unit : re)
+								for (auto&& [ii, unit] : Indexed(target))
 								{
 									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
 									double xPos = end.x
 										+ (
-											(counter - (result))
+											(ii - (result))
 											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
 											)
 										-
-										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
 									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
 									double yPos = end.y
 										- (
-										(counter - (result))
+										(ii - (result))
 										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
 
 										)
 										-
-										(counterLisClassHorizontalUnit * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
 
-									//移動
 									unit->orderPosiLeft = Vec2(xPos, yPos);
 									unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									//unit->vecMove = Vec2(unit->orderPosiLeft - unit->nowPosiLeft).normalized();
 									unit->FlagMove = false;
-									//unit->FlagMoving = true;
+									unit->FlagMoveAI = true;
 
-									counter++;
+									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
 								}
 							}
-
-							counterLisClassHorizontalUnit++;
 						}
 						getData().classGameStatus.IsBattleMove = false;
 
@@ -2637,6 +2606,7 @@ public:
 
 						abortMyUnits = false;
 
+						//経路算出
 						taskMyUnits = Async(BattleMoveAStarMyUnits,
 										std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
 										std::ref(getData().classGameStatus.classBattle.defUnitGroup),
@@ -2835,13 +2805,13 @@ public:
 					for (auto& itemUnit : item.ListClassUnit)
 					{
 						if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::WALL2)
-						{
 							continue;
-						}
+						if (itemUnit.IsBuilding == true && itemUnit.mapTipObjectType == MapTipObjectType::GATE)
+							continue;
 						if (itemUnit.IsBattleEnable == false)
-						{
 							continue;
-						}
+
+						//実際に動く処理
 						if (itemUnit.FlagMoving == true)
 						{
 							itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
@@ -2851,9 +2821,7 @@ public:
 							double next_distanceX = current_distanceX - (itemUnit.vecMove.x * (itemUnit.Speed / 100));
 							double next_distanceY = current_distanceY - (itemUnit.vecMove.y * (itemUnit.Speed / 100));
 							if (next_distanceX * next_distanceX + next_distanceY * next_distanceY >= current_distanceX * current_distanceX + current_distanceY * current_distanceY)
-							{
 								itemUnit.FlagMoving = false;
-							}
 							continue;
 
 							//Circle c = { itemUnit.nowPosiLeft ,1 };
@@ -2870,10 +2838,11 @@ public:
 							//}
 							//continue;
 						}
+
+
 						if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
-						{
 							continue;
-						}
+
 						//潜在的バグ有り
 						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
 						{
@@ -2916,13 +2885,9 @@ public:
 
 						Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
 						if (hhh.x == 0 && hhh.y == 0)
-						{
 							itemUnit.vecMove = { 0,0 };
-						}
 						else
-						{
 							itemUnit.vecMove = hhh.normalized();
-						}
 						itemUnit.FlagMoving = true;
 						itemUnit.FlagMovingEnd = false;
 					}
@@ -3803,6 +3768,8 @@ public:
 					String tip = getData().classGameStatus.classBattle.classMapBattle.value().mapData[index.x][index.y].tip;
 					TextureAsset(tip + U".png").draw(Arg::bottomCenter = pos);
 
+					//PutText(U"{}"_fmt(index), pos.movedBy(0, -mapCreator.TileOffset.y - 15));
+					//PutText(U"{}"_fmt(pos), pos.movedBy(0, -mapCreator.TileOffset.y - 0));
 				}
 			}
 
@@ -3910,6 +3877,12 @@ public:
 						{
 							TextureAsset(itemUnit.Image).drawAt(itemUnit.GetNowPosiCenter());
 						}
+
+						//s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(itemUnit.orderPosiLeft, columnQuads, rowQuads);
+						//if (nowIndexEnemy.has_value() == false)
+						//	continue;
+						//Circle ccccc = Circle{ Arg::bottomCenter = nowIndexEnemy.value(),30 };
+						//ccccc.draw(Palette::Blue);
 					}
 				}
 			}
@@ -4115,6 +4088,16 @@ public:
 
 		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
 		renderTextureSkillUP.draw(0, Scene::Size().y - 320 - 30);
+
+		//ClearPrint();
+		////for (auto& target : getData().classGameStatus.classBattle.sortieUnitGroup)
+		////	for (auto& unit : target.ListClassUnit)
+		////		if (unit.FlagMove == true)
+		////			Print << Format(unit.ID) + U":" + unit.NameTag;
+		//for (auto& target : getData().classGameStatus.classBattle.sortieUnitGroup)
+		//	for (auto& unit : target.ListClassUnit)
+		//		if (unit.FlagMoveAI == true)
+		//			Print << U"【" + Format(unit.ID) + U":" + unit.NameTag;
 
 		switch (battleStatus)
 		{

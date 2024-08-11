@@ -2,23 +2,23 @@
   "enemy": [
     {
       "name": "gho0",
-      "value": "ghostFireTest,ghostFireTest,IlkaySpellcaster"
+      "value": "ghostFireTest"
     },
     {
       "name": "gho1",
-      "value": "IlkaySpellcaster,ghostFireTest,ghostFireTest"
+      "value": "IlkaySpellcaster"
     },
     {
       "name": "Ilk0",
-      "value": "IlkaySpellcaster,ghostFireTest,IlkaySpellcaster"
+      "value": "IlkaySpellcaster"
     },
     {
       "name": "Ilk1",
-      "value": "ghostFireTest,IlkaySpellcaster,ghostFireTest"
+      "value": "ghostFireTest"
     },
     {
       "name": "Ilk2",
-      "value": "IlkaySpellcaster,IlkaySpellcaster,IlkaySpellcaster"
+      "value": "IlkaySpellcaster"
     }
   ]
 }

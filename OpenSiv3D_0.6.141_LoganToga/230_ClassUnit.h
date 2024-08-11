@@ -270,9 +270,14 @@ public:
 	String MoveType;
 
 	// FlagMove
+	// これを対象としますよ、というフラグ
 	bool FlagMove = false;
 
+	// 経路探索の対象としますよ、というフラグ
+	bool FlagMoveAI = false;
+
 	// FlagMoving
+	//実際に座標を動かす処理に突入する為のフラグ
 	bool FlagMoving = false;
 
 	// FlagMoving
