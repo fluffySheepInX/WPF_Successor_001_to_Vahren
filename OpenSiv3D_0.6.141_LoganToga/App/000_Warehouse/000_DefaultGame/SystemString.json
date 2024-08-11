@@ -27,7 +27,20 @@
       "TopMenuTitle": "TopMenuTitle",
       "Pause": "Pauseしました。復帰はOKボタン押下でします",
       "PauseYokoku": "Pauseします",
-      "BackTitle": "タイトル画面へ戻ります"
+      "BackTitle": "タイトル画面へ戻ります",
+      "StatusName": "名前",
+      "StatusRace": "種族",
+      "StatusPrice": "値段",
+      "StatusHp": "体力",
+      "StatusMp": "技術値",
+      "StatusAttack": "攻撃力",
+      "StatusDefense": "防御力",
+      "StatusMagic": "魔力",
+      "StatusMagDef": "魔防御",
+      "StatusSpeed": "速さ",
+      "StatusMove": "機動力",
+      "StatusSkill": "スキル名",
+      "StatusSetumei": "説明"
     }
   ]
 }

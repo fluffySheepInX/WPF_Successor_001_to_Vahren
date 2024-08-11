@@ -3,6 +3,7 @@
     {
       "name_tag": "LineInfantryM14",
       "name": "M14 Infantry Rifle",
+      "help": "平原戦を確実に勝つ為の津波であった。\r\n両脇を妻帯者で固め、中央に若者を据えて強力に前進する。\r\n勝つ為の武装は整えた。後は喇叭の音を望むのみ。",
       "race": "human",
       "image": "chipGene001.png",
       "friend": "LineInfantryM14",
@@ -16,7 +17,7 @@
       "cost": "10",
       "medical": "0",
       "hasExp": "0",
-      "hp": "7",
+      "hp": "700",
       "mp": "100",
       "attack": "55",
       "defense": "25",

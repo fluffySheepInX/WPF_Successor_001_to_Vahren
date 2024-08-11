@@ -585,6 +585,19 @@ public:
 				ss.BuyMessage001 = value[U"BuyMessage001"].get<String>();
 				ss.SelectCharMessage001 = value[U"SelectCharMessage001"].get<String>();
 				ss.StorySkip = value[U"StorySkip"].get<String>();
+				ss.StatusName = value[U"StatusName"].get<String>();
+				ss.StatusRace = value[U"StatusRace"].get<String>();
+				ss.StatusPrice = value[U"StatusPrice"].get<String>();
+				ss.StatusHp = value[U"StatusHp"].get<String>();
+				ss.StatusMp = value[U"StatusMp"].get<String>();
+				ss.StatusAttack = value[U"StatusAttack"].get<String>();
+				ss.StatusDefense = value[U"StatusDefense"].get<String>();
+				ss.StatusMagic = value[U"StatusMagic"].get<String>();
+				ss.StatusMagDef = value[U"StatusMagDef"].get<String>();
+				ss.StatusSpeed = value[U"StatusSpeed"].get<String>();
+				ss.StatusMove = value[U"StatusMove"].get<String>();
+				ss.StatusSkill = value[U"StatusSkill"].get<String>();
+				ss.StatusSetumei = value[U"StatusSetumei"].get<String>();
 				systemString = ss;
 			}
 		}
@@ -1707,9 +1720,28 @@ private:
 			// 描画された最大のアルファ成分を保持するブレンドステート
 			const ScopedRenderStates2D blend{ MakeBlendState() };
 
-			String temp = nowHtRectPlusUnit.Name + U"\r\n" + Format(nowHtRectPlusUnit.Attack);
+			String temp = U"【" + systemString.StatusName + U"】" + nowHtRectPlusUnit.Name + U"\r\n"
+				+ U"【" + systemString.StatusPrice + U"】" + Format(nowHtRectPlusUnit.Price) + U"\r\n"
+				+ U"【" + systemString.StatusRace + U"】" + Format(nowHtRectPlusUnit.Race) + U"\r\n"
+				+ U"【" + systemString.StatusHp + U"】" + Format(nowHtRectPlusUnit.Hp) + U"\r\n"
+				+ U"【" + systemString.StatusMp + U"】" + Format(nowHtRectPlusUnit.Mp) + U"\r\n"
+				+ U"【" + systemString.StatusMagic + U"】" + Format(nowHtRectPlusUnit.Magic) + U"\r\n"
+				+ U"【" + systemString.StatusMove + U"】" + Format(nowHtRectPlusUnit.Move) + U"\r\n"
+				+ U"【" + systemString.StatusAttack + U"】" + Format(nowHtRectPlusUnit.Attack) + U"\r\n"
+				+ U"【" + systemString.StatusDefense + U"】" + Format(nowHtRectPlusUnit.Defense) + U"\r\n"
+				+ U"【" + systemString.StatusSpeed + U"】" + Format(nowHtRectPlusUnit.Speed) + U"\r\n"
+				+ U"【" + systemString.StatusSetumei + U"】" + U"\r\n"
+				;
 
 			getData().fontLine(temp).draw(12, 12);
+
+			while (not getData().fontLine(nowHtRectPlusUnit.Help).draw(BaseRectRightSetumei.stretched(-12), ColorF{ 0.0 }))
+			{
+				BaseRectRightSetumei.h = BaseRectRightSetumei.h + 12;
+			}
+			BaseRectRightSetumei.y = getData().fontLine(temp).region().h + 12;
+			getData().slice9.draw(BaseRectRightSetumei);
+			getData().fontLine(nowHtRectPlusUnit.Help).draw(BaseRectRightSetumei.stretched(-12));
 
 			Graphics2D::Flush();
 			tempRight.resolve();
@@ -2133,6 +2165,7 @@ private:
 	const Rect BaseRectRight{ 932,0, 400, 800 };
 	const Quad TargetQuadRight{ Vec2{ 996, 64 },Vec2{ 1396, 0 },Vec2{ 1396, 900 },Vec2{ 996, 800 } };
 	const Mat3x3 projectionRight = Mat3x3::Homography(BaseRectRight.asQuad(), TargetQuadRight);
+	Rect BaseRectRightSetumei{ 0,0, 400, 0 };
 
 	Array<std::tuple<int32, Rect>> htMenuBtn;
 	MSRenderTexture renderTextureMenuBtn;
@@ -4535,12 +4568,20 @@ void Init(App& manager)
 			cu.Name = value[U"name"].getString();
 			cu.Image = value[U"image"].getString();
 			cu.Hp = Parse<int32>(value[U"hp"].getString());
+			cu.Mp = Parse<int32>(value[U"mp"].getString());
 			cu.HpMAX = cu.Hp;
 			cu.Attack = Parse<int32>(value[U"attack"].getString());
 			cu.Defense = Parse<int32>(value[U"defense"].getString());
+			cu.Magic = Parse<int32>(value[U"magic"].getString());
+			cu.MagDef = Parse<int32>(value[U"magDef"].getString());
 			cu.Speed = Parse<double>(value[U"speed"].getString());
 			cu.Price = Parse<int32>(value[U"price"].getString());
 			cu.Move = Parse<int32>(value[U"move"].getString());
+			if (value.hasElement(U"help") == true)
+			{
+				cu.Help = (value[U"help"].getString());
+			}
+			cu.Race = (value[U"race"].getString());
 			String sNa = value[U"skill"].getString();
 			if (sNa.contains(',') == true)
 			{

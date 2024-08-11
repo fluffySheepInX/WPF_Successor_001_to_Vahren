@@ -27,4 +27,17 @@ public:
 	String SelectCharMessage001;
 	String StorySkip;
 
+	String StatusName;
+	String StatusRace;
+	String StatusPrice;
+	String StatusHp;
+	String StatusMp;
+	String StatusAttack;
+	String StatusDefense;
+	String StatusMagic;
+	String StatusMagDef;
+	String StatusSpeed;
+	String StatusMove;
+	String StatusSkill;
+	String StatusSetumei;
 };
