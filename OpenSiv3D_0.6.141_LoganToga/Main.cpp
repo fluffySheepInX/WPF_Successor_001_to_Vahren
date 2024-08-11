@@ -2491,9 +2491,6 @@ public:
 					Point end = Cursor::Pos();
 
 					//ターゲットを抽出
-
-					//TODO この時、enableがfalseのものを除外すること
-
 					Array<ClassHorizontalUnit> lisClassHorizontalUnit;
 					switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
 					{
@@ -2555,10 +2552,11 @@ public:
 							}
 
 							//移動
-							cu->vecMove = Vec2(cu->orderPosiLeft - cu->nowPosiLeft).normalized();
-							cu->orderPosiLeft = end;
-							cu->FlagMove = false;
-							cu->FlagMoving = true;
+							ClassUnit& cuu = GetCU(cu->ID);
+							cuu.vecMove = Vec2(cu->orderPosiLeft - cu->nowPosiLeft).normalized();
+							cuu.orderPosiLeft = end;
+							cuu.FlagMove = false;
+							cuu.FlagMoving = true;
 						}
 
 						//FlagMove == trueのものだけで構成する
