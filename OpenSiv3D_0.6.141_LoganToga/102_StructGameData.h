@@ -31,6 +31,6 @@ struct GameData {
 	ClassPower selectClassPower;
 	String NovelPower = U"";
 	int32 NovelNumber = 0;
-	int32 Money = 0;
+	long Money = 0;
 	int32 Wave = 0;
 };

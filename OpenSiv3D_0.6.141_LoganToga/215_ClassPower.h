@@ -10,6 +10,6 @@ public:
 	String Text;
 	String Diff;
 	RectF RectF;
-	int32 Money = 0;
+	long Money = 0;
 	int32 Wave;
 };

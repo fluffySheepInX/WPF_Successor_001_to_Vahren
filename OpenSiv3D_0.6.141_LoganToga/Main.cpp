@@ -360,15 +360,12 @@ int32 BattleMoveAStarMyUnits(Array<ClassHorizontalUnit>& target,
 				continue;
 			if (listClassUnit.IsBuilding == true && listClassUnit.mapTipObjectType == MapTipObjectType::GATE)
 				continue;
-			if (listClassUnit.IsBattleEnable == false)
+			if (listClassUnit.IsBattleEnable == false)//戦闘不能はスキップ
 				continue;
 			if (listClassUnit.FlagMoving == true)
 				continue;
 			if (listClassUnit.FlagMovingEnd == false)
 				continue;
-			//これをすると動かなくなる
-			//if (listClassUnit.FlagMove == false)
-			//	continue;
 			if (listClassUnit.FlagMoveAI == false)
 				continue;
 
@@ -2461,14 +2458,39 @@ public:
 					Point end = Cursor::Pos();
 
 					//ターゲットを抽出
-					Array<ClassHorizontalUnit>* lisClassHorizontalUnit;
+
+					//TODO この時、enableがfalseのものを除外すること
+
+					Array<ClassHorizontalUnit> lisClassHorizontalUnit;
 					switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
 					{
 					case BattleWhichIsThePlayer::Sortie:
-						lisClassHorizontalUnit = &getData().classGameStatus.classBattle.sortieUnitGroup;
-						break;
+					{
+						for (auto& temp : getData().classGameStatus.classBattle.sortieUnitGroup)
+						{
+							ClassHorizontalUnit chu;
+							for (auto& temptemp : temp.ListClassUnit)
+							{
+								if (temptemp.mapTipObjectType == MapTipObjectType::GATE)
+									continue;
+								if (temptemp.mapTipObjectType == MapTipObjectType::WALL2)
+									continue;
+
+								if (temptemp.IsBattleEnable == true)
+								{
+									chu.ListClassUnit.push_back(temptemp);
+								}
+							}
+							if (chu.ListClassUnit.size() > 0)
+							{
+								lisClassHorizontalUnit.push_back(chu);
+							}
+						}
+						//lisClassHorizontalUnit = getData().classGameStatus.classBattle.sortieUnitGroup;
+					}
+					break;
 					case BattleWhichIsThePlayer::Def:
-						lisClassHorizontalUnit = &getData().classGameStatus.classBattle.defUnitGroup;
+						lisClassHorizontalUnit = getData().classGameStatus.classBattle.defUnitGroup;
 						break;
 					case BattleWhichIsThePlayer::None:
 						//AI同士の戦いにフラグは立てない
@@ -2480,9 +2502,9 @@ public:
 					if (getData().classGameStatus.IsBattleMove == true)
 					{
 						Array<ClassUnit*> lisUnit;
-						for (auto& target : *lisClassHorizontalUnit)
+						for (auto& target : lisClassHorizontalUnit)
 							for (auto& unit : target.ListClassUnit)
-								if (unit.FlagMove == true)
+								if (unit.FlagMove == true && unit.IsBattleEnable == true)
 									lisUnit.push_back(&unit);
 
 						if (lisUnit.size() == 1)
@@ -2506,11 +2528,28 @@ public:
 							cu->FlagMoving = true;
 						}
 
-						for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(*lisClassHorizontalUnit))
+						//FlagMove == trueのものだけで構成する
+
+						Array<ClassHorizontalUnit> lisClassHorizontalUnitLoop;
+						for (auto& target : lisClassHorizontalUnit)
+						{
+							ClassHorizontalUnit chu;
+							for (auto& unit : target.ListClassUnit)
+							{
+								if (unit.FlagMove == true && unit.IsBattleEnable == true)
+									chu.ListClassUnit.push_back(unit);
+							}
+							if (chu.ListClassUnit.size() > 0)
+							{
+								lisClassHorizontalUnitLoop.push_back(chu);
+							}
+						}
+
+						for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(lisClassHorizontalUnitLoop))
 						{
 							Array<ClassUnit*> target;
 							for (auto& unit : loopLisClassHorizontalUnit.ListClassUnit)
-								if (unit.FlagMove == true)
+								if (unit.FlagMove == true && unit.IsBattleEnable == true)
 									target.push_back(&unit);
 
 							if (target.size() == 0)
@@ -2551,10 +2590,16 @@ public:
 										-
 										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
 
-									unit->orderPosiLeft = Vec2(xPos, yPos);
-									unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									unit->FlagMove = false;
-									unit->FlagMoveAI = true;
+									ClassUnit& cuu = GetCU(unit->ID);
+									cuu.orderPosiLeft = Vec2(xPos, yPos);
+									cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+									cuu.FlagMove = false;
+									cuu.FlagMoveAI = true;
+
+									//unit->orderPosiLeft = Vec2(xPos, yPos);
+									//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+									//unit->FlagMove = false;
+									//unit->FlagMoveAI = true;
 
 									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
 								}
@@ -2581,10 +2626,16 @@ public:
 										-
 										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
 
-									unit->orderPosiLeft = Vec2(xPos, yPos);
-									unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									unit->FlagMove = false;
-									unit->FlagMoveAI = true;
+									ClassUnit& cuu = GetCU(unit->ID);
+									cuu.orderPosiLeft = Vec2(xPos, yPos);
+									cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+									cuu.FlagMove = false;
+									cuu.FlagMoveAI = true;
+
+									//unit->orderPosiLeft = Vec2(xPos, yPos);
+									//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+									//unit->FlagMove = false;
+									//unit->FlagMoveAI = true;
 
 									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
 								}
@@ -2617,7 +2668,7 @@ public:
 					else
 					{
 						//範囲選択
-						for (auto& target : *lisClassHorizontalUnit)
+						for (auto& target : lisClassHorizontalUnit)
 						{
 							for (auto& unit : target.ListClassUnit)
 							{
@@ -2631,12 +2682,14 @@ public:
 										if (gnpc.x >= end.x && gnpc.x <= start.x
 											&& gnpc.y >= end.y && gnpc.y <= start.y)
 										{
-											unit.FlagMove = true;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = true;
 											getData().classGameStatus.IsBattleMove = true;
 										}
 										else
 										{
-											unit.FlagMove = false;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = false;
 										}
 									}
 									else
@@ -2645,12 +2698,14 @@ public:
 										if (gnpc.x >= end.x && gnpc.x <= start.x
 											&& gnpc.y >= start.y && gnpc.y <= end.y)
 										{
-											unit.FlagMove = true;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = true;
 											getData().classGameStatus.IsBattleMove = true;
 										}
 										else
 										{
-											unit.FlagMove = false;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = false;
 										}
 									}
 								}
@@ -2663,12 +2718,14 @@ public:
 										if (gnpc.x >= start.x && gnpc.x <= end.x
 											&& gnpc.y >= end.y && gnpc.y <= start.y)
 										{
-											unit.FlagMove = true;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = true;
 											getData().classGameStatus.IsBattleMove = true;
 										}
 										else
 										{
-											unit.FlagMove = false;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = false;
 										}
 									}
 									else
@@ -2677,12 +2734,14 @@ public:
 										if (gnpc.x >= start.x && gnpc.x <= end.x
 											&& gnpc.y >= start.y && gnpc.y <= end.y)
 										{
-											unit.FlagMove = true;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = true;
 											getData().classGameStatus.IsBattleMove = true;
 										}
 										else
 										{
-											unit.FlagMove = false;
+											ClassUnit& cuu = GetCU(unit.ID);
+											cuu.FlagMove = false;
 										}
 									}
 								}
@@ -3602,16 +3661,12 @@ public:
 					if (itemUnit.isValidBuilding() == true)
 					{
 						if (itemUnit.HPCastle <= 0)
-						{
 							itemUnit.IsBattleEnable = false;
-						}
 					}
 					else
 					{
 						if (itemUnit.Hp <= 0)
-						{
 							itemUnit.IsBattleEnable = false;
-						}
 					}
 				}
 			}
@@ -4133,6 +4188,19 @@ public:
 		m_fadeOutFunction->fade(t);
 	}
 private:
+	ClassUnit& GetCU(long ID)
+	{
+		for (auto& temp : getData().classGameStatus.classBattle.sortieUnitGroup)
+		{
+			for (auto& temptemp : temp.ListClassUnit)
+			{
+				if (temptemp.ID == ID)
+				{
+					return temptemp;
+				}
+			}
+		}
+	}
 	bool PauseFlag = false;
 	RenderTexture rtMap;
 	Array<ClassAStar*> debugAstar;
@@ -4448,7 +4516,7 @@ void Init(App& manager)
 			cp.Image = value[U"Image"].getString();
 			cp.Text = value[U"Text"].getString();
 			cp.Diff = value[U"Diff"].getString();
-			cp.Money = Parse<int32>(value[U"Money"].getString());
+			cp.Money = Parse<long>(value[U"Money"].getString());
 			cp.Wave = Parse<int32>(value[U"Wave"].getString());
 			manager.get().get()->classGameStatus.arrayClassPower.push_back(std::move(cp));
 		}
