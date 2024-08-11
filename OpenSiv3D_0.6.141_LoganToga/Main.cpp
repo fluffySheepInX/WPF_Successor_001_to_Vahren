@@ -2228,8 +2228,7 @@ public:
 		}
 
 		//始点設定
-		viewPos = mapCreator.ToIndex(Point(counterXSor, counterYSor), columnQuads, rowQuads).value();
-		camera.setCenter(viewPos);
+		viewPos = mapCreator.ToTileBottomCenter(Point(counterXSor, counterYSor), mapCreator.N);
 
 		//ユニットの初期位置設定
 		bool ran = true;
@@ -2426,8 +2425,7 @@ public:
 		{
 		case BattleStatus::Battle:
 		{
-			//カメラ移動
-			//部隊を選択状態にする。もしくは既に選択状態なら移動させる
+			//カメラ移動 || 部隊を選択状態にする。もしくは既に選択状態なら移動させる
 			{
 				const auto t = camera.createTransformer();
 
@@ -2812,6 +2810,7 @@ public:
 							continue;
 
 						//実際に動く処理
+
 						if (itemUnit.FlagMoving == true)
 						{
 							itemUnit.nowPosiLeft = itemUnit.nowPosiLeft + (itemUnit.vecMove * (itemUnit.Move / 100));
@@ -2842,6 +2841,7 @@ public:
 
 						if (getData().classGameStatus.aiRoot[itemUnit.ID].isEmpty() == true)
 							continue;
+
 
 						//潜在的バグ有り
 						if (getData().classGameStatus.aiRoot[itemUnit.ID].size() == 1)
@@ -2885,9 +2885,13 @@ public:
 
 						Vec2 hhh = itemUnit.GetOrderPosiCenter() - itemUnit.GetNowPosiCenter();
 						if (hhh.x == 0 && hhh.y == 0)
+						{
 							itemUnit.vecMove = { 0,0 };
+						}
 						else
+						{
 							itemUnit.vecMove = hhh.normalized();
+						}
 						itemUnit.FlagMoving = true;
 						itemUnit.FlagMovingEnd = false;
 					}
@@ -3707,8 +3711,7 @@ public:
 						BattleMessage001 = false;
 						battleStatus = BattleStatus::Battle;
 
-
-
+						camera.jumpTo(viewPos, camera.getTargetScale());
 					}
 				}
 			}
