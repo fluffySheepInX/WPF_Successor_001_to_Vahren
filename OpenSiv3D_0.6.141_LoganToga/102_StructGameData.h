@@ -8,6 +8,7 @@ struct GameData {
 	const Font fontNormal = Font{ FontMethod::MSDF,50, FONTJA };
 	const Font fontMini = Font{ FontMethod::MSDF,40, FONTJA };
 	const Font fontLine = Font{ FontMethod::MSDF,25, FONTJA };
+	const Font fontMiniMini = Font{ FontMethod::MSDF,12, FONTJA };
 	const GameUIToolkit::Slice9 slice9{ STRINGSLICE9000, GameUIToolkit::Slice9::Style{
 .backgroundRect = Rect{ 0, 0, 64, 64 },
 	.frameRect = Rect{ 64, 0, 64, 64 },

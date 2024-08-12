@@ -40,7 +40,8 @@
       "StatusSpeed": "速さ",
       "StatusMove": "機動力",
       "StatusSkill": "スキル名",
-      "StatusSetumei": "説明"
+      "StatusSetumei": "説明",
+      "SkillAttack": "スキル攻撃率"
     }
   ]
 }

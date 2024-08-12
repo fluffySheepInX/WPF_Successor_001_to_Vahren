@@ -598,6 +598,7 @@ public:
 				ss.StatusMove = value[U"StatusMove"].get<String>();
 				ss.StatusSkill = value[U"StatusSkill"].get<String>();
 				ss.StatusSetumei = value[U"StatusSetumei"].get<String>();
+				ss.SkillAttack = value[U"SkillAttack"].get<String>();
 				systemString = ss;
 			}
 		}
@@ -2782,6 +2783,78 @@ public:
 				}
 			}
 
+			//skill選択処理
+			{
+				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(0, Scene::Size().y - 320 - 30) };
+				for (auto&& [i, re] : Indexed(htSkill))
+				{
+					if (re.second.leftClicked())
+					{
+						bool flgEr = false;
+						for (auto it = nowSelectSkill.begin(); it != nowSelectSkill.end(); ++it)
+						{
+							if (it->contains(re.first))
+							{
+								nowSelectSkill.erase(it);
+								flgEr = true;
+								break;
+							}
+						}
+						nowSelectSkill.push_back(re.first);
+						{
+							const ScopedRenderTarget2D target{ renderTextureSkillUP.clear(ColorF{ 0.5, 0.0, 0.0, 0.0 }) };
+
+							// 描画された最大のアルファ成分を保持するブレンドステート
+							const ScopedRenderStates2D blend{ MakeBlendState() };
+
+							re.second.drawFrame(2, 0, Palette::Red);
+						}
+					}
+					if (re.second.mouseOver())
+					{
+						flagDisplaySkillSetumei = true;
+						nowSelectSkillSetumei = U"";
+						//スキル説明を書く
+						for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+						{
+							if (!item.FlagBuilding &&
+								!item.ListClassUnit.empty())
+								for (auto& itemUnit : item.ListClassUnit)
+								{
+									for (auto& itemSkill : itemUnit.Skill)
+									{
+										if (itemSkill.nameTag == re.first)
+										{
+											nowSelectSkillSetumei = itemSkill.name + U"\r\n"
+												+ itemSkill.help + U"\r\n"
+												+ systemString.SkillAttack + U":" + Format(itemSkill.str);
+											;
+											break;
+										}
+									}
+									if (nowSelectSkillSetumei != U"")
+										break;
+								}
+							if (nowSelectSkillSetumei != U"")
+								break;
+						}
+
+						nowSelectSkillSetumei = U"~~~Skill~~~\r\n" + nowSelectSkillSetumei;
+
+						while (not getData().fontMiniMini(nowSelectSkillSetumei).draw(rectSkillSetumei.stretched(-12), ColorF{ 0.0 }))
+						{
+							rectSkillSetumei.h = rectSkillSetumei.h + 12;
+						}
+						break;
+					}
+					else
+					{
+						flagDisplaySkillSetumei = false;
+						nowSelectSkillSetumei = U"";
+					}
+				}
+			}
+
 			//pause処理
 			{
 				if (KeySpace.down())
@@ -3651,39 +3724,6 @@ public:
 				m_Battle_enemy_skills.remove_if([&](const ClassExecuteSkills& a) { return a.ArrayClassBullet.size() == 0; });
 			}
 
-			//skill選択処理
-			{
-				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(0, Scene::Size().y - 320 - 30) };
-				for (auto&& [i, re] : Indexed(htSkill))
-				{
-					if (re.second.leftClicked())
-					{
-						bool flgEr = false;
-						for (auto it = nowSelectSkill.begin(); it != nowSelectSkill.end(); ++it)
-						{
-							if (it->contains(re.first))
-							{
-								nowSelectSkill.erase(it);
-								flgEr = true;
-								break;
-							}
-						}
-						nowSelectSkill.push_back(re.first);
-						{
-							const ScopedRenderTarget2D target{ renderTextureSkillUP.clear(ColorF{ 0.5, 0.0, 0.0, 0.0 }) };
-
-							// 描画された最大のアルファ成分を保持するブレンドステート
-							const ScopedRenderStates2D blend{ MakeBlendState() };
-
-							re.second.drawFrame(2, 0, Palette::Red);
-						}
-						//if (flgEr == false)
-						//{
-						//}
-					}
-				}
-			}
-
 			//体力が無くなったunit削除処理
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
@@ -4177,6 +4217,11 @@ public:
 
 		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
 		renderTextureSkillUP.draw(0, Scene::Size().y - 320 - 30);
+		if (flagDisplaySkillSetumei == true)
+		{
+			getData().slice9.draw(rectSkillSetumei);
+			getData().fontMiniMini(nowSelectSkillSetumei).draw(rectSkillSetumei.stretched(-12));
+		}
 
 		//ClearPrint();
 		////for (auto& target : getData().classGameStatus.classBattle.sortieUnitGroup)
@@ -4247,6 +4292,9 @@ private:
 	RenderTexture renderTextureSkillUP;
 	HashTable<String, Rect> htSkill;
 	Array<String> nowSelectSkill;
+	bool flagDisplaySkillSetumei;
+	String nowSelectSkillSetumei = U"";
+	Rect rectSkillSetumei = { 0,0,320,320 };
 
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
@@ -4604,9 +4652,9 @@ void Init(App& manager)
 		for (const auto& [key, value] : skillData[U"Skill"]) {
 			ClassSkill cu;
 			if (value.hasElement(U"sortkey") == true)
-			{
 				cu.sortKey = Parse<int32>(value[U"sortkey"].get<String>());
-			}
+			if (value.hasElement(U"help") == true)
+				cu.help = ClassStaticCommonMethod::ReplaceNewLine(value[U"help"].get<String>());
 
 			{
 				if (value[U"func"].get<String>() == U"missile")
@@ -4628,15 +4676,9 @@ void Init(App& manager)
 					cu.MoveType = MoveType::swing;
 				}
 			}
-			{
-				if (value.hasElement(U"Easing") == true)
-				{
-					if (value[U"Easing"].get<String>() == U"easeOutExpo")
-					{
-						cu.Easing = SkillEasing::easeOutExpo;
-					}
-				}
-			}
+			if (value.hasElement(U"Easing") == true)
+				if (value[U"Easing"].get<String>() == U"easeOutExpo")
+					cu.Easing = SkillEasing::easeOutExpo;
 			if (value.hasElement(U"EasingRatio") == true)
 			{
 				cu.EasingRatio = Parse<int32>(value[U"EasingRatio"].get<String>());
@@ -4761,19 +4803,13 @@ void Init(App& manager)
 
 		//unitのスキル名からスキルクラスを探し、unitに格納
 		for (auto& itemUnit : arrayClassUnit)
-		{
 			for (const auto& itemSkillName : itemUnit.SkillName)
-			{
 				for (const auto& skill : arrayClassSkill)
-				{
 					if (skill.nameTag == itemSkillName)
 					{
 						itemUnit.Skill.emplace_back(skill);
 						break;
 					}
-				}
-			}
-		}
 
 		manager.get().get()->classGameStatus.arrayClassUnit = arrayClassUnit;
 	}

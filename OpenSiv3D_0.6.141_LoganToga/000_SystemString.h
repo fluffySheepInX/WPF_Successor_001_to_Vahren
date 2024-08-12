@@ -40,4 +40,7 @@ public:
 	String StatusMove;
 	String StatusSkill;
 	String StatusSetumei;
+
+	String SkillAttack;
+
 };
