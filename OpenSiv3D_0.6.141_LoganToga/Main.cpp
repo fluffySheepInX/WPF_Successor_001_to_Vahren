@@ -2503,6 +2503,10 @@ public:
 			{
 				const auto t = camera.createTransformer();
 
+				//右ダブルクリックで選択解除とする
+				//ここでFlagMoveがfalseになる
+				//そしてcontinue or break;
+
 				//カメラ移動
 				if (MouseL.pressed() == true)
 				{
