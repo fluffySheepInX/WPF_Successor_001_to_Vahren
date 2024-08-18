@@ -2430,6 +2430,49 @@ public:
 		renderTextureSkillUP = RenderTexture{ 320,320 };
 		renderTextureSkillUP.clear(ColorF{ 0.5, 0.0, 0.0, 0.0 });
 
+		renderTextureSelektUnit = RenderTexture{ 160,200 };
+		renderTextureSelektUnit.clear(ColorF{ 0.5, 0.0 });
+		RectSelectUnit.push_back(Rect{ 4,4,200,40 });
+		RectSelectUnit.push_back(Rect{ 4,44,160,40 });
+		RectSelectUnit.push_back(Rect{ 4,84,160,40 });
+		RectSelectUnit.push_back(Rect{ 4,124,160,40 });
+		{
+			const ScopedRenderTarget2D target{ renderTextureSelektUnit.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			for (auto&& [i, ttt] : Indexed(RectSelectUnit))
+			{
+				if (i == 0)
+				{
+					getData().fontMini(U"選択").draw(ttt, Palette::Black);
+					continue;
+				}
+				else if (i == 1)
+				{
+					ttt.draw(Palette::Red);
+					getData().fontMini(U"前衛").draw(ttt);
+					continue;
+				}
+				else if (i == 2)
+				{
+					ttt.draw(Palette::Blue);
+					getData().fontMini(U"後衛").draw(ttt);
+					continue;
+				}
+				else if (i == 3)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontMini(U"騎兵").draw(ttt, Palette::Black);
+					continue;
+				}
+			}
+
+			Rect df = Rect(160, 200);
+			df.drawFrame(4, 0, ColorF{ 0.5 });
+		}
+
 		task = Async(BattleMoveAStar,
 				std::ref(getData().classGameStatus.classBattle.defUnitGroup),
 				std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
@@ -2854,6 +2897,84 @@ public:
 					}
 				}
 			}
+
+			//移動指定
+			{
+				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(316, WINDOWSIZEHEIGHT000 - 200) };
+
+				for (auto&& [i, re] : Indexed(RectSelectUnit))
+				{
+					if (re.leftClicked())
+					{
+						BattleFormation bbb = BattleFormation::F;
+						if (i == 1)
+						{
+							bbb = BattleFormation::F;
+						}
+						else if (i == 2)
+						{
+							bbb = BattleFormation::B;
+						}
+						else if (i == 3)
+						{
+							bbb = BattleFormation::M;
+						}
+
+						//ターゲットを抽出
+						Array<ClassHorizontalUnit> lisClassHorizontalUnit;
+						switch (getData().classGameStatus.classBattle.battleWhichIsThePlayer)
+						{
+						case BattleWhichIsThePlayer::Sortie:
+						{
+							for (auto& temp : getData().classGameStatus.classBattle.sortieUnitGroup)
+							{
+								ClassHorizontalUnit chu;
+								for (auto& temptemp : temp.ListClassUnit)
+								{
+									if (temptemp.mapTipObjectType == MapTipObjectType::GATE)
+										continue;
+									if (temptemp.mapTipObjectType == MapTipObjectType::WALL2)
+										continue;
+
+									if (temptemp.IsBattleEnable == true)
+									{
+										chu.ListClassUnit.push_back(temptemp);
+									}
+								}
+								if (chu.ListClassUnit.size() > 0)
+								{
+									lisClassHorizontalUnit.push_back(chu);
+								}
+							}
+							//lisClassHorizontalUnit = getData().classGameStatus.classBattle.sortieUnitGroup;
+						}
+						break;
+						case BattleWhichIsThePlayer::Def:
+							lisClassHorizontalUnit = getData().classGameStatus.classBattle.defUnitGroup;
+							break;
+						case BattleWhichIsThePlayer::None:
+							//AI同士の戦いにフラグは立てない
+							return;
+						default:
+							return;
+						}
+
+						for (auto& target : lisClassHorizontalUnit)
+						{
+							for (auto& unit : target.ListClassUnit)
+							{
+								if (unit.Formation == bbb)
+								{
+									ClassUnit& cuu = GetCU(unit.ID);
+									cuu.FlagMove = true;
+									getData().classGameStatus.IsBattleMove = true;
+								}
+							}
+						}
+					}
+				}
+			}
+
 
 			//pause処理
 			{
@@ -3988,7 +4109,22 @@ public:
 				}
 			}
 
-			//unit
+			////unit
+			//
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+
+						TextureAsset(U"ringA.png").drawAt(itemUnit.GetNowPosiCenter().movedBy(0, 8));
+					}
+				}
+			}
 			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
 			{
 				if (!item.FlagBuilding &&
@@ -4015,6 +4151,35 @@ public:
 					}
 				}
 			}
+			for (auto& item : getData().classGameStatus.classBattle.sortieUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+
+						TextureAsset(U"ringB.png").drawAt(itemUnit.GetNowPosiCenter().movedBy(0, 16));
+					}
+				}
+			}
+
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+
+						TextureAsset(U"ringA_E.png").drawAt(itemUnit.GetNowPosiCenter().movedBy(0, 8));
+					}
+				}
+			}
 			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
 			{
 				if (!item.FlagBuilding &&
@@ -4035,6 +4200,21 @@ public:
 					}
 				}
 			}
+			for (auto& item : getData().classGameStatus.classBattle.defUnitGroup)
+			{
+				if (!item.FlagBuilding &&
+					!item.ListClassUnit.empty())
+				{
+					for (auto& itemUnit : item.ListClassUnit)
+					{
+						if (itemUnit.IsBattleEnable == false)
+							continue;
+
+						TextureAsset(U"ringB_E.png").drawAt(itemUnit.GetNowPosiCenter().movedBy(0, 16));
+					}
+				}
+			}
+
 
 			Array<ClassUnit> bui;
 			bui.append(getData().classGameStatus.classBattle.sortieUnitGroup[0].ListClassUnit);
@@ -4217,6 +4397,7 @@ public:
 
 		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
 		renderTextureSkillUP.draw(0, Scene::Size().y - 320 - 30);
+		renderTextureSelektUnit.draw(316, WINDOWSIZEHEIGHT000 - 200);
 		if (flagDisplaySkillSetumei == true)
 		{
 			getData().slice9.draw(rectSkillSetumei);
@@ -4295,6 +4476,9 @@ private:
 	bool flagDisplaySkillSetumei;
 	String nowSelectSkillSetumei = U"";
 	Rect rectSkillSetumei = { 0,0,320,320 };
+
+	RenderTexture renderTextureSelektUnit;
+	Array<Rect> RectSelectUnit;
 
 	Array<ClassHorizontalUnit> bui;
 	Vec2 viewPos;
@@ -4626,6 +4810,23 @@ void Init(App& manager)
 			if (value.hasElement(U"help") == true)
 			{
 				cu.Help = (value[U"help"].getString());
+			}
+			if (value.hasElement(U"bf") == true)
+			{
+				int32 temp = Parse<int32>(value[U"bf"].getString());
+
+				if (temp == 0)
+				{
+					cu.Formation = BattleFormation::F;
+				}
+				else if (temp == 1)
+				{
+					cu.Formation = BattleFormation::B;
+				}
+				else if (temp == 2)
+				{
+					cu.Formation = BattleFormation::M;
+				}
 			}
 			cu.Race = (value[U"race"].getString());
 			String sNa = value[U"skill"].getString();

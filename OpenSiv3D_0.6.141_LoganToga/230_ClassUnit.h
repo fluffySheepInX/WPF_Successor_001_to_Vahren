@@ -82,7 +82,7 @@ public:
 	}
 
 	// Formation
-	BattleFormation Formation;
+	BattleFormation Formation = BattleFormation::F;
 
 	// ID
 	long long ID = 0;

@@ -34,7 +34,8 @@
       "summon_max": "5",
       "no_knock": "0",
       "escape_range": "-1",
-      "movetype": "a"
+      "movetype": "a",
+      "bf": "0"
     },
     {
       "name_tag": "DragoonFrancesca",
@@ -69,7 +70,8 @@
       "summon_max": "5",
       "no_knock": "0",
       "escape_range": "-1",
-      "movetype": "a"
+      "movetype": "a",
+      "bf": "2"
     },
     {
       "name_tag": "HowitzerC11",
@@ -104,7 +106,8 @@
       "summon_max": "5",
       "no_knock": "0",
       "escape_range": "-1",
-      "movetype": "a"
+      "movetype": "a",
+      "bf": "1"
     },
     {
       "name_tag": "IlkayWarrior",
