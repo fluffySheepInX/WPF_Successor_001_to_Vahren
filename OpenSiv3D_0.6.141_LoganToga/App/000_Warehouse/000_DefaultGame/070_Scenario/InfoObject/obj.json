@@ -17,6 +17,14 @@
       "castle_magdef": 100
     },
     {
+      "name": "tttt003",
+      "type": "wall2",
+      "no_wall2": 80,
+      "castle": 100,
+      "castle_defense": 100,
+      "castle_magdef": 100
+    },
+    {
       "name": "ucwall",
       "type": "gate",
       "no_wall2": 80,
