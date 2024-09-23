@@ -33,7 +33,7 @@
       "heal_max": "500",
       "summon_max": "5",
       "no_knock": "0",
-      "escape_range": "-1",
+      "escape_range": "300",
       "movetype": "a",
       "bf": "0"
     },
@@ -69,7 +69,7 @@
       "heal_max": "500",
       "summon_max": "5",
       "no_knock": "0",
-      "escape_range": "-1",
+      "escape_range": "300",
       "movetype": "a",
       "bf": "2"
     },
@@ -176,7 +176,7 @@
       "heal_max": "500",
       "summon_max": "5",
       "no_knock": "0",
-      "escape_range": "-1",
+      "escape_range": "15",
       "movetype": "a"
     },
     {
@@ -211,7 +211,7 @@
       "heal_max": "500",
       "summon_max": "5",
       "no_knock": "0",
-      "escape_range": "-1",
+      "escape_range": "15",
       "movetype": "a"
     },
     {
@@ -246,7 +246,7 @@
       "heal_max": "500",
       "summon_max": "5",
       "no_knock": "0",
-      "escape_range": "-1",
+      "escape_range": "800",
       "movetype": "a"
     },
 
@@ -266,7 +266,7 @@
       "cost": "10",
       "medical": "0",
       "hasExp": "0",
-      "hp": "1500",
+      "hp": "200",
       "mp": "100",
       "attack": "55",
       "defense": "25",

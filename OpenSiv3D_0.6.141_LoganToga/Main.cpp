@@ -197,14 +197,7 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 				{
 					continue;
 				}
-				if (bbb.FlagMoving == true)
-				{
-					continue;
-				}
-				if (bbb.FlagMovingEnd == false)
-				{
-					continue;
-				}
+
 				Array<Point> listRoot;
 
 				//まず現在のマップチップを取得
@@ -259,9 +252,44 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 					}
 				}
 
+				bool flagGetEscapeRange = false;
+				//escape_rangeの範囲なら、撤退。その為、反対側の座標を調整したものを扱う
+				if (bbb.Escape_range >= 1)
+				{
+					Circle cCheck = Circle(bbb.GetNowPosiCenter(), bbb.Escape_range);
+					Circle cCheck2 = Circle(minElement->second.GetNowPosiCenter(), 1);
+					if (cCheck.intersects(cCheck2) == true)
+					{
+						//撤退
+						double newDistance = 50.0;
+						double angle = atan2(minElement->second.GetNowPosiCenter().y - bbb.GetNowPosiCenter().y, minElement->second.GetNowPosiCenter().x - bbb.GetNowPosiCenter().x);
+						double xC, yC;
+						// 反対方向に進むために角度を180度反転
+						angle += Math::Pi;
+						xC = bbb.GetNowPosiCenter().x + newDistance * cos(angle);
+						yC = bbb.GetNowPosiCenter().y + newDistance * sin(angle);
+						minElement->second.nowPosiLeft = Vec2(xC, yC);
+						flagGetEscapeRange = true;
+					}
+				}
+
+				if (bbb.FlagMoving == true && flagGetEscapeRange == false)
+				{
+					continue;
+				}
+				if (bbb.FlagMovingEnd == false && flagGetEscapeRange == false)
+				{
+					continue;
+				}
+
 				//最寄りの敵のマップチップを取得
 				s3d::Optional<Size> nowIndexEnemy = mapCreator.ToIndex(minElement->second.GetNowPosiCenter(), columnQuads, rowQuads);
 				if (nowIndexEnemy.has_value() == false)
+				{
+					continue;
+				}
+
+				if (nowIndexEnemy.value() == nowIndex.value())
 				{
 					continue;
 				}
@@ -3055,11 +3083,13 @@ public:
 						{
 							getData().classGameStatus.aiRoot[itemUnit.ID].pop_front();
 							auto rthrthrt = getData().classGameStatus.aiRoot[itemUnit.ID];
-							index = getData().classGameStatus.aiRoot[itemUnit.ID][0];
+							if (rthrthrt.size() > 0)
+							{
+								index = rthrthrt[0];
+							}
 						}
 						catch (const std::exception&)
 						{
-							throw;
 							continue;
 						}
 
@@ -4811,6 +4841,7 @@ void Init(App& manager)
 			cu.Speed = Parse<double>(value[U"speed"].getString());
 			cu.Price = Parse<int32>(value[U"price"].getString());
 			cu.Move = Parse<int32>(value[U"move"].getString());
+			cu.Escape_range = Parse<int32>(value[U"escape_range"].getString());
 			if (value.hasElement(U"help") == true)
 			{
 				cu.Help = (value[U"help"].getString());

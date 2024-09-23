@@ -2,11 +2,11 @@
   "enemy": [
     {
       "name": "gho0",
-      "value": "ghostFireTest,ghostFireTest,ghostFireTest"
+      "value": "IlkaySpellcaster"
     },
     {
       "name": "gho1",
-      "value": "IlkaySpellcaster,ghostFireTest,ghostFireTest"
+      "value": "IlkaySpellcaster,IlkaySpellcaster,IlkayYari"
     },
     {
       "name": "gho2_map003",
