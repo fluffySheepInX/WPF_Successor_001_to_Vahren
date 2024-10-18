@@ -2570,6 +2570,12 @@ public:
 
 		}
 
+		getData().classGameStatus.arrayBattleZinkei.push_back(false);
+		getData().classGameStatus.arrayBattleZinkei.push_back(false);
+		getData().classGameStatus.arrayBattleZinkei.push_back(false);
+		getData().classGameStatus.arrayBattleCommand.push_back(false);
+		getData().classGameStatus.arrayBattleCommand.push_back(false);
+
 		task = Async(BattleMoveAStar,
 				std::ref(getData().classGameStatus.classBattle.defUnitGroup),
 				std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
@@ -2704,119 +2710,139 @@ public:
 							cuu.FlagMoving = true;
 						}
 
-						//FlagMove == trueのものだけで構成する
-
-						Array<ClassHorizontalUnit> lisClassHorizontalUnitLoop;
-						for (auto& target : lisClassHorizontalUnit)
+						if (getData().classGameStatus.arrayBattleZinkei[0] == true)
 						{
-							ClassHorizontalUnit chu;
-							for (auto& unit : target.ListClassUnit)
+							for (auto& target : lisClassHorizontalUnit)
+								for (auto& unit : target.ListClassUnit)
+								{
+									ClassUnit& cuu = GetCU(unit.ID);
+									cuu.orderPosiLeft = end.movedBy(Random(-10, 10), Random(-10, 10));
+									cuu.orderPosiLeftLast = cuu.orderPosiLeft;
+									cuu.FlagMove = false;
+									cuu.FlagMoveAI = true;
+								}
+						}
+						else if (getData().classGameStatus.arrayBattleZinkei[1] == true)
+						{
+
+						}
+						else
+						{
+							//FlagMove == trueのものだけで構成する
+
+							Array<ClassHorizontalUnit> lisClassHorizontalUnitLoop;
+							for (auto& target : lisClassHorizontalUnit)
 							{
-								if (unit.FlagMove == true && unit.IsBattleEnable == true)
-									chu.ListClassUnit.push_back(unit);
+								ClassHorizontalUnit chu;
+								for (auto& unit : target.ListClassUnit)
+								{
+									if (unit.FlagMove == true && unit.IsBattleEnable == true)
+										chu.ListClassUnit.push_back(unit);
+								}
+								if (chu.ListClassUnit.size() > 0)
+								{
+									lisClassHorizontalUnitLoop.push_back(chu);
+								}
 							}
-							if (chu.ListClassUnit.size() > 0)
+
+							for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(lisClassHorizontalUnitLoop))
 							{
-								lisClassHorizontalUnitLoop.push_back(chu);
+								Array<ClassUnit*> target;
+								for (auto& unit : loopLisClassHorizontalUnit.ListClassUnit)
+									if (unit.FlagMove == true && unit.IsBattleEnable == true)
+										target.push_back(&unit);
+
+								if (target.size() == 0)
+									continue;
+
+								//その部隊の人数を取得
+								int32 unitCount = target.size();
+
+								//商の数
+								int32 result = (unitCount - 1) / 2;
+
+								// 角度_X軸との角度を計算_θ'=直線とx軸のなす角度
+								double angle2 = Math::Atan2(end.y - start.y,
+													   end.x - start.x);
+								//θ
+								double angle = Math::Pi / 2 - angle2;
+
+								//移動フラグが立っているユニットだけ、繰り返す
+								if (unitCount % 2 == 1)//偶奇判定
+								{
+									for (auto&& [ii, unit] : Indexed(target))
+									{
+										//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+										double xPos = end.x
+											+ (
+												(ii - (result))
+												* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+												)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+										double yPos = end.y
+											- (
+											(ii - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+											)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+										ClassUnit& cuu = GetCU(unit->ID);
+										cuu.orderPosiLeft = Vec2(xPos, yPos);
+										cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+										cuu.FlagMove = false;
+										cuu.FlagMoveAI = true;
+
+										//unit->orderPosiLeft = Vec2(xPos, yPos);
+										//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+										//unit->FlagMove = false;
+										//unit->FlagMoveAI = true;
+
+										auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
+									}
+								}
+								else
+								{
+									for (auto&& [ii, unit] : Indexed(target))
+									{
+										//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+										double xPos = end.x
+											+ (
+												(ii - (result))
+												* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+												)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+										double yPos = end.y
+											- (
+											(ii - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+											)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+										ClassUnit& cuu = GetCU(unit->ID);
+										cuu.orderPosiLeft = Vec2(xPos, yPos);
+										cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+										cuu.FlagMove = false;
+										cuu.FlagMoveAI = true;
+
+										//unit->orderPosiLeft = Vec2(xPos, yPos);
+										//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+										//unit->FlagMove = false;
+										//unit->FlagMoveAI = true;
+
+										auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
+									}
+								}
 							}
 						}
 
-						for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(lisClassHorizontalUnitLoop))
-						{
-							Array<ClassUnit*> target;
-							for (auto& unit : loopLisClassHorizontalUnit.ListClassUnit)
-								if (unit.FlagMove == true && unit.IsBattleEnable == true)
-									target.push_back(&unit);
-
-							if (target.size() == 0)
-								continue;
-
-							//その部隊の人数を取得
-							int32 unitCount = target.size();
-
-							//商の数
-							int32 result = (unitCount - 1) / 2;
-
-							// 角度_X軸との角度を計算_θ'=直線とx軸のなす角度
-							double angle2 = Math::Atan2(end.y - start.y,
-												   end.x - start.x);
-							//θ
-							double angle = Math::Pi / 2 - angle2;
-
-							//移動フラグが立っているユニットだけ、繰り返す
-							if (unitCount % 2 == 1)//偶奇判定
-							{
-								for (auto&& [ii, unit] : Indexed(target))
-								{
-									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
-									double xPos = end.x
-										+ (
-											(ii - (result))
-											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
-											)
-										-
-										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
-									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
-									double yPos = end.y
-										- (
-										(ii - (result))
-										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
-
-										)
-										-
-										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
-
-									ClassUnit& cuu = GetCU(unit->ID);
-									cuu.orderPosiLeft = Vec2(xPos, yPos);
-									cuu.orderPosiLeftLast = Vec2(xPos, yPos);
-									cuu.FlagMove = false;
-									cuu.FlagMoveAI = true;
-
-									//unit->orderPosiLeft = Vec2(xPos, yPos);
-									//unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									//unit->FlagMove = false;
-									//unit->FlagMoveAI = true;
-
-									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
-								}
-							}
-							else
-							{
-								for (auto&& [ii, unit] : Indexed(target))
-								{
-									//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
-									double xPos = end.x
-										+ (
-											(ii - (result))
-											* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
-											)
-										-
-										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
-									//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
-									double yPos = end.y
-										- (
-										(ii - (result))
-										* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
-
-										)
-										-
-										(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
-
-									ClassUnit& cuu = GetCU(unit->ID);
-									cuu.orderPosiLeft = Vec2(xPos, yPos);
-									cuu.orderPosiLeftLast = Vec2(xPos, yPos);
-									cuu.FlagMove = false;
-									cuu.FlagMoveAI = true;
-
-									//unit->orderPosiLeft = Vec2(xPos, yPos);
-									//unit->orderPosiLeftLast = Vec2(xPos, yPos);
-									//unit->FlagMove = false;
-									//unit->FlagMoveAI = true;
-
-									auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
-								}
-							}
-						}
 						getData().classGameStatus.IsBattleMove = false;
 
 						// 実行途中のタスクがあれば完了まで待つ。
@@ -3133,7 +3159,7 @@ public:
 								{
 									if (i == j)
 									{
-										ttt.draw(Palette::Darkred); 
+										ttt.draw(Palette::Darkred);
 									}
 									else
 									{
@@ -3149,16 +3175,64 @@ public:
 				}
 			}
 
-			for (auto&& [i, ttt] : Indexed(rectOrderSkill))
+			//コマンド処理
 			{
-				if (ttt.leftClicked())
+				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(0,Scene::Size().y - 380 - 30) };
+
+				for (auto&& [j, ttt] : Indexed(rectOrderSkill))
 				{
-					getData().classGameStatus.arrayBattleCommand.clear();
-					for (size_t i = 0; i < rectOrderSkill.size(); i++)
+					if (ttt.leftClicked())
 					{
-						getData().classGameStatus.arrayBattleCommand.push_back(false);
+						getData().classGameStatus.arrayBattleCommand.clear();
+						for (size_t k = 0; k < rectOrderSkill.size(); k++)
+						{
+							getData().classGameStatus.arrayBattleCommand.push_back(false);
+						}
+						getData().classGameStatus.arrayBattleCommand[j] = true;
+
+						renderTextureOrderSkill.clear(ColorF{ 0.5, 0.0 });
+						{
+							const ScopedRenderTarget2D target{ renderTextureOrderSkill.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
+
+							// 描画された最大のアルファ成分を保持するブレンドステート
+							const ScopedRenderStates2D blend{ MakeBlendState() };
+
+							Rect df = Rect(320, 60);
+							df.drawFrame(4, 0, ColorF{ 0.5 });
+
+							for (auto&& [i, ttt] : Indexed(rectOrderSkill))
+							{
+								if (i == 0)
+								{
+									if (i == j)
+									{
+										ttt.draw(Palette::Darkred);
+									}
+									else
+									{
+										ttt.draw(Palette::Aliceblue);
+									}
+									getData().fontLine(U"必殺技").draw(ttt, Palette::Black);
+									continue;
+								}
+								else if (i == 1)
+								{
+									if (i == j)
+									{
+										ttt.draw(Palette::Darkred);
+									}
+									else
+									{
+										ttt.draw(Palette::Aliceblue);
+									}
+									getData().fontLine(U"通常").draw(ttt, Palette::Black);
+									continue;
+								}
+							}
+
+						}
+
 					}
-					getData().classGameStatus.arrayBattleCommand[i] = true;
 				}
 			}
 
