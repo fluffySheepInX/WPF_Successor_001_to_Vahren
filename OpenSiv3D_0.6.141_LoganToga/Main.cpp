@@ -231,6 +231,7 @@ int32 BattleMoveAStar(Array<ClassHorizontalUnit>& target,
 							xy2.x = xy2.x * xy2.x;
 							xy2.y = xy2.y * xy2.y;
 							double disB = xy2.x + xy2.y;
+							//hashが被ることあり
 							dicDis.emplace(disA - disB, ddd);
 						}
 					}
@@ -2501,6 +2502,74 @@ public:
 			df.drawFrame(4, 0, ColorF{ 0.5 });
 		}
 
+		rectZinkei.push_back(Rect{ 8,8,60,40 });
+		rectZinkei.push_back(Rect{ 76,8,60,40 });
+		rectZinkei.push_back(Rect{ 144,8,60,40 });
+		renderTextureZinkei = RenderTexture{ 320,60 };
+		renderTextureZinkei.clear(ColorF{ 0.5, 0.0 });
+		{
+			const ScopedRenderTarget2D target{ renderTextureZinkei.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			Rect df = Rect(320, 60);
+			df.drawFrame(4, 0, ColorF{ 0.5 });
+
+			for (auto&& [i, ttt] : Indexed(rectZinkei))
+			{
+				if (i == 0)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontLine(U"密集").draw(ttt, Palette::Black);
+					continue;
+				}
+				else if (i == 1)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontLine(U"横列").draw(ttt, Palette::Black);
+					continue;
+				}
+				else if (i == 2)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontLine(U"正方").draw(ttt, Palette::Black);
+					continue;
+				}
+			}
+		}
+
+		rectOrderSkill.push_back(Rect{ 8,8,80,40 });
+		rectOrderSkill.push_back(Rect{ 96,8,60,40 });
+		renderTextureOrderSkill = RenderTexture{ 320,60 };
+		renderTextureOrderSkill.clear(ColorF{ 0.5, 0.0 });
+		{
+			const ScopedRenderTarget2D target{ renderTextureOrderSkill.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
+
+			// 描画された最大のアルファ成分を保持するブレンドステート
+			const ScopedRenderStates2D blend{ MakeBlendState() };
+
+			Rect df = Rect(320, 60);
+			df.drawFrame(4, 0, ColorF{ 0.5 });
+
+			for (auto&& [i, ttt] : Indexed(rectOrderSkill))
+			{
+				if (i == 0)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontLine(U"必殺技").draw(ttt, Palette::Black);
+					continue;
+				}
+				else if (i == 1)
+				{
+					ttt.draw(Palette::Aliceblue);
+					getData().fontLine(U"通常").draw(ttt, Palette::Black);
+					continue;
+				}
+			}
+
+		}
+
 		task = Async(BattleMoveAStar,
 				std::ref(getData().classGameStatus.classBattle.defUnitGroup),
 				std::ref(getData().classGameStatus.classBattle.sortieUnitGroup),
@@ -3007,6 +3076,91 @@ public:
 				}
 			}
 
+			//陣形処理
+			{
+				const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(0,Scene::Size().y - 440 - 30) };
+
+				for (auto&& [j, ttt] : Indexed(rectZinkei))
+				{
+					if (ttt.leftClicked())
+					{
+						getData().classGameStatus.arrayBattleZinkei.clear();
+						for (size_t k = 0; k < rectZinkei.size(); k++)
+						{
+							getData().classGameStatus.arrayBattleZinkei.push_back(false);
+						}
+						getData().classGameStatus.arrayBattleZinkei[j] = true;
+
+						renderTextureZinkei.clear(ColorF{ 0.5, 0.0 });
+						{
+							const ScopedRenderTarget2D target{ renderTextureZinkei.clear(ColorF{ 0.8, 0.8, 0.8,0.5 }) };
+
+							// 描画された最大のアルファ成分を保持するブレンドステート
+							const ScopedRenderStates2D blend{ MakeBlendState() };
+
+							Rect df = Rect(320, 60);
+							df.drawFrame(4, 0, ColorF{ 0.5 });
+
+							for (auto&& [i, ttt] : Indexed(rectZinkei))
+							{
+								if (i == 0)
+								{
+									if (i == j)
+									{
+										ttt.draw(Palette::Darkred);
+									}
+									else
+									{
+										ttt.draw(Palette::Aliceblue);
+									}
+									getData().fontLine(U"密集").draw(ttt, Palette::Black);
+									continue;
+								}
+								else if (i == 1)
+								{
+									if (i == j)
+									{
+										ttt.draw(Palette::Darkred);
+									}
+									else
+									{
+										ttt.draw(Palette::Aliceblue);
+									}
+									getData().fontLine(U"横列").draw(ttt, Palette::Black);
+									continue;
+								}
+								else if (i == 2)
+								{
+									if (i == j)
+									{
+										ttt.draw(Palette::Darkred); 
+									}
+									else
+									{
+										ttt.draw(Palette::Aliceblue);
+									}
+									getData().fontLine(U"正方").draw(ttt, Palette::Black);
+									continue;
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			for (auto&& [i, ttt] : Indexed(rectOrderSkill))
+			{
+				if (ttt.leftClicked())
+				{
+					getData().classGameStatus.arrayBattleCommand.clear();
+					for (size_t i = 0; i < rectOrderSkill.size(); i++)
+					{
+						getData().classGameStatus.arrayBattleCommand.push_back(false);
+					}
+					getData().classGameStatus.arrayBattleCommand[i] = true;
+				}
+			}
 
 			//pause処理
 			{
@@ -4432,6 +4586,10 @@ public:
 		renderTextureSkill.draw(0, Scene::Size().y - 320 - 30);
 		renderTextureSkillUP.draw(0, Scene::Size().y - 320 - 30);
 		renderTextureSelektUnit.draw(316, WINDOWSIZEHEIGHT000 - 200);
+
+		renderTextureZinkei.draw(0, Scene::Size().y - 440 - 30);
+		renderTextureOrderSkill.draw(0, Scene::Size().y - 380 - 30);
+
 		if (flagDisplaySkillSetumei == true)
 		{
 			getData().slice9.draw(rectSkillSetumei);
@@ -4507,9 +4665,15 @@ private:
 	RenderTexture renderTextureSkillUP;
 	HashTable<String, Rect> htSkill;
 	Array<String> nowSelectSkill;
-	bool flagDisplaySkillSetumei;
+	bool flagDisplaySkillSetumei = false;
 	String nowSelectSkillSetumei = U"";
 	Rect rectSkillSetumei = { 0,0,320,320 };
+
+	RenderTexture renderTextureZinkei;
+	Array<Rect> rectZinkei;
+
+	RenderTexture renderTextureOrderSkill;
+	Array<Rect> rectOrderSkill;
 
 	RenderTexture renderTextureSelektUnit;
 	Array<Rect> RectSelectUnit;

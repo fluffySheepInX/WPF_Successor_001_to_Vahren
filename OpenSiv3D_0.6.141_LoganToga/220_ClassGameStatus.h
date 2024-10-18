@@ -41,6 +41,8 @@ public:
 	Array<ClassSkill> arrayClassSkill;
 	Array<ClassCard> arrayClassCard;
 	bool IsBattleMove = false;
+	Array<bool> arrayBattleZinkei;
+	Array<bool> arrayBattleCommand;
 	int32 DistanceBetweenUnit = 0;
 	int32 DistanceBetweenUnitTate = 0;
 
