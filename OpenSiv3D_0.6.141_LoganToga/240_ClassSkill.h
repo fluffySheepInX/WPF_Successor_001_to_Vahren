@@ -52,6 +52,56 @@ public:
 			&& (radian == other.radian)
 			&& (degree == other.degree);
 	}
+	ClassSkill& operator=(const ClassSkill& other) {
+		if (this != &other) {
+			nameTag = other.nameTag;
+			name = other.name;
+			help = other.help;
+			image = other.image;
+			icon = other.icon;
+			fkey = other.fkey;
+			sortKey = other.sortKey;
+			SkillType = other.SkillType;
+			MoveType = other.MoveType;
+			Easing = other.Easing;
+			EasingRatio = other.EasingRatio;
+			mp = other.mp;
+			slowPer = other.slowPer;
+			slowTime = other.slowTime;
+			SkillCenter = other.SkillCenter;
+			SkillBomb = other.SkillBomb;
+			SkillD360 = other.SkillD360;
+			sound = other.sound;
+			direct = other.direct;
+			w = other.w;
+			h = other.h;
+			a = other.a;
+			height = other.height;
+			radius = other.radius;
+			forceFire = other.forceFire;
+			attr = other.attr;
+			str = other.str;
+			SkillStrKind = other.SkillStrKind;
+			range = other.range;
+			damageRangeAdjust = other.damageRangeAdjust;
+			rangeMin = other.rangeMin;
+			speed = other.speed;
+			gunDelay = other.gunDelay;
+			pairNext = other.pairNext;
+			next = other.next;
+			randomSpace = other.randomSpace;
+			offset = other.offset;
+			ray = other.ray;
+			rayStrokeThickness = other.rayStrokeThickness;
+			rush = other.rush;
+			rushInterval = other.rushInterval;
+			rushRandomDegree = other.rushRandomDegree;
+			SkillForceRay = other.SkillForceRay;
+			radian = other.radian;
+			degree = other.degree;
+		}
+		return *this;
+	}
 
 	// < 演算子のオーバーロード
 	bool operator<(const ClassSkill& other) const

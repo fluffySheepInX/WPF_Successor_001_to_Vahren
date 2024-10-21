@@ -2724,7 +2724,122 @@ public:
 						}
 						else if (getData().classGameStatus.arrayBattleZinkei[1] == true)
 						{
+							ClassHorizontalUnit liZenei;
 
+
+							ClassHorizontalUnit liKouei;
+
+
+
+
+							ClassHorizontalUnit liKihei;
+
+
+
+
+
+
+							Array<ClassHorizontalUnit> lisClassHorizontalUnitLoop;
+							lisClassHorizontalUnitLoop.push_back(liZenei);
+							lisClassHorizontalUnitLoop.push_back(liKouei);
+							lisClassHorizontalUnitLoop.push_back(liKihei);
+
+							for (auto&& [i, loopLisClassHorizontalUnit] : IndexedRef(lisClassHorizontalUnitLoop))
+							{
+								Array<ClassUnit*> target;
+								for (auto& unit : loopLisClassHorizontalUnit.ListClassUnit)
+									if (unit.FlagMove == true && unit.IsBattleEnable == true)
+										target.push_back(&unit);
+
+								if (target.size() == 0)
+									continue;
+
+								//その部隊の人数を取得
+								int32 unitCount = target.size();
+
+								//商の数
+								int32 result = (unitCount - 1) / 2;
+
+								// 角度_X軸との角度を計算_θ'=直線とx軸のなす角度
+								double angle2 = Math::Atan2(end.y - start.y,
+													   end.x - start.x);
+								//θ
+								double angle = Math::Pi / 2 - angle2;
+
+								//移動フラグが立っているユニットだけ、繰り返す
+								if (unitCount % 2 == 1)//偶奇判定
+								{
+									for (auto&& [ii, unit] : Indexed(target))
+									{
+										//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+										double xPos = end.x
+											+ (
+												(ii - (result))
+												* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+												)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+										double yPos = end.y
+											- (
+											(ii - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+											)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+										ClassUnit& cuu = GetCU(unit->ID);
+										cuu.orderPosiLeft = Vec2(xPos, yPos);
+										cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+										cuu.FlagMove = false;
+										cuu.FlagMoveAI = true;
+
+										//unit->orderPosiLeft = Vec2(xPos, yPos);
+										//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+										//unit->FlagMove = false;
+										//unit->FlagMoveAI = true;
+
+										auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
+									}
+								}
+								else
+								{
+									for (auto&& [ii, unit] : Indexed(target))
+									{
+										//px+(b-切り捨て商)＊dcosθ+a＊d'cosθ’
+										double xPos = end.x
+											+ (
+												(ii - (result))
+												* (getData().classGameStatus.DistanceBetweenUnit * Math::Cos(angle))
+												)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Cos(angle2)));
+										//py+(b-切り捨て商)＊dsinθ-a＊d'sinθ’
+										double yPos = end.y
+											- (
+											(ii - (result))
+											* (getData().classGameStatus.DistanceBetweenUnit * Math::Sin(angle))
+
+											)
+											-
+											(i * (getData().classGameStatus.DistanceBetweenUnitTate * Math::Sin(angle2)));
+
+										ClassUnit& cuu = GetCU(unit->ID);
+										cuu.orderPosiLeft = Vec2(xPos, yPos);
+										cuu.orderPosiLeftLast = Vec2(xPos, yPos);
+										cuu.FlagMove = false;
+										cuu.FlagMoveAI = true;
+
+										//unit->orderPosiLeft = Vec2(xPos, yPos);
+										//unit->orderPosiLeftLast = Vec2(xPos, yPos);
+										//unit->FlagMove = false;
+										//unit->FlagMoveAI = true;
+
+										auto index = mapCreator.ToIndex(unit->orderPosiLeft, columnQuads, rowQuads);
+									}
+								}
+							}
 						}
 						else
 						{
